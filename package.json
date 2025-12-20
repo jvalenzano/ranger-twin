@@ -1,0 +1,27 @@
+{
+  "name": "cedar-creek-twin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent-first AI platform for post-fire forest recovery",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r run clean",
+    "console:dev": "pnpm --filter command-console dev",
+    "console:build": "pnpm --filter command-console build",
+    "field:dev": "pnpm --filter field-companion dev",
+    "field:build": "pnpm --filter field-companion build",
+    "ui:storybook": "pnpm --filter ui-components storybook"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.12.0"
+}

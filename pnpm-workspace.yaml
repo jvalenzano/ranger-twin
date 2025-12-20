@@ -1,0 +1,9 @@
+# pnpm Workspace Configuration
+# https://pnpm.io/workspaces
+
+packages:
+  # Frontend applications
+  - 'apps/*'
+
+  # Shared TypeScript/React packages
+  - 'packages/ui-components'

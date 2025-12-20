@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # Infrastructure
+  # =============================================================================
+
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: cedar-creek-postgres
+    environment:
+      POSTGRES_USER: cedar_creek
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+      POSTGRES_DB: cedar_creek_twin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cedar_creek -d cedar_creek_twin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cedar-creek-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # API Gateway
+  # =============================================================================
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: cedar-creek-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://cedar_creek:${POSTGRES_PASSWORD:-localdev}@postgres:5432/cedar_creek_twin
+      REDIS_URL: redis://redis:6379
+      BURN_ANALYST_URL: http://burn-analyst:8001
+      TRAIL_ASSESSOR_URL: http://trail-assessor:8002
+      TIMBER_CRUISER_URL: http://timber-cruiser:8003
+      COMPLIANCE_ADVISOR_URL: http://compliance-advisor:8004
+      RECOVERY_COORDINATOR_URL: http://recovery-coordinator:8005
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/api-gateway:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # =============================================================================
+  # AI Agents
+  # =============================================================================
+
+  burn-analyst:
+    build:
+      context: ./services/agents/burn-analyst
+      dockerfile: Dockerfile
+    container_name: cedar-creek-burn-analyst
+    ports:
+      - "8001:8001"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    volumes:
+      - ./services/agents/burn-analyst:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
+      - ./data:/data:ro
+    command: uvicorn burn_analyst.main:app --host 0.0.0.0 --port 8001 --reload
+
+  trail-assessor:
+    build:
+      context: ./services/agents/trail-assessor
+      dockerfile: Dockerfile
+    container_name: cedar-creek-trail-assessor
+    ports:
+      - "8002:8002"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    volumes:
+      - ./services/agents/trail-assessor:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
+      - ./data:/data:ro
+    command: uvicorn trail_assessor.main:app --host 0.0.0.0 --port 8002 --reload
+
+  timber-cruiser:
+    build:
+      context: ./services/agents/timber-cruiser
+      dockerfile: Dockerfile
+    container_name: cedar-creek-timber-cruiser
+    ports:
+      - "8003:8003"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    volumes:
+      - ./services/agents/timber-cruiser:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
+      - ./data:/data:ro
+    command: uvicorn timber_cruiser.main:app --host 0.0.0.0 --port 8003 --reload
+
+  compliance-advisor:
+    build:
+      context: ./services/agents/compliance-advisor
+      dockerfile: Dockerfile
+    container_name: cedar-creek-compliance-advisor
+    ports:
+      - "8004:8004"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+      DATABASE_URL: postgresql://cedar_creek:${POSTGRES_PASSWORD:-localdev}@postgres:5432/cedar_creek_twin
+    volumes:
+      - ./services/agents/compliance-advisor:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
+      - ./data:/data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn compliance_advisor.main:app --host 0.0.0.0 --port 8004 --reload
+
+  recovery-coordinator:
+    build:
+      context: ./services/agents/recovery-coordinator
+      dockerfile: Dockerfile
+    container_name: cedar-creek-recovery-coordinator
+    ports:
+      - "8005:8005"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+      BURN_ANALYST_URL: http://burn-analyst:8001
+      TRAIL_ASSESSOR_URL: http://trail-assessor:8002
+      TIMBER_CRUISER_URL: http://timber-cruiser:8003
+      COMPLIANCE_ADVISOR_URL: http://compliance-advisor:8004
+    volumes:
+      - ./services/agents/recovery-coordinator:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
+    depends_on:
+      - burn-analyst
+      - trail-assessor
+      - timber-cruiser
+      - compliance-advisor
+    command: uvicorn recovery_coordinator.main:app --host 0.0.0.0 --port 8005 --reload
+
+  # =============================================================================
+  # Frontend
+  # =============================================================================
+
+  command-console:
+    build:
+      context: ./apps/command-console
+      dockerfile: Dockerfile
+    container_name: cedar-creek-console
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:8000
+    volumes:
+      - ./apps/command-console:/app
+      - /app/node_modules
+    command: pnpm dev --host
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: cedar-creek-network
