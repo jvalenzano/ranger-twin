@@ -1,6 +1,6 @@
 # API Gateway
 
-> FastAPI main router for Cedar Creek Digital Twin
+> FastAPI main router for Project RANGER
 
 ## Overview
 

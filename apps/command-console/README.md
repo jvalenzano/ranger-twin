@@ -1,6 +1,6 @@
 # Command Console
 
-> Desktop UI for the Cedar Creek Digital Twin - "Tactical Futurism" aesthetic
+> Desktop UI for Project RANGER - "Tactical Futurism" aesthetic
 
 ## Overview
 

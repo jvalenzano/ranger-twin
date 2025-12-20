@@ -1,4 +1,4 @@
--- Cedar Creek Digital Twin - Database Initialization
+-- RANGER Digital Twin - Database Initialization
 -- This script runs on first PostgreSQL container startup
 
 -- Enable required extensions

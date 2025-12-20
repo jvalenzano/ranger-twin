@@ -120,7 +120,7 @@
 
 **Competitive Gaps FireSight Fills:**
 - Automated, non-technical report generation for BAER teams without GIS expertise
-- Seamless integration into broader cedar-creek digital twin narrative (not standalone tool)
+- Seamless integration into broader RANGER digital twin narrative (not standalone tool)
 - Potential accuracy enhancement through novel spectral indices or temporal compositing
 
 **Differentiation Imperative:** FireSight alone *cannot compete* with free BAER tool. **Value lies in dashboard integration + integration with trail/timber/compliance modules.**
@@ -664,7 +664,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 - **Success Metric:** 1 signed pilot MOA within 6 months
 
 #### **Strategic Partnerships**
-1. **Esri:** Co-market "ArcGIS-native Cedar Creek Digital Twin"; position as Esri extension (not competitive)
+1. **Esri:** Co-market "ArcGIS-native RANGER Twin"; position as Esri extension (not competitive)
 2. **ICF International:** Explore EGP modernization partnership (ICF is prime contractor); position as data layer provider
 3. **USFS Regional Offices:** Identify 3-5 champion regions; provide dedicated implementation support
 4. **Interagency Collaboration:** Engage BLM, NPS for parallel pilots (same workflows; larger TAM)
@@ -674,7 +674,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 **Target Audience:** USFS Regional/District Leaders, NEPA Planners, Trail Managers, Timber Sale Administrators
 
 **Core Message:**
-> *"Cedar Creek Digital Twin transforms post-fire recovery from disconnected operations into coordinated intelligence. One spatial data model. Four time-saving applications. Built for USFS workflows, validated on real fire data, scaled for national operations."*
+> *"Project RANGER transforms post-fire recovery from disconnected operations into coordinated intelligence. One spatial data model. Five specialized AI agents. Built for USFS workflows, validated on real fire data, scaled for national operations."*
 
 **Key Talking Points:**
 1. **Not a replacement:** "Enhances existing USFS tools (BAER, TRACS, FScruiser, PALS)"

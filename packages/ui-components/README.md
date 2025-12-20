@@ -1,6 +1,6 @@
 # ui-components
 
-> Shared React component library for Cedar Creek Digital Twin
+> Shared React component library for Project RANGER
 
 ## Overview
 

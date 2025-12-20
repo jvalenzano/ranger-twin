@@ -1,6 +1,6 @@
 # agent-common
 
-> Shared utilities for AI agents in Cedar Creek Digital Twin
+> Shared utilities for AI agents in Project RANGER
 
 ## Overview
 

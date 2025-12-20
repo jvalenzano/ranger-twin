@@ -1,6 +1,6 @@
 # twin-core
 
-> Shared Python utilities for Cedar Creek Digital Twin
+> Shared Python utilities for Project RANGER
 
 ## Overview
 

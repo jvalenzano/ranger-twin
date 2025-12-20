@@ -95,8 +95,8 @@ ranger/
 
 ```bash
 # Clone
-git clone https://github.com/jvalenzano/cedar-creek-twin.git
-cd cedar-creek-twin
+git clone https://github.com/jvalenzano/ranger-twin.git
+cd ranger-twin
 
 # Environment
 cp .env.example .env
