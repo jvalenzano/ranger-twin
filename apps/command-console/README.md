@@ -79,6 +79,22 @@ pnpm typecheck
 - [ ] Timeline scrubber (pre-fire → post-fire → projected)
 - [ ] Export to GeoJSON, PDF
 
+## Mockup Reference
+
+![Command Console v1](../../docs/assets/mockup-iterations/ranger-command-console-v1.png)
+
+*Approved v1 mockup — December 2025*
+
+## Setup from AI Studio Export
+
+When importing code from Google AI Studio Build mode:
+
+1. Export the ZIP from AI Studio
+2. Extract to a temporary location
+3. Copy relevant components to `src/components/`
+4. Adapt imports and styling to match our structure
+5. Replace placeholder map with MapLibre/deck.gl integration
+
 ## Environment Variables
 
 ```bash

@@ -16,17 +16,32 @@ The interface is built on the principle of **"Macro-to-Micro Intelligence."** It
     - **Compliance (NEPA Advisor):** AI-assisted regulatory workflows.
 3.  **AI Insight HUD:** Translucent, glassmorphic panels provide high-level metrics and "What-If" scenarios, such as estimated timber loss or recovery timelines.
 
-## 2. Design Mockup: "The Ranger's Command Console"
+## 2. Design Mockups: "The Ranger's Command Console"
+
+### V2: Hero Mockup (3D Terrain Visualization)
+
+![RANGER Command Console v2](../assets/mockup-iterations/ranger-command-console-v2.png)
+
+*Approved v2 hero mockup — December 2025. Generated via Google AI Studio Build mode.*
+
+**Key Features:**
+- **3D Terrain:** Organic topographic contours with 25 elevation layers, isometric perspective
+- **Fire Visualization:** Pulsing thermal gradient with ignition core, fire perimeter boundary
+- **Tactical HUD:** Coordinate grid, crosshairs, dot grid overlay
+- **Animations:** Contour pulse, fire glow pulse, depth-based opacity
+- **Code Export:** `docs/assets/temp/ranger-command-console-v2/` — Full React + TypeScript + Tailwind
+
+### V1: UI Chrome Reference
 
 ![RANGER Command Console v1](../assets/mockup-iterations/ranger-command-console-v1.png)
 
-*Approved v1 mockup — December 2025. Generated via Google AI Studio Build mode.*
+*Approved v1 mockup — December 2025. Clean UI shell for component reference.*
 
-**Key Elements Shown:**
+**Key Elements:**
 - **Header:** RANGER branding with breadcrumb navigation (Willamette NF > Cedar Creek Fire > Impact Analysis)
 - **Lifecycle Rail:** Four-step workflow (IMPACT active, DAMAGE, TIMBER, COMPLIANCE)
 - **BURN ANALYST Panel:** Glassmorphic HUD with 98.4% confidence, severity breakdown, and stacked bar visualization
-- **Map Area:** Burn severity gradient with fire perimeter and geographic reference points
+- **Map Area:** Simple burn severity gradient with fire perimeter and geographic reference points
 - **Controls:** SAT/TER/IR toggle, zoom controls, scale bar with data attribution
 
 ## 3. Design Rationale: "Tactical Futurism"
