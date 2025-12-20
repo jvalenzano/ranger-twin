@@ -65,8 +65,7 @@ RANGER moves from siloed tools to an **Agentic OS** through three core shifts:
 2. **Coordinated Intelligence:** A root **Recovery Coordinator** orchestrating specialist sub-agents using Google ADK.
 3. **Agentic Synthesis:** Shifting from "raw data/maps" to **coordinated briefings** and actionable insights.
 
-See [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) for the live strategic authority.
-or should be implemented as a **distinct root LlmAgent** using the **Coordinator/Dispatcher Pattern**:
+See [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) for the live strategic authority. The Recovery Coordinator is implemented as a **distinct root LlmAgent** using the **Coordinator/Dispatcher Pattern**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
