@@ -1,0 +1,5 @@
+# Git LFS for large data files
+data/layers/*.geojson filter=lfs diff=lfs merge=lfs -text
+data/rasters/*.tif filter=lfs diff=lfs merge=lfs -text
+data/documents/*.pdf filter=lfs diff=lfs merge=lfs -text
+data/synthetic/*.json filter=lfs diff=lfs merge=lfs -text
