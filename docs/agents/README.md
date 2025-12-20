@@ -8,11 +8,11 @@ This directory contains detailed specifications for each AI agent in the RANGER 
 
 | Agent | Role Title | Spec Document | Service Directory | Priority |
 |-------|------------|---------------|-------------------|----------|
-| **Burn Analyst** | The Burn Analyst | [BURN-ANALYST-SPEC.md](./BURN-ANALYST-SPEC.md) | `services/agents/burn-analyst/` | Phase 1 |
-| **Trail Assessor** | The Trail Assessor | [TRAIL-ASSESSOR-SPEC.md](./TRAIL-ASSESSOR-SPEC.md) | `services/agents/trail-assessor/` | Phase 1 |
-| **Cruising Assistant** | The Cruising Assistant | [TIMBER-CRUISER-SPEC.md](./TIMBER-CRUISER-SPEC.md) | `services/agents/cruising-assistant/` | Phase 2 |
-| **NEPA Advisor** | The NEPA Advisor | [COMPLIANCE-ADVISOR-SPEC.md](./COMPLIANCE-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Phase 3 |
-| **Recovery Coordinator** | Recovery Coordinator | (See PROJECT-BRIEF.md) | `services/agents/recovery-coordinator/` | Phase 2 |
+| **Recovery Coordinator** | Recovery Coordinator | [RECOVERY-COORDINATOR-SPEC.md](./RECOVERY-COORDINATOR-SPEC.md) | `services/agents/recovery-coordinator/` | **Root Agent** |
+| **Burn Analyst** | The Burn Analyst | [BURN-ANALYST-SPEC.md](./BURN-ANALYST-SPEC.md) | `services/agents/burn-analyst/` | Sub-agent |
+| **Trail Assessor** | The Trail Assessor | [TRAIL-ASSESSOR-SPEC.md](./TRAIL-ASSESSOR-SPEC.md) | `services/agents/trail-assessor/` | Sub-agent |
+| **Cruising Assistant** | The Cruising Assistant | [TIMBER-CRUISER-SPEC.md](./TIMBER-CRUISER-SPEC.md) | `services/agents/cruising-assistant/` | Sub-agent |
+| **NEPA Advisor** | The NEPA Advisor | [COMPLIANCE-ADVISOR-SPEC.md](./COMPLIANCE-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Sub-agent |
 
 ## Agent Architecture
 

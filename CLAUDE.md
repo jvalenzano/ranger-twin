@@ -12,15 +12,17 @@ Guidance for Claude Code when working in this repository.
 
 For complete project vision, see `docs/PROJECT-BRIEF.md`.
 
-## The Crew: Five AI Agents
+## The Crew: One Root Coordinator, Four Specialists
 
-| Agent | Directory | Purpose |
-|-------|-----------|---------|
-| **Burn Analyst** | `services/agents/burn-analyst/` | Satellite burn severity assessment |
-| **Trail Assessor** | `services/agents/trail-assessor/` | AI-powered trail damage detection |
-| **Cruising Assistant** | `services/agents/cruising-assistant/` | Multimodal timber inventory (voice + video) |
-| **NEPA Advisor** | `services/agents/nepa-advisor/` | Regulatory guidance via RAG |
-| **Recovery Coordinator** | `services/agents/recovery-coordinator/` | Multi-agent orchestration |
+RANGER uses the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** is the root agent that orchestrates specialized lifecycle sub-agents.
+
+| Agent | Directory | Role |
+|-------|-----------|------|
+| **Recovery Coordinator** | `services/agents/recovery-coordinator/` | **Root Agent** (Orchestration & Dispatch) |
+| **Burn Analyst** | `services/agents/burn-analyst/` | Sub-agent: Satellite burn severity |
+| **Trail Assessor** | `services/agents/trail-assessor/` | Sub-agent: AI-powered trail damage |
+| **Cruising Assistant** | `services/agents/cruising-assistant/` | Sub-agent: Multimodal timber inventory |
+| **NEPA Advisor** | `services/agents/nepa-advisor/` | Sub-agent: Regulatory guidance (RAG) |
 
 **Naming convention** (per ADR-002):
 - Code: `BurnAnalyst`, `TrailAssessor`, `CruisingAssistant`, `NEPAAdvisor`
@@ -29,7 +31,22 @@ For complete project vision, see `docs/PROJECT-BRIEF.md`.
 
 For agent specs, see `docs/agents/` and `docs/PROJECT-BRIEF.md` section 3.
 
-## Monorepo Structure
+## System Architecture
+
+### Multi-Agent Hierarchy (Google ADK)
+The **Command Console UI** renders the output; the **Recovery Coordinator** handled the logic.
+- **Root**: `RecoveryCoordinator` (LlmAgent)
+- **Leaves**: `BurnAnalyst`, `TrailAssessor`, `CruisingAssistant`, `NEPAAdvisor` (Sub-agents)
+
+```
+Console (UI) → Recovery Coordinator (Root)
+                    ├── Burn Analyst (Sub-agent)
+                    ├── Trail Assessor (Sub-agent)
+                    ├── Cruising Assistant (Sub-agent)
+                    └── NEPA Advisor (Sub-agent)
+```
+
+### Monorepo Structure
 
 ```
 ranger/

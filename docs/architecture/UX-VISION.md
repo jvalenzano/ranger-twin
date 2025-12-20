@@ -22,27 +22,26 @@ The interface is built on the principle of **"Macro-to-Micro Intelligence."** It
 
 ![RANGER Command Console v2](../assets/mockup-iterations/ranger-command-console-v2.png)
 
-*Approved v2 hero mockup — December 2025. Generated via Google AI Studio Build mode.*
+*Approved v2 hero mockup — December 2025. This represents the **IMPACT** lifecycle view.*
 
-**Key Features:**
-- **3D Terrain:** Organic topographic contours with 25 elevation layers, isometric perspective
-- **Fire Visualization:** Pulsing thermal gradient with ignition core, fire perimeter boundary
-- **Tactical HUD:** Coordinate grid, crosshairs, dot grid overlay
-- **Animations:** Contour pulse, fire glow pulse, depth-based opacity
-- **Code Export:** `docs/assets/temp/ranger-command-console-v2/` — Full React + TypeScript + Tailwind
+**Key Features (IMPACT View):**
+- **3D Terrain:** Organic topographic contours with 25 elevation layers, isometric perspective.
+- **Fire Visualization:** Pulsing thermal gradient representing burn intensity/severity.
+- **Tactical HUD:** Coordinate grid, crosshairs, and dot grid overlay.
+- **Lifecycle Context:** This shows the initial assessment phase where satellite data defines the fire's footprint.
 
-### V1: UI Chrome Reference
+### UI Framework: Shared Chrome vs. View-Specific Content
 
-![RANGER Command Console v1](../assets/mockup-iterations/ranger-command-console-v1.png)
+The Command Console uses a unified shell ("The Chrome") that persists across all lifecycle views, while the central viewport and side panels reflect the active agent's focus.
 
-*Approved v1 mockup — December 2025. Clean UI shell for component reference.*
-
-**Key Elements:**
-- **Header:** RANGER branding with breadcrumb navigation (Willamette NF > Cedar Creek Fire > Impact Analysis)
-- **Lifecycle Rail:** Four-step workflow (IMPACT active, DAMAGE, TIMBER, COMPLIANCE)
-- **BURN ANALYST Panel:** Glassmorphic HUD with 98.4% confidence, severity breakdown, and stacked bar visualization
-- **Map Area:** Simple burn severity gradient with fire perimeter and geographic reference points
-- **Controls:** SAT/TER/IR toggle, zoom controls, scale bar with data attribution
+| Component | Type | Description |
+|-----------|------|-------------|
+| **Navigation Header** | Shared | Branding, global search, and fire event selector. |
+| **Lifecycle Rail** | Shared | Vertical navigation between IMPACT, DAMAGE, TIMBER, and COMPLIANCE. |
+| **3D Terrain Engine** | Shared | The base digital twin (3DEP terrain + satellite base maps). |
+| **Agent Insight Panel** | View-Specific | The glassmorphic HUD that changes content based on the active agent (e.g., Burn Analyst metrics vs. Trail Assessor work orders). |
+| **Tactical Overlays** | View-Specific | Map layers (burn severity dNBR, trail GPS lines, timber stand polygons) specific to the workflow. |
+| **Multimodal Controls** | Shared | View toggles (Sat/3D/IR), zoom, and orientation controls. |
 
 ## 3. Design Rationale: "Tactical Futurism"
 - **Dark Mode:** Reduces eye strain for operators working in low-light command centers or field conditions.
