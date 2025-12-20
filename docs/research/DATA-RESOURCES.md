@@ -2,7 +2,7 @@
 
 To support our "Golden Thread" strategy, this resource list focuses on the specific real-world data sources needed to build the **Cedar Creek Fire (2022)** demo scenario.
 
-## 1. FireSight Lite (The Event)
+## 1. Burn Analyst (The Event)
 **Target:** Post-fire burn severity assessment in the Waldo Lake area.
 
 ### Fire Information & Perimeters
@@ -17,7 +17,7 @@ To support our "Golden Thread" strategy, this resource list focuses on the speci
 
 ---
 
-## 2. TrailScan AI (The Response)
+## 2. Trail Assessor (The Response)
 **Target:** Assessing damage to the Pacific Crest Trail (PCT) near Waldo Lake.
 
 ### Trail Data
@@ -31,12 +31,12 @@ To support our "Golden Thread" strategy, this resource list focuses on the speci
 
 ---
 
-## 3. TimberScribe (The Recovery)
+## 3. Cruising Assistant (The Recovery)
 **Target:** Salvage timber cruise in Douglas Fir / Western Hemlock stands.
 
 ### Forest Inventory Data
 *   **[USFS FIA DataMart](https://apps.fs.usda.gov/fia/datamart/)** - Forest Inventory and Analysis data. Great for finding typical "Trees Per Acre" and "Basal Area" stats for Willamette NF.
-*   **[FSVeg Data Dictionary](https://www.fs.usda.gov/nrm/fsveg/)** - definitive guide for the schema TimberScribe must match (Species Codes, Defect Codes).
+*   **[FSVeg Data Dictionary](https://www.fs.usda.gov/nrm/fsveg/)** - Definitive guide for the schema Cruising Assistant must match (Species Codes, Defect Codes).
 *   **[FScruiser Software](https://www.fs.usda.gov/forestmanagement/products/measurement/cruising/fscruiser/index.php)** - The current production software we are modernizing; useful for understanding the current UI/workflow.
 
 ### Biological References
@@ -45,7 +45,7 @@ To support our "Golden Thread" strategy, this resource list focuses on the speci
 
 ---
 
-## 4. PolicyPilot (The Decision)
+## 4. NEPA Advisor (The Decision)
 **Target:** Regulatory compliance for the restoration project.
 
 ### Regulatory Corpus

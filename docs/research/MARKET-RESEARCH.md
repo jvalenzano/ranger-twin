@@ -1,5 +1,5 @@
-# CEDAR CREEK DIGITAL TWIN & PROJECT RANGER AI
-## Strategic Market Research & Competitive Intelligence Report
+# RANGER: Strategic Market Research & Competitive Intelligence Report
+## Post-Fire Recovery Digital Twin Platform
 **Prepared for:** TechTrend Federal  
 **Date:** December 19, 2025  
 **Classification:** Internal Strategy Document  
@@ -73,12 +73,12 @@
 - **Resolution:** 30m (Landsat) or 20m (Sentinel-2)
 - **Positioning:** Automated, rapid burn severity classification. **Industry standard for federal post-fire response.**
 - **User Skill Level:** Requires GIS expertise for manual field validation
-- **Competitive Threat vs. FireSight Lite:** Medium-High. FireSight must differentiate on (1) ease-of-use for non-GIS staff, (2) integration with broader recovery toolkit, or (3) novel accuracy improvements.
+- **Competitive Threat vs. Burn Analyst:** Medium-High. Burn Analyst must differentiate on (1) ease-of-use for non-GIS staff, (2) integration with broader recovery toolkit, or (3) novel accuracy improvements.
 
 #### 6. **BAER Imagery Support Program** (Government, Free)
 - **Capacity:** Produces BARC (Burned Area Reflectance Classification) within hours post-fire
 - **Integration:** Feeds into BAER team workflows and Infra Trails database
-- **Competitive Threat:** High. FireSight Lite competes directly here. Differentiation *essential*.
+- **Competitive Threat:** High. Burn Analyst competes directly here. Differentiation *essential*.
 
 #### 7. **Purdue Digital Forestry Initiative** (Academic)
 - **Capability:** LiDAR + satellite imagery for forest fuel assessment; firebreak planning optimization
@@ -106,9 +106,9 @@
 
 ## SECTION 2: APPLICATION-BY-APPLICATION COMPETITIVE MATRIX
 
-### 2A. FireSight Lite (Burn Severity Assessment)
+### 2A. Burn Analyst (Burn Severity Assessment)
 
-| Capability | FireSight Lite | BAER RAVG | Planet Labs | Descartes Labs | Google Earth Engine |
+| Capability | Burn Analyst | BAER RAVG | Planet Labs | Descartes Labs | Google Earth Engine |
 |------------|---|---|---|---|---|
 | **dNBR Calculation** | ✓ | ✓ | ✓ | Custom pipelines | ✓ |
 | **Automated Report Gen** | ✓ (Proposed) | Manual | Custom | Custom | Custom |
@@ -118,20 +118,20 @@
 | **Offline Capability** | No | Limited | No | No | No |
 | **Integration w/ Digital Twin** | ✓ | Standalone | Standalone | Standalone | Standalone |
 
-**Competitive Gaps FireSight Fills:**
+**Competitive Gaps Burn Analyst Fills:**
 - Automated, non-technical report generation for BAER teams without GIS expertise
 - Seamless integration into broader RANGER digital twin narrative (not standalone tool)
 - Potential accuracy enhancement through novel spectral indices or temporal compositing
 
-**Differentiation Imperative:** FireSight alone *cannot compete* with free BAER tool. **Value lies in dashboard integration + integration with trail/timber/compliance modules.**
+**Differentiation Imperative:** Burn Analyst alone *cannot compete* with free BAER tool. **Value lies in dashboard integration + integration with trail/timber/compliance modules.**
 
-**Risk:** If government agencies view FireSight as "another dNBR tool," adoption will be low. Positioning must emphasize *integration* and *ease-of-use*.
+**Risk:** If government agencies view Burn Analyst as "another dNBR tool," adoption will be low. Positioning must emphasize *integration* and *ease-of-use*.
 
 ---
 
-### 2B. TrailScan AI (Trail Damage Assessment)
+### 2B. Trail Assessor (Trail Damage Assessment)
 
-| Capability | TrailScan AI | TRACS | Ombrulla | T2D2 | FlyPix AI |
+| Capability | Trail Assessor | TRACS | Ombrulla | T2D2 | FlyPix AI |
 |------------|---|---|---|---|---|
 | **Trail-Specific** | ✓ (Designed) | ✓ (Standard) | Infrastructure-generic | Structural damage | Road/general |
 | **Mobile-First** | ✓ | Paper/manual | ✓ | ✓ | Drone/vehicle |
@@ -146,7 +146,7 @@
 - TRACS is **not digital-native**; requires manual field surveys + office data entry
 - **No published trail-specific AI assessment tool exists**
 
-**TrailScan AI's Competitive Advantage: VERY HIGH**
+**Trail Assessor's Competitive Advantage: VERY HIGH**
 - Only solution purpose-built for trail damage assessment via mobile video
 - Ombrulla, T2D2, FlyPix are generic infrastructure tools (adaptable but not optimized)
 - Can integrate with existing TRACS workflows rather than replacing them
@@ -160,9 +160,9 @@
 
 ---
 
-### 2C. TimberScribe (Timber Cruising)
+### 2C. Cruising Assistant (Timber Cruising)
 
-| Capability | TimberScribe | FScruiser | SCA (Sweden) | Arboair | Gaia AI |
+| Capability | Cruising Assistant | FScruiser | SCA (Sweden) | Arboair | Gaia AI |
 |------------|---|---|---|---|---|
 | **Mobile Data Collection** | ✓ | ✓ (Android) | ✓ | ✓ | Not field-mobile |
 | **Voice Transcription** | ✓ (Proposed) | Manual entry | No | No | No |
@@ -178,7 +178,7 @@
 - **International solutions** (SCA, Nordic Forestry) are ahead on digital-first forestry but are proprietary to Scandinavian companies
 - **No commercial tool combining voice narration + video → automated timber plot data** exists
 
-**TimberScribe's Competitive Advantage: VERY HIGH**
+**Cruising Assistant's Competitive Advantage: VERY HIGH**
 - Multimodal AI (species ID from video + audio notes) is **novel in USFS context**
 - Reduces field crew time (critical bottleneck in forestry)
 - Maintains FSVeg compatibility (doesn't break existing workflows)
@@ -193,9 +193,9 @@
 
 ---
 
-### 2D. PolicyPilot (NEPA Compliance)
+### 2D. NEPA Advisor (NEPA Compliance)
 
-| Capability | PolicyPilot | PolicyAI (DOE) | SearchNEPA | Kolena ESA | Beveridge & Diamond |
+| Capability | NEPA Advisor | PolicyAI (DOE) | SearchNEPA | Kolena ESA | Beveridge & Diamond |
 |------------|---|---|---|---|---|
 | **NEPA-Specific** | ✓ | ✓ | ✓ | ESA-focused | Legal consulting |
 | **RAG over FSM/FSH** | ✓ (Proposed) | General docs | General docs | Not NEPA | Case law + regulations |
@@ -212,7 +212,7 @@
 - RAG over Forest Service Manual (FSM) + Forest Service Handbook (FSH) is **unusual; most legal RAG focuses on case law/statutes**
 - Legal defensibility is open question; recent ELR article (2025) highlights concerns about transparency, bias, public participation
 
-**PolicyPilot's Competitive Advantage: MEDIUM-HIGH**
+**NEPA Advisor's Competitive Advantage: MEDIUM-HIGH**
 - RAG trained specifically on FSM/FSH/USFS EA templates is **defensibly different**
 - Designed for USFS workflows (not generic legal compliance)
 - Complements government pilots; USFS can build on lessons learned from PolicyAI
@@ -251,8 +251,8 @@ No published competitor connects Fire Event → Trail Damage → Timber Recovery
 
 Technique exists in construction/mining; application to USFS field workflows is novel.
 
-- TrailScan: Video damage classification + GPS correlation
-- TimberScribe: Video species ID + audio transcription → FSVeg records
+- Trail Assessor: Video damage classification + GPS correlation
+- Cruising Assistant: Video species ID + audio transcription → FSVeg records
 - **USFS application is novel; technique is established**
 
 **Defensibility:** Low-to-Medium (technique is published; USFS application is narrow)
@@ -383,9 +383,9 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 
 #### **SOM (Serviceable Obtainable Market, Year 1-3):** $1-5M
 - Realistic: 5-10 regional office pilots
-- Phase 1 MVP (FireSight + TrailScan): ~$500K-$1M
-- Phase 2 (TimberScribe): ~$1-2M
-- Phase 3 (PolicyPilot): ~$500K-$1M
+- Phase 1 MVP (Burn Analyst + Trail Assessor): ~$500K-$1M
+- Phase 2 (Cruising Assistant): ~$1-2M
+- Phase 3 (NEPA Advisor): ~$500K-$1M
 
 ---
 
@@ -395,9 +395,9 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 
 | Risk | Probability | Severity | Impact | Mitigation |
 |------|-------------|----------|--------|-----------|
-| AI species ID accuracy insufficient for timber sales | Medium | **CRITICAL** | TimberScribe unusable if <90% accuracy | Extensive field testing (50+ plots); human verification loop; start with single forest type; publish accuracy metrics |
+| AI species ID accuracy insufficient for timber sales | Medium | **CRITICAL** | Cruising Assistant unusable if <90% accuracy | Extensive field testing (50+ plots); human verification loop; start with single forest type; publish accuracy metrics |
 | Offline sync failures in poor connectivity zones | Medium | Medium | Data loss, frustration with field crews | Robust queue management; cloud fallback on sync; test in remote areas (actual USFS terrain) |
-| FSVeg data dictionary incompatibilities | Medium | **High** | TimberScribe output rejected by USFS systems | Early coordination with USFS data standards team; API-based integration (not direct DB writes); clear data mapping documentation |
+| FSVeg data dictionary incompatibilities | Medium | **High** | Cruising Assistant output rejected by USFS systems | Early coordination with USFS data standards team; API-based integration (not direct DB writes); clear data mapping documentation |
 | NEPA AI misses critical legal requirements | **High** | **CRITICAL** | Regulatory non-compliance; legal challenge to EA | Mandatory human review loop; explainable AI; legal team involvement in training/validation; regulatory compliance testing against real EAs |
 | Multimodal AI training data acquisition | High | Medium | Model performance degradation without sufficient training data | Partner with USFS for access to historical field photos/audio; synthetic data generation (if applicable); crowdsource annotations |
 | Multi-agency data integration complexity | High | Medium | Pilot success doesn't scale nationally | Start with single forest/region; modular architecture; clear API contracts; detailed documentation for downstream integrators |
@@ -426,7 +426,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 
 | Risk | Probability | Severity | Impact | Mitigation |
 |------|-------------|----------|--------|-----------|
-| USFS data standards team resistance to new integrations | Medium | High | TrailScan/TimberScribe outputs rejected by existing systems | Early engagement; attend USFS data governance meetings; propose integration standards collaboratively; show alignment with EDW priorities |
+| USFS data standards team resistance to new integrations | Medium | High | Trail Assessor/Cruising Assistant outputs rejected by existing systems | Early engagement; attend USFS data governance meetings; propose integration standards collaboratively; show alignment with EDW priorities |
 | Field crew adoption resistance (training burden) | Medium | Medium | Pilots show poor uptake despite technical success | Design UI for non-technical users; extensive field testing + feedback loops; incentivize pilot participation (time/cost savings benefits) |
 | USFS rapid personnel turnover | Medium | Medium | Pilot champions depart; institutional knowledge lost | Build relationships at multiple levels (regional + national office); document workflows thoroughly; embed champions in project governance |
 
@@ -523,12 +523,12 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 #### **Gaia AI (Timber Inventory)** [web:76]
 - **Focus:** AI-based timber inventory using GPS/satellite/LiDAR
 - **Capability:** Carbon credit generation + forestry inventory management
-- **Threat to TimberScribe:** Low-to-Medium. Satellite-based (not field-mobile); not FSVeg-compatible; not USFS-focused.
+- **Threat to Cruising Assistant:** Low-to-Medium. Satellite-based (not field-mobile); not FSVeg-compatible; not USFS-focused.
 - **Market Segment:** Large timber companies + carbon projects; not government agencies.
 
 #### **Arboair (AI Forest Inventory)** [web:36]
 - **Capability:** Drone/satellite imagery → tree-level inventory + AI analysis
-- **Threat to TimberScribe:** Low. Drone-based (not mobile field crew); not timber cruising standard.
+- **Threat to Cruising Assistant:** Low. Drone-based (not mobile field crew); not timber cruising standard.
 
 ### Procurement Landscape
 
@@ -568,22 +568,22 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 **Goal:** Rapid proof-of-concept + secure 2-3 regional office pilots
 
 **Deliverables:**
-- **FireSight Lite:** Automated dNBR report generation on Cedar Creek Fire historical data
-- **TrailScan AI:** Video damage classification + georeferencing (video-to-GeoJSON)
+- **Burn Analyst:** Automated dNBR report generation on Cedar Creek Fire historical data
+- **Trail Assessor:** Video damage classification + georeferencing (video-to-GeoJSON)
 - **Digital Twin Dashboard:** Interactive Cedar Creek Fire map with toggleable layers + timeline slider
 
 **Target Pilots:** 2-3 regional offices (Pacific NW logical starting point; Willamette NF where Cedar Creek occurred)
 
 **Success Metrics:**
-- FireSight report matches BAER output + generates in <5 min
-- TrailScan achieves >85% accuracy on damage classification (vs. manual assessment)
+- Burn Analyst report matches BAER output + generates in <5 min
+- Trail Assessor achieves >85% accuracy on damage classification (vs. manual assessment)
 - Dashboard loads Cedar Creek layer set without latency issues
 
 #### **Phase 2: Field Validation (6-12 Months)**
 **Goal:** Validate multimodal AI components; secure integration partnerships
 
 **Deliverables:**
-- **TimberScribe:** Voice transcription + video species ID; FSVeg data export
+- **Cruising Assistant:** Voice transcription + video species ID; FSVeg data export
 - **Extended Trail Assessment:** Repair prioritization + cost estimation; repair sequence optimization
 - **Integration with FScruiser + Cruise Processing:** Validate data flow end-to-end
 - **EDW Integration:** Formal API contracts with USFS data standards team
@@ -591,15 +591,15 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 **Target Pilots:** Extend to 5-10 districts; diverse forest types (Cascades, Sierra, Southwest)
 
 **Success Metrics:**
-- TimberScribe species ID accuracy >90% (field-validated on 100+ plots)
+- Cruising Assistant species ID accuracy >90% (field-validated on 100+ plots)
 - FSVeg data successfully ingested into Cruise Processing pipeline
 - Field crew feedback: >80% satisfaction; time savings documented
 
 #### **Phase 3: Compliance & Scaling (12-18 Months)**
-**Goal:** Launch PolicyPilot; prepare for national rollout
+**Goal:** Launch NEPA Advisor; prepare for national rollout
 
 **Deliverables:**
-- **PolicyPilot:** RAG over FSM/FSH; EA draft assistance; regulatory checklist
+- **NEPA Advisor:** RAG over FSM/FSH; EA draft assistance; regulatory checklist
 - **Legal Review Framework:** Explainability; human oversight protocols; legal defensibility validation
 - **PALS Integration:** Formal integration with Planning, Analysis & Collaboration Support System
 - **FedRAMP Assessment Path:** Initiate compliance pathway
@@ -607,7 +607,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 **Target Pilots:** 3-5 regional offices requiring post-fire EAs
 
 **Success Metrics:**
-- PolicyPilot flags regulatory gaps in mock EAs (validated by USFS legal team)
+- NEPA Advisor flags regulatory gaps in mock EAs (validated by USFS legal team)
 - EA writing time reduced by 30-50% (measured on pilot projects)
 - FedRAMP compliance path clear (timelines, costs identified)
 
@@ -615,14 +615,14 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 
 ### Feature Differentiation Strategy
 
-#### **FireSight Lite: Value-Add Beyond BAER**
-1. **Automated Report Generation:** BAER teams currently generate reports manually; FireSight auto-produces formatted summaries + confidence intervals
+#### **Burn Analyst: Value-Add Beyond BAER**
+1. **Automated Report Generation:** BAER teams currently generate reports manually; Burn Analyst auto-produces formatted summaries + confidence intervals
 2. **Integration with Digital Twin:** Display dNBR results on interactive map (not standalone analysis)
 3. **Historical Trend Analysis:** Compare severity to similar fires (size, region, vegetation type); inform recovery strategies
 4. **Multi-date Compositing:** Improve accuracy in cloud-covered areas by analyzing multi-week post-fire imagery
 5. **Positioning:** "BAER Enablement Tool" (extends, doesn't replace government system)
 
-#### **TrailScan AI: Competitive Moat**
+#### **Trail Assessor: Competitive Moat**
 1. **One-Click Assessment:** Hike damaged trail with smartphone; video + GPS auto-analyzed; damage inventory generated
 2. **Automatic Repair Prioritization:** Suggest work sequence based on severity + impact (visitor safety, ecosystem)
 3. **Cost Estimation:** AI estimates repair labor/materials (vs. manual field estimate)
@@ -630,7 +630,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 5. **Offline Mobile App:** Works in field (no connectivity required); syncs when available
 6. **Positioning:** "TRACS Modernization" (digitizes manual process)
 
-#### **TimberScribe: Highest-Differentiation Feature**
+#### **Cruising Assistant: Highest-Differentiation Feature**
 1. **Voice-First Interface:** Field crew speaks; AI transcribes + structures data (hands-free)
 2. **Real-Time Species ID:** Point camera at tree; AI identifies species on-screen
 3. **Automatic Plot Structuring:** Audio notes + video → FSVeg-compatible plot records (no manual data entry)
@@ -638,7 +638,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 5. **Integration with FScruiser:** Import cruise file → add multimodal data → export to Cruise Processing
 6. **Positioning:** "Next-Generation Timber Cruising" (builds on FScruiser, doesn't replace)
 
-#### **PolicyPilot: Legal Safety Framework**
+#### **NEPA Advisor: Legal Safety Framework**
 1. **FSM/FSH-Specific RAG:** Retrieve relevant Forest Service guidance based on EA context (forest type, recovery phase, region)
 2. **Regulatory Citation Suggestions:** AI suggests specific FSM sections, FSH chapters, NEPA case law relevant to project
 3. **Compliance Checklist:** Interactive checklist; AI flags missing sections or unsupported claims
@@ -692,7 +692,7 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
    - Secure executive champion (Regional Forester or equivalent)
    - Clear communication: MVP is proof-of-concept; full national rollout requires additional phases
 
-2. **Legal Defensibility (PolicyPilot):**
+2. **Legal Defensibility (NEPA Advisor):**
    - Engage USFS legal team early; involve in training + validation
    - Publish explainability framework; show reasoning for each compliance flag
    - Maintain mandatory human review loop throughout
@@ -726,10 +726,10 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 ### Competitive Advantages (Defensibility Assessment)
 | Feature | Defensibility | Notes |
 |---------|---|---|
-| FireSight Lite | Medium | Differentiates on ease-of-use + integration; competes with free BAER tool |
-| TrailScan AI | **VERY HIGH** | Only published trail-specific AI tool; zero direct competitors |
-| TimberScribe | **VERY HIGH** | Unique multimodal approach (voice + video); no USFS-specific timber AI exists |
-| PolicyPilot | Medium-High | RAG over FSM/FSH is unusual; legal defensibility is key differentiator |
+| Burn Analyst | Medium | Differentiates on ease-of-use + integration; competes with free BAER tool |
+| Trail Assessor | **VERY HIGH** | Only published trail-specific AI tool; zero direct competitors |
+| Cruising Assistant | **VERY HIGH** | Unique multimodal approach (voice + video); no USFS-specific timber AI exists |
+| NEPA Advisor | Medium-High | RAG over FSM/FSH is unusual; legal defensibility is key differentiator |
 | Integrated Digital Twin | **HIGH** | Unified recovery lifecycle is defensibly different from point solutions |
 
 ### Investment Thesis
@@ -761,8 +761,8 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 
 **Week 3-6: MVP Specification**
 - Define Cedar Creek dataset requirements + access plan
-- Prototype FireSight Lite dNBR pipeline (use historical Sentinel-2/Landsat imagery)
-- Design TrailScan AI video classification model (source training data)
+- Prototype Burn Analyst dNBR pipeline (use historical Sentinel-2/Landsat imagery)
+- Design Trail Assessor video classification model (source training data)
 - Draft dashboard specifications (Mapbox GL JS or Leaflet)
 
 **Week 7-10: Pilot MOA Development**
@@ -777,9 +777,9 @@ Cedar Creek Fire data is public + well-documented. Synthetic data (damage points
 - Prepare demo materials + stakeholder briefings
 
 **Month 4+: Phase 1 Execution**
-- Deploy FireSight + TrailScan MVP to pilot regions
+- Deploy Burn Analyst + Trail Assessor MVP to pilot regions
 - Gather field feedback; iterate rapidly
-- Plan Phase 2 (TimberScribe) based on Phase 1 learnings
+- Plan Phase 2 (Cruising Assistant) based on Phase 1 learnings
 - Maintain momentum + stakeholder engagement throughout
 
 ---

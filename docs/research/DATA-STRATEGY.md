@@ -4,7 +4,7 @@
 
 To ensure a cohesive user journey across the USDA Forest Service AI Demo Portfolio, we will curate a unified synthetic dataset centered on a **single narrative event**: the aftermath of a major wildfire in the Pacific Northwest.
 
-This approach creates a "Golden Thread" that connects all four applications. Instead of disjointed demos (e.g., assessing a fire in NM, then counting trees in GA), the audience will see a logical progression of agency workflows: **Fire Event** (FireSight) → **Damage Assessment** (TrailScan) → **Resource Recovery** (TimberScribe) → **Regulatory Approval** (PolicyPilot).
+This approach creates a "Golden Thread" that connects all four applications. Instead of disjointed demos (e.g., assessing a fire in NM, then counting trees in GA), the audience will see a logical progression of agency workflows: **Fire Event** (Burn Analyst) → **Damage Assessment** (Trail Assessor) → **Resource Recovery** (Cruising Assistant) → **Regulatory Approval** (NEPA Advisor).
 
 ## The Selected Scenario: Cedar Creek Fire Recovery
 
@@ -19,7 +19,7 @@ We will ground our data curation in the **Cedar Creek Fire (2022)** in the Willa
 
 ## Application-Specific Data Plan
 
-### 1. FireSight Lite (The Trigger Event)
+### 1. Burn Analyst (The Trigger Event)
 **Role:** Post-fire burn severity assessment.
 
 *   **Dataset Requirements:**
@@ -32,7 +32,7 @@ We will ground our data curation in the **Cedar Creek Fire (2022)** in the Willa
         *   DEM (USGS 3DEP) for slope analysis.
     *   **Synthetic Augmentation:** None needed; real satellite data is sufficient and best for "wow" factor.
 
-### 2. TrailScan AI (The Response)
+### 2. Trail Assessor (The Response)
 **Role:** Assessing damage to recreational infrastructure in the burn area.
 
 *   **Dataset Requirements:**
@@ -42,9 +42,9 @@ We will ground our data curation in the **Cedar Creek Fire (2022)** in the Willa
         *   *Clip A (Erosion):* Trail tread washed out (simulated or real stock footage).
         *   *Clip B (Obstruction):* Downed log crossing the trail (very common in PNW).
         *   *Clip C (Burn Damage):* Scorched signpost or bridge railing.
-    *   **Metadata:** GPS tracks (GPX files) generated to overlay exactly on the satellite map from FireSight Lite.
+    *   **Metadata:** GPS tracks (GPX files) generated to overlay exactly on the satellite map from Burn Analyst.
 
-### 3. TimberScribe (The Recovery)
+### 3. Cruising Assistant (The Recovery)
 **Role:** Cruising timber for salvage sales or green-tree retention surveys.
 
 *   **Dataset Requirements:**
@@ -55,7 +55,7 @@ We will ground our data curation in the **Cedar Creek Fire (2022)** in the Willa
         *   *Audio:* Voice actor narrating: "Plot 1, tree 1, Douglas Fir, DBH 24 inches, slight fire scar, merchantable."
     *   **Key Species:** Douglas Fir (*Pseudotsuga menziesii*), Western Hemlock (*Tsuga heterophylla*).
 
-### 4. PolicyPilot (The Decision)
+### 4. NEPA Advisor (The Decision)
 **Role:** Ensuring the recovery project complies with environmental regulations.
 
 *   **Dataset Requirements:**
@@ -71,11 +71,11 @@ We will ground our data curation in the **Cedar Creek Fire (2022)** in the Willa
 
 | App | Asset | Source Strategy | Owner |
 |-----|-------|-----------------|-------|
-| **FireSight** | Sentinel-2 Imagery | Download from Copernicus Open Access Hub (or Google Earth Engine). | TBD |
-| **TrailScan** | Trail Videos | **Option A:** Film locally in WA/OR forests. <br>**Option B:** Purchase stock footage of "hiking POV" and "trail damage". | TBD |
-| **TimberScribe** | Tree Videos | **Option A:** Film locally. <br>**Option B:** Stock footage of "Pacific Northwest Forest". | TBD |
-| **TimberScribe** | Audio Narration | Record in-house using script. | Jason |
-| **PolicyPilot** | Draft EA | Write synthetic document using Gemini (prompt: "Write a USFS Environmental Assessment for..."). | Jason |
+| **Burn Analyst** | Sentinel-2 Imagery | Download from Copernicus Open Access Hub (or Google Earth Engine). | TBD |
+| **Trail Assessor** | Trail Videos | **Option A:** Film locally in WA/OR forests. <br>**Option B:** Purchase stock footage of "hiking POV" and "trail damage". | TBD |
+| **Cruising Assistant** | Tree Videos | **Option A:** Film locally. <br>**Option B:** Stock footage of "Pacific Northwest Forest". | TBD |
+| **Cruising Assistant** | Audio Narration | Record in-house using script. | Jason |
+| **NEPA Advisor** | Draft EA | Write synthetic document using Gemini (prompt: "Write a USFS Environmental Assessment for..."). | Jason |
 | **Common** | GIS/GPS Data | Create a master QGIS project to generate matching GPX tracks and perimeters. | TBD |
 
 ---

@@ -1,21 +1,23 @@
-# FireSight Lite - Application Brief
+# Burn Analyst - Agent Specification
 
-**Status:** ⚪ Concept (Backup)  
-**Priority:** Alternative  
-**Developer:** TBD  
+> *Formerly "FireSight Lite" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
+
+**Status:** ⚪ Concept (Backup)
+**Priority:** Alternative
+**Developer:** TBD
 **Sprint Target:** 6 weeks (if activated)
 
 ---
 
 ## The "Wow" Pitch
 
-> Within 48 hours of a wildfire being contained, FireSight Lite analyzes satellite imagery to map burn severity across the entire fire perimeter. A BAER team that used to spend two weeks on aerial surveys and ground-truthing gets a draft severity map on day one—complete with suggested treatment priorities and a pre-populated BAER report template.
+> Within 48 hours of a wildfire being contained, the Burn Analyst analyzes satellite imagery to map burn severity across the entire fire perimeter. A BAER team that used to spend two weeks on aerial surveys and ground-truthing gets a draft severity map on day one—complete with suggested treatment priorities and a pre-populated BAER report template.
 
 ---
 
 ## Core Purpose
 
-FireSight Lite is a **post-fire damage assessment accelerator** that uses satellite imagery analysis and generative AI to streamline Burned Area Emergency Response (BAER) team workflows. It transforms satellite data into actionable severity maps and draft reports, compressing weeks of assessment into days.
+The Burn Analyst is a **post-fire damage assessment accelerator** that uses satellite imagery analysis and generative AI to streamline Burned Area Emergency Response (BAER) team workflows. It transforms satellite data into actionable severity maps and draft reports, compressing weeks of assessment into days.
 
 **Problem Solved:** After major wildfires, BAER teams have 7 days to complete initial assessments that inform emergency stabilization treatments. Current workflows rely on helicopter surveys, manual GIS analysis, and extensive ground-truthing. Teams are overwhelmed, especially during active fire seasons when multiple fires compete for limited BAER resources.
 
@@ -32,7 +34,7 @@ FireSight Lite is a **post-fire damage assessment accelerator** that uses satell
 | **Technical Complexity** | High—requires CV expertise we may not have | Risk to timeline |
 | **Demo Appeal** | Medium—less visually interactive than field apps | Harder to "wow" audience |
 
-**Activation Criteria:** Consider FireSight Lite if:
+**Activation Criteria:** Consider the Burn Analyst if:
 - Primary apps encounter fatal technical blockers
 - Client specifically requests fire-related capabilities
 - Satellite imagery partnership emerges
@@ -55,7 +57,7 @@ FireSight Lite is a **post-fire damage assessment accelerator** that uses satell
 
 ## Target Users
 
-| Persona | Role | Pain Point | How FireSight Helps |
+| Persona | Role | Pain Point | How Burn Analyst Helps |
 |---------|------|------------|---------------------|
 | **BAER Team Lead** | Coordinates assessment | 7-day deadline pressure | Draft assessment on day 1 |
 | **GIS Specialist** | Creates severity maps | Manual classification is tedious | Automated first-pass classification |
@@ -201,7 +203,7 @@ FireSight Lite is a **post-fire damage assessment accelerator** that uses satell
 
 **Duration:** 8-10 minutes
 
-1. **Setup** (1 min): Show FireSight interface, explain BAER challenge
+1. **Setup** (1 min): Show Burn Analyst interface, explain BAER challenge
 2. **The Problem** (1 min): "BAER teams have 7 days, but assessment takes 14..."
 3. **Fire Selection** (1 min): Select a recent fire from the map
 4. **Analysis Trigger** (2 min): Show satellite imagery, trigger analysis
@@ -239,7 +241,7 @@ FireSight Lite is a **post-fire damage assessment accelerator** that uses satell
 
 ### Differentiation Challenge
 
-Unlike our other apps, FireSight Lite enters a **crowded market** with well-funded competitors. Our differentiation must be:
+Unlike our other agents, the Burn Analyst enters a **crowded market** with well-funded competitors. Our differentiation must be:
 
 1. **BAER Workflow Integration** — Not just a map, but a report
 2. **Speed to Draft** — 48 hours, not 2 weeks
@@ -260,7 +262,7 @@ Unlike our other apps, FireSight Lite enters a **crowded market** with well-fund
 
 ## Activation Decision Framework
 
-### Activate FireSight Lite If:
+### Activate Burn Analyst If:
 
 | Condition | Why |
 |-----------|-----|
@@ -270,7 +272,7 @@ Unlike our other apps, FireSight Lite enters a **crowded market** with well-fund
 | Fire season creates urgent BAER demand | Timely relevance |
 | Team has strong CV/geospatial expertise | Lower technical risk |
 
-### Keep FireSight Lite as Backup If:
+### Keep Burn Analyst as Backup If:
 
 | Condition | Why |
 |-----------|-----|
@@ -288,7 +290,7 @@ Unlike our other apps, FireSight Lite enters a **crowded market** with well-fund
 - [Sentinel-2 on Google Earth Engine](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2)
 - [dNBR Calculation Guide](https://www.usgs.gov/landsat-missions/landsat-normalized-burn-ratio)
 - [RAVG - Rapid Assessment of Vegetation Condition](https://fsapps.nwcg.gov/ravg/)
-- [TimberScribe APP-BRIEF](../timberscribe/APP-BRIEF.md) (Template Reference)
+- [Cruising Assistant Spec](./TIMBER-CRUISER-SPEC.md) (Template Reference)
 
 ---
 

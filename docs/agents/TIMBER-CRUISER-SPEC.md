@@ -1,8 +1,10 @@
-# TimberScribe - Application Brief
+# Cruising Assistant - Agent Specification
 
-**Status:** 🔵 Planning  
-**Priority:** 1 (Primary)  
-**Developer:** JASON VALENZANO  
+> *Formerly "TimberScribe" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
+
+**Status:** 🔵 Planning
+**Priority:** 1 (Primary)
+**Developer:** JASON VALENZANO
 **Sprint Target:** 6 weeks
 
 ---
@@ -15,7 +17,7 @@
 
 ## Core Purpose
 
-TimberScribe is a **"Speak-and-See" inventory assistant** that allows field foresters to conduct timber cruising using simultaneous voice dictation and video capture. It eliminates manual data entry by using Gemini 2.0 Flash (or Gemini 2.5 Pro for enhanced accuracy) to visually verify spoken observations and automatically populate structured inventory records.
+The Cruising Assistant is a **"Speak-and-See" inventory assistant** that allows field foresters to conduct timber cruising using simultaneous voice dictation and video capture. It eliminates manual data entry by using Gemini 2.0 Flash (or Gemini 2.5 Pro for enhanced accuracy) to visually verify spoken observations and automatically populate structured inventory records.
 
 **Problem Solved:** Forest inventory is labor-intensive, requiring foresters to juggle measurement tools, clipboards, and tablets while navigating difficult terrain. The 38% workforce reduction at Forest Service means fewer people covering the same 193 million acres.
 
@@ -37,7 +39,7 @@ TimberScribe is a **"Speak-and-See" inventory assistant** that allows field fore
 
 ## Target Users
 
-| Persona | Role | Pain Point | How TimberScribe Helps |
+| Persona | Role | Pain Point | How Cruising Assistant Helps |
 |---------|------|------------|------------------------|
 | **Forestry Technician** | Conducts timber cruises | Data entry is slow, error-prone | Voice capture eliminates clipboard |
 | **Silviculturist** | Plans timber sales | Needs accurate stand data | AI-verified species and DBH estimates |

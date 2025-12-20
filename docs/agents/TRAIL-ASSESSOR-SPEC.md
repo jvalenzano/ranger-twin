@@ -1,21 +1,23 @@
-# TrailScan AI - Application Brief
+# Trail Assessor - Agent Specification
 
-**Status:** 🔵 Planning  
-**Priority:** 2 (Secondary)  
-**Developer:** TBD  
+> *Formerly "TrailScan AI" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
+
+**Status:** 🔵 Planning
+**Priority:** 2 (Secondary)
+**Developer:** TBD
 **Sprint Target:** 6 weeks
 
 ---
 
 ## The "Wow" Pitch
 
-> A maintenance technician walks a 2-mile trail segment with their phone recording video. TrailScan AI automatically identifies 14 maintenance issues—erosion gullies, damaged water bars, a fallen tree, and a broken signpost—pinpoints each on a map, estimates repair costs, and generates a TRACS-ready work order. A 4-hour inspection and 2 hours of paperwork becomes a 45-minute walk.
+> A maintenance technician walks a 2-mile trail segment with their phone recording video. The Trail Assessor automatically identifies 14 maintenance issues—erosion gullies, damaged water bars, a fallen tree, and a broken signpost—pinpoints each on a map, estimates repair costs, and generates a TRACS-ready work order. A 4-hour inspection and 2 hours of paperwork becomes a 45-minute walk.
 
 ---
 
 ## Core Purpose
 
-TrailScan AI is a **video-based trail assessment system** that uses computer vision and agentic AI to transform smartphone video into actionable maintenance work orders. It addresses the Forest Service's $8.6 billion deferred maintenance backlog by dramatically accelerating condition assessments and standardizing deficiency documentation.
+The Trail Assessor is a **video-based trail assessment system** that uses computer vision and agentic AI to transform smartphone video into actionable maintenance work orders. It addresses the Forest Service's $8.6 billion deferred maintenance backlog by dramatically accelerating condition assessments and standardizing deficiency documentation.
 
 **Problem Solved:** The Forest Service manages 158,000+ miles of trails with shrinking budgets and workforce. Manual trail assessments are time-consuming, inconsistent, and generate paperwork that sits in backlogs. Critical safety issues go unaddressed because documentation takes longer than the field work.
 
@@ -39,7 +41,7 @@ TrailScan AI is a **video-based trail assessment system** that uses computer vis
 
 ## Target Users
 
-| Persona | Role | Pain Point | How TrailScan Helps |
+| Persona | Role | Pain Point | How Trail Assessor Helps |
 |---------|------|------------|---------------------|
 | **Wilderness Ranger** | Patrols backcountry trails | No connectivity for data entry | Offline capture, sync later |
 | **Recreation Technician** | Maintains developed trails | Paperwork bottleneck | Auto-generated work orders |
@@ -97,7 +99,7 @@ TrailScan AI is a **video-based trail assessment system** that uses computer vis
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        TrailScan Agent                              │
+│                        Trail Assessor Agent                         │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Step 1: Analyze Video                                              │
 │  └── Call Gemini API with video + prompt for deficiency detection   │
@@ -210,7 +212,7 @@ TrailScan AI is a **video-based trail assessment system** that uses computer vis
 
 **Duration:** 8-10 minutes
 
-1. **Setup** (1 min): Show TrailScan interface, explain maintenance backlog
+1. **Setup** (1 min): Show Trail Assessor interface, explain maintenance backlog
 2. **The Problem** (1 min): "$8.6B deferred maintenance, shrinking workforce..."
 3. **Video Upload** (1 min): Upload pre-recorded trail walk video
 4. **AI Analysis** (2 min): Watch agent identify deficiencies in real-time
@@ -249,4 +251,4 @@ TrailScan AI is a **video-based trail assessment system** that uses computer vis
 - [Vertex AI Agent Builder](https://cloud.google.com/vertex-ai/docs/agent-builder/introduction)
 - [Agent Development Kit (ADK)](https://cloud.google.com/blog/products/ai-machine-learning/introducing-agent-development-kit)
 - [USFS INFRA TRACS](https://www.fs.usda.gov/recreation/programs/trail-management/)
-- [TimberScribe APP-BRIEF](../timberscribe/APP-BRIEF.md) (Template Reference)
+- [Cruising Assistant Spec](./TIMBER-CRUISER-SPEC.md) (Template Reference)
