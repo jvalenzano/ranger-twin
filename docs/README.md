@@ -45,6 +45,18 @@
 | [research/DATA-RESOURCES.md](./research/DATA-RESOURCES.md) | Public data sources, access methods |
 | [research/DATA-STRATEGY.md](./research/DATA-STRATEGY.md) | Data curation and pipeline strategy |
 
+### Assets & Mockup Generation
+
+| Document | Description |
+|----------|-------------|
+| [assets/MOCKUP-SESSION-LOG.md](./assets/MOCKUP-SESSION-LOG.md) | **Active session.** Current progress, pending fixes, next steps |
+| [assets/VIBE-CODING-GUIDE.md](./assets/VIBE-CODING-GUIDE.md) | Vibe coding workflow with Google AI Studio Build mode |
+| [assets/DESIGN-SPEC-HANDOFF.md](./assets/DESIGN-SPEC-HANDOFF.md) | **Engineering handoff.** CSS, typography, map layer specs |
+| [assets/AI-STUDIO-PROMPT.md](./assets/AI-STUDIO-PROMPT.md) | Full prompt with system instructions and iteration strategies |
+| [assets/GOOGLE-AI-STUDIO-WORKFLOW.md](./assets/GOOGLE-AI-STUDIO-WORKFLOW.md) | Legacy Playground workflow (reference) |
+| [assets/MOCKUP-GENERATION.md](./assets/MOCKUP-GENERATION.md) | Design brief, Midjourney/Figma alternatives |
+| [assets/ranger-mockup.png](./assets/ranger-mockup.png) | Current Command Console mockup (placeholder) |
+
 ### Architecture Decision Records
 
 | ADR | Title | Status |

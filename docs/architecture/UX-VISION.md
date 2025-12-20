@@ -18,7 +18,16 @@ The interface is built on the principle of **"Macro-to-Micro Intelligence."** It
 
 ## 2. Design Mockup: "The Ranger's Command Console"
 
-![Project RANGER AI Command Console Mockup](./assets/ranger_ai_mockup.png)
+![RANGER Command Console v1](../assets/mockup-iterations/ranger-command-console-v1.png)
+
+*Approved v1 mockup — December 2025. Generated via Google AI Studio Build mode.*
+
+**Key Elements Shown:**
+- **Header:** RANGER branding with breadcrumb navigation (Willamette NF > Cedar Creek Fire > Impact Analysis)
+- **Lifecycle Rail:** Four-step workflow (IMPACT active, DAMAGE, TIMBER, COMPLIANCE)
+- **BURN ANALYST Panel:** Glassmorphic HUD with 98.4% confidence, severity breakdown, and stacked bar visualization
+- **Map Area:** Burn severity gradient with fire perimeter and geographic reference points
+- **Controls:** SAT/TER/IR toggle, zoom controls, scale bar with data attribution
 
 ## 3. Design Rationale: "Tactical Futurism"
 - **Dark Mode:** Reduces eye strain for operators working in low-light command centers or field conditions.
