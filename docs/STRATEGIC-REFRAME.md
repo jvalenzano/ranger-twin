@@ -60,11 +60,13 @@ The **Recovery Coordinator** is referenced in brand architecture documents (CLAU
 
 ### ~~Original Recommendation: Absorb into Console~~ (REVISED)
 
-An earlier analysis suggested absorbing Recovery Coordinator into the console's orchestration layer. **This was incorrect.**
+RANGER moves from siloed tools to an **Agentic OS** through three core shifts:
+1. **One Console, Not Four Apps:** A unified command shell for the entire recovery lifecycle.
+2. **Coordinated Intelligence:** A root **Recovery Coordinator** orchestrating specialist sub-agents using Google ADK.
+3. **Agentic Synthesis:** Shifting from "raw data/maps" to **coordinated briefings** and actionable insights.
 
-### Correct Architecture: Recovery Coordinator is the Root Agent
-
-After reviewing the **Google ADK (Agent Development Kit) multi-agent architecture**, the Recovery Coordinator should be implemented as a **distinct root LlmAgent** using the **Coordinator/Dispatcher Pattern**:
+See [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) for the live strategic authority.
+or should be implemented as a **distinct root LlmAgent** using the **Coordinator/Dispatcher Pattern**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐

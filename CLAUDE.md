@@ -8,13 +8,17 @@ Guidance for Claude Code when working in this repository.
 
 - **Philosophy**: 100% open source stack; 80% investment in AI agents, 20% in UI
 - **Tagline**: "Recovery at the speed of insight."
+
+### Vision Statement
+> **RANGER is an Agentic OS for Natural Resource Recovery**, built on open-source infrastructure and Google ADK orchestration. It transforms siloed fire data into coordinated intelligence through a multi-agent crew.
+
 - **Proof of Concept**: Cedar Creek Fire (Willamette NF, Oregon, 2022) — ~127,000 acres
 
 For complete project vision, see `docs/PROJECT-BRIEF.md`.
 
 ## The Crew: One Root Coordinator, Four Specialists
 
-RANGER uses the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** is the root agent that orchestrates specialized lifecycle sub-agents.
+RANGER uses the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** (Root) oversees four specialized sub-agents:
 
 | Agent | Directory | Role |
 |-------|-----------|------|

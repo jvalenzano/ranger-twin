@@ -1,8 +1,8 @@
 # The Crew: Agent Specifications
 
-This directory contains detailed specifications for each AI agent in the RANGER platform.
+This directory contains detailed specifications for each AI agent in the RANGER platform, an **Agentic OS for Natural Resource Recovery**.
 
-**Naming Principle:** Agent names are **role titles**, not product names. This frames AI as "digital colleagues" that assist human experts, not replacement technology. See [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for decision rationale.
+**Core Philosophy:** We are building a **Coordinated AI Crew** of digital colleagues. These agents don't just generate maps; they provide **Agentic Synthesis**—transforming complex geospatial data into actionable briefings for recovery leadership.
 
 ## The Five Agents
 

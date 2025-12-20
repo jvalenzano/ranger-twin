@@ -4,7 +4,7 @@
 
 To ensure a cohesive user journey across the USDA Forest Service AI Demo Portfolio, we will curate a unified synthetic dataset centered on a **single narrative event**: the aftermath of a major wildfire in the Pacific Northwest.
 
-This approach creates a "Golden Thread" that connects all four applications. Instead of disjointed demos (e.g., assessing a fire in NM, then counting trees in GA), the audience will see a logical progression of agency workflows: **Fire Event** (Burn Analyst) → **Damage Assessment** (Trail Assessor) → **Resource Recovery** (Cruising Assistant) → **Regulatory Approval** (NEPA Advisor).
+This approach creates a "Golden Thread" that connects all agents through a **Shared Recovery Session**. Instead of disjointed data silos, the audience will see **Agentic Synthesis**: the **Burn Analyst** identifies risk, which informs the **Trail Assessor's** priorities, which creates the baseline for the **Cruising Assistant's** salvage plan, all overseen by the **Recovery Coordinator**.
 
 ## The Selected Scenario: Cedar Creek Fire Recovery
 

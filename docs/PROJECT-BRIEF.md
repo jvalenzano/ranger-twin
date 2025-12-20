@@ -12,9 +12,9 @@
 
 ### Vision Statement
 
-> **RANGER is an agent-first digital twin platform for post-fire forest recovery, built entirely on open source tooling and public data, with investment focused on AI capabilities rather than application licensing.**
+> **RANGER is an Agentic OS for Natural Resource Recovery, built on open-source infrastructure and Google ADK orchestration. It transforms siloed data into coordinated intelligence, enabling "Forest Floor to Washington" oversight.**
 
-We are not building four applications with AI features bolted on. We are building **five specialized AI agents** with a thin application shell providing the interface. The agents are the product. The application is plumbing.
+We are not building a dashboard with AI features; we are building a **Coordinated AI Crew** that uses a shared digital twin as its sensory layer. The agents are the decision-support system; the UI is their console.
 
 ### Brand Architecture
 
@@ -50,10 +50,27 @@ The Cedar Creek Fire (Willamette National Forest, 2022) serves as our "frozen-in
 ### 6-Week Deliverable
 
 A working prototype demonstrating:
-- 3D digital twin visualization of Cedar Creek Fire area
-- At least 2 functional AI agents (TrailAssessor + BurnAnalyst)
-- Agent chat interface for natural language queries
-- Stakeholder-ready demo for USFS regional office presentation
+- 3D digital twin visualization of Cedar Creek Fire area.
+- Functional **Recovery Coordinator** orchestrating **Trail Assessor** and **Burn Analyst** briefings.
+- Integrated **"Agentic Synthesis"** view—moving from raw maps to actionable recovery intelligence.
+
+---
+
+## 2. Strategic Directives & Risk Mitigation
+
+Success depends on navigating three critical "Hard Truths" identified by the Senior Product Owner:
+
+### 2.1 The "Just Another Map" Trap
+**Risk:** Burn severity mapping (IMPACT) is a commoditized domain (NASA, RAVG).
+**Mitigation:** The **Burn Analyst** must not merely output a map; it must output a **Coordinated Briefing**. It acts as the "trigger" for the rest of the crew, informing the Recovery Coordinator of downstream impacts (e.g., "High severity in Sector 4 requires the Trail Assessor to prioritize Waldo Lake Trail").
+
+### 2.2 Adoption Inertia (Legacy Compatibility)
+**Risk:** USFS relies on legacy systems (`FScruiser`, `TRACS`) that are deeply entrenched.
+**Mitigation:** RANGER is a **Digital Wrapper**, not a replacement. All agent outputs must be **legacy-compatible** (e.g., exporting `FSVeg` stubs or `TRACS`-aligned work orders). The goal is to digitize the *collection* and *synthesis*, while feeding the existing *records*.
+
+### 2.3 The ADK Orchestration Gap
+**Risk:** Multi-agent routing can devolve into simple hard-coded logic.
+**Mitigation:** We leverage the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** maintains a **Shared Session State**, ensuring the crew has "Cross-Agent Memory"—e.g., the NEPA Advisor knows why a specific trail was prioritized by the Trail Assessor.
 
 ---
 
@@ -163,9 +180,9 @@ AI Capabilities (primary investment) → Application Shell (commodity)
 | Attribute | Specification |
 |-----------|---------------|
 | **Input** | Sentinel-2/Landsat imagery (pre/post fire), fire perimeter GeoJSON |
-| **Output** | Burn severity map (dNBR), severity statistics, narrative analysis |
+| **Output** | **Coordinated Briefing** for Recovery Coordinator, dNBR mapping, priority sector identification |
 | **Model** | Gemini 2.0 Flash (multimodal) + geemap for raster processing |
-| **Key Queries** | "Show burn severity by elevation" / "Compare to similar fires" / "What areas are highest priority?" |
+| **Key Queries** | "Brief the coordinator on erosion risk" / "Compare severity to the 2020 Holiday Farm fire" / "Which sectors require immediate trail assessment?" |
 
 **Sample Interaction:**
 ```
@@ -176,9 +193,7 @@ Burn Analyst: Based on my analysis of Sentinel-2 imagery from September 2022:
 - Moderate Severity: 31% (13,530 acres)
 - Low Severity: 27% (11,780 acres)
 
-The northwest quadrant shows concentrated high-severity burn, likely due
-to steep terrain and dense fuel loads. I recommend prioritizing this area
-for erosion control assessment.
+The northwest quadrant shows concentrated high-severity burn. **I have briefed the Recovery Coordinator to task the Trail Assessor with prioritizing the Waldo Lake Trail segments in this sector.**
 
 [Confidence: 94% | Last Updated: Post-fire imagery Sept 15, 2022]
 ```
@@ -249,7 +264,8 @@ Species Composition:
 
 Estimated Salvage Volume: 18,400 board feet
 Salvage Window: 12-18 months (bark beetle risk)
-Recommended Action: Priority salvage - high value, time-sensitive
+
+**Output Formatting:** Preliminary assessment is **FSVeg-compatible**. Export ready for legacy system ingestion.
 
 [Export to FSVeg →] [Add to cruise plan →]
 
