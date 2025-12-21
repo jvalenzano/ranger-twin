@@ -6,12 +6,14 @@ import MapControls from '@/components/map/MapControls';
 import Attribution from '@/components/map/Attribution';
 import CedarCreekMap from '@/components/map/CedarCreekMap';
 import DemoTourOverlay from '@/components/tour/DemoTourOverlay';
+import ChatPanel from '@/components/chat/ChatPanel';
 import mockBriefingService from '@/services/mockBriefingService';
 import { useBriefingStore } from '@/stores/briefingStore';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
 
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const addEvent = useBriefingStore((state) => state.addEvent);
 
   // Connect to gateway on mount
@@ -62,7 +64,7 @@ const App: React.FC = () => {
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col relative z-10">
-          <Header />
+          <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
 
           <main className="flex-1 relative p-6 pointer-events-none">
             <div className="pointer-events-auto contents">
@@ -74,6 +76,9 @@ const App: React.FC = () => {
 
               {/* Attribution - Bottom Left */}
               <Attribution />
+
+              {/* Chat Panel - Bottom Right (toggleable) */}
+              {isChatOpen && <ChatPanel />}
             </div>
 
             {/* Geographic Markers */}

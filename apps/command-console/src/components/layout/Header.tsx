@@ -1,9 +1,14 @@
 import React from 'react';
-import { Bell, ChevronRight, Play, Sparkles } from 'lucide-react';
+import { Bell, ChevronRight, Play, Sparkles, MessageSquare, X } from 'lucide-react';
 
 import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onChatToggle?: () => void;
+  isChatOpen?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => {
   const startTour = useDemoTourStore((state) => state.startTour);
   const endTour = useDemoTourStore((state) => state.endTour);
   const isTourActive = useTourActive();
@@ -53,6 +58,27 @@ const Header: React.FC = () => {
             <>
               <Play size={10} className="fill-accent-cyan group-hover:scale-110 transition-transform" />
               Run Demo
+            </>
+          )}
+        </button>
+
+        <button
+          onClick={onChatToggle}
+          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all ${
+            isChatOpen
+              ? 'bg-purple-500/20 border border-purple-500/50 text-purple-400'
+              : 'bg-slate-700/50 border border-slate-600/50 text-slate-300 hover:bg-slate-600/50 hover:text-white'
+          }`}
+        >
+          {isChatOpen ? (
+            <>
+              <X size={10} />
+              Close
+            </>
+          ) : (
+            <>
+              <MessageSquare size={10} />
+              Ask
             </>
           )}
         </button>
