@@ -4,6 +4,12 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 ## The Diagram Set
 
+### Context & Introduction
+
+| Diagram | Audience | Question It Answers |
+|---------|----------|---------------------|
+| [Cedar Creek Fire 2022](Cedar%20Creek%20Fire%202022.png) | All audiences | "Why does this problem matter?" |
+
 ### Technical Architecture
 
 | Diagram | Audience | Question It Answers |
@@ -24,13 +30,15 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 ## Quick Reference
 
-**For developer onboarding:** Start with How the pieces fit together → Rendering Pipeline → Coordinator Routing
+**For developer onboarding:** Cedar Creek Fire 2022 (context) → How the pieces fit together → Rendering Pipeline → Coordinator Routing
 
-**For investor/partner presentations:** Start with Phase 1 Boundaries → Recovery Chain
+**For investor/partner presentations:** Cedar Creek Fire 2022 (problem) → Phase 1 Boundaries → Recovery Chain
 
-**For government procurement:** Lead with Confidence Ledger → Legacy Bridge
+**For government procurement:** Cedar Creek Fire 2022 (context) → Confidence Ledger → Legacy Bridge
 
-**For USFS field staff:** Focus on Recovery Chain (the human story)
+**For USFS field staff:** Cedar Creek Fire 2022 (their fire) → Recovery Chain (the human story)
+
+**For executive briefings:** Cedar Creek Fire 2022 (scale) → Recovery Chain (value) → Confidence Ledger (trust)
 
 ## Visual Style
 

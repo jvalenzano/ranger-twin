@@ -4,6 +4,66 @@ Companion narratives for architectural diagrams. Use these as speaker notes, wri
 
 ---
 
+## 0. Cedar Creek Fire 2022: The Context
+
+**File:** `Cedar Creek Fire 2022.png`
+
+**One-Sentence Summary:** A tactical briefing infographic establishing the scale, timeline, and complexity of the Cedar Creek Fire—the real-world scenario that demonstrates why RANGER's multi-domain coordination is essential.
+
+### The Story This Diagram Tells
+
+This is the opening slide—the "why we're here" moment. Before diving into architecture diagrams and technical flows, stakeholders need to understand the problem RANGER solves. This isn't an abstract use case; it's a real 127,311-acre wildfire that overwhelmed traditional response systems.
+
+The **aerial perspective** immediately establishes scale. Waldo Lake's pristine blue oval serves as a geographic anchor, with mosaic burn patterns (green, amber, red patches) spreading westward toward Oakridge. The pyrocumulonimbus cloud tower rising from the burn zone isn't just dramatic—it's a visual reminder of the fire's intensity and the dangerous conditions that made traditional firefighting impossible.
+
+The **header stats** hit hard: **127,311 ACRES • $58M • 2,000+ EVACUATED**. These aren't just numbers—they represent communities displaced, ecosystems damaged, and a recovery operation that will span years.
+
+The **Oregon locator map** (top right) provides geographic context for non-local audiences, showing Portland and Eugene with the fire location glowing amber in the Cascade Range.
+
+The **timeline strip** (bottom center) tells the explosive growth story that defines this fire:
+- **AUG 1**: ¼ acre (lightning strike)
+- **SEPT 8**: EAST WINDS (weather event)
+- **SEPT 11**: 86,000 acres (**4 DAYS** of explosive growth)
+- **NOV 22**: CONTAINED (nearly 4 months total)
+
+This timeline answers the critical question: "Why couldn't they just put it out?" The answer: extreme terrain, dangerous winds, and a fire that grew faster than any response could contain.
+
+The **four assessment domain icons** (bottom, above timeline) introduce RANGER's value proposition:
+- 🔥 **BURN SEVERITY** — Understanding damage patterns
+- 🥾 **TRAIL DAMAGE** — Assessing infrastructure loss
+- 🌲 **TIMBER** — Evaluating salvage economics
+- 📋 **NEPA** — Navigating regulatory compliance
+
+These aren't separate projects—they're interconnected domains that must be coordinated for effective recovery.
+
+The **tactical annotations** add critical context:
+- **"Level 3 Evacuation - Sept 9"** near Oakridge shows the human impact
+- **"Rappellers refused - terrain too hazardous"** near the fire origin explains why even elite firefighters couldn't safely access the area
+
+The **USDA Forest Service shield** (bottom left) and **RANGER AGENTIC OS badge** (bottom right) establish institutional credibility and brand identity.
+
+### Key Talking Points
+
+- **Real-world complexity**: This isn't a hypothetical—it's a documented disaster
+- **Scale demands coordination**: 127,000 acres across 4 assessment domains
+- **Traditional response failed**: Even elite crews couldn't safely access the terrain
+- **Multi-month operation**: 8 incident management teams rotated through
+- **Recovery is the challenge**: The fire is contained, but the work is just beginning
+- **Why RANGER matters**: "This fire was so complex that recovery requires coordinating 4 different specialist assessments across 127,000 acres of mosaic burn. That's why you need RANGER."
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| Executive briefings | Establishing the problem scale before showing the solution |
+| Investor presentations | Demonstrating market need with real-world evidence |
+| USFS stakeholders | Grounding the demo in a fire they know intimately |
+| Grant applications | Showing the complexity that justifies AI coordination |
+| Demo introductions | Setting context before diving into technical capabilities |
+| Media/press | Providing visual context for the RANGER story |
+
+---
+
 ## 1. How the Pieces Fit Together
 
 **File:** `How the pieces fit together.png`
@@ -400,6 +460,51 @@ This "tactical whiteboard" aesthetic reinforces RANGER's identity as an operatio
 ## Generation Prompts
 
 The prompts used to generate each diagram are preserved here for reproducibility and future iterations.
+
+### Prompt 0: Cedar Creek Fire 2022
+
+```
+Tactical briefing infographic, dark slate chalkboard style, dramatic aerial
+perspective of Oregon's Cascade Range wildfire scene.
+
+Central composition: Bird's-eye view of Waldo Lake (distinctive pristine blue
+oval) with mosaic burn severity patterns (patches of green, amber, red showing
+varied damage) spreading westward toward Oakridge. Massive pyrocumulonimbus
+cloud tower rising. Retardant planes and helicopter with water bucket.
+Topographic contour lines visible.
+
+Top header: "CEDAR CREEK FIRE • WILLAMETTE NATIONAL FOREST • 2022"
+
+Key stats (top left): "127,311 ACRES • $58M • 2,000+ EVACUATED"
+
+Oregon locator map (top right corner): State silhouette with Portland, Eugene
+marked, fire location glowing amber.
+
+CRITICAL ADDITION - Timeline strip (bottom center):
+"AUG 1: ¼ acre → SEPT 8: EAST WINDS → SEPT 11: 86,000 acres (4 DAYS) → NOV 22:
+CONTAINED"
+
+CRITICAL ADDITION - Four assessment domain icons (bottom, above timeline):
+🔥 BURN SEVERITY | 🥾 TRAIL DAMAGE | 🌲 TIMBER | 📋 NEPA
+
+Bottom corners: USDA Forest Service shield (left), RANGER AGENTIC OS badge
+(right)
+
+Small annotation near Oakridge: "Level 3 Evacuation - Sept 9"
+Small annotation near fire origin: "Rappellers refused - terrain too hazardous"
+
+Style: Dark tactical military briefing aesthetic, chalk and graphite textures,
+burnt orange and amber fire tones, cool blue lake contrast, cream annotations.
+Emergency operations center mood. Illustrated tactical map, not photorealistic.
+
+--ar 16:9
+
+---
+This version tells the story: "This fire was so complex and dangerous that even 
+elite firefighters couldn't safely access it, 8 teams rotated through, and the 
+recovery requires coordinating 4 different specialist assessments across 127,000
+acres of mosaic burn. That's why you need RANGER."
+```
 
 ### Prompt 1: AgentBriefingEvent Rendering Pipeline
 
