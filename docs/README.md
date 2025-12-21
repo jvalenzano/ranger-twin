@@ -9,7 +9,6 @@
 | Document | Description |
 |----------|-------------|
 | [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) | **Start here.** Authoritative scope document defining Phase 1 boundaries and simulation contract |
-| [PHASED-BUILD-PLAN.md](./PHASED-BUILD-PLAN.md) | **Execution roadmap.** Three-phase plan from static demo to production-ready |
 | [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Master vision document with agents and architecture |
 | [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: unified console vs. separate apps |
 | [SPRINT-FOCUS.md](./SPRINT-FOCUS.md) | Development priorities for Phase 1 (P0-P3) |

@@ -4,7 +4,65 @@ Companion narratives for architectural diagrams. Use these as speaker notes, wri
 
 ---
 
-## 1. AgentBriefingEvent Rendering Pipeline
+## 1. How the Pieces Fit Together
+
+**File:** `How the pieces fit together.png`
+
+**One-Sentence Summary:** A developer-focused chalkboard diagram showing the architectural split between Phase 1 (browser-only static demo) and Phase 2 (AI integration), highlighting shared components and the upgrade path.
+
+### The Story This Diagram Tells
+
+This is the "big picture" diagram for developers joining the project. It answers the most common onboarding question: "Wait, so what's actually running where?" The chalkboard aesthetic reinforces that this is a working session, not a polished sales pitch.
+
+The diagram is divided into three main sections that tell a clear evolution story:
+
+**LEFT SECTION - "Phase 1: Static Demo"** shows the current reality. Everything runs in the browser. The `briefing-events.json` fixture file feeds into `mockBriefingService`, which loads and emits events exactly as the real service would. These events flow into the Zustand store via `addEvent`, which triggers React component re-renders. The four UI targets (Panel, Rail Pulse, Modal, Map) all render from the same store state. Three green checkmarks drive the point home: ✓ No server needed, ✓ No network calls, ✓ Just JSON → UI. This is the working demo you can run right now with `npm run dev`.
+
+**CENTER SECTION - "The Bridge"** shows what stays constant between phases. Three shared elements span both sides: `AgentBriefingEvent` (the data contract that both mock and real services emit), Zustand Store (state management that doesn't care where events come from), and React UI Components (the same panels, modals, and maps render in both phases). This is the architectural payoff—we're not building a throwaway prototype. The UI and state management are production-ready.
+
+**RIGHT SECTION - "Phase 2: AI Integration"** shows the future state. The browser now has a `ChatInput` where users ask questions like "What's the burn severity?" A POST to `/api/query` hits a Vercel Edge Function running the Recovery Coordinator. The Coordinator routes the query to Gemini API, which generates reasoning and returns an `AgentBriefingEvent`—the exact same structure Phase 1 uses. That event flows back to the browser, into the same Zustand store, triggering the same UI components. The user sees the same interface, but now it's powered by real AI instead of fixtures.
+
+**BOTTOM SECTION - "Key Files"** provides a file tree showing where the code lives:
+```
+apps/command-console/
+├── src/
+│   ├── services/
+│   │   ├── mockBriefingService.ts  ← Phase 1
+│   │   └── aiBriefingService.ts    ← Phase 2
+│   ├── stores/briefingStore.ts     ← Shared
+│   └── components/                 ← Shared
+└── api/query.ts                    ← Phase 2
+```
+
+**CORNER ANNOTATIONS** add informal chalk notes that answer common questions:
+- "WebSocket = Phase 2+ only" (clarifies that Phase 1 doesn't need it)
+- "Gemini = only external API" (no complex integrations)
+- "Fixtures = simulated satellite/trail data" (explains what the JSON represents)
+- "Same UI, different data source" (reinforces the architectural continuity)
+
+### Key Talking Points
+
+- **Phase 1 is real work, not a mockup:** The UI, state management, and rendering pipeline are production-ready
+- **Shared data contract:** `AgentBriefingEvent` is the bridge—both phases emit the same structure
+- **Clean separation of concerns:** Swap `mockBriefingService` for `aiBriefingService`, everything else stays the same
+- **No wasted effort:** Every component built in Phase 1 ships in Phase 2
+- **Developer-friendly:** The file tree shows exactly where to look for each piece
+- **Vercel Edge Functions:** Phase 2 backend is serverless, not a complex deployment
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| New developers | First diagram in onboarding—establishes mental model |
+| Technical reviewers | Shows architectural maturity and upgrade path |
+| Project managers | Clarifies Phase 1 vs Phase 2 scope and deliverables |
+| Stakeholders | Demonstrates that Phase 1 isn't throwaway work |
+| Yourself (6 months later) | Reminds you why you architected it this way |
+
+---
+
+## 2. AgentBriefingEvent Rendering Pipeline
+
 
 **File:** `AgentBriefingEvent Rendering Pipeline.png`
 
@@ -284,6 +342,44 @@ The gears indicate this is automated engineering, not manual transcription. The 
 | Change management teams | Demonstrating minimal training requirements |
 | Legacy system owners | Assuring them their systems remain relevant |
 | Procurement officers | Answering "what's the integration story?" |
+
+---
+
+## 7. Agentic AI Architecture: Body vs. Brain
+
+**File:** `Agentic AI Architecture.png`
+
+**One-Sentence Summary:** Illustrates the "Body vs. Brain" development workflow, showing how local containers (Body) act as the interface for remote Gemini intelligence (Brain).
+
+### The Story This Diagram Tells
+
+This diagram resolves the primary confusion about "where the AI lives" in a local development environment. It clearly distinguishes the physical infrastructure (Body) from the cognitive processing (Brain), helping new developers understand why they don't need GPUs to run RANGER locally.
+
+**The Body (Localhost)** represents the physical "muscle" of the system. The React app acts as the **Senses**, capturing user intent (clicks, questions). The API Gateway acts as the **Nerves**, routing these signals to the correct destination. The Python Agent Services are the **Muscles**, executing the code that structures inputs and formats outputs.
+
+**The Brain (Cloud)** represents the remote intelligence. The Gemini API is where the actual "thinking" occurs. The diagram emphasizes that our local code is essentially a "prompt engineering engine" that packages context for the remote brain.
+
+**The Flow (The Leap)** traces a single interaction:
+1.  **Click:** User intent captured
+2.  **Route:** Signal dispatched to specialist
+3.  **Prompt:** Context packaged into natural language
+4.  **Thought:** Remote reasoning (The Leap)
+5.  **Insight:** Structured response returned
+
+### Key Talking Points
+
+-   **"Local code is the body; Cloud is the brain."**
+-   **No local GPU required:** We are orchestrating text, not computing tensors.
+-   **The "Leap":** Intelligence is a network call. Latency lives in the round trip.
+-   **Security boundary:** We control exactly what context is sent to the brain (no sensitive PII unless explicitly passed).
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| New Developers | Explaining the local dev environment setup |
+| Security/Compliance | Showing exactly where data leaves the local boundary |
+| Architecture Reviews | Visualizing the dependency on external model inference |
 
 ---
 
@@ -679,3 +775,17 @@ When creating additional diagrams in this series, maintain:
 4. **Clear narrative flow** (left-to-right or top-to-bottom)
 5. **Explicit callouts** for key insights
 6. **Practical grounding** (show real file names, real data structures)
+
+### Prompt 7: Agentic AI Architecture
+
+```text
+A highly detailed, wide-format technical chalkboard diagram drawn on a deep textured slate wall. The diagram is titled "AGENTIC AI ARCHITECTURE: BODY vs BRAIN" in bold architectural lettering.
+
+The drawing is a software schematic divided into two clear zones:
+
+1. Bottom-Left Zone labeled "THE BODY (Localhost)": Intricate white chalk schematics of a computer running Docker containers. Labeled components: a React UI icon labeled "Senses", a Router icon labeled "Nerves (Gateway)", and Python logo gears labeled "Muscles (Agents)".
+2. Top-Right Zone labeled "THE BRAIN (Cloud)": A stylized, detailed neural network cloud drawing. Label: "Gemini 2.0 API".
+3. Flow: A large, dramatic arched arrow connecting the two zones labeled "THE LEAP". Small chalk arrows show the cycle: "Click" → "Route" → "Prompt" → "Thought" → "Insight".
+
+Style: Da Vinci engineering sketch, clean white chalk lines with yellow chalk accents for emphasis, precise technical drawing, photorealistic 8k, educational infographic. --ar 16:9 --v 6.0
+```

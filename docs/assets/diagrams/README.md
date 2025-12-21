@@ -8,6 +8,8 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 | Diagram | Audience | Question It Answers |
 |---------|----------|---------------------|
+| [How the pieces fit together](How%20the%20pieces%20fit%20together.png) | Developers | "How does Phase 1 vs Phase 2 work?" |
+| [Agentic AI Architecture](Agentic%20AI%20Architecture.png) | Developers | "How does the local vs cloud workflow operate?" |
 | [AgentBriefingEvent Rendering Pipeline](AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" |
 | [Coordinator Routing & Cross-Agent Cascade](Coordinator%20Routing%20&%20Cross-Agent%20Cascade.png) | Architects | "How does orchestration work?" |
 | [Phase 1 Architecture Boundaries](Phase%201%20Architecture%20Boundaries.png) | Technical reviewers | "What's real vs simulated?" |
@@ -22,7 +24,7 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 ## Quick Reference
 
-**For developer onboarding:** Start with Rendering Pipeline → Coordinator Routing
+**For developer onboarding:** Start with How the pieces fit together → Rendering Pipeline → Coordinator Routing
 
 **For investor/partner presentations:** Start with Phase 1 Boundaries → Recovery Chain
 

@@ -131,11 +131,11 @@ FOREST FLOOR                                              WASHINGTON
 
 | Priority | Component | Rationale |
 |----------|-----------|-----------|
-| **P0** | Command Console UI shell | Shared infrastructure for all views |
-| **P1** | Trail Assessor field capture | Novel innovation, zero competition |
-| **P1** | Cruising Assistant field capture | Novel innovation, multimodal is new |
-| **P2** | IMPACT view integrations | Entry point to lifecycle (not competing, aggregating) |
-| **P3** | COMPLIANCE view (RAG) | Later phase, legal considerations |
+| **P0** | **Recovery Coordinator** | Root orchestration engine (ADK-based routing). |
+| **P0** | **Command Console UI Shell** | Core rendering layer and shared chrome. |
+| **P1** | **Agent Orchestration Demo** | Complete Cedar Creek cascade with all 4 agents. |
+| **P2** | **Reasoning Transparency UX** | Proof layers and visualization. |
+| **P3** | **Legacy Export Validation** | TRACS/FSVeg integration testing. |
 
 **The V2 mockup with burn severity is valid**—it's the IMPACT view. The two hours weren't wasted; we built the shared UI chrome that every lifecycle view uses.
 

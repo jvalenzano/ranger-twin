@@ -130,13 +130,11 @@ export function useBriefingEventsConnection(
     }
 
     const url = `${wsUrl}/${effectiveSessionId}`;
-    console.log(`[Briefings] Connecting to ${url}`);
 
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log('[Briefings] Connected');
       setConnectionStatus('connected');
       setSessionId(effectiveSessionId);
       reconnectDelayRef.current = INITIAL_RECONNECT_DELAY;
@@ -165,23 +163,20 @@ export function useBriefingEventsConnection(
         }
 
         if (data.type === 'connected' || data.type === 'subscribed') {
-          console.log('[Briefings]', data.type, data);
           return;
         }
 
         // Check if it's a briefing event
         if (isAgentBriefingEvent(data)) {
-          console.log('[Briefings] Event received:', data.type, data.source_agent);
           addEvent(data);
           onEventRef.current?.(data);
         }
       } catch (err) {
-        console.error('[Briefings] Failed to parse message:', err);
+        // Silent failure for parse errors
       }
     };
 
     ws.onclose = (event) => {
-      console.log('[Briefings] Disconnected:', event.code, event.reason);
       setConnectionStatus('disconnected');
       onConnectionChangeRef.current?.(false);
 
@@ -198,8 +193,8 @@ export function useBriefingEventsConnection(
       }
     };
 
-    ws.onerror = (error) => {
-      console.error('[Briefings] WebSocket error:', error);
+    ws.onerror = () => {
+      // Silent error
     };
   }, [
     wsUrl,
