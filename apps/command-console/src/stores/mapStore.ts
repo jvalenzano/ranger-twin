@@ -187,11 +187,8 @@ export const useMapCamera = () => useMapStore((state) => state.camera);
 export const useDataLayers = () => useMapStore((state) => state.dataLayers);
 export const useDataLayer = (layer: DataLayerType) =>
   useMapStore((state) => state.dataLayers[layer]);
-export const useTerrainSettings = () =>
-  useMapStore((state) => ({
-    exaggeration: state.terrainExaggeration,
-    enabled: state.terrainEnabled,
-  }));
+export const useTerrainExaggeration = () => useMapStore((state) => state.terrainExaggeration);
+export const useTerrainEnabled = () => useMapStore((state) => state.terrainEnabled);
 
 // Export constants for use elsewhere
 export const CEDAR_CREEK = {

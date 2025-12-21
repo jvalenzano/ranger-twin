@@ -14,7 +14,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { useMapStore, useActiveLayer, useMapCamera, useTerrainSettings, useDataLayers } from '@/stores/mapStore';
+import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers } from '@/stores/mapStore';
 
 // MapTiler tile URLs
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
@@ -62,12 +62,14 @@ const CedarCreekMap: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const isInitialized = useRef(false);
+  const isInternalMove = useRef(false);
   const dataLoaded = useRef(false);
 
   const activeLayer = useActiveLayer();
   const camera = useMapCamera();
   const dataLayers = useDataLayers();
-  const { exaggeration, enabled: terrainEnabled } = useTerrainSettings();
+  const exaggeration = useTerrainExaggeration();
+  const terrainEnabled = useTerrainEnabled();
   const setCamera = useMapStore((state) => state.setCamera);
 
   // Load GeoJSON data and add layers
@@ -348,7 +350,10 @@ const CedarCreekMap: React.FC = () => {
 
     // Sync camera state on move
     map.current.on('moveend', () => {
-      if (!map.current) return;
+      if (!map.current || isInternalMove.current) {
+        isInternalMove.current = false;
+        return;
+      }
       const center = map.current.getCenter();
       setCamera({
         center: [center.lng, center.lat],
@@ -390,12 +395,11 @@ const CedarCreekMap: React.FC = () => {
             <div class="text-xs text-cyan-400">${props.stand_type}</div>
             <div class="text-xs mt-1">MBF/acre: ${props.mbf_per_acre}</div>
             <div class="text-xs">Value/acre: $${props.salvage_value_per_acre?.toLocaleString()}</div>
-            <div class="text-xs mt-1 font-medium" style="color: ${
-              props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
-              props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
+            <div class="text-xs mt-1 font-medium" style="color: ${props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
+            props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
               props.priority === 'MEDIUM' ? PRIORITY_COLORS.MEDIUM :
-              PRIORITY_COLORS.LOW
-            }">Priority: ${props.priority}</div>
+                PRIORITY_COLORS.LOW
+          }">Priority: ${props.priority}</div>
           </div>
         `)
         .addTo(map.current!);
@@ -411,11 +415,10 @@ const CedarCreekMap: React.FC = () => {
         .setHTML(`
           <div class="p-2">
             <div class="font-bold text-sm">${props.name}</div>
-            <div class="text-xs" style="color: ${
-              props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
-              props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
+            <div class="text-xs" style="color: ${props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
+            props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
               SEVERITY_COLORS.LOW
-            }">${props.severity} Severity</div>
+          }">${props.severity} Severity</div>
             <div class="text-xs mt-1">${props.acres?.toLocaleString()} acres</div>
             <div class="text-xs">dNBR: ${props.dnbr_mean}</div>
           </div>
@@ -686,6 +689,7 @@ const CedarCreekMap: React.FC = () => {
     const zoomDiff = Math.abs(currentZoom - camera.zoom) > 0.1;
 
     if (centerDiff || zoomDiff) {
+      isInternalMove.current = true;
       mapInstance.flyTo({
         center: camera.center,
         zoom: camera.zoom,
