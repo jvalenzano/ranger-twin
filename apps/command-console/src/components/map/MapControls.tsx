@@ -23,32 +23,49 @@ const MapControls: React.FC = () => {
   const layers: MapLayerType[] = ['SAT', 'TER', 'IR'];
 
   const layerLabels: Record<MapLayerType, string> = {
-    SAT: 'Satellite',
-    TER: 'Terrain',
-    IR: 'Infrared',
+    SAT: 'Satellite imagery',
+    TER: 'Terrain with hillshade',
+    IR: 'Thermal/Infrared view',
   };
+
+  const isIRMode = activeLayer === 'IR';
 
   return (
     <div className="absolute bottom-6 right-6 flex flex-col gap-4 z-20">
       {/* Layer Toggle Pill */}
-      <div className="glass p-1 rounded-full flex flex-col gap-1 shadow-2xl border border-white/10">
-        {layers.map((layer) => (
-          <button
-            key={layer}
-            onClick={() => setActiveLayer(layer)}
-            title={layerLabels[layer]}
-            className={`
-              w-10 h-10 rounded-full text-[10px] font-bold tracking-tighter transition-all duration-200
-              ${
-                activeLayer === layer
-                  ? 'bg-safe text-white shadow-[0_0_12px_rgba(16,185,129,0.5)]'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
-              }
-            `}
-          >
-            {layer}
-          </button>
-        ))}
+      <div className={`glass p-1 rounded-full flex flex-col gap-1 shadow-2xl border ${isIRMode ? 'border-orange-500/50' : 'border-white/10'}`}>
+        {layers.map((layer) => {
+          const isActive = activeLayer === layer;
+          const isIR = layer === 'IR';
+
+          // Special styling for IR mode
+          let buttonClasses = 'w-10 h-10 rounded-full text-[10px] font-bold tracking-tighter transition-all duration-200 ';
+
+          if (isActive && isIR) {
+            // Active IR button - orange glow
+            buttonClasses += 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-[0_0_16px_rgba(249,115,22,0.7)] animate-pulse';
+          } else if (isActive) {
+            // Active non-IR button - green
+            buttonClasses += 'bg-safe text-white shadow-[0_0_12px_rgba(16,185,129,0.5)]';
+          } else if (isIR && isIRMode) {
+            // IR button when in IR mode but not active
+            buttonClasses += 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10';
+          } else {
+            // Inactive button
+            buttonClasses += 'text-text-secondary hover:text-text-primary hover:bg-white/5';
+          }
+
+          return (
+            <button
+              key={layer}
+              onClick={() => setActiveLayer(layer)}
+              title={layerLabels[layer]}
+              className={buttonClasses}
+            >
+              {layer}
+            </button>
+          );
+        })}
       </div>
 
       {/* Zoom Controls */}
@@ -78,6 +95,29 @@ const MapControls: React.FC = () => {
       >
         <Compass size={24} strokeWidth={1.5} />
       </button>
+
+      {/* IR Mode Legend */}
+      {isIRMode && (
+        <div className="glass rounded-lg p-3 border border-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.2)] animate-fadeIn">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400 mb-2">
+            Thermal View
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              <span className="text-[10px] text-slate-300">High Severity</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
+              <span className="text-[10px] text-slate-300">Moderate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
+              <span className="text-[10px] text-slate-300">Low/Cool</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -27,11 +27,18 @@ const TILE_SOURCES = {
 
 const TERRAIN_SOURCE = `https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=${MAPTILER_KEY}`;
 
-// Severity color palette
+// Severity color palette (normal view)
 const SEVERITY_COLORS = {
   HIGH: '#EF4444',    // Red
   MODERATE: '#F59E0B', // Amber
   LOW: '#10B981',      // Green
+};
+
+// IR/Thermal color palette (heat signature style)
+const IR_SEVERITY_COLORS = {
+  HIGH: '#FFFFFF',     // Hot white
+  MODERATE: '#FFD700', // Yellow/gold
+  LOW: '#0066FF',      // Cool blue
 };
 
 // Trail damage type colors
@@ -127,6 +134,64 @@ const CedarCreekMap: React.FC = () => {
           ],
           'line-width': 2,
           'line-opacity': 0.8,
+        },
+      });
+
+      // IR/Thermal mode layers - hidden by default
+      // These use thermal imaging colors (blue=cold, yellow=warm, white=hot)
+      mapInstance.addLayer({
+        id: 'burn-severity-ir-fill',
+        type: 'fill',
+        source: 'burn-severity',
+        layout: {
+          visibility: 'none',
+        },
+        paint: {
+          'fill-color': [
+            'match',
+            ['get', 'severity'],
+            'HIGH', IR_SEVERITY_COLORS.HIGH,
+            'MODERATE', IR_SEVERITY_COLORS.MODERATE,
+            'LOW', IR_SEVERITY_COLORS.LOW,
+            '#1a1a2e',
+          ],
+          'fill-opacity': 0.6,
+        },
+      });
+
+      // IR glow effect layer for high severity (heat signature)
+      mapInstance.addLayer({
+        id: 'burn-severity-ir-glow',
+        type: 'fill',
+        source: 'burn-severity',
+        layout: {
+          visibility: 'none',
+        },
+        filter: ['==', ['get', 'severity'], 'HIGH'],
+        paint: {
+          'fill-color': '#FF6B00',
+          'fill-opacity': 0.3,
+        },
+      });
+
+      mapInstance.addLayer({
+        id: 'burn-severity-ir-outline',
+        type: 'line',
+        source: 'burn-severity',
+        layout: {
+          visibility: 'none',
+        },
+        paint: {
+          'line-color': [
+            'match',
+            ['get', 'severity'],
+            'HIGH', '#FF6B00',
+            'MODERATE', '#FFD700',
+            'LOW', '#0088FF',
+            '#333344',
+          ],
+          'line-width': 3,
+          'line-opacity': 0.9,
         },
       });
 
@@ -395,6 +460,31 @@ const CedarCreekMap: React.FC = () => {
     if (!map.current) return;
 
     const mapInstance = map.current;
+    const isIR = activeLayer === 'IR';
+
+    // Toggle normal burn severity layers
+    const normalSeverityLayers = ['burn-severity-fill', 'burn-severity-outline'];
+    normalSeverityLayers.forEach((layerId) => {
+      if (mapInstance.getLayer(layerId)) {
+        mapInstance.setLayoutProperty(
+          layerId,
+          'visibility',
+          isIR ? 'none' : (dataLayers.burnSeverity.visible ? 'visible' : 'none')
+        );
+      }
+    });
+
+    // Toggle IR thermal layers
+    const irSeverityLayers = ['burn-severity-ir-fill', 'burn-severity-ir-glow', 'burn-severity-ir-outline'];
+    irSeverityLayers.forEach((layerId) => {
+      if (mapInstance.getLayer(layerId)) {
+        mapInstance.setLayoutProperty(
+          layerId,
+          'visibility',
+          isIR && dataLayers.burnSeverity.visible ? 'visible' : 'none'
+        );
+      }
+    });
 
     if (activeLayer === 'SAT') {
       if (!mapInstance.getSource('satellite')) {
@@ -423,16 +513,23 @@ const CedarCreekMap: React.FC = () => {
     }
 
     if (activeLayer === 'IR') {
+      // Dark, desaturated base for thermal effect
       if (mapInstance.getLayer('satellite-layer')) {
         mapInstance.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.9);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.5);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.1);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -1); // Full grayscale
+        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.3);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.05);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.4); // Darker base
+      }
+    } else {
+      // Reset brightness max for non-IR modes
+      if (mapInstance.getLayer('satellite-layer')) {
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1);
       }
     }
 
     console.log(`[CedarCreekMap] Layer switched to: ${activeLayer}`);
-  }, [activeLayer]);
+  }, [activeLayer, dataLayers.burnSeverity.visible]);
 
   useEffect(() => {
     if (!map.current) return;
@@ -449,34 +546,63 @@ const CedarCreekMap: React.FC = () => {
     if (!map.current || !dataLoaded.current) return;
 
     const mapInstance = map.current;
+    const isIR = activeLayer === 'IR';
 
-    // Fire perimeter
+    // Fire perimeter (use cyan glow in IR mode)
     if (mapInstance.getLayer('fire-perimeter-line')) {
       mapInstance.setLayoutProperty(
         'fire-perimeter-line',
         'visibility',
         dataLayers.firePerimeter.visible ? 'visible' : 'none'
       );
+      // Style perimeter for IR mode
+      if (isIR) {
+        mapInstance.setPaintProperty('fire-perimeter-line', 'line-color', '#00FFFF');
+        mapInstance.setPaintProperty('fire-perimeter-line', 'line-width', 4);
+      } else {
+        mapInstance.setPaintProperty('fire-perimeter-line', 'line-color', '#FFFFFF');
+        mapInstance.setPaintProperty('fire-perimeter-line', 'line-width', 3);
+      }
     }
 
-    // Burn severity
-    ['burn-severity-fill', 'burn-severity-outline'].forEach((layerId) => {
+    // Burn severity - toggle between normal and IR layers
+    const normalLayers = ['burn-severity-fill', 'burn-severity-outline'];
+    const irLayers = ['burn-severity-ir-fill', 'burn-severity-ir-glow', 'burn-severity-ir-outline'];
+
+    normalLayers.forEach((layerId) => {
       if (mapInstance.getLayer(layerId)) {
         mapInstance.setLayoutProperty(
           layerId,
           'visibility',
-          dataLayers.burnSeverity.visible ? 'visible' : 'none'
+          (!isIR && dataLayers.burnSeverity.visible) ? 'visible' : 'none'
         );
       }
     });
 
-    // Trail damage
+    irLayers.forEach((layerId) => {
+      if (mapInstance.getLayer(layerId)) {
+        mapInstance.setLayoutProperty(
+          layerId,
+          'visibility',
+          (isIR && dataLayers.burnSeverity.visible) ? 'visible' : 'none'
+        );
+      }
+    });
+
+    // Trail damage - use brighter colors in IR mode
     if (mapInstance.getLayer('trail-damage-points')) {
       mapInstance.setLayoutProperty(
         'trail-damage-points',
         'visibility',
         dataLayers.trailDamage.visible ? 'visible' : 'none'
       );
+      if (isIR) {
+        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-color', '#00FFFF');
+        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-width', 3);
+      } else {
+        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-color', '#FFFFFF');
+        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-width', 2);
+      }
     }
 
     // Timber plots
@@ -489,7 +615,38 @@ const CedarCreekMap: React.FC = () => {
         );
       }
     });
-  }, [dataLayers]);
+  }, [dataLayers, activeLayer]);
+
+  // IR glow animation - pulsing heat signature effect
+  useEffect(() => {
+    if (!map.current || activeLayer !== 'IR') return;
+
+    const mapInstance = map.current;
+    let animationFrame: number;
+    let startTime: number | null = null;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+
+      // Oscillate opacity between 0.15 and 0.45 over 2 seconds
+      const opacity = 0.3 + 0.15 * Math.sin((elapsed / 1000) * Math.PI);
+
+      if (mapInstance.getLayer('burn-severity-ir-glow')) {
+        mapInstance.setPaintProperty('burn-severity-ir-glow', 'fill-opacity', opacity);
+      }
+
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [activeLayer]);
 
   // Handle terrain exaggeration changes
   useEffect(() => {

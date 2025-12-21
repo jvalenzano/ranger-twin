@@ -35,26 +35,33 @@ Last updated: 2025-12-20
 - [x] Sync tour steps with map view (fly-to animations)
 - [x] Sync tour steps with layer visibility
 
-## In Progress
+### Milestone 4: The Intelligent Core ✅
+- [x] Set up Vercel project structure (`api/` folder with serverless functions)
+- [x] Create Gemini client utility (`api/lib/gemini.ts`)
+- [x] Create Recovery Coordinator routing logic (`api/lib/agents/coordinator.ts`)
+- [x] Create Burn Analyst prompt template
+- [x] Create Trail Assessor prompt template
+- [x] Create Cruising Assistant prompt template
+- [x] Create NEPA Advisor prompt template
+- [x] Create /api/query endpoint (`api/query.ts`)
+- [x] Create aiBriefingService for frontend (`src/services/aiBriefingService.ts`)
+- [x] Wire frontend to use AI service
+- [x] Add error handling and fallback responses
 
-### Milestone 4: The Intelligent Core
-- [ ] Set up Vercel project structure
-- [ ] Create Gemini client utility
-- [ ] Create Recovery Coordinator routing logic
-- [ ] Create Burn Analyst prompt template
-- [ ] Create Trail Assessor prompt template
-- [ ] Create Cruising Assistant prompt template
-- [ ] Create NEPA Advisor prompt template
-- [ ] Create /api/query endpoint
-- [ ] Test each agent with curl
-- [ ] Create aiBriefingService for frontend
-- [ ] Wire frontend to use AI service
-- [ ] Add loading states during Gemini calls
-- [ ] Add error handling and fallback to fixtures
+### Milestone 5: The Conversation ✅
+- [x] Create chatStore with Zustand (`src/stores/chatStore.ts`)
+- [x] Create ChatPanel component with message bubbles
+- [x] Add suggested query chips for quick start
+- [x] Display agent role badges with color coding
+- [x] Show confidence scores on responses
+- [x] Add expandable reasoning chain display
+- [x] Wire "Ask" button in Header to toggle chat
+- [x] Add loading states during AI queries
+- [x] Add error message display
+- [x] Add clear chat functionality
 
 ## Pending
 
-### Milestone 5: The Conversation
 ### Milestone 6: The IR Layer
 ### Milestone 7: The Polish
 
@@ -76,7 +83,46 @@ Last updated: 2025-12-20
 
 **Commit:** `0ce7a78` - feat: implement Milestones 1-3
 
+### 2025-12-20 - Milestone 4: The Intelligent Core
+
+**Completed:**
+1. Created Vercel serverless API structure in `api/` folder
+2. Created `api/lib/gemini.ts` - Gemini 1.5 Flash client utility
+3. Created `api/lib/agents/types.ts` - Type definitions for agent responses
+4. Created `api/lib/agents/prompts.ts` - Agent prompt templates with Cedar Creek context
+5. Created `api/lib/agents/coordinator.ts` - Recovery Coordinator with keyword-based routing
+6. Created `api/query.ts` - Serverless endpoint for AI queries
+7. Created `src/services/aiBriefingService.ts` - Frontend client for AI queries
+8. Created `vercel.json` for deployment configuration
+9. Updated `.env.example` with GEMINI_API_KEY
+
+**Agent Routing:**
+- Queries containing "burn", "severity", "BAER" → Burn Analyst
+- Queries containing "trail", "damage", "access" → Trail Assessor
+- Queries containing "timber", "salvage", "volume" → Cruising Assistant
+- Queries containing "NEPA", "compliance", "environmental" → NEPA Advisor
+- All other queries → Recovery Coordinator
+
+**Commit:** `c78cbc4` - feat: implement Milestone 4 - The Intelligent Core
+
+### 2025-12-20 - Milestone 5: The Conversation
+
+**Completed:**
+1. Created `src/stores/chatStore.ts` - Zustand store for conversation state
+2. Created `src/components/chat/ChatPanel.tsx` - Full chat interface:
+   - Message history with user/assistant bubbles
+   - Suggested query chips (Burn severity, Trail damage, Timber salvage, NEPA pathways)
+   - Agent role badges with color coding (Coordinator=cyan, Burn=red, Trail=amber, Cruising=green, NEPA=purple)
+   - Confidence score display
+   - Expandable reasoning chain (collapsible details)
+   - Loading spinner during AI queries
+   - Error message display
+   - Clear chat button
+3. Updated `Header.tsx` - Added "Ask" toggle button with purple highlight when active
+4. Updated `App.tsx` - Added isChatOpen state and ChatPanel rendering
+
+**Commit:** `5a47349` - feat: implement Milestone 5 - The Conversation
+
 **Next Steps:**
-- Begin Milestone 4: The Intelligent Core
-- Set up Vercel Edge Functions for Gemini API
-- Create agent prompt templates
+- Milestone 6: The IR Layer (optional thermal visualization)
+- Milestone 7: The Polish (loading states, error boundaries, deployment)
