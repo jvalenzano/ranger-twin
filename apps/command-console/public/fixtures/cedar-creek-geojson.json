@@ -1,0 +1,353 @@
+{
+  "firePerimeter": {
+    "type": "Feature",
+    "properties": {
+      "fire_id": "cedar-creek-2022",
+      "fire_name": "Cedar Creek Fire",
+      "total_acres": 127341,
+      "containment_date": "2022-10-14"
+    },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-122.1460, 43.5756],
+        [-122.1460, 43.8012],
+        [-121.9008, 43.8012],
+        [-121.9008, 43.5756],
+        [-122.1460, 43.5756]
+      ]]
+    }
+  },
+  "burnSeverity": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "NW-1",
+          "name": "Waldo Lake North",
+          "severity": "HIGH",
+          "severity_class": 4,
+          "acres": 18340,
+          "dnbr_mean": 0.72
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.0847, 43.7523],
+            [-122.0234, 43.7523],
+            [-122.0234, 43.8012],
+            [-122.0847, 43.8012],
+            [-122.0847, 43.7523]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "NW-2",
+          "name": "Waldo Lake South",
+          "severity": "HIGH",
+          "severity_class": 4,
+          "acres": 14200,
+          "dnbr_mean": 0.68
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.0847, 43.6934],
+            [-122.0234, 43.6934],
+            [-122.0234, 43.7523],
+            [-122.0847, 43.7523],
+            [-122.0847, 43.6934]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "NE-1",
+          "name": "Charlton Lake Area",
+          "severity": "MODERATE",
+          "severity_class": 3,
+          "acres": 12500,
+          "dnbr_mean": 0.45
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-121.9621, 43.7523],
+            [-121.9008, 43.7523],
+            [-121.9008, 43.8012],
+            [-121.9621, 43.8012],
+            [-121.9621, 43.7523]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "NE-2",
+          "name": "Bobby Lake Basin",
+          "severity": "MODERATE",
+          "severity_class": 3,
+          "acres": 9800,
+          "dnbr_mean": 0.42
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-121.9621, 43.6934],
+            [-121.9008, 43.6934],
+            [-121.9008, 43.7523],
+            [-121.9621, 43.7523],
+            [-121.9621, 43.6934]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "SW-1",
+          "name": "Hills Creek Drainage",
+          "severity": "HIGH",
+          "severity_class": 4,
+          "acres": 21500,
+          "dnbr_mean": 0.76
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.1460, 43.6345],
+            [-122.0847, 43.6345],
+            [-122.0847, 43.6934],
+            [-122.1460, 43.6934],
+            [-122.1460, 43.6345]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "SW-2",
+          "name": "Timpanogas Lake Area",
+          "severity": "LOW",
+          "severity_class": 2,
+          "acres": 8400,
+          "dnbr_mean": 0.22
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.1460, 43.5756],
+            [-122.0847, 43.5756],
+            [-122.0847, 43.6345],
+            [-122.1460, 43.6345],
+            [-122.1460, 43.5756]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "SE-1",
+          "name": "Odell Lake Corridor",
+          "severity": "MODERATE",
+          "severity_class": 3,
+          "acres": 15600,
+          "dnbr_mean": 0.48
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.0234, 43.5756],
+            [-121.9621, 43.5756],
+            [-121.9621, 43.6345],
+            [-122.0234, 43.6345],
+            [-122.0234, 43.5756]
+          ]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "id": "CORE-1",
+          "name": "Central Fire Origin",
+          "severity": "HIGH",
+          "severity_class": 4,
+          "acres": 27001,
+          "dnbr_mean": 0.81
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [-122.0847, 43.6345],
+            [-122.0234, 43.6345],
+            [-122.0234, 43.6934],
+            [-122.0847, 43.6934],
+            [-122.0847, 43.6345]
+          ]]
+        }
+      }
+    ]
+  },
+  "trailDamage": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "WL-001",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Complete loss of 40ft timber bridge crossing North Fork"
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.0412, 43.7234] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "WL-002",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "DEBRIS_FLOW",
+          "severity": 4,
+          "description": "Major debris accumulation. Trail obliterated for 200 meters."
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.0289, 43.7456] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "WL-003",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Corridor of standing dead timber. ~45 hazard trees."
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.0156, 43.7623] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "BL-001",
+          "trail_name": "Bobby Lake Trail #3526",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Puncheon bridge completely destroyed."
+        },
+        "geometry": { "type": "Point", "coordinates": [-121.9345, 43.7123] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "BL-002",
+          "trail_name": "Bobby Lake Trail #3526",
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Dense stand of fire-killed lodgepole pine. Over 100 hazard trees."
+        },
+        "geometry": { "type": "Point", "coordinates": [-121.9278, 43.7234] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-001",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Primary bridge over Hills Creek destroyed. Critical access point."
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.1234, 43.6567] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-002",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "DEBRIS_FLOW",
+          "severity": 5,
+          "description": "Massive debris flow. Trail buried for 400 meters."
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.1089, 43.6678] }
+      }
+    ]
+  },
+  "timberPlots": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "47-ALPHA",
+          "sector": "SW-1",
+          "stand_type": "Douglas-fir/Western Hemlock",
+          "priority": "HIGH",
+          "mbf_per_acre": 32.4,
+          "salvage_value_per_acre": 2174
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.1156, 43.6567] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "47-BRAVO",
+          "sector": "SW-1",
+          "stand_type": "Douglas-fir",
+          "priority": "HIGH",
+          "mbf_per_acre": 42.8,
+          "salvage_value_per_acre": 2914
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.1089, 43.6623] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "23-CHARLIE",
+          "sector": "NW-1",
+          "stand_type": "Mountain Hemlock/Subalpine Fir",
+          "priority": "LOW",
+          "mbf_per_acre": 8.2,
+          "salvage_value_per_acre": 152
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.0523, 43.7678] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "31-DELTA",
+          "sector": "CORE-1",
+          "stand_type": "Mixed Conifer",
+          "priority": "MEDIUM",
+          "mbf_per_acre": 24.6,
+          "salvage_value_per_acre": 1159
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.0478, 43.6589] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "15-ECHO",
+          "sector": "NE-1",
+          "stand_type": "Lodgepole Pine",
+          "priority": "LOW",
+          "mbf_per_acre": 6.4,
+          "salvage_value_per_acre": 189
+        },
+        "geometry": { "type": "Point", "coordinates": [-121.9234, 43.7745] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "52-FOXTROT",
+          "sector": "SW-1",
+          "stand_type": "Douglas-fir/Western Redcedar",
+          "priority": "HIGHEST",
+          "mbf_per_acre": 48.2,
+          "salvage_value_per_acre": 3225
+        },
+        "geometry": { "type": "Point", "coordinates": [-122.1278, 43.6478] }
+      }
+    ]
+  }
+}

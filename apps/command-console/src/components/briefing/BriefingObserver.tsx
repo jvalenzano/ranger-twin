@@ -2,19 +2,20 @@
  * BriefingObserver - Root observer for AgentBriefingEvents
  *
  * This component sits at the App level and:
- * 1. Establishes WebSocket connection for briefing events
- * 2. Routes events to appropriate UI target renderers
- * 3. Renders the ModalInterrupt overlay for critical alerts
+ * 1. Optionally establishes WebSocket connection for briefing events (Phase 2+)
+ * 2. Renders the ModalInterrupt overlay for critical alerts
+ *
+ * For Phase 1 static demo, use autoConnect={false} to skip WebSocket entirely.
+ * Events are pushed via mockBriefingService instead.
  *
  * Usage:
- * <BriefingObserver>
+ * <BriefingObserver autoConnect={false}>
  *   <App />
  * </BriefingObserver>
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useBriefingEventsConnection } from '@/hooks/useBriefingEvents';
 import { useActiveModal, useBriefingStore } from '@/stores/briefingStore';
 
 import { ModalInterrupt } from './renderers/ModalInterrupt';
@@ -22,39 +23,26 @@ import { ModalInterrupt } from './renderers/ModalInterrupt';
 interface BriefingObserverProps {
   children: React.ReactNode;
   /**
-   * Optional session ID for the WebSocket connection.
-   */
-  sessionId?: string;
-  /**
-   * Whether to auto-connect on mount.
-   * @default true
+   * Whether to auto-connect WebSocket on mount.
+   * Set to false for static demo (Phase 1).
+   * @default false
    */
   autoConnect?: boolean;
 }
 
 export const BriefingObserver: React.FC<BriefingObserverProps> = ({
   children,
-  sessionId,
-  autoConnect = true,
+  autoConnect = false,
 }) => {
-  const { isConnected } = useBriefingEventsConnection({
-    sessionId,
-    autoConnect,
-    onEvent: (event) => {
-      console.log('[BriefingObserver] Received event:', event.type, event.source_agent);
-    },
-    onConnectionChange: (connected) => {
-      console.log('[BriefingObserver] Connection changed:', connected);
-    },
-  });
-
   const activeModal = useActiveModal();
   const dismissModal = useBriefingStore((state) => state.dismissModal);
 
-  // Log connection status changes
-  useEffect(() => {
-    console.log('[BriefingObserver] Connection status:', isConnected);
-  }, [isConnected]);
+  // Phase 1: Skip WebSocket connection entirely
+  // Events are pushed via mockBriefingService.subscribe() in App.tsx
+  // Phase 2+: Will re-enable WebSocket via useBriefingEventsConnection hook
+  if (autoConnect) {
+    console.warn('[BriefingObserver] autoConnect=true requires WebSocket backend (Phase 2+)');
+  }
 
   return (
     <>

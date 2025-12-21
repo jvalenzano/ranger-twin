@@ -97,6 +97,24 @@
   }
 }
 
+/* MapLibre Popup Styles */
+.ranger-popup .maplibregl-popup-content {
+  @apply bg-surface/95 backdrop-blur-md text-text-primary rounded-lg border border-white/10;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  min-width: 180px;
+}
+
+.ranger-popup .maplibregl-popup-tip {
+  border-top-color: rgba(30, 41, 59, 0.95);
+}
+
+.ranger-popup .maplibregl-popup-close-button {
+  @apply text-text-secondary hover:text-text-primary;
+  font-size: 18px;
+  padding: 4px 8px;
+}
+
 @layer utilities {
   /* Text shadow for labels on dark backgrounds */
   .text-shadow-sm {
@@ -115,4 +133,39 @@
   .ring-severity-severe {
     @apply ring-severe/50;
   }
+}
+
+/* Demo Tour Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Glass panel for tour cards */
+.glass-panel {
+  @apply bg-slate-900/90 backdrop-blur-xl;
 }

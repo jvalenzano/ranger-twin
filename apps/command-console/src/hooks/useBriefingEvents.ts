@@ -99,6 +99,18 @@ export function useBriefingEventsConnection(
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const reconnectDelayRef = useRef(INITIAL_RECONNECT_DELAY);
 
+  // Use refs for callbacks to prevent infinite loops when unstable functions are passed
+  const onEventRef = useRef(onEvent);
+  const onConnectionChangeRef = useRef(onConnectionChange);
+
+  useEffect(() => {
+    onEventRef.current = onEvent;
+  }, [onEvent]);
+
+  useEffect(() => {
+    onConnectionChangeRef.current = onConnectionChange;
+  }, [onConnectionChange]);
+
   const {
     setConnectionStatus,
     setSessionId,
@@ -128,7 +140,7 @@ export function useBriefingEventsConnection(
       setConnectionStatus('connected');
       setSessionId(effectiveSessionId);
       reconnectDelayRef.current = INITIAL_RECONNECT_DELAY;
-      onConnectionChange?.(true);
+      onConnectionChangeRef.current?.(true);
 
       // Send subscription filters if provided
       if (agents?.length || eventTypes?.length) {
@@ -161,7 +173,7 @@ export function useBriefingEventsConnection(
         if (isAgentBriefingEvent(data)) {
           console.log('[Briefings] Event received:', data.type, data.source_agent);
           addEvent(data);
-          onEvent?.(data);
+          onEventRef.current?.(data);
         }
       } catch (err) {
         console.error('[Briefings] Failed to parse message:', err);
@@ -171,7 +183,7 @@ export function useBriefingEventsConnection(
     ws.onclose = (event) => {
       console.log('[Briefings] Disconnected:', event.code, event.reason);
       setConnectionStatus('disconnected');
-      onConnectionChange?.(false);
+      onConnectionChangeRef.current?.(false);
 
       // Auto-reconnect with exponential backoff
       if (!event.wasClean) {
@@ -197,8 +209,7 @@ export function useBriefingEventsConnection(
     setConnectionStatus,
     setSessionId,
     addEvent,
-    onEvent,
-    onConnectionChange,
+    // Note: onEvent and onConnectionChange are handled via refs
   ]);
 
   const disconnect = useCallback(() => {

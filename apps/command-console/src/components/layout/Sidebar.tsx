@@ -17,7 +17,9 @@ import {
   useAllPhases,
   type LifecyclePhase,
 } from '@/stores/lifecycleStore';
-import briefingService from '@/services/briefingService';
+import mockBriefingService, {
+  type LifecyclePhase as MockPhase,
+} from '@/services/mockBriefingService';
 
 interface LifecycleStep {
   id: LifecyclePhase;
@@ -42,16 +44,8 @@ const Sidebar: React.FC = () => {
     setActivePhase(phase);
     clearPulse(phase);
 
-    // Trigger real backend analysis based on phase
-    if (phase === 'IMPACT') {
-      briefingService.triggerBurnAnalysis('Sector NW-4');
-    } else if (phase === 'DAMAGE') {
-      briefingService.triggerTrailAssessment('Waldo Lake Trail');
-    } else if (phase === 'TIMBER') {
-      briefingService.triggerTimberCruise('Plot 47-Alpha');
-    } else if (phase === 'COMPLIANCE') {
-      briefingService.triggerNepaReview('Cedar Creek Recovery');
-    }
+    // Fire the event for this phase from fixtures
+    mockBriefingService.triggerPhase(phase as MockPhase);
   };
 
   return (

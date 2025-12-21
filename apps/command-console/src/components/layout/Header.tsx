@@ -1,7 +1,21 @@
 import React from 'react';
-import { Bell, ChevronRight } from 'lucide-react';
+import { Bell, ChevronRight, Play, Sparkles } from 'lucide-react';
+
+import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 
 const Header: React.FC = () => {
+  const startTour = useDemoTourStore((state) => state.startTour);
+  const endTour = useDemoTourStore((state) => state.endTour);
+  const isTourActive = useTourActive();
+
+  const handleDemoClick = () => {
+    if (isTourActive) {
+      endTour();
+    } else {
+      startTour();
+    }
+  };
+
   return (
     <header className="h-[48px] w-full glass-header z-30 flex items-center justify-between px-8">
       {/* Left side Wordmark */}
@@ -20,8 +34,29 @@ const Header: React.FC = () => {
         <span className="text-text-primary">Impact Analysis</span>
       </div>
 
-      {/* Right side status/user */}
+      {/* Right side status/user/actions */}
       <div className="flex items-center gap-6">
+        <button
+          onClick={handleDemoClick}
+          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all group ${
+            isTourActive
+              ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
+              : 'bg-accent-cyan/10 border border-accent-cyan/30 text-accent-cyan hover:bg-accent-cyan/20 hover:border-accent-cyan/50'
+          }`}
+        >
+          {isTourActive ? (
+            <>
+              <Sparkles size={10} className="text-accent-cyan animate-pulse" />
+              Tour Active
+            </>
+          ) : (
+            <>
+              <Play size={10} className="fill-accent-cyan group-hover:scale-110 transition-transform" />
+              Run Demo
+            </>
+          )}
+        </button>
+
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-safe live-dot shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
           <span className="text-safe uppercase text-[10px] font-bold tracking-widest">
