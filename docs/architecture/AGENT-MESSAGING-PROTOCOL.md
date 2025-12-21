@@ -44,6 +44,18 @@ The `AgentBriefingEvent` (formerly `BriefingObject`) is the keystone contract be
 
   "proof_layer": {
     "confidence": "number (0-1)",
+    "confidence_ledger": {
+      "inputs": [
+        {
+          "source": "string (data source name)",
+          "confidence": "number (0-1)",
+          "tier": "1 | 2 | 3",
+          "notes": "string (optional context)"
+        }
+      ],
+      "analysis_confidence": "number (0-1)",
+      "recommendation_confidence": "number (0-1)"
+    },
     "citations": [
       {
         "source_type": "string (Sentinel-2 | FSM | TRACS | etc)",
@@ -73,6 +85,32 @@ The `AgentBriefingEvent` (formerly `BriefingObject`) is the keystone contract be
 Federal deployment requires absolute transparency. Every `AgentBriefingEvent` must provide its "work":
 - **Citations:** Direct links to satellite metadata, forest service manual (FSM) chapters, or legacy database IDs.
 - **Reasoning Chain:** A human-readable trace of *why* the agent reached this conclusion.
+- **Confidence Ledger:** Per-input confidence tracking with data tier classification.
+
+### Confidence Ledger Pattern
+
+The Confidence Ledger provides granular transparency about data quality:
+
+| Tier | Confidence Range | Usage | Example |
+|------|-----------------|-------|---------|
+| **Tier 1** | 90%+ | Direct use, no hedging | Sentinel-2 imagery, crew GPS |
+| **Tier 2** | 70-85% | Caution-flagged, human decision pending | Interpolated LiDAR, FIA extrapolation |
+| **Tier 3** | <70% | Demo only, synthetic | ML-inferred canopy height, climate projections |
+
+Example Confidence Ledger:
+```json
+{
+  "inputs": [
+    {"source": "MTBS burn severity", "confidence": 0.95, "tier": 1, "notes": "Direct satellite classification"},
+    {"source": "LiDAR coverage", "confidence": 0.40, "tier": 3, "notes": "Only 40% of area surveyed"},
+    {"source": "Climate projections", "confidence": 0.76, "tier": 2, "notes": "MACA dataset, coarse resolution"}
+  ],
+  "analysis_confidence": 0.82,
+  "recommendation_confidence": 0.87
+}
+```
+
+The UI surfaces this as: "This recommendation is based on high-confidence burn data (95%) but limited LiDAR coverage (40%). Consider visual confirmation before committing crews."
 
 ## 4. Propagation Flow
 

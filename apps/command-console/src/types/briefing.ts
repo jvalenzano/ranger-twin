@@ -101,14 +101,66 @@ export interface Citation {
 }
 
 /**
+ * Data confidence tier classification.
+ * From workshop Confidence Ledger pattern:
+ * - Tier 1 (90%+): Direct use, no hedging
+ * - Tier 2 (70-85%): Caution-flagged, human decision pending
+ * - Tier 3 (<70%): Demo only, synthetic
+ */
+export type DataTier = 1 | 2 | 3;
+
+/**
+ * Confidence metadata for a single input data source.
+ * Part of the Confidence Ledger pattern for granular transparency.
+ */
+export interface InputConfidence {
+  source: string;
+  confidence: number; // 0-1
+  tier: DataTier;
+  notes?: string;
+}
+
+/**
+ * The Confidence Ledger - Per-input confidence tracking.
+ * Provides granular transparency about data quality across all inputs.
+ *
+ * From workshop: "Sarah can see this breakdown. Not magic. Not 'AI said do this.'
+ * But 'Here's what we know, here's what we're inferring, here's what you decide.'"
+ */
+export interface ConfidenceLedger {
+  inputs: InputConfidence[];
+  analysis_confidence: number; // 0-1
+  recommendation_confidence: number; // 0-1
+}
+
+/**
  * The "Proof Layer" - Anti-hallucination contract.
  * Federal deployment requires absolute transparency.
  */
 export interface ProofLayer {
-  confidence: number; // 0-1
+  confidence: number; // 0-1 (overall)
+  confidence_ledger?: ConfidenceLedger | null; // Granular per-input tracking
   citations: Citation[];
   reasoning_chain: string[];
 }
+
+/**
+ * Helper to get tier label for display.
+ */
+export const DATA_TIER_LABELS: Record<DataTier, string> = {
+  1: 'High Confidence',
+  2: 'Medium Confidence',
+  3: 'Low Confidence',
+};
+
+/**
+ * Helper to get tier CSS class for styling.
+ */
+export const DATA_TIER_COLORS: Record<DataTier, string> = {
+  1: 'text-safe',
+  2: 'text-warning',
+  3: 'text-severe',
+};
 
 /**
  * The AgentBriefingEvent - Keystone contract for RANGER agentic interface.

@@ -143,18 +143,84 @@ class Citation(BaseModel):
     excerpt: str = Field(description="Relevant excerpt from the source")
 
 
+class DataTier(int, Enum):
+    """
+    Data confidence tier classification.
+
+    From workshop Confidence Ledger pattern:
+    - Tier 1 (90%+): Direct use, no hedging
+    - Tier 2 (70-85%): Caution-flagged, human decision pending
+    - Tier 3 (<70%): Demo only, synthetic
+    """
+
+    TIER_1 = 1  # High confidence (90%+), direct use
+    TIER_2 = 2  # Medium confidence (70-85%), caution-flagged
+    TIER_3 = 3  # Low confidence (<70%), demo/synthetic only
+
+
+class InputConfidence(BaseModel):
+    """
+    Confidence metadata for a single input data source.
+
+    Part of the Confidence Ledger pattern for granular transparency.
+    """
+
+    source: str = Field(description="Name of the data source")
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Confidence score (0-1) for this input",
+    )
+    tier: DataTier = Field(description="Data tier classification (1, 2, or 3)")
+    notes: Optional[str] = Field(
+        default=None,
+        description="Optional context about this input's reliability",
+    )
+
+
+class ConfidenceLedger(BaseModel):
+    """
+    The Confidence Ledger - Per-input confidence tracking.
+
+    Provides granular transparency about data quality across all inputs
+    that contributed to an agent's analysis and recommendation.
+
+    From workshop: "Sarah can see this breakdown. Not magic. Not 'AI said do this.'
+    But 'Here's what we know, here's what we're inferring, here's what you decide.'"
+    """
+
+    inputs: list[InputConfidence] = Field(
+        default_factory=list,
+        description="Confidence scores for each input data source",
+    )
+    analysis_confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Confidence in the analysis performed on inputs",
+    )
+    recommendation_confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Confidence in the final recommendation",
+    )
+
+
 class ProofLayer(BaseModel):
     """
     The "Proof Layer" - Anti-hallucination contract.
 
     Federal deployment requires absolute transparency. Every AgentBriefingEvent
-    must provide its "work" through citations and reasoning chain.
+    must provide its "work" through citations, reasoning chain, and confidence ledger.
     """
 
     confidence: float = Field(
         ge=0.0,
         le=1.0,
-        description="Confidence score (0-1) based on agent-specific formula",
+        description="Overall confidence score (0-1) based on agent-specific formula",
+    )
+    confidence_ledger: Optional[ConfidenceLedger] = Field(
+        default=None,
+        description="Granular per-input confidence tracking (workshop pattern)",
     )
     citations: list[Citation] = Field(
         default_factory=list,

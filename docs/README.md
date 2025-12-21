@@ -59,6 +59,24 @@
 | [ADR-001](./adr/ADR-001-tech-stack.md) | Technology Stack Selection | Accepted |
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
 
+### Workshop (Production Vision)
+
+Expert panel workshop outputs describing the full production vision. See [workshop/](./workshop/) for details.
+
+| Document | Description |
+|----------|-------------|
+| [workshop/README.md](./workshop/README.md) | Workshop overview and navigation |
+| [workshop/ranger_workshop.md](./workshop/ranger_workshop.md) | Full 4-phase expert discourse |
+| [workshop/ranger_roadmap.md](./workshop/ranger_roadmap.md) | 26-week implementation blueprint ($704K) |
+| [workshop/ranger_executive.md](./workshop/ranger_executive.md) | Executive summary and funding request |
+| [workshop/WORKSHOP-DEMO-ALIGNMENT.md](./workshop/WORKSHOP-DEMO-ALIGNMENT.md) | **How workshop vision maps to our demo** |
+
+### Audit
+
+| Document | Description |
+|----------|-------------|
+| [audit/DOCUMENTATION-CLEANUP.md](./audit/DOCUMENTATION-CLEANUP.md) | Documentation cleanup prompts and checklist |
+
 ### Archive
 
 Archived documents from the initial exploration phase are available in [archive/](./archive/). These contain ideation artifacts and research that have been superseded by current documents.
