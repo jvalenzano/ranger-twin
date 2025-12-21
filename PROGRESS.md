@@ -60,10 +60,26 @@ Last updated: 2025-12-20
 - [x] Add error message display
 - [x] Add clear chat functionality
 
-## Pending
+### Milestone 6: The IR Layer ✅
+- [x] Create IR-style color ramp for burn severity (blue→yellow→white)
+- [x] Add IR thermal layers to map (fill, glow, outline)
+- [x] Wire IR button to show thermal-styled layer
+- [x] Add pulsing glow animation on high severity areas
+- [x] Style fire perimeter and markers for IR mode
+- [x] Add IR legend showing thermal color scale
+- [x] Enhanced IR button with orange glow styling
 
-### Milestone 6: The IR Layer
-### Milestone 7: The Polish
+### Milestone 7: The Polish ✅
+- [x] Create ErrorBoundary component with retry functionality
+- [x] Create MapLoadingSkeleton with animated loading state
+- [x] Lazy load CedarCreekMap with React.lazy/Suspense
+- [x] Add comprehensive SEO meta tags
+- [x] Add Open Graph and Twitter card meta tags
+- [x] Add theme-color and apple-mobile-web-app meta tags
+- [x] Add mobile responsive CSS utilities
+- [x] Add responsive breakpoints for sidebar, header, panels
+
+## Complete
 
 ---
 
@@ -123,6 +139,56 @@ Last updated: 2025-12-20
 
 **Commit:** `5a47349` - feat: implement Milestone 5 - The Conversation
 
-**Next Steps:**
-- Milestone 6: The IR Layer (optional thermal visualization)
-- Milestone 7: The Polish (loading states, error boundaries, deployment)
+### 2025-12-20 - Milestone 6: The IR Layer
+
+**Completed:**
+1. Added IR thermal color palette (`IR_SEVERITY_COLORS`) - blue=cool, yellow=warm, white=hot
+2. Created IR-specific map layers:
+   - `burn-severity-ir-fill` - Thermal-styled fill with heat signature colors
+   - `burn-severity-ir-glow` - Pulsing glow effect for high severity areas
+   - `burn-severity-ir-outline` - Enhanced outline with thermal colors
+3. Updated `updateLayer()` to toggle between normal and IR burn severity layers
+4. Added glow animation using `requestAnimationFrame` - oscillates opacity for heat signature effect
+5. Enhanced IR mode styling:
+   - Cyan fire perimeter in IR mode
+   - Cyan-stroked trail damage markers
+   - Full grayscale + darkened base layer for thermal camera aesthetic
+6. Added IR legend in MapControls showing thermal color scale
+7. Enhanced IR button with orange gradient glow and pulse animation
+
+**Commit:** `59a03f4` - feat: implement Milestone 6 - The IR Layer
+
+### 2025-12-20 - Milestone 7: The Polish
+
+**Completed:**
+1. Created `ErrorBoundary.tsx` - Class component with error catching and retry
+2. Created `MapLoadingSkeleton.tsx` - Animated loading placeholder with contour rings
+3. Updated `App.tsx`:
+   - Wrapped app in ErrorBoundary
+   - Lazy load CedarCreekMap with React.lazy
+   - Added Suspense with MapLoadingSkeleton fallback
+4. Updated `index.html` with comprehensive meta tags:
+   - SEO: description, keywords, author, robots
+   - Open Graph: title, description, image, dimensions
+   - Twitter Card: summary_large_image format
+   - PWA: theme-color, apple-mobile-web-app-capable
+5. Added mobile responsive CSS:
+   - Breakpoints for 768px and 480px
+   - Sidebar collapse on mobile
+   - Chat panel full-width on mobile
+   - Smaller controls on mobile
+   - Hidden geographic markers on small screens
+
+**Commit:** (pending) - feat: implement Milestone 7 - The Polish
+
+---
+
+## All Milestones Complete! 🎉
+
+The RANGER Demo is ready for deployment:
+- Living Map with Cedar Creek Fire data
+- Burn severity, trail damage, and timber plot overlays
+- Guided demo tour with 7 steps
+- AI-powered chat with Gemini integration
+- IR thermal visualization mode
+- Production polish (error handling, loading states, SEO)

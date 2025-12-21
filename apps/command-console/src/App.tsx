@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import InsightPanel from '@/components/panels/InsightPanel';
 import MapControls from '@/components/map/MapControls';
 import Attribution from '@/components/map/Attribution';
-import CedarCreekMap from '@/components/map/CedarCreekMap';
 import DemoTourOverlay from '@/components/tour/DemoTourOverlay';
 import ChatPanel from '@/components/chat/ChatPanel';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import MapLoadingSkeleton from '@/components/common/MapLoadingSkeleton';
 import mockBriefingService from '@/services/mockBriefingService';
 import { useBriefingStore } from '@/stores/briefingStore';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
+
+// Lazy load the heavy map component
+const CedarCreekMap = lazy(() => import('@/components/map/CedarCreekMap'));
 
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
@@ -51,10 +55,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <BriefingObserver autoConnect={false}>
-      <div className="relative w-screen h-screen overflow-hidden bg-background flex text-text-primary">
-        {/* MapLibre GL Map - Cedar Creek Fire (Willamette NF, Oregon) */}
-        <CedarCreekMap />
+    <ErrorBoundary>
+      <BriefingObserver autoConnect={false}>
+        <div className="relative w-screen h-screen overflow-hidden bg-background flex text-text-primary">
+          {/* MapLibre GL Map - Cedar Creek Fire (Willamette NF, Oregon) */}
+          <Suspense fallback={<MapLoadingSkeleton />}>
+            <CedarCreekMap />
+          </Suspense>
 
         {/* Demo Tour Overlay - Guided Experience */}
         <DemoTourOverlay />
@@ -100,8 +107,9 @@ const App: React.FC = () => {
             </div>
           </main>
         </div>
-      </div>
-    </BriefingObserver>
+        </div>
+      </BriefingObserver>
+    </ErrorBoundary>
   );
 };
 

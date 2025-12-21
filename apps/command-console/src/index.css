@@ -169,3 +169,102 @@
 .glass-panel {
   @apply bg-slate-900/90 backdrop-blur-xl;
 }
+
+/* Mobile Responsiveness */
+@layer utilities {
+  /* Hide on mobile, show on desktop */
+  .desktop-only {
+    @apply hidden md:block;
+  }
+
+  /* Hide on desktop, show on mobile */
+  .mobile-only {
+    @apply block md:hidden;
+  }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  /* Sidebar - collapse to icons only */
+  .sidebar-mobile {
+    width: 48px !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Hide text on mobile sidebar */
+  .sidebar-text {
+    display: none !important;
+  }
+
+  /* Smaller header on mobile */
+  .glass-header {
+    height: 40px !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* Adjust insight panel for mobile */
+  .insight-panel-mobile {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 50vh !important;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+
+  /* Chat panel full width on mobile */
+  .chat-panel-mobile {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 60vh !important;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+
+  /* Map controls - move to corner on mobile */
+  .map-controls-mobile {
+    bottom: 1rem !important;
+    right: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Smaller buttons on mobile */
+  .map-controls-mobile button {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Tour overlay adjustments */
+  .tour-card-mobile {
+    max-width: calc(100vw - 2rem) !important;
+    left: 1rem !important;
+    right: 1rem !important;
+    top: auto !important;
+    bottom: 5rem !important;
+  }
+
+  /* Hide geographic markers on mobile */
+  .geo-marker-mobile {
+    display: none !important;
+  }
+}
+
+/* Small mobile (< 480px) */
+@media (max-width: 480px) {
+  .glass-header {
+    height: 36px !important;
+  }
+
+  /* Even smaller map controls */
+  .map-controls-mobile button {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
