@@ -81,11 +81,21 @@ For documentation cleanup tasks, see `docs/audit/DOCUMENTATION-CLEANUP.md`.
 
 Visual explanations of RANGER's architecture live in `docs/assets/diagrams/`. These are essential for understanding the system:
 
+### Technical Architecture (for developers/architects)
+
 | Diagram | What It Shows |
 |---------|---------------|
 | `AgentBriefingEvent Rendering Pipeline.png` | How agent events become UI elements (the rendering contract) |
 | `Coordinator Routing & Cross-Agent Cascade.png` | Query routing, parallel dispatch, and cross-agent handoffs |
 | `Phase 1 Architecture Boundaries.png` | What's simulated vs. real (the "magic" is in reasoning, not data) |
+
+### Value Proposition (for stakeholders/partners)
+
+| Diagram | What It Shows |
+|---------|---------------|
+| `The Cedar Creek Recovery Chain (Persona Cascade).png` | How Sarah, Marcus, Elena & Dr. Park trigger each other (human story) |
+| `The Confidence Ledger (Trust Architecture).png` | How RANGER builds trust (confidence scores, citations, audit trail) |
+| `The Legacy Bridge (TRACS & FSVeg Export).png` | How AI outputs become legacy-compatible formats (no rip-and-replace) |
 
 **Read `docs/assets/diagrams/DIAGRAM-NARRATIVES.md`** for detailed walkthroughs, talking points, and the prompts used to generate these diagrams. When explaining RANGER's architecture, reference these visuals.
 

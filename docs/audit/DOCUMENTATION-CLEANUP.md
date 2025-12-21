@@ -115,14 +115,14 @@ Update TRAIL-ASSESSOR-SPEC.md to:
 5. The agent's value is SYNTHESIS and LEGACY EXPORT, not damage detection
 ```
 
-#### `docs/agents/TIMBER-CRUISER-SPEC.md`
+#### `docs/agents/CRUISING-ASSISTANT-SPEC.md`
 **Issue:** Likely describes Whisper transcription, species ID models, and mobile capture.
 
 **Prompt:**
 ```
 Read docs/agents/TIMBER-CRUISER-SPEC.md and docs/DATA-SIMULATION-STRATEGY.md.
 
-Update TIMBER-CRUISER-SPEC.md to:
+Update CRUISING-ASSISTANT-SPEC.md to:
 1. Add a "Phase 1 Scope" section stating this agent receives SIMULATED plot data JSON
 2. Move all Whisper/species ID/mobile app content to a "Future Vision" section
 3. Remove any development timelines
@@ -130,14 +130,14 @@ Update TIMBER-CRUISER-SPEC.md to:
 5. The agent's value is FSVeg COMPATIBILITY and REASONING, not field transcription
 ```
 
-#### `docs/agents/COMPLIANCE-ADVISOR-SPEC.md`
+#### `docs/agents/NEPA-ADVISOR-SPEC.md`
 **Issue:** May describe complex RAG pipelines; needs Phase 1 scoping.
 
 **Prompt:**
 ```
 Read docs/agents/COMPLIANCE-ADVISOR-SPEC.md and docs/DATA-SIMULATION-STRATEGY.md.
 
-Update COMPLIANCE-ADVISOR-SPEC.md to:
+Update NEPA-ADVISOR-SPEC.md to:
 1. Add a "Phase 1 Scope" section - RAG over a LIMITED FSM/FSH corpus is acceptable for Phase 1
 2. Clarify that the corpus may be incomplete and that's okay
 3. Remove any complex PALS integration plans
@@ -286,8 +286,8 @@ docs/
 │   ├── RECOVERY-COORDINATOR-SPEC.md
 │   ├── BURN-ANALYST-SPEC.md
 │   ├── TRAIL-ASSESSOR-SPEC.md
-│   ├── TIMBER-CRUISER-SPEC.md
-│   └── COMPLIANCE-ADVISOR-SPEC.md
+│   ├── CRUISING-ASSISTANT-SPEC.md
+│   └── NEPA-ADVISOR-SPEC.md
 ├── architecture/
 │   ├── AGENT-MESSAGING-PROTOCOL.md
 │   ├── BRIEFING-UX-SPEC.md

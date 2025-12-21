@@ -143,9 +143,153 @@ The **Future State** footer at the bottom shows the upgrade path. The Mock MCP L
 
 ---
 
+## 4. The Cedar Creek Recovery Chain (Persona Cascade)
+
+**File:** `The Cedar Creek Recovery Chain (Persona Cascade).png`
+
+**One-Sentence Summary:** Shows how four real USFS personas—Sarah, Marcus, Elena, and Dr. Park—trigger each other through RANGER, demonstrating the human value of cross-agent coordination.
+
+### The Story This Diagram Tells
+
+This is the "why should I care?" diagram. While other diagrams explain technical architecture, this one puts human faces on the value proposition. It answers the question every USFS stakeholder will ask: "How does this help my people?"
+
+The circular flow tells a story of **coordinated recovery**:
+
+**Sarah Chen (Fire Management Officer)** starts the chain. Her question—"Where are the high-severity burn zones?"—triggers the Burn Analyst. When she identifies Sector 4 as high severity with erosion risk, that insight doesn't die in her inbox. It automatically triggers trail priority for Marcus.
+
+**Marcus Rodriguez (Recreation Technician)** receives Sarah's insight in context. His question—"Which trails need closure?"—is now informed by burn severity data. When he discovers the bridge washout at PCT Mile 47, that information flows to Elena, informing access routes for her timber work.
+
+**Elena Vasquez (Timber Cruiser)** asks "What's the salvage potential?" But she's not working blind—she knows which access routes are compromised. When she identifies Unit 12 near a historic trail, that triggers a compliance check with Dr. Park.
+
+**Dr. James Park (Environmental Coordinator)** closes the loop. His question—"Are we compliant?"—synthesizes inputs from all three colleagues. When he identifies a Section 106 buffer requirement, that refinement feeds back into the overall recovery scope, informing Sarah's next iteration.
+
+The **center correlation_id** (`cedar-creek-recovery-001`) ties it all together. This isn't four separate conversations—it's one coordinated recovery operation with shared context.
+
+The **footer contrast** drives the point home: "Before RANGER: 4 silos, 4 separate workflows, information lost in email. With RANGER: 1 coordinated recovery, automatic handoffs, nothing falls through cracks."
+
+### Key Talking Points
+
+- **Human-first framing:** Real job titles (FMO, Rec Tech, Cruiser, NEPA) that USFS staff recognize
+- **Circular, not linear:** Recovery is iterative—Dr. Park's findings feed back to Sarah
+- **Automatic handoffs:** Insights flow without manual email forwarding
+- **Shared context:** The correlation_id means everyone sees the same picture
+- **Real work products:** Each persona has a visible output (map, damage list, plot data, EA checklist)
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| USFS leadership | Showing how their teams work better together |
+| Field staff | Demonstrating relevance to their actual workflows |
+| Partner organizations | Explaining the collaboration value |
+| Non-technical stakeholders | Making orchestration tangible through people |
+
+---
+
+## 5. The Confidence Ledger (Trust Architecture)
+
+**File:** `The Confidence Ledger (Trust Architecture).png`
+
+**One-Sentence Summary:** Deep-dives into how RANGER builds trust through the "Three Pillars of Proof"—confidence scores, citation chains, and reasoning transparency—plus a complete audit trail.
+
+### The Story This Diagram Tells
+
+This is the "can we trust AI?" diagram. It directly confronts the biggest objection to AI in government: accountability. The visual contrast between "Black Box AI" (crossed out, captioned "Trust me, bro") and "RANGER Briefing" (green checkmark, captioned "Here's my evidence") sets the stakes immediately.
+
+**The Trust Problem** at the top establishes the contrast. A generic chatbot says "The bridge is damaged" with no source, no confidence, no reasoning. RANGER's Trail Assessor says "Bridge at Mile 47 shows structural failure" backed by three visible proof elements.
+
+**The Three Pillars of Proof** form the core of the diagram:
+
+1. **Confidence Score** — Not a vague "high/medium/low" label, but an actual probability (0.87 / 87%). The gauge visualization with red-amber-green zones makes the score immediately interpretable. Below the gauge, we show what drives the score: source data quality (0.92), model certainty (0.84), and cross-validation (0.85). This isn't a black box—users can see *why* the system is confident.
+
+2. **Citation Chain** — Every claim is traceable to source. The three citation chips (TRACS Report #4521, Mobile Video Frame 00:42, FSM 2353.03) each link to verifiable artifacts. "Click to verify" isn't a slogan—it's a feature. Auditors can follow the trail from AI insight back to original evidence.
+
+3. **Reasoning Chain** — The numbered steps (1-4) show exactly how the AI reached its conclusion. From "Video frame shows visible crack" to "Recommend immediate closure," every logical step is visible. This is "step-by-step logic, not magic."
+
+**The Audit Trail** at the bottom shows the complete lifecycle: event emitted with timestamp, source agent identified, confidence recorded, user acknowledgment logged, action taken documented. The "Immutable Event Log" database icon reinforces that this history cannot be altered after the fact.
+
+**The footer** is the closer: "Government-grade AI requires government-grade accountability. RANGER's Confidence Ledger makes every insight defensible."
+
+### Key Talking Points
+
+- **Contrast is the message:** "Trust me, bro" vs. "Here's my evidence"
+- **Quantified confidence:** Real probabilities, not fuzzy categories
+- **Clickable citations:** Every claim traceable to source documents
+- **Visible reasoning:** Step-by-step logic chain, not opaque inference
+- **Complete audit trail:** Timestamped, immutable, legally defensible
+- **Government-grade:** Designed for procurement scrutiny and compliance review
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| Procurement officers | Answering "how do we trust AI outputs?" |
+| Legal/compliance teams | Demonstrating auditability and accountability |
+| Risk managers | Showing how AI decisions become defensible |
+| Technical evaluators | Understanding the anti-hallucination architecture |
+| Skeptics | Converting "AI can't be trusted" to "this AI can" |
+
+---
+
+## 6. The Legacy Bridge (TRACS & FSVeg Export)
+
+**File:** `The Legacy Bridge (TRACS & FSVeg Export).png`
+
+**One-Sentence Summary:** Shows how modern AI insights transform into legacy-compatible formats (TRACS CSV, FSVeg XML) that existing USFS systems can import without modification.
+
+### The Story This Diagram Tells
+
+This is the "do we have to replace our systems?" diagram. It answers with a emphatic visual NO. The literal bridge connecting sleek modern RANGER to chunky retro terminals tells the story instantly: we're building a connection, not demanding a replacement.
+
+**Modern RANGER (Left Side)** shows what the AI produces: a rich, structured briefing from the Trail Assessor Agent. The insight is human-readable ("Bridge at Mile 47: Structural failure detected. Estimated repair: $45,000. Priority: Critical.") but also machine-readable (JSON with damage_type, location, repair_estimate_usd, priority fields). This is "Rich, structured, AI-generated."
+
+**The Bridge (Center)** is a literal architectural bridge graphic, labeled "Schema Transformer." On the bridge deck, three transformation steps are visible:
+1. Validate against TRACS schema
+2. Map fields to legacy codes
+3. Generate compliant output
+
+The gears indicate this is automated engineering, not manual transcription. The caption states the promise: "Zero data loss. Full compliance."
+
+**Legacy Systems (Right Side)** shows two actual USFS systems with deliberately retro styling:
+
+- **TRACS** (Trail Condition Assessment System, 1999) receives a CSV file with the exact column headers their system expects: TRAIL_ID, MILE, DAMAGE_CODE, EST_COST, PRIORITY. Green checkmark: "Import validated."
+
+- **FSVeg** (Field Sampled Vegetation) receives an XML file with proper tags: Plot ID, Species (PSME for Douglas Fir), DBH, Mortality. Green checkmark: "Schema validated."
+
+**Why This Matters (Bottom)** hits the three adoption objections:
+
+1. **No Rip and Replace** — "USFS keeps existing systems. RANGER augments, doesn't replace." This addresses budget concerns—no multi-million dollar system replacement.
+
+2. **Audit Compliance** — "Exports meet federal data standards. Auditors see familiar formats." This addresses regulatory concerns—the output looks exactly like what they've always produced.
+
+3. **Training Continuity** — "Staff use same legacy interfaces. AI benefits without retraining." This addresses change management—nobody needs to learn a new system to get AI benefits.
+
+**The footer** closes the sale: "The fastest path to adoption isn't replacing legacy systems—it's making them smarter."
+
+### Key Talking Points
+
+- **Visual contrast:** Sleek modern vs. retro chunky establishes the gap being bridged
+- **Real formats:** Actual TRACS CSV and FSVeg XML structure, not abstractions
+- **Automated transformation:** Schema Transformer handles the translation
+- **Zero friction adoption:** Staff upload files to the same systems they always have
+- **Augmentation, not replacement:** AI enhances existing workflows, doesn't disrupt them
+- **The upgrade path message:** "Making them smarter" is more compelling than "replacing them"
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| IT decision-makers | Proving no system replacement is required |
+| Budget approvers | Showing cost-effective augmentation strategy |
+| Change management teams | Demonstrating minimal training requirements |
+| Legacy system owners | Assuring them their systems remain relevant |
+| Procurement officers | Answering "what's the integration story?" |
+
+---
+
 ## Visual Design Notes
 
-All three diagrams share a consistent aesthetic:
+All six diagrams share a consistent aesthetic:
 
 - **Chalk-on-slate style:** Dark background (#0F172A-ish) with hand-drawn white lines
 - **Color coding:** Matches RANGER's severity palette (green=safe, orange=warning, red=critical)

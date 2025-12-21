@@ -4,7 +4,7 @@
 
 ## Overview
 
-RecoveryCoordinator synthesizes outputs from all specialist agents (BurnAnalyst, TrailAssessor, TimberCruiser, ComplianceAdvisor) to create unified recovery plans. It handles cross-domain reasoning, resource allocation, and timeline optimization.
+RecoveryCoordinator synthesizes outputs from all specialist agents (BurnAnalyst, TrailAssessor, CruisingAssistant, NepaAdvisor) to create unified recovery plans. It handles cross-domain reasoning, resource allocation, and timeline optimization.
 
 ## Capabilities
 
@@ -40,8 +40,8 @@ recovery_coordinator/
 └── clients/
     ├── burn_analyst.py      # BurnAnalyst client
     ├── trail_assessor.py    # TrailAssessor client
-    ├── timber_cruiser.py    # TimberCruiser client
-    └── compliance_advisor.py # ComplianceAdvisor client
+    ├── cruising_assistant.py      # CruisingAssistant client
+    └── nepa_advisor.py            # NepaAdvisor client
 ```
 
 ## API
@@ -85,8 +85,8 @@ You synthesize outputs from specialist agents to create unified recovery plans.
 Specialist agents you coordinate:
 - BurnAnalyst: Burn severity assessment
 - TrailAssessor: Trail damage and repair priorities
-- TimberCruiser: Timber inventory and salvage planning
-- ComplianceAdvisor: NEPA and regulatory guidance
+- CruisingAssistant: Timber inventory and salvage planning
+- NepaAdvisor: NEPA and regulatory guidance
 
 When creating plans:
 - Consider dependencies between activities
@@ -111,7 +111,7 @@ User Query
     ▼         ▼        ▼        ▼
 ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐
 │ Burn  │ │ Trail │ │Timber │ │Compli.│
-│Analyst│ │Assess.│ │Cruiser│ │Advisor│
+│Analyst│ │Assess.│ │ Cruiser│ │Advisor│
 └───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘
     │         │        │        │
     └────┬────┴────────┴────────┘
@@ -146,6 +146,6 @@ GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
 VERTEX_AI_LOCATION=us-east4
 BURN_ANALYST_URL=http://burn-analyst:8001
 TRAIL_ASSESSOR_URL=http://trail-assessor:8002
-TIMBER_CRUISER_URL=http://timber-cruiser:8003
-COMPLIANCE_ADVISOR_URL=http://compliance-advisor:8004
+CRUISING_ASSISTANT_URL=http://cruising-assistant:8003
+NEPA_ADVISOR_URL=http://nepa-advisor:8004
 ```

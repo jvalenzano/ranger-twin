@@ -41,7 +41,7 @@ app/
 
 ```
 POST /api/agents/{agent_name}/query
-  - agent_name: burn-analyst | trail-assessor | timber-cruiser | compliance-advisor | recovery-coordinator
+  - agent_name: burn-analyst | trail-assessor | cruising-assistant | nepa-advisor | recovery-coordinator
   - body: { "question": "...", "context": {...} }
   - returns: { "answer": "...", "confidence": 0.94, "sources": [...], "suggestions": [...] }
 ```
@@ -89,8 +89,8 @@ DATABASE_URL=postgresql://...
 REDIS_URL=redis://...
 BURN_ANALYST_URL=http://burn-analyst:8001
 TRAIL_ASSESSOR_URL=http://trail-assessor:8002
-TIMBER_CRUISER_URL=http://timber-cruiser:8003
-COMPLIANCE_ADVISOR_URL=http://compliance-advisor:8004
+CRUISING_ASSISTANT_URL=http://cruising-assistant:8003
+NEPA_ADVISOR_URL=http://nepa-advisor:8004
 RECOVERY_COORDINATOR_URL=http://recovery-coordinator:8005
 ```
 

@@ -50,8 +50,8 @@ services:
       REDIS_URL: redis://redis:6379
       BURN_ANALYST_URL: http://burn-analyst:8001
       TRAIL_ASSESSOR_URL: http://trail-assessor:8002
-      TIMBER_CRUISER_URL: http://timber-cruiser:8003
-      COMPLIANCE_ADVISOR_URL: http://compliance-advisor:8004
+      CRUISING_ASSISTANT_URL: http://cruising-assistant:8003
+      NEPA_ADVISOR_URL: http://nepa-advisor:8004
       RECOVERY_COORDINATOR_URL: http://recovery-coordinator:8005
     depends_on:
       postgres:
@@ -100,11 +100,11 @@ services:
       - ./data:/data:ro
     command: uvicorn trail_assessor.main:app --host 0.0.0.0 --port 8002 --reload
 
-  timber-cruiser:
+  cruising-assistant:
     build:
-      context: ./services/agents/timber-cruiser
+      context: ./services/agents/cruising-assistant
       dockerfile: Dockerfile
-    container_name: cedar-creek-timber-cruiser
+    container_name: cedar-creek-cruising-assistant
     ports:
       - "8003:8003"
     environment:
@@ -112,16 +112,16 @@ services:
       VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
     volumes:
-      - ./services/agents/timber-cruiser:/app
+      - ./services/agents/cruising-assistant:/app
       - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
       - ./data:/data:ro
-    command: uvicorn timber_cruiser.main:app --host 0.0.0.0 --port 8003 --reload
+    command: uvicorn cruising_assistant.main:app --host 0.0.0.0 --port 8003 --reload
 
-  compliance-advisor:
+  nepa-advisor:
     build:
-      context: ./services/agents/compliance-advisor
+      context: ./services/agents/nepa-advisor
       dockerfile: Dockerfile
-    container_name: cedar-creek-compliance-advisor
+    container_name: cedar-creek-nepa-advisor
     ports:
       - "8004:8004"
     environment:
@@ -130,13 +130,13 @@ services:
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       DATABASE_URL: postgresql://cedar_creek:${POSTGRES_PASSWORD:-localdev}@postgres:5432/cedar_creek_twin
     volumes:
-      - ./services/agents/compliance-advisor:/app
+      - ./services/agents/nepa-advisor:/app
       - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
       - ./data:/data:ro
     depends_on:
       postgres:
         condition: service_healthy
-    command: uvicorn compliance_advisor.main:app --host 0.0.0.0 --port 8004 --reload
+    command: uvicorn nepa_advisor.main:app --host 0.0.0.0 --port 8004 --reload
 
   recovery-coordinator:
     build:
@@ -151,16 +151,16 @@ services:
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       BURN_ANALYST_URL: http://burn-analyst:8001
       TRAIL_ASSESSOR_URL: http://trail-assessor:8002
-      TIMBER_CRUISER_URL: http://timber-cruiser:8003
-      COMPLIANCE_ADVISOR_URL: http://compliance-advisor:8004
+      CRUISING_ASSISTANT_URL: http://cruising-assistant:8003
+      NEPA_ADVISOR_URL: http://nepa-advisor:8004
     volumes:
       - ./services/agents/recovery-coordinator:/app
       - ${GOOGLE_APPLICATION_CREDENTIALS:-./secrets/gcp-sa-key.json}:/secrets/gcp-sa-key.json:ro
     depends_on:
       - burn-analyst
       - trail-assessor
-      - timber-cruiser
-      - compliance-advisor
+      - cruising-assistant
+      - nepa-advisor
     command: uvicorn recovery_coordinator.main:app --host 0.0.0.0 --port 8005 --reload
 
   # =============================================================================

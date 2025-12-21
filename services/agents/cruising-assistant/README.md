@@ -1,10 +1,10 @@
-# TimberCruiser Agent
+# Cruising Assistant Agent
 
 > Multimodal timber inventory with voice transcription and species ID
 
 ## Overview
 
-TimberCruiser processes voice narration and video from field timber cruisers to generate FSVeg-compatible plot records. It uses Whisper for transcription, custom models for species identification, and Gemini for data structuring.
+Cruising Assistant processes voice narration and video from field timber cruisers to generate FSVeg-compatible plot records. It uses Whisper for transcription, custom models for species identification, and Gemini for data structuring.
 
 ## Capabilities
 
@@ -24,9 +24,9 @@ TimberCruiser processes voice narration and video from field timber cruisers to 
 ## Structure
 
 ```
-timber_cruiser/
+cruising_assistant/
 ├── main.py                  # FastAPI service
-├── agent.py                 # TimberCruiser agent class
+├── agent.py                 # Cruising Assistant agent class
 ├── prompts/
 │   └── system.md            # System prompt
 ├── tools/
@@ -72,7 +72,7 @@ GET /plot/{plot_id}/fsveg
 ## System Prompt
 
 ```
-You are TimberCruiser, a specialized AI agent for multimodal timber inventory.
+You are Cruising Assistant, a specialized AI agent for multimodal timber inventory.
 You process voice narration and video from field timber cruisers to generate
 accurate plot records compatible with USFS FSVeg data standards.
 
@@ -94,7 +94,7 @@ pip install -r requirements.txt
 python scripts/download_weights.py
 
 # Run
-python -m timber_cruiser.main
+python -m cruising_assistant.main
 
 # Test
 pytest tests/

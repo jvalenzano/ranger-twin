@@ -1,10 +1,10 @@
-# ComplianceAdvisor Agent
+# NEPA Advisor Agent
 
 > NEPA regulatory guidance via RAG over FSM/FSH corpus
 
 ## Overview
 
-ComplianceAdvisor provides AI-assisted regulatory guidance for NEPA compliance, Environmental Assessments, and Forest Service policy. It uses RAG (Retrieval-Augmented Generation) over the Forest Service Manual (FSM) and Forest Service Handbook (FSH) to provide accurate, citation-backed guidance.
+NEPA Advisor provides AI-assisted regulatory guidance for NEPA compliance, Environmental Assessments, and Forest Service policy. It uses RAG (Retrieval-Augmented Generation) over the Forest Service Manual (FSM) and Forest Service Handbook (FSH) to provide accurate, citation-backed guidance.
 
 ## Capabilities
 
@@ -25,9 +25,9 @@ ComplianceAdvisor provides AI-assisted regulatory guidance for NEPA compliance, 
 ## Structure
 
 ```
-compliance_advisor/
+nepa_advisor/
 ├── main.py                  # FastAPI service
-├── agent.py                 # ComplianceAdvisor agent class
+├── agent.py                 # NEPA Advisor agent class
 ├── prompts/
 │   ├── system.md            # System prompt
 │   └── ea_templates/        # EA section templates
@@ -77,7 +77,7 @@ GET /regulations/{topic}
 ## System Prompt
 
 ```
-You are ComplianceAdvisor, a specialized AI agent for NEPA and Forest Service
+You are NEPA Advisor, a specialized AI agent for NEPA and Forest Service
 regulatory guidance. You use retrieval-augmented generation over the Forest
 Service Manual (FSM) and Forest Service Handbook (FSH) to provide accurate,
 citation-backed guidance.
@@ -111,7 +111,7 @@ pip install -r requirements.txt
 python scripts/ingest_corpus.py
 
 # Run
-python -m compliance_advisor.main
+python -m nepa_advisor.main
 
 # Test
 pytest tests/
