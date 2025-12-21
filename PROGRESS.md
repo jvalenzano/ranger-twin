@@ -1,6 +1,6 @@
 # RANGER Demo Progress
 
-Last updated: 2025-12-20
+Last updated: 2025-12-21
 
 ## Completed Milestones
 
@@ -190,7 +190,50 @@ Last updated: 2025-12-20
 4. Refactored `mapStore.ts` with granular terrain hooks for better performance.
 5. Fixed infinite camera sync loop in `CedarCreekMap.tsx` using `isInternalMove` ref.
 
-**Commit:** (pending) - chore: align AI service with new API gateway
+**Commit:** `3e74a55` - chore: align AI service with new API gateway
+
+### 2025-12-21 - UI Polish & Measurement Tools
+
+**Completed:**
+1. **MeasureTool Integration:**
+   - Integrated `MeasureTool.tsx` into `CedarCreekMap.tsx` for distance/area measurement
+   - Fixed TypeScript errors (unused imports, array indexing null checks)
+   - Added crosshair cursor CSS for measuring mode (`.measuring-active` class)
+   - Updated messaging: "👆 Click on the map" with animation for clarity
+
+2. **RANGER Badge & Naming Consistency:**
+   - Moved RANGER badge from Header to Sidebar (top-left position)
+   - Standardized agent naming convention across app:
+     - Impact Analysis → IMPACT ANALYST
+     - Damage Assessment → DAMAGE ASSESSOR
+     - Timber Salvage → TIMBER ANALYST
+     - Compliance Review → COMPLIANCE ADVISOR
+   - Updated `InsightPanel.tsx` with consistent AGENT_CONFIG names
+   - Updated `Sidebar.tsx` workflow descriptions
+
+3. **Map Layer Color Persistence Fix:**
+   - Fixed bug where SAT/TER/IR colors reset when zooming/panning
+   - Added `applyLayerStyling()` function with proper raster paint properties
+   - Wired to `idle` and `sourcedata` events for consistency after tile loads
+   - Added immediate application on layer button click
+
+4. **Dynamic Contextual Attribution:**
+   - Rewrote `Attribution.tsx` with layer-specific contextual info:
+     - SAT: "Sentinel-2 L2A • 10m resolution • Oct 2024" (cyan accent)
+     - TER: "3DEP 10m DEM • 2,100 - 6,800 ft • 2.5× exaggeration" (emerald accent)
+     - IR: Thermal legend with High/Med/Low indicators (orange accent + glow)
+   - Removed inline ThermalLegend from MapControls
+   - Each mode has smooth fadeIn animation on transition
+
+**Files Modified:**
+- `CedarCreekMap.tsx` - MeasureTool integration, layer styling persistence
+- `MapControls.tsx` - Measurement UI cleanup, removed thermal legend
+- `Attribution.tsx` - Dynamic contextual info per layer
+- `Sidebar.tsx` - RANGER badge, naming consistency
+- `Header.tsx` - Removed RANGER badge
+- `InsightPanel.tsx` - Agent naming consistency
+- `MeasureTool.tsx` - TypeScript fixes
+- `index.css` - Measuring cursor CSS
 
 ---
 

@@ -26,12 +26,16 @@ import { useLifecycleStore } from '@/stores/lifecycleStore';
 import type { AgentBriefingEvent, SourceAgent } from '@/types/briefing';
 import briefingService from '@/services/briefingService';
 
-// Map agents to icons and display names
+// Map agents to icons and display names (consistent with workflow naming)
+// Impact Analysis → IMPACT ANALYST
+// Damage Assessment → DAMAGE ASSESSOR
+// Timber Salvage → TIMBER ANALYST
+// Compliance Review → COMPLIANCE ADVISOR
 const AGENT_CONFIG: Record<SourceAgent, { icon: LucideIcon; name: string }> = {
-  burn_analyst: { icon: Flame, name: 'BURN ANALYST' },
-  trail_assessor: { icon: Map, name: 'TRAIL ASSESSOR' },
-  cruising_assistant: { icon: TreePine, name: 'CRUISING ASSISTANT' },
-  nepa_advisor: { icon: FileCheck, name: 'NEPA ADVISOR' },
+  burn_analyst: { icon: Flame, name: 'IMPACT ANALYST' },
+  trail_assessor: { icon: Map, name: 'DAMAGE ASSESSOR' },
+  cruising_assistant: { icon: TreePine, name: 'TIMBER ANALYST' },
+  nepa_advisor: { icon: FileCheck, name: 'COMPLIANCE ADVISOR' },
   recovery_coordinator: { icon: Brain, name: 'RECOVERY COORDINATOR' },
 };
 
@@ -73,18 +77,9 @@ const InsightPanel: React.FC = () => {
     console.log(`[InsightPanel] Action clicked: trigger ${targetAgent}`);
   };
 
-  // If no event, show empty state
+  // If no event, don't show anything - sidebar provides guidance
   if (!latestEvent) {
-    return (
-      <div className="absolute top-6 right-6 w-[360px] glass p-5 rounded-md z-20">
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <Brain size={32} className="text-text-muted mb-3 opacity-50" />
-          <p className="text-text-muted text-sm">
-            Click a lifecycle phase to see agent insights
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const config = AGENT_CONFIG[latestEvent.source_agent];

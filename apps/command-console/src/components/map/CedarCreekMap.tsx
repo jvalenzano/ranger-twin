@@ -11,10 +11,12 @@
  * Cedar Creek Fire (2022): 43.7°N, 122.1°W, Willamette National Forest, Oregon
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers } from '@/stores/mapStore';
+import { useMeasureMode } from '@/stores/measureStore';
+import MeasureTool from './MeasureTool';
 
 // MapTiler tile URLs
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
@@ -64,8 +66,10 @@ const CedarCreekMap: React.FC = () => {
   const isInitialized = useRef(false);
   const isInternalMove = useRef(false);
   const dataLoaded = useRef(false);
+  const [mapReady, setMapReady] = useState(false);
 
   const activeLayer = useActiveLayer();
+  const measureMode = useMeasureMode();
   const camera = useMapCamera();
   const dataLayers = useDataLayers();
   const exaggeration = useTerrainExaggeration();
@@ -345,15 +349,19 @@ const CedarCreekMap: React.FC = () => {
     map.current.on('load', () => {
       if (map.current) {
         loadDataLayers(map.current);
+        setMapReady(true);
       }
     });
 
-    // Sync camera state on move
+    // Sync camera state on user-initiated moves (not from store)
     map.current.on('moveend', () => {
-      if (!map.current || isInternalMove.current) {
-        isInternalMove.current = false;
+      if (!map.current) return;
+
+      // Skip syncing back to store if this was an internal move (from controls)
+      if (isInternalMove.current) {
         return;
       }
+
       const center = map.current.getCenter();
       setCamera({
         center: [center.lng, center.lat],
@@ -454,6 +462,7 @@ const CedarCreekMap: React.FC = () => {
         map.current = null;
         isInitialized.current = false;
         dataLoaded.current = false;
+        setMapReady(false);
       }
     };
   }, [loadDataLayers]);
@@ -503,15 +512,34 @@ const CedarCreekMap: React.FC = () => {
         mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', 0);
         mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0);
         mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
+      }
+      // Reset terrain exaggeration for SAT mode
+      if (mapInstance.getTerrain()) {
+        mapInstance.setTerrain({
+          source: 'terrain-dem',
+          exaggeration: 1.5, // Default exaggeration
+        });
       }
     }
 
     if (activeLayer === 'TER') {
+      // Topographic style: desaturated with enhanced contrast for terrain visibility
       if (mapInstance.getLayer('satellite-layer')) {
         mapInstance.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.3);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.2);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.7); // More desaturated
+        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.4);    // Higher contrast
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.1);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.85);
+        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 30);   // Slight sepia tint
+      }
+      // Increase terrain exaggeration for TER mode
+      if (mapInstance.getTerrain()) {
+        mapInstance.setTerrain({
+          source: 'terrain-dem',
+          exaggeration: 2.5, // More pronounced terrain
+        });
       }
     }
 
@@ -523,26 +551,92 @@ const CedarCreekMap: React.FC = () => {
         mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.3);
         mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.05);
         mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.4); // Darker base
+        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
       }
-    } else {
-      // Reset brightness max for non-IR modes
-      if (mapInstance.getLayer('satellite-layer')) {
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1);
+      // Reset terrain exaggeration for IR mode
+      if (mapInstance.getTerrain()) {
+        mapInstance.setTerrain({
+          source: 'terrain-dem',
+          exaggeration: 1.5,
+        });
       }
     }
 
     console.log(`[CedarCreekMap] Layer switched to: ${activeLayer}`);
   }, [activeLayer, dataLayers.burnSeverity.visible]);
 
+  // Track the current layer to apply styling consistently
+  const currentLayerRef = useRef(activeLayer);
+  currentLayerRef.current = activeLayer;
+
+  // Function to apply layer styling (called on idle to maintain consistency after tile loads)
+  const applyLayerStyling = useCallback(() => {
+    if (!map.current) return;
+    const mapInstance = map.current;
+    const layer = currentLayerRef.current;
+
+    if (!mapInstance.getLayer('satellite-layer')) return;
+
+    // Apply styling based on current layer mode
+    // Note: We use slightly non-zero values for SAT to ensure properties are "active"
+    if (layer === 'SAT') {
+      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', 0.0);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.0);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.0);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1.0);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
+    } else if (layer === 'TER') {
+      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.7);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.4);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.1);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.85);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 30);
+    } else if (layer === 'IR') {
+      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -1.0);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.3);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.05);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.4);
+      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
+    }
+  }, []);
+
   useEffect(() => {
     if (!map.current) return;
 
-    if (map.current.isStyleLoaded()) {
+    const mapInstance = map.current;
+
+    if (mapInstance.isStyleLoaded()) {
       updateLayer();
+      // Apply styling immediately on layer change
+      applyLayerStyling();
     } else {
-      map.current.once('load', updateLayer);
+      mapInstance.once('load', () => {
+        updateLayer();
+        applyLayerStyling();
+      });
     }
-  }, [activeLayer, updateLayer]);
+
+    // Reapply styling when map becomes idle (after tiles load)
+    const handleIdle = () => {
+      applyLayerStyling();
+    };
+
+    // Also reapply on sourcedata for tile loads during zoom/pan
+    const handleSourceData = (e: maplibregl.MapSourceDataEvent) => {
+      // Only respond to satellite source tile events
+      if (e.sourceId === 'satellite' && e.tile) {
+        applyLayerStyling();
+      }
+    };
+
+    mapInstance.on('idle', handleIdle);
+    mapInstance.on('sourcedata', handleSourceData);
+
+    return () => {
+      mapInstance.off('idle', handleIdle);
+      mapInstance.off('sourcedata', handleSourceData);
+    };
+  }, [activeLayer, updateLayer, applyLayerStyling]);
 
   // Handle data layer visibility changes
   useEffect(() => {
@@ -689,29 +783,59 @@ const CedarCreekMap: React.FC = () => {
       Math.abs(currentCenter.lng - camera.center[0]) > 0.001 ||
       Math.abs(currentCenter.lat - camera.center[1]) > 0.001;
     const zoomDiff = Math.abs(currentZoom - camera.zoom) > 0.1;
-    const bearingDiff = Math.abs(currentBearing - camera.bearing) > 1;
+
+    // Normalize bearing difference (handle wraparound at 360)
+    let bearingDelta = camera.bearing - currentBearing;
+    if (bearingDelta > 180) bearingDelta -= 360;
+    if (bearingDelta < -180) bearingDelta += 360;
+    const bearingDiff = Math.abs(bearingDelta) > 1;
+
     const pitchDiff = Math.abs(currentPitch - camera.pitch) > 1;
 
     if (centerDiff || zoomDiff || bearingDiff || pitchDiff) {
+      console.log('[CedarCreekMap] Camera sync triggered:', {
+        bearingDiff,
+        pitchDiff,
+        currentBearing,
+        targetBearing: camera.bearing,
+        currentPitch,
+        targetPitch: camera.pitch,
+      });
+
       isInternalMove.current = true;
-      mapInstance.flyTo({
+
+      // Use 'once' to properly handle the end of this specific animation
+      const handleMoveEnd = () => {
+        isInternalMove.current = false;
+      };
+      mapInstance.once('moveend', handleMoveEnd);
+
+      mapInstance.easeTo({
         center: camera.center,
         zoom: camera.zoom,
         bearing: camera.bearing,
         pitch: camera.pitch,
-        duration: 1000,
+        duration: 500,
       });
     }
   }, [camera.center[0], camera.center[1], camera.zoom, camera.bearing, camera.pitch]);
 
+  // Determine if measuring is active for cursor styling
+  const isMeasuring = measureMode !== null;
+
   return (
-    <div
-      ref={mapContainer}
-      className="absolute inset-0 w-full h-full"
-      style={{
-        background: '#0f172a',
-      }}
-    />
+    <>
+      <div
+        ref={mapContainer}
+        className={`absolute inset-0 w-full h-full ${isMeasuring ? 'measuring-active' : ''}`}
+        style={{
+          background: '#0f172a',
+          cursor: isMeasuring ? 'crosshair' : undefined,
+        }}
+      />
+      {/* Measurement tool - handles map interactions when active */}
+      {mapReady && <MeasureTool map={map.current} />}
+    </>
   );
 };
 

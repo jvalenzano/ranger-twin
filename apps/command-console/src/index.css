@@ -115,6 +115,13 @@
   padding: 4px 8px;
 }
 
+/* Measurement Tool - Force crosshair cursor on map canvas when measuring */
+.measuring-active,
+.measuring-active canvas,
+.measuring-active .maplibregl-canvas {
+  cursor: crosshair !important;
+}
+
 @layer utilities {
   /* Text shadow for labels on dark backgrounds */
   .text-shadow-sm {

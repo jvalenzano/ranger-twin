@@ -60,7 +60,8 @@ interface MapState {
 }
 
 // Cedar Creek Fire location (Willamette NF, Oregon)
-const CEDAR_CREEK_CENTER: [number, number] = [-122.1, 43.7];
+// Verified from Wikipedia: 43°43′34″N 122°10′01″W
+const CEDAR_CREEK_CENTER: [number, number] = [-122.167, 43.726];
 const DEFAULT_ZOOM = 10;
 const DEFAULT_BEARING = 0;
 const DEFAULT_PITCH = 45; // 3D view for terrain
@@ -196,9 +197,10 @@ export const CEDAR_CREEK = {
   center: CEDAR_CREEK_CENTER,
   defaultZoom: DEFAULT_ZOOM,
   bounds: {
-    north: 43.85,
-    south: 43.55,
-    east: -121.9,
-    west: -122.3,
+    // Bounds adjusted to center around verified coordinates
+    north: 43.876,  // ~16km north of center
+    south: 43.576,  // ~16km south of center
+    east: -121.967, // ~16km east of center
+    west: -122.367, // ~16km west of center
   },
 };

@@ -2,6 +2,15 @@ import React from 'react';
 import { Bell, ChevronRight, Play, Sparkles, MessageSquare, X } from 'lucide-react';
 
 import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
+import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
+
+// Map phase IDs to user-friendly labels (consistent naming)
+const PHASE_LABELS: Record<LifecyclePhase, string> = {
+  IMPACT: 'Impact Analysis',
+  DAMAGE: 'Damage Assessment',
+  TIMBER: 'Timber Salvage',
+  COMPLIANCE: 'Compliance Review',
+};
 
 interface HeaderProps {
   onChatToggle?: () => void;
@@ -12,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   const startTour = useDemoTourStore((state) => state.startTour);
   const endTour = useDemoTourStore((state) => state.endTour);
   const isTourActive = useTourActive();
+  const activePhase = useLifecycleStore((state) => state.activePhase);
 
   const handleDemoClick = () => {
     if (isTourActive) {
@@ -23,20 +33,18 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
 
   return (
     <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-8">
-      {/* Left side Wordmark - offset to account for sidebar width */}
-      <div className="flex items-center" style={{ marginLeft: '64px' }}>
-        <span className="text-[18px] font-bold tracking-[0.05em] text-text-primary">
-          RANGER
-        </span>
-      </div>
+      {/* Left side - spacer for sidebar */}
+      <div style={{ width: '200px' }} />
 
-      {/* Center Breadcrumb */}
+      {/* Center Breadcrumb - Dynamic phase indicator */}
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-text-secondary text-[12px] font-medium tracking-wide">
         <span>Willamette NF</span>
         <ChevronRight size={14} className="opacity-40" />
         <span>Cedar Creek Fire</span>
         <ChevronRight size={14} className="opacity-40" />
-        <span className="text-text-primary">Impact Analysis</span>
+        <span className="text-text-primary transition-all duration-300">
+          {PHASE_LABELS[activePhase]}
+        </span>
       </div>
 
       {/* Right side status/user/actions */}

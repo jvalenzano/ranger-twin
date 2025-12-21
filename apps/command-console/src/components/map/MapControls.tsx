@@ -1,5 +1,5 @@
 /**
- * MapControls - Layer toggles, zoom, and compass controls
+ * MapControls - Layer toggles, zoom, compass, and measurement tools
  *
  * Wired to mapStore for real map control:
  * - SAT: Satellite imagery
@@ -7,11 +7,20 @@
  * - IR: Infrared/thermal simulation
  * - Zoom +/-: Controlled zoom levels
  * - Compass: Reset bearing to north
+ * - Ruler: Distance measurement
+ * - Area: Polygon area measurement
  */
 
 import React from 'react';
-import { Plus, Minus, Compass } from 'lucide-react';
+import { Plus, Minus, Compass, Ruler, PenTool, X } from 'lucide-react';
 import { useMapStore, useActiveLayer, type MapLayerType } from '@/stores/mapStore';
+import {
+  useMeasureStore,
+  useMeasureMode,
+  useMeasureDistance,
+  useMeasureArea,
+  useMeasurePoints,
+} from '@/stores/measureStore';
 
 const MapControls: React.FC = () => {
   const activeLayer = useActiveLayer();
@@ -19,6 +28,13 @@ const MapControls: React.FC = () => {
   const zoomIn = useMapStore((state) => state.zoomIn);
   const zoomOut = useMapStore((state) => state.zoomOut);
   const resetBearing = useMapStore((state) => state.resetBearing);
+
+  const measureMode = useMeasureMode();
+  const measureDistance = useMeasureDistance();
+  const measureArea = useMeasureArea();
+  const measurePoints = useMeasurePoints();
+  const setMeasureMode = useMeasureStore((state) => state.setMode);
+  const clearMeasure = useMeasureStore((state) => state.clear);
 
   const layers: MapLayerType[] = ['SAT', 'TER', 'IR'];
 
@@ -29,9 +45,128 @@ const MapControls: React.FC = () => {
   };
 
   const isIRMode = activeLayer === 'IR';
+  const isMeasuring = measureMode !== null;
+
+  const handleDistanceClick = () => {
+    if (measureMode === 'distance') {
+      clearMeasure();
+    } else {
+      setMeasureMode('distance');
+    }
+  };
+
+  const handleAreaClick = () => {
+    if (measureMode === 'area') {
+      clearMeasure();
+    } else {
+      setMeasureMode('area');
+    }
+  };
+
+  // Format distance for display
+  const formatDistance = (miles: number): string => {
+    if (miles < 0.1) {
+      const feet = miles * 5280;
+      return `${Math.round(feet).toLocaleString()} ft`;
+    }
+    return `${miles.toFixed(2)} mi`;
+  };
+
+  // Format area for display
+  const formatArea = (acres: number): string => {
+    if (acres >= 1000) {
+      return `${(acres / 1000).toFixed(2)}k acres`;
+    }
+    return `${acres.toFixed(1)} acres`;
+  };
 
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+      {/* Measurement Display - Shows when measuring */}
+      {isMeasuring && (
+        <div className="glass rounded-lg px-4 py-2 border border-accent-cyan/40 shadow-[0_0_20px_rgba(0,212,255,0.2)] flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            {measureMode === 'distance' ? (
+              <Ruler size={14} className="text-accent-cyan" />
+            ) : (
+              <PenTool size={14} className="text-accent-cyan" />
+            )}
+            <span className="text-[10px] uppercase tracking-wider text-accent-cyan font-bold">
+              {measureMode === 'distance' ? 'Distance' : 'Area'}
+            </span>
+          </div>
+
+          {/* Measurements */}
+          <div className="flex items-center gap-3">
+            {measureDistance !== null && (
+              <div className="text-white font-mono text-sm font-bold">
+                {formatDistance(measureDistance)}
+              </div>
+            )}
+            {measureArea !== null && (
+              <div className="text-white font-mono text-sm font-bold">
+                {formatArea(measureArea)}
+              </div>
+            )}
+            {measurePoints.length === 0 && (
+              <span className="text-[10px] text-accent-cyan animate-pulse">
+                👆 Click on the map
+              </span>
+            )}
+            {measurePoints.length === 1 && (
+              <span className="text-[10px] text-text-muted">Click next point on map</span>
+            )}
+            {measurePoints.length >= 2 && measureMode === 'distance' && (
+              <span className="text-[10px] text-text-muted">Double-click to finish</span>
+            )}
+            {measurePoints.length >= 2 && measureMode === 'area' && measurePoints.length < 3 && (
+              <span className="text-[10px] text-text-muted">Need 3+ points</span>
+            )}
+            {measurePoints.length >= 3 && measureMode === 'area' && (
+              <span className="text-[10px] text-text-muted">Double-click to close shape</span>
+            )}
+          </div>
+
+          {/* Clear button */}
+          <button
+            onClick={clearMeasure}
+            className="p-1 rounded hover:bg-white/10 text-text-muted hover:text-white transition-colors"
+            title="Clear measurement (ESC)"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Distance Measure */}
+      <button
+        onClick={handleDistanceClick}
+        title="Measure distance"
+        className={`glass w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-95 ${
+          measureMode === 'distance'
+            ? 'border-accent-cyan/50 text-accent-cyan bg-accent-cyan/10 shadow-[0_0_12px_rgba(0,212,255,0.4)]'
+            : 'border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5'
+        }`}
+      >
+        <Ruler size={18} />
+      </button>
+
+      {/* Area Measure */}
+      <button
+        onClick={handleAreaClick}
+        title="Measure area"
+        className={`glass w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-95 ${
+          measureMode === 'area'
+            ? 'border-accent-cyan/50 text-accent-cyan bg-accent-cyan/10 shadow-[0_0_12px_rgba(0,212,255,0.4)]'
+            : 'border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5'
+        }`}
+      >
+        <PenTool size={18} />
+      </button>
+
+      {/* Divider */}
+      <div className="w-px h-6 bg-white/10" />
+
       {/* Zoom Out */}
       <button
         onClick={zoomOut}
@@ -95,28 +230,6 @@ const MapControls: React.FC = () => {
         <Compass size={20} strokeWidth={1.5} />
       </button>
 
-      {/* IR Mode Legend - Positioned to the right of controls */}
-      {isIRMode && (
-        <div className="glass rounded-lg px-3 py-2 border border-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.2)] animate-fadeIn flex items-center gap-4">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400">
-            Thermal
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-              <span className="text-[9px] text-slate-300">High</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
-              <span className="text-[9px] text-slate-300">Med</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
-              <span className="text-[9px] text-slate-300">Low</span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

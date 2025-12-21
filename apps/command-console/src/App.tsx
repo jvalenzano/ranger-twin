@@ -18,6 +18,7 @@ const CedarCreekMap = lazy(() => import('@/components/map/CedarCreekMap'));
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(200); // Start expanded
   const addEvent = useBriefingStore((state) => state.addEvent);
 
   // Connect to gateway on mount
@@ -65,11 +66,14 @@ const App: React.FC = () => {
           {/* Header - Full width at top */}
           <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
 
-          {/* Lifecycle Navigation Rail - Left side */}
-          <Sidebar />
+          {/* Lifecycle Navigation - Left side (expandable) */}
+          <Sidebar onWidthChange={setSidebarWidth} />
 
-          {/* Main Content Area - offset for sidebar */}
-          <main className="absolute top-[48px] left-[64px] right-0 bottom-0 p-6 pointer-events-none">
+          {/* Main Content Area - offset for dynamic sidebar width */}
+          <main
+            className="absolute top-[48px] right-0 bottom-0 p-6 pointer-events-none transition-all duration-300"
+            style={{ left: sidebarWidth }}
+          >
             <div className="pointer-events-auto contents">
               {/* Insight Panel - Top Right */}
               <InsightPanel />
