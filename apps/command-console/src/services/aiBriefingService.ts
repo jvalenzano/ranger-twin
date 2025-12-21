@@ -62,23 +62,24 @@ class AIBriefingService {
   private isLoading = false;
 
   /**
-   * Query the RANGER agents
+   * Query the RANGER agents via simple chat endpoint
    */
   async query(
     queryText: string,
-    targetAgent?: AgentRole
+    sessionId: string = 'demo-session-123'
   ): Promise<QueryResponse> {
     this.isLoading = true;
 
     try {
-      const response = await fetch(`${API_URL}/query`, {
+      // The gateway endpoint is /api/v1/chat
+      const response = await fetch(`${API_URL}/v1/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           query: queryText,
-          targetAgent,
+          session_id: sessionId,
         }),
       });
 
@@ -86,12 +87,25 @@ class AIBriefingService {
         throw new Error(`API error: ${response.status}`);
       }
 
-      const data: QueryResponse = await response.json();
-      return data;
+      const data: { answer: string } = await response.json();
+
+      // Adapt the simple answer back to the expected AgentResponse format
+      // In Phase 2+, the full BriefingEvent will arrive via WebSocket
+      const adaptedResponse: QueryResponse = {
+        success: true,
+        response: {
+          agentRole: 'recovery-coordinator',
+          summary: data.answer,
+          reasoning: ['Synthesized by Recovery Coordinator'],
+          confidence: 90,
+          citations: [],
+        },
+      };
+
+      return adaptedResponse;
     } catch (error) {
       console.error('[AIBriefingService] Query failed:', error);
 
-      // Return error response
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Query failed',

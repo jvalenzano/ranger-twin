@@ -179,7 +179,18 @@ Last updated: 2025-12-20
    - Smaller controls on mobile
    - Hidden geographic markers on small screens
 
-**Commit:** (pending) - feat: implement Milestone 7 - The Polish
+**Commit:** `3113929` - feat: finalize Milestone 7 polish and camera sync fixes
+
+### 2025-12-20 - API Alignment & Phase 1 Finalization
+
+**Completed:**
+1. Aligned `aiBriefingService.ts` with the new Python-based API Gateway.
+2. Updated frontend to call `/api/v1/chat` instead of the legacy `/api/query`.
+3. Adapted text-based agent responses to maintain compatibility with the existing UI components.
+4. Refactored `mapStore.ts` with granular terrain hooks for better performance.
+5. Fixed infinite camera sync loop in `CedarCreekMap.tsx` using `isInternalMove` ref.
+
+**Commit:** (pending) - chore: align AI service with new API gateway
 
 ---
 
