@@ -1,8 +1,7 @@
-# RANGER Strategic Reframe: Session Capture
+# RANGER Strategic Reframe
 
-**Date:** December 20, 2025
-**Context:** Documentation audit led to strategic clarity session
-**Status:** Ready for execution in next session
+**Purpose:** Document the architectural clarity achieved through strategic analysis
+**See Also:** [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) for Phase 1 implementation boundaries
 
 ---
 
@@ -200,21 +199,25 @@ FOREST FLOOR                                              WASHINGTON
 
 ## What We Actually Need to Build vs. Integrate
 
-| Component | Build vs. Integrate | Notes |
-|-----------|---------------------|-------|
-| Command Console UI | **Build** | React + MapLibre (V2 mockup is valid) |
-| MTBS/RAVG data access | **Integrate** | API/MCP |
-| EDW trail layer | **Integrate** | API/MCP |
-| FSVeg/FIA data | **Integrate** | API/MCP |
-| FSM/FSH corpus | **Integrate** | RAG |
-| Fire perimeters (NIFC) | **Integrate** | API/MCP |
-| Google Earth Engine imagery | **Integrate** | API/MCP |
-| 3D terrain (3DEP) | **Integrate** | MapLibre + terrain tiles |
-| Field capture mobile app | **Build** | Flutter/React Native |
-| Gemini AI synthesis | **Integrate** | Vertex AI |
+**Note:** For Phase 1, "Integrate" means "simulate" per [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md). We are proving the orchestration value, not the data pipeline capabilities.
 
-**The BUILD is:** Console UI + Field capture apps
-**The INTEGRATE is:** Everything else (via MCP/API)
+| Component | Phase 1 Approach | Future Integration | Notes |
+|-----------|------------------|-------------------|-------|
+| Command Console UI | **Build** | N/A | React + MapLibre (V2 mockup is valid) |
+| MTBS/RAVG data access | **Simulate** | API/MCP | Static GeoJSON fixtures for Cedar Creek |
+| EDW trail layer | **Simulate** | API/MCP | Static JSON representing trail damage |
+| FSVeg/FIA data | **Simulate** | API/MCP | Static JSON representing timber plots |
+| FSM/FSH corpus | **Integrate** | RAG | Real PDFs, chunked for RAG (partial corpus) |
+| Fire perimeters (NIFC) | **Simulate** | API/MCP | Static GeoJSON for Cedar Creek |
+| Google Earth Engine imagery | **Simulate** | API/MCP | No live satellite pulls; use MTBS-derived data |
+| 3D terrain (3DEP) | **Integrate** | MapLibre + terrain tiles | Real terrain visualization |
+| Field capture mobile app | **Future** | Build | Not in Phase 1 scope |
+| Gemini AI synthesis | **Integrate** | Vertex AI | Real AI reasoning and briefings |
+| Recovery Coordinator | **Build** | N/A | Core orchestration agent (Google ADK) |
+
+**The Phase 1 BUILD is:** Console UI + Recovery Coordinator + Agent reasoning chains
+**The Phase 1 SIMULATE is:** All upstream data sources (using static fixtures)
+**The Phase 1 REAL is:** Gemini synthesis, cross-agent orchestration, briefing generation
 
 ---
 
@@ -232,23 +235,34 @@ FOREST FLOOR                                              WASHINGTON
 
 ---
 
-## What Changed in This Session
+## Strategic Insights Summary
 
-### Documentation Cleanup (Completed)
-- Trimmed CLAUDE.md from 306 → 144 lines
-- Fixed all agent naming to ADR-002 standard across 8 files
-- Aligned MARKET-RESEARCH.md, DATA-STRATEGY.md, DATA-RESOURCES.md
-- Updated all 4 agent specs with "Formerly" notes and correct names
+### Key Realizations
+- **One Console, Multiple Views:** We are not building four separate applications. The "agents" are lifecycle-based workflow lenses on a unified digital twin.
+- **IMPACT View is Entry Point:** The burn severity view (V2 mockup) is not a backup plan—it's the natural entry point to the recovery lifecycle.
+- **Innovation is Orchestration + Field Capture:** We're not competing with RAVG or MTBS—we're wrapping them. The innovation is AI-powered field capture and cross-lifecycle synthesis.
+- **MCP/API Integration Path:** All external data sources integrate via Model Context Protocol or REST APIs.
 
-### Strategic Clarity (This Document)
-- Reframed from "four apps" to "one console, multiple views"
-- Identified that IMPACT view is entry point, not backup
-- Clarified that innovation is field capture + AI, not reinventing base data
-- Established MCP/API integration as the path for data sources
+### Recovery Coordinator Clarity
+The Recovery Coordinator is not UI logic—it's a distinct root `LlmAgent` using Google ADK's Coordinator/Dispatcher Pattern. It requires:
+- An actual agent with a model for routing decisions
+- AI capability for cross-lifecycle synthesis queries
+- Parent-child relationships with the four specialist sub-agents
+
+### Architecture Hierarchy
+```
+Console (UI) → Recovery Coordinator (Root Agent)
+                    ├── Burn Analyst (Sub-agent)
+                    ├── Trail Assessor (Sub-agent)
+                    ├── Cruising Assistant (Sub-agent)
+                    └── NEPA Advisor (Sub-agent)
+```
 
 ---
 
-## MCP Integration Targets (To Be Researched)
+## Future Integration Targets
+
+These represent post-Phase 1 capabilities when real data pipelines replace simulations:
 
 ### IMPACT View (Burn Analyst)
 | Data Source | Purpose | API/Access Method |
@@ -279,88 +293,9 @@ FOREST FLOOR                                              WASHINGTON
 
 ---
 
-## Commits Made This Session
+## Document History
 
-```
-3102732 docs: align all documentation with ADR-002 naming convention
-86229e2 feat(docs): add Command Console v2 hero mockup with 3D terrain visualization
-6565e5d feat(docs): add Command Console v1 mockup and vibe coding workflow
-```
-
----
-
-## Files Modified
-
-- `CLAUDE.md` — Trimmed significantly
-- `docs/agents/BURN-ANALYST-SPEC.md` — Renamed, added ADR-002 note
-- `docs/agents/TRAIL-ASSESSOR-SPEC.md` — Renamed, added ADR-002 note
-- `docs/agents/TIMBER-CRUISER-SPEC.md` — Renamed, added ADR-002 note
-- `docs/agents/COMPLIANCE-ADVISOR-SPEC.md` — Renamed, added ADR-002 note
-- `docs/research/MARKET-RESEARCH.md` — All naming fixed
-- `docs/research/DATA-STRATEGY.md` — All naming fixed
-- `docs/research/DATA-RESOURCES.md` — All naming fixed
-
----
-
-## Next Session Execution Plan
-
-### Task 1: Reframe CLAUDE.md and Project Docs
-Update to reflect "one console, multiple views" architecture:
-- CLAUDE.md needs new "Architecture" section explaining unified console
-- Consider updating PROJECT-BRIEF.md if it still uses "four apps" framing
-- Add this STRATEGIC-REFRAME.md content to permanent docs
-
-### Task 2: Identify MCP/API Integrations for IMPACT View
-Research and document:
-- MTBS API endpoints and authentication
-- RAVG data access (public vs. USFS internal)
-- Google Earth Engine integration patterns
-- NIFC fire perimeter API
-
-### Task 3: Validate V2 Mockup as IMPACT View Reference
-- Confirm V2 mockup represents IMPACT lifecycle step correctly
-- Document that this is the shared UI chrome for all views
-- Note what changes per lifecycle step (panel content, data sources)
-
-### Task 4: Prioritize Field Capture Development
-- Create `SPRINT-FOCUS.md` with explicit priorities
-- Trail Assessor + Cruising Assistant are the novel contributions
-- Console UI is shared infrastructure
-
-### Task 5: Create MCP Integration Plan
-- New document: `docs/architecture/MCP-INTEGRATION-PLAN.md`
-- Map each lifecycle view to its data sources
-- Identify which MCPs exist vs. need to be built
-- Prioritize by demo needs
-
----
-
-## Warm Handoff Prompt for Next Session
-
-Copy this into the next context window:
-
----
-
-**CONTEXT:** We just completed a strategic reframe session for RANGER. Key insight: We're building ONE unified command console with multiple lifecycle views, not four separate applications. The "agents" are workflow lenses that orchestrate existing data sources via MCP/API.
-
-**READ FIRST:** `/Users/jvalenzano/Projects/ranger-twin/docs/STRATEGIC-REFRAME.md`
-
-**EXECUTE THESE 5 TASKS:**
-
-1. **Reframe CLAUDE.md and project docs** — Update to reflect "one console, multiple views" rather than "four separate agents." The console is the product; the agents are views.
-
-2. **Identify MCP/API integrations for IMPACT view** — Research and document:
-   - MTBS API for historical burn severity
-   - RAVG for rapid assessment data
-   - Google Earth Engine for satellite imagery
-   - NIFC for fire perimeters
-
-3. **Validate V2 mockup** — Confirm the existing V2 mockup (`docs/assets/mockup-iterations/ranger-command-console-v2.png`) is the IMPACT view design reference. Document what's shared chrome vs. view-specific.
-
-4. **Prioritize field capture** — Create `SPRINT-FOCUS.md` establishing Trail Assessor + Cruising Assistant as P1 (novel innovation), with IMPACT view integrations as P2 (aggregation, not competition).
-
-5. **Create MCP integration plan** — New doc at `docs/architecture/MCP-INTEGRATION-PLAN.md` mapping each lifecycle view to its data sources and integration approach.
-
-**KEY PRINCIPLE:** We're not competing with RAVG or MTBS—we're wrapping them. The innovation is field capture + AI synthesis, not reinventing base data.
-
----
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0 | 2025-12-20 | Initial strategic reframe capturing "one console, multiple views" |
+| 1.1 | 2025-12-20 | Cleaned up session artifacts, added simulation strategy reference |

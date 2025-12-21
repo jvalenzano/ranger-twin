@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   RANGER Command Console - Tactical Futurism
+   ============================================ */
+
+@layer base {
+  body {
+    @apply m-0 p-0 overflow-hidden bg-background font-sans;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Glass morphism panels */
+  .glass {
+    @apply bg-surface/60 backdrop-blur-[24px] saturate-[180%];
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-header {
+    @apply bg-surface/70 backdrop-blur-[12px];
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Monospace text utility */
+  .mono {
+    @apply font-mono;
+  }
+
+  /* Active step glow for sidebar */
+  .active-step-glow {
+    @apply animate-pulse-glow;
+  }
+
+  /* Live indicator dot */
+  .live-dot {
+    @apply animate-live-pulse;
+  }
+
+  /* 3D Terrain container */
+  .terrain-container {
+    perspective: 1500px;
+    perspective-origin: 50% 40%;
+    transform-style: preserve-3d;
+  }
+
+  .terrain-plane {
+    transform: rotateX(55deg) rotateZ(-45deg);
+    transform-style: preserve-3d;
+    width: 1200px;
+    height: 1200px;
+    @apply bg-background relative;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 1);
+  }
+
+  .contour-layer {
+    @apply absolute inset-0 pointer-events-none;
+    transform-style: preserve-3d;
+  }
+
+  /* Fire effects */
+  .fire-valley {
+    @apply animate-fire-pulse;
+    mix-blend-mode: screen;
+  }
+
+  .fire-glow-anim {
+    @apply animate-fire-glow;
+  }
+
+  /* HUD dot grid background */
+  .dot-grid-bg {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Scanlines overlay for military HUD aesthetic */
+  .scanlines-overlay {
+    @apply fixed inset-0 pointer-events-none z-[100] opacity-50;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+  }
+}
+
+@layer utilities {
+  /* Text shadow for labels on dark backgrounds */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Severity-based ring colors for focus states */
+  .ring-severity-safe {
+    @apply ring-safe/50;
+  }
+
+  .ring-severity-warning {
+    @apply ring-warning/50;
+  }
+
+  .ring-severity-severe {
+    @apply ring-severe/50;
+  }
+}

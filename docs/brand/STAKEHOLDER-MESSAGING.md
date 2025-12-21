@@ -1,8 +1,10 @@
 # RANGER Stakeholder Messaging Guide
 
-**Version:** 1.0
-**Date:** December 19, 2025
+**Version:** 1.1
+**Last Updated:** Phase 1 (Simulation/Demo Focus)
 **Purpose:** Tailored messaging for different audiences
+
+> **Phase 1 Scope Note:** This messaging reflects the simulation/demonstration strategy focused on **orchestration and coordination value**. We are NOT building computer vision capabilities, field capture apps, or voice interaction in Phase 1. The demo uses historical Cedar Creek Fire data to show how the Recovery Coordinator synthesizes insights across multiple agent domains. Avoid messaging that promises CV, multimodal field capture, or offline mobile apps.
 
 ---
 
@@ -33,7 +35,7 @@
 - **Federal alignment:** FedRAMP High compatible; supports USDA AI strategy (FY 2025-2026)
 
 **Elevator Pitch (30 seconds):**
-> "Project RANGER is the Forest Service's first integrated digital twin for post-fire recovery. It connects burn severity mapping, trail damage assessment, timber inventory, and NEPA compliance through a unified AI platform. Built entirely on open source tools with no licensing fees, it delivers analysis in days that currently takes weeks. We're demonstrating it with the Cedar Creek Fire this quarter."
+> "Project RANGER is the Forest Service's first integrated digital twin for post-fire recovery. It connects burn severity mapping, trail damage assessment, timber inventory, and NEPA compliance through a unified AI platform. Built entirely on open source tools with no licensing fees, it delivers analysis in days that currently takes weeks. We're demonstrating orchestration and coordination capabilities using historical Cedar Creek Fire data."
 
 **Tagline:**
 > "Recovery at the speed of insight."
@@ -57,12 +59,12 @@
 - **Staff efficiency:** Field staff spend time on decisions, not data entry
 
 **Elevator Pitch (30 seconds):**
-> "RANGER is a unified platform that connects your burn severity analysis, trail assessments, timber cruising, and NEPA compliance into one coordinated workflow. Your teams get AI-powered analysis that compresses weeks into days, and the platform scales to zero in the off-season so you're not paying for capacity you don't need."
+> "RANGER is a unified platform that connects your burn severity analysis, trail assessments, timber cruising, and NEPA compliance into one coordinated workflow. Our Recovery Coordinator orchestrates multiple AI agents to synthesize insights across all recovery domains. Your teams get AI-powered analysis that compresses weeks into days, and the platform scales to zero in the off-season so you're not paying for capacity you don't need."
 
 **ROI Talking Points:**
-- Estimated 3x efficiency gain for timber cruising (voice + video vs. clipboard)
 - Draft BAER assessments in 48 hours vs. 2 weeks
 - NEPA cite-checking in 30 seconds vs. 3 weeks of manual cross-referencing
+- Coordinated recovery planning across burn severity, trails, timber, and compliance in one view
 
 **Avoid:**
 - Over-promising on accuracy (always frame as "draft" or "AI-assisted")
@@ -74,22 +76,22 @@
 ### 3. District Rangers
 
 **Primary Message:**
-> RANGER gives you and your team AI-powered tools that handle the data work so your people can focus on the decisions that matter.
+> RANGER gives you and your team a coordinated AI nerve center that synthesizes recovery insights across burn severity, trails, timber, and compliance — so your people can focus on the decisions that matter.
 
 **Key Points:**
-- **Time savings:** Assessments that took days now take hours
+- **Time savings:** Coordinated assessments that took days now take hours
 - **Consistency:** Standardized outputs across your district
 - **Risk reduction:** AI pre-screens compliance issues before you sign
-- **Offline-ready:** Works in the field with no connectivity
+- **Unified view:** One platform coordinates insights from multiple recovery domains
 
 **Elevator Pitch (30 seconds):**
-> "RANGER is four AI assistants for your recovery operations. The Burn Analyst maps severity from satellite imagery. The Trail Assessor identifies damage from walk-through video. The Cruising Assistant captures timber inventory from voice and video. And the NEPA Advisor checks your documents against the FSM and FSH in seconds. Your experts stay in charge; the AI handles the grunt work."
+> "RANGER is a Recovery Coordinator that orchestrates four specialized AI agents. The Burn Analyst maps severity from satellite imagery. The Trail Assessor analyzes damage patterns. The Cruising Assistant processes timber inventory data. And the NEPA Advisor checks your documents against the FSM and FSH in seconds. Instead of juggling four disconnected analyses, you get one coordinated briefing that shows how everything connects."
 
 **Demo Scenario:**
-1. Show satellite imagery of burn area
-2. Ask the Burn Analyst: "What percentage is high severity?"
-3. Show trail video analysis identifying damage points
-4. Generate a compliance check on a draft EA paragraph
+1. Ask Recovery Coordinator: "Give me a briefing on Cedar Creek Fire recovery priorities"
+2. Watch as it orchestrates Burn Analyst, Trail Assessor, Timber Cruiser, and NEPA Advisor
+3. See coordinated insights rendered in unified briefing view
+4. Ask follow-up: "What are the compliance risks for salvage logging in high-severity zones?"
 
 **Avoid:**
 - Implying you can skip human review
@@ -101,25 +103,22 @@
 ### 4. Field Staff (Foresters, Trail Crews, Technicians)
 
 **Primary Message:**
-> RANGER is your digital crew — AI assistants that handle the paperwork so you can focus on the forest.
+> RANGER is your digital crew — AI assistants that process and analyze recovery data so you can focus on the forest.
 
 **Key Points:**
-- **Hands-free data capture:** Voice and video replace clipboards
-- **Offline-first:** Works without cell service; syncs when you're back
+- **Faster analysis:** Data that took weeks to synthesize now takes hours
+- **Coordinated insights:** All recovery domains (burn, trails, timber, compliance) connected
 - **You stay in charge:** AI makes suggestions; you make decisions
-- **Less office time:** Capture data in the field, not the desk
+- **Better information:** See how your field observations connect to the bigger recovery picture
 
 **Elevator Pitch (30 seconds):**
-> "Imagine walking a trail with your phone recording video, and by the time you get back to the truck, you've got a map of every damage point and a draft work order. That's the Trail Assessor. Or doing a timber cruise by just talking through what you see — 'I see three Doug firs with fire damage' — and having the Cruising Assistant fill out the plot form for you. RANGER is AI that does the paperwork so you don't have to."
+> "RANGER connects all the recovery work happening across your district. When you submit burn severity observations, trail condition reports, or timber inventory data, the Recovery Coordinator synthesizes it with satellite imagery, historical data, and compliance requirements to show the full picture. You get coordinated briefings instead of disconnected spreadsheets."
 
-**Voice Interaction Example:**
-> **Forester:** "Hey Ranger, start a new plot."
-> **Cruising Assistant:** "Plot 47-Alpha started. GPS coordinates logged. What do you see?"
-> **Forester:** "Twelve large Douglas fir, most showing fire damage on the lower trunk. Estimating 80% mortality in the overstory."
-> **Cruising Assistant:** "Got it. Species: Douglas Fir, 12 stems, 80% estimated mortality. Anything else?"
+**Value Proposition:**
+> "Instead of submitting data into a black hole and waiting weeks for analysis, you see how your field observations fit into the district's overall recovery strategy — in hours, not weeks."
 
 **Adoption Message:**
-> "This isn't replacing you — it's giving you a helper that never gets tired of data entry."
+> "This isn't replacing you — it's making sure your expertise gets connected to everyone else's work so the district can make better decisions faster."
 
 **Avoid:**
 - Anything that sounds like job replacement
@@ -204,7 +203,7 @@ Infra:      GCP Cloud Run + Cloud SQL + Cloud Storage + BigQuery
 
 ### "We've seen demos before that never went anywhere."
 
-> "Fair point. Three things are different here: First, we're building on 100% open source tools with no licensing costs, so there's no procurement barrier. Second, we're using the Cedar Creek Fire as a 'frozen-in-time' proof-of-concept with real public data, not synthetic demos. Third, we're designing for your actual workflows — TRACS for trails, FSVeg for timber, FSM/FSH for compliance — not building a shiny tool that doesn't fit."
+> "Fair point. Three things are different here: First, we're building on 100% open source tools with no licensing costs, so there's no procurement barrier. Second, we're demonstrating orchestration value with real Cedar Creek Fire data — showing how AI agents coordinate across recovery domains, not flashy computer vision that requires years of training data. Third, we're designing for your actual workflows — focusing on the coordination and synthesis that saves weeks, not individual tools that might save hours."
 
 ### "What happens when the fire season is over?"
 

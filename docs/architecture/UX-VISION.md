@@ -1,20 +1,22 @@
 # RANGER Command Console: UI/UX Vision
 
-This document outlines the "Command & Control" interface designed for the US Forest Service, transitioning from a macro-level US map to a high-fidelity 3D "Digital Twin" of specific forest fire sites.
+This document defines the design vision for the RANGER Command Console — a "Command & Control" interface for the US Forest Service that transitions from macro-level situational awareness to high-fidelity 3D "Digital Twin" visualization of specific forest fire sites.
+
+> **Note:** The mockups referenced in this document represent the target user experience for the Command Console. They illustrate the intended design direction and component structure, not a strict implementation timeline.
 
 ## 1. Tactical Forest Intelligence
 
-The interface is built on the principle of **"Macro-to-Micro Intelligence."** It allows a strategic planner to see the entire national landscape and then dive into a hyper-detailed "Digital Twin" of a specific fire event.
+The interface is built on the principle of **"Macro-to-Micro Intelligence."** It allows strategic planners to see the entire national landscape and then dive into a hyper-detailed "Digital Twin" of a specific fire event.
 
-### Key Design Features
+### Core Design Features
 
-1.  **3D Digital Twin Engine:** The central viewport displays a photorealistic 3D model of the forest. It overlays real-time AI detections like burn severity and heat signatures directly onto the terrain.
-2.  **Post-Fire Lifecycle Rail:** The left-hand sidebar provides a direct link to the four core AI agents ("The Crew"):
-    - **Impact (Burn Analyst):** Satellite-based burn assessment.
-    - **Damage (Trail Assessor):** Computer vision identification of trail washouts.
-    - **Timber (Cruising Assistant):** Multimodal data for salvage logging.
-    - **Compliance (NEPA Advisor):** AI-assisted regulatory workflows.
-3.  **AI Insight HUD:** Translucent, glassmorphic panels provide high-level metrics and "What-If" scenarios, such as estimated timber loss or recovery timelines.
+1.  **3D Digital Twin Engine:** The central viewport displays a photorealistic 3D model of the forest, overlaying real-time AI detections like burn severity and heat signatures directly onto the terrain.
+2.  **Post-Fire Lifecycle Rail:** The left-hand sidebar provides direct access to the four core AI agents ("The Crew"):
+    - **Impact (Burn Analyst):** Satellite-based burn severity assessment.
+    - **Damage (Trail Assessor):** Computer vision identification of trail washouts and infrastructure damage.
+    - **Timber (Cruising Assistant):** Multimodal data collection for salvage logging operations.
+    - **Compliance (NEPA Advisor):** AI-assisted regulatory workflows and document generation.
+3.  **AI Insight HUD:** Translucent, glassmorphic panels provide high-level metrics, AI-generated insights, and "What-If" scenarios such as estimated timber loss or recovery timelines.
 
 ## 2. Design Mockups: "The Ranger's Command Console"
 
@@ -43,28 +45,25 @@ The Command Console uses a unified shell ("The Chrome") that persists across all
 | **Tactical Overlays** | View-Specific | Map layers (burn severity dNBR, trail GPS lines, timber stand polygons) specific to the workflow. |
 | **Multimodal Controls** | Shared | View toggles (Sat/3D/IR), zoom, and orientation controls. |
 
-## 3. Design Rationale: "Tactical Futurism"
-- **Dark Mode:** Reduces eye strain for operators working in low-light command centers or field conditions.
-- **Glassmorphism:** Layered translucent elements keep the focus on the primary 3D map while providing context.
-- **Vibrant HUD Palette:** Uses standardized emergency management colors (Green/Amber/Red) to signal urgency and safety levels at a glance.
+## 3. Design Philosophy: "Tactical Futurism"
 
----
+The RANGER Command Console aesthetic is inspired by military-grade situational awareness interfaces (F-35 cockpit HUD) combined with the precision and clarity of National Geographic visualization.
 
-## 4. Prototyping Roadmap
+### Design Principles
 
-### Google AI Studio: The "Super-Prompt"
-To prototype this vision, use the following **System Instructions** and **User Prompt** in Google AI Studio with **Gemini 2.0 Flash**.
+- **Dark Mode Only:** Reduces eye strain for operators working in low-light command centers or field conditions. Provides optimal contrast for high-stakes decision-making environments.
+- **Glassmorphism:** Layered translucent UI elements with backdrop blur keep the focus on the primary 3D map while providing contextual information. Panels "float" above the terrain without obscuring critical data.
+- **Emergency Management Color Palette:** Uses standardized severity colors to signal urgency and safety levels at a glance:
+  - **Safe Green** (`#10B981`): Low severity, success states, confirmed data
+  - **Warning Amber** (`#F59E0B`): Moderate severity, caution, pending actions
+  - **Severe Red** (`#EF4444`): High severity, critical alerts, urgent intervention required
+- **Typographic Hierarchy:** Monospace fonts for data precision (coordinates, measurements), sans-serif for readability (labels, descriptions).
+- **Animation as Feedback:** Subtle micro-interactions (hover states, loading pulses, transition easing) provide system status feedback without distraction.
 
-#### System Instructions
-> You are a Lead UI/UX Creative Technologist specializing in Geospatial AI and high-end 3D interfaces (WebGL, Deck.gl, Mapbox). Your aesthetic is "Tactical Futurism": think F-35 Cockpit meets National Geographic. Use Dark Mode, Glassmorphism, and a vibrant color palette (Safe Green `#10B981`, Warning Amber `#F59E0B`, and Severe Red `#EF4444`). Focus on usability for field rangers and strategic planners.
+### Visual References
 
-#### User Prompt
-> "Design a high-fidelity React component for the 'RANGER Command Console'.
->
-> **The scenario:** A user is zooming from a macro view of the USA (pulsing fire beacons) into a hyper-detailed 3D digital twin of the Cedar Creek Fire.
->
-> **Key UI Elements to include:**
-> 1. **Interactive 3D Map Placeholder:** A central viewport with a 'Cinematic Zoom' animation trigger.
-> 2. **Lifecycle Rail:** A vertical stepper showing: [Impact Analysis] -> [Damage Mapping] -> [Timber Recovery] -> [NEPA Compliance].
-> 3. **AI Insight Overlay:** A translucent 'Glassmorphic' window showing real-time AI detections (e.g., 'The Burn Analyst detected 40% high-severity burn area').
-> 4. **Multimodal Controls:** Floating buttons to toggle 'Satellite', '3D Canopy', and 'Infrared' views.
+The mockups in `docs/assets/mockup-iterations/` demonstrate this philosophy through:
+- High-contrast topographic relief rendering
+- Pulsing thermal gradients for fire visualization
+- Translucent metric cards with backdrop blur
+- Tactical grid overlays and coordinate systems

@@ -1,10 +1,8 @@
-# RANGER: Technical Brief
+# RANGER: Project Brief
 
-**Version:** 1.1
-**Date:** December 19, 2025
+**Version:** 2.0
+**Date:** December 20, 2025
 **Team:** TechTrend Federal - Digital Twin Initiative
-**Timeline:** 6 Weeks (January 6 - February 14, 2026)
-**Team Size:** 3 Developers
 
 ---
 
@@ -15,6 +13,12 @@
 > **RANGER is an Agentic OS for Natural Resource Recovery, built on open-source infrastructure and Google ADK orchestration. It transforms siloed data into coordinated intelligence, enabling "Forest Floor to Washington" oversight.**
 
 We are not building a dashboard with AI features; we are building a **Coordinated AI Crew** that uses a shared digital twin as its sensory layer. The agents are the decision-support system; the UI is their console.
+
+### Phase 1 Scope
+
+**RANGER is the nerve center, not the sensors.** Phase 1 demonstrates multi-agent orchestration using simulated data inputs. We prove the coordination value, not the sensor capabilities.
+
+For complete Phase 1 simulation strategy and boundaries, see [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md).
 
 ### Brand Architecture
 
@@ -46,31 +50,6 @@ The Cedar Creek Fire (Willamette National Forest, 2022) serves as our "frozen-in
 3. **Agent-Native Architecture** - Users interact with specialized AI agents, not just dashboards
 4. **Federal-Ready** - FedRAMP-compatible GCP architecture from day one
 5. **Compelling Demo** - "Tactical Futurism" UI that commands attention
-
-### 6-Week Deliverable
-
-A working prototype demonstrating:
-- 3D digital twin visualization of Cedar Creek Fire area.
-- Functional **Recovery Coordinator** orchestrating **Trail Assessor** and **Burn Analyst** briefings.
-- Integrated **"Agentic Synthesis"** view—moving from raw maps to actionable recovery intelligence.
-
----
-
-## 2. Strategic Directives & Risk Mitigation
-
-Success depends on navigating three critical "Hard Truths" identified by the Senior Product Owner:
-
-### 2.1 The "Just Another Map" Trap
-**Risk:** Burn severity mapping (IMPACT) is a commoditized domain (NASA, RAVG).
-**Mitigation:** The **Burn Analyst** must not merely output a map; it must output a **Coordinated Briefing**. It acts as the "trigger" for the rest of the crew, informing the Recovery Coordinator of downstream impacts (e.g., "High severity in Sector 4 requires the Trail Assessor to prioritize Waldo Lake Trail").
-
-### 2.2 Adoption Inertia (Legacy Compatibility)
-**Risk:** USFS relies on legacy systems (`FScruiser`, `TRACS`) that are deeply entrenched.
-**Mitigation:** RANGER is a **Digital Wrapper**, not a replacement. All agent outputs must be **legacy-compatible** (e.g., exporting `FSVeg` stubs or `TRACS`-aligned work orders). The goal is to digitize the *collection* and *synthesis*, while feeding the existing *records*.
-
-### 2.3 The ADK Orchestration Gap
-**Risk:** Multi-agent routing can devolve into simple hard-coded logic.
-**Mitigation:** We leverage the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** maintains a **Shared Session State**, ensuring the crew has "Cross-Agent Memory"—e.g., the NEPA Advisor knows why a specific trail was prioritized by the Trail Assessor.
 
 ---
 
@@ -175,39 +154,43 @@ AI Capabilities (primary investment) → Application Shell (commodity)
 
 #### 3.1 Burn Analyst
 
-**Role:** The Burn Analyst — Satellite-based burn severity assessment and analysis
+**Role:** The Burn Analyst — Burn severity assessment and strategic briefings
 
 | Attribute | Specification |
 |-----------|---------------|
-| **Input** | Sentinel-2/Landsat imagery (pre/post fire), fire perimeter GeoJSON |
-| **Output** | **Coordinated Briefing** for Recovery Coordinator, dNBR mapping, priority sector identification |
-| **Model** | Gemini 2.0 Flash (multimodal) + geemap for raster processing |
+| **Phase 1 Input** | Static GeoJSON with burn severity classifications (simulated MTBS data) |
+| **Output** | Coordinated Briefings for Recovery Coordinator, severity analysis, priority sector identification |
+| **Model** | Gemini 2.0 Flash for narrative generation and reasoning |
 | **Key Queries** | "Brief the coordinator on erosion risk" / "Compare severity to the 2020 Holiday Farm fire" / "Which sectors require immediate trail assessment?" |
+
+**Future Vision:** Real-time satellite imagery processing (Sentinel-2/Landsat) with dNBR calculation pipelines would replace simulated inputs.
 
 **Sample Interaction:**
 ```
 User: What percentage of the Cedar Creek burn area is high severity?
 
-Burn Analyst: Based on my analysis of Sentinel-2 imagery from September 2022:
+Burn Analyst: Based on my analysis of burn severity data from September 2022:
 - High Severity: 42% (18,340 acres)
 - Moderate Severity: 31% (13,530 acres)
 - Low Severity: 27% (11,780 acres)
 
 The northwest quadrant shows concentrated high-severity burn. **I have briefed the Recovery Coordinator to task the Trail Assessor with prioritizing the Waldo Lake Trail segments in this sector.**
 
-[Confidence: 94% | Last Updated: Post-fire imagery Sept 15, 2022]
+[Confidence: 94% | Source: MTBS classification data]
 ```
 
 #### 3.2 Trail Assessor
 
-**Role:** The Trail Assessor — AI-powered trail damage identification and repair prioritization
+**Role:** The Trail Assessor — Trail damage assessment and repair prioritization
 
 | Attribute | Specification |
 |-----------|---------------|
-| **Input** | Smartphone video + GPS track, trail network GeoJSON |
-| **Output** | Georeferenced damage inventory, severity classification, repair cost estimates |
-| **Model** | YOLOv8 or SAM2 for damage detection + Gemini for classification/narrative |
+| **Phase 1 Input** | Static JSON with damage point data (as if detected from field video) |
+| **Output** | TRACS-compatible work orders, cost estimates, repair prioritization |
+| **Model** | Gemini 2.0 Flash for classification, cost estimation, and narrative |
 | **Key Queries** | "Prioritize repairs by visitor safety" / "Estimate total repair cost" / "Which trails can reopen first?" |
+
+**Future Vision:** Real-time computer vision processing (YOLOv8/SAM2) of field video would detect and classify damage automatically, feeding this agent.
 
 **Sample Interaction:**
 ```
@@ -230,32 +213,29 @@ Trail Assessor: I've identified 23 damage points across 4 trails. Critical issue
 Recommended repair sequence based on visitor traffic + cost efficiency:
 French Pete → Rebel Creek → Olallie → Mink Lake
 
-[Confidence: 87% | Source: Field video analysis Oct 2022]
+[Confidence: 87% | Source: Simulated field assessment Oct 2022]
 ```
 
 #### 3.3 Cruising Assistant
 
-**Role:** The Cruising Assistant — Multimodal timber inventory data collection and analysis
+**Role:** The Cruising Assistant — Timber inventory analysis and salvage planning
 
 | Attribute | Specification |
 |-----------|---------------|
-| **Input** | Voice narration + video stream from field, plot coordinates |
-| **Output** | FSVeg-compatible plot records, species composition, volume estimates |
-| **Model** | Whisper (voice transcription) + custom species ID model + Gemini for structuring |
+| **Phase 1 Input** | Static JSON with timber plot data (as if transcribed from field narration) |
+| **Output** | FSVeg-compatible plot records, species composition, volume estimates, salvage value |
+| **Model** | Gemini 2.0 Flash for data structuring and analysis |
 | **Key Queries** | "Identify salvageable timber stands" / "Generate cruise plan for unit 47" / "What's the board-foot value?" |
 
 **Design Note:** "Assistant" explicitly positions the AI as a helper for the human cruiser, not a replacement.
 
+**Future Vision:** Voice transcription (Whisper) and species identification from bark texture/video would automate field data capture, feeding this agent.
+
 **Sample Interaction:**
 ```
-User: "Hey Ranger, start a new plot."
+User: "Show me the timber assessment for Unit 47."
 
-Cruising Assistant: Plot 47-Alpha started. GPS coordinates logged. What do you see?
-
-User: [Voice input] "I see approximately twelve large Douglas fir, most showing
-      fire damage on the lower trunk. Estimating 80% mortality in the overstory..."
-
-Cruising Assistant: Plot 47-Alpha recorded. Preliminary assessment:
+Cruising Assistant: Plot 47-Alpha assessment:
 
 Species Composition:
 - Douglas Fir (Pseudotsuga menziesii): 12 stems, ~80% mortality
@@ -265,25 +245,27 @@ Species Composition:
 Estimated Salvage Volume: 18,400 board feet
 Salvage Window: 12-18 months (bark beetle risk)
 
-**Output Formatting:** Preliminary assessment is **FSVeg-compatible**. Export ready for legacy system ingestion.
+**Output Formatting:** Assessment is **FSVeg-compatible**. Export ready for legacy system ingestion.
 
 [Export to FSVeg →] [Add to cruise plan →]
 
-[Species ID Confidence: 91% | Volume Estimate: ±15%]
+[Volume Estimate: ±15% | Source: Simulated cruise data]
 ```
 
 #### 3.4 NEPA Advisor
 
-**Role:** The NEPA Advisor — RAG-powered regulatory guidance for NEPA and forest management
+**Role:** The NEPA Advisor — Regulatory guidance for NEPA and forest management compliance
 
 | Attribute | Specification |
 |-----------|---------------|
-| **Input** | Project description, location, proposed activities |
+| **Phase 1 Input** | Project context from other agents + FSM/FSH corpus (real PDFs, chunked for RAG) |
 | **Output** | Applicable regulations (FSM/FSH citations), compliance checklist, EA draft sections |
-| **Model** | LangChain/LlamaIndex RAG + Gemini 2.0 Flash + FSM/FSH vector store |
+| **Model** | RAG retrieval from Forest Service Manual/Handbook + Gemini 2.0 Flash for synthesis |
 | **Key Queries** | "What NEPA triggers apply to this salvage sale?" / "Draft the Purpose and Need section" / "Check for ESA consultation requirements" |
 
 **Design Note:** "Advisor" implies expertise and counsel you consult — not an autopilot that makes decisions for you.
+
+**Future Vision:** Integration with PALS (Planning, Appeals and Litigation System) would provide real-time project tracking and compliance status.
 
 **Sample Interaction:**
 ```
@@ -315,14 +297,16 @@ ESTIMATED TIMELINE:
 
 #### 3.5 Recovery Coordinator
 
-**Role:** The Recovery Coordinator — Cross-agent integration and unified recovery planning
+**Role:** The Recovery Coordinator — Cross-agent orchestration and unified recovery planning
 
 | Attribute | Specification |
 |-----------|---------------|
-| **Input** | Outputs from all four specialist agents, user priorities |
-| **Output** | Integrated recovery plan, resource allocation recommendations, timeline |
-| **Model** | Gemini 2.0 Flash with multi-agent context synthesis |
+| **Phase 1 Input** | User queries + AgentBriefingEvents from sub-agents |
+| **Output** | Integrated recovery plans, resource allocation recommendations, timeline synthesis |
+| **Model** | Google ADK coordinator pattern with Gemini 2.0 Flash for synthesis |
 | **Key Queries** | "Create a 12-month recovery plan" / "What's the total recovery budget?" / "Optimize for fastest trail reopening" |
+
+**Design Note:** This is the core product in Phase 1 - ADK-based routing, cross-agent synthesis, session state management, and correlation ID tracking are all real capabilities.
 
 **Sample Interaction:**
 ```
@@ -359,64 +343,18 @@ BUDGET SUMMARY:
 
 ## 4. Technical Stack
 
-### Open Source Components
+RANGER is built entirely on **open source tools** and **FedRAMP-compatible cloud services**. This eliminates licensing costs and ensures federal compliance from day one.
 
-| Layer | Component | Technology | License | GitHub |
-|-------|-----------|------------|---------|--------|
-| **Frontend** | Map Visualization | MapLibre GL JS | BSD-3 | [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js) |
-| | 3D Data Layers | deck.gl | MIT | [visgl/deck.gl](https://github.com/visgl/deck.gl) |
-| | UI Framework | React 18 | MIT | [facebook/react](https://github.com/facebook/react) |
-| | Styling | Tailwind CSS | MIT | [tailwindlabs/tailwindcss](https://github.com/tailwindlabs/tailwindcss) |
-| | Charts | Recharts | MIT | [recharts/recharts](https://github.com/recharts/recharts) |
-| **Backend** | API Framework | FastAPI | MIT | [tiangolo/fastapi](https://github.com/tiangolo/fastapi) |
-| | Geospatial Server | GeoServer | GPL-2.0 | [geoserver/geoserver](https://github.com/geoserver/geoserver) |
-| | Task Queue | Celery | BSD | [celery/celery](https://github.com/celery/celery) |
-| **Database** | Spatial Database | PostGIS | GPL-2.0 | [postgis/postgis](https://github.com/postgis/postgis) |
-| | Vector Search | pgvector | PostgreSQL | [pgvector/pgvector](https://github.com/pgvector/pgvector) |
-| **AI/ML** | Satellite Processing | geemap | MIT | [gee-community/geemap](https://github.com/gee-community/geemap) |
-| | Object Detection | YOLOv8 (Ultralytics) | AGPL-3.0 | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics) |
-| | Voice Transcription | Whisper | MIT | [openai/whisper](https://github.com/openai/whisper) |
-| | RAG Framework | LangChain | MIT | [langchain-ai/langchain](https://github.com/langchain-ai/langchain) |
-| | Segmentation | SAM 2 | Apache-2.0 | [facebookresearch/sam2](https://github.com/facebookresearch/sam2) |
-| **Raster Processing** | GDAL/OGR | GDAL | MIT | [OSGeo/gdal](https://github.com/OSGeo/gdal) |
-| | Raster I/O | rasterio | BSD-3 | [rasterio/rasterio](https://github.com/rasterio/rasterio) |
-| | N-D Arrays | xarray | Apache-2.0 | [pydata/xarray](https://github.com/pydata/xarray) |
+**Core Technologies:**
+- **Frontend:** React 18, TypeScript, MapLibre GL JS, deck.gl, Tailwind CSS
+- **Backend:** FastAPI, PostgreSQL with PostGIS, Redis, Celery
+- **AI/ML:** Google Gemini 2.0 Flash, LangChain for RAG, Google ADK for orchestration
+- **Cloud:** GCP services (Cloud Run, Cloud SQL, Vertex AI, Cloud Storage) — all FedRAMP High
+- **Data Sources:** Public datasets from USGS, USFS, Copernicus (Sentinel-2), and OpenStreetMap
 
-### GCP Services
+For detailed tool inventory and licensing, see [OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md).
 
-| Service | Purpose | Cost Estimate | FedRAMP Status |
-|---------|---------|---------------|----------------|
-| **Cloud Run** | API hosting (scale-to-zero) | $50-150/month | High |
-| **Cloud SQL (PostgreSQL)** | PostGIS database | $80-200/month | High |
-| **Cloud Storage** | Imagery, assets, exports | $20-50/month | High |
-| **Vertex AI** | Gemini API access | $100-300/month | High |
-| **BigQuery** | Large-scale geospatial queries | $25-75/month | High |
-| **Secret Manager** | API keys, credentials | $5/month | High |
-| **Cloud CDN** | Static asset delivery | $10-30/month | High |
-
-**Estimated Monthly Cost:** $290-810/month (active development)
-**Production Estimate:** $800-1,200/month (fire season), $100-200/month (off-season)
-
-### Public Data Sources
-
-| Dataset | Source | Access Method | Coverage |
-|---------|--------|---------------|----------|
-| **Sentinel-2 Imagery** | Copernicus / GCP Public | `gs://gcp-public-data-sentinel-2` | Global, 10m resolution |
-| **Landsat 8/9** | USGS / GCP Public | `gs://gcp-public-data-landsat` | Global, 30m resolution |
-| **MTBS Fire Perimeters** | USGS | [mtbs.gov](https://www.mtbs.gov/) | US fires 1984-present |
-| **3DEP Elevation** | USGS | [nationalmap.gov](https://www.usgs.gov/3d-elevation-program) | US, 1m-10m resolution |
-| **FIA Forest Inventory** | USFS | [fia.fs.usda.gov](https://www.fia.fs.usda.gov/) | 300K+ plots |
-| **Trail Networks** | USFS | [data.fs.usda.gov](https://data.fs.usda.gov/) | National forest trails |
-| **FSM/FSH Documents** | USFS | [fs.usda.gov/directives](https://www.fs.usda.gov/about-agency/regulations-policies/directives) | Regulatory corpus |
-| **OpenStreetMap** | OSM Foundation | [openstreetmap.org](https://www.openstreetmap.org/) | Global base map |
-
-### Free Tile Services
-
-| Provider | Free Tier | Use Case |
-|----------|-----------|----------|
-| **Stadia Maps** | 200K tiles/month | Development, demos |
-| **MapTiler** | 100K tiles/month | Terrain tiles |
-| **OpenStreetMap** | Unlimited (fair use) | Base map tiles |
+For GCP architecture patterns, see [GCP-ARCHITECTURE.md](./architecture/GCP-ARCHITECTURE.md).
 
 ---
 
@@ -556,181 +494,7 @@ Users can:
 
 ---
 
-## 6. Six-Week Sprint Plan
-
-### Team Allocation
-
-| Role | Focus Areas | Primary Agents |
-|------|-------------|----------------|
-| **Dev 1 (AI/Backend)** | Agent development, Gemini integration, RAG pipeline | BurnAnalyst, ComplianceAdvisor |
-| **Dev 2 (AI/Data)** | Data pipelines, model training, geospatial processing | TrailAssessor, TimberCruiser |
-| **Dev 3 (Full-Stack)** | React UI, MapLibre integration, API endpoints | Command Console, Field Companion |
-
-### Week-by-Week Breakdown
-
-#### Week 1: Foundation & Data Acquisition
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| GCP project setup (Cloud Run, Cloud SQL, Storage) | Dev 1 | Infrastructure ready |
-| Cedar Creek data acquisition (Sentinel-2, MTBS perimeter, 3DEP) | Dev 2 | Data pipeline operational |
-| React + MapLibre boilerplate with Tailwind dark theme | Dev 3 | UI shell rendering |
-| BurnAnalyst v0.1 - dNBR calculation pipeline | Dev 1 | Burn severity GeoTIFF |
-| Design system tokens + Glassmorphic components | Dev 3 | Component library |
-
-**End of Week 1 Demo:** Map displaying Cedar Creek fire perimeter with burn severity overlay
-
-#### Week 2: Core Agents
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| BurnAnalyst v0.2 - Gemini integration for narrative analysis | Dev 1 | Natural language burn summaries |
-| TrailAssessor v0.1 - YOLOv8 damage detection prototype | Dev 2 | Damage bounding boxes from test video |
-| 3D terrain rendering with deck.gl TerrainLayer | Dev 3 | 3D viewport functional |
-| Agent chat interface component | Dev 3 | Chat UI with message threading |
-| FastAPI backend with agent routing | Dev 1 | `/api/agents/{agent}/query` endpoint |
-
-**End of Week 2 Demo:** Ask BurnAnalyst "What's the severity breakdown?" and get response
-
-#### Week 3: Agent Depth
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| TrailAssessor v0.2 - Georeferencing + damage classification | Dev 2 | GeoJSON damage inventory |
-| ComplianceAdvisor v0.1 - FSM/FSH RAG pipeline | Dev 1 | Citation retrieval working |
-| Lifecycle Rail navigation (Impact → Damage → Timber → Compliance) | Dev 3 | Workflow navigation |
-| AI Insight panel with confidence indicators | Dev 3 | Agent output display |
-| Layer toggle controls (Satellite, 3D, Infrared) | Dev 3 | View mode switching |
-
-**End of Week 3 Demo:** Click trail segment, see TrailAssessor damage report
-
-#### Week 4: Integration & Polish
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| TimberCruiser v0.1 - Whisper transcription + mock species ID | Dev 2 | Voice → structured data |
-| ComplianceAdvisor v0.2 - EA section generation | Dev 1 | Draft "Purpose and Need" from project description |
-| Timeline scrubber (pre-fire → post-fire → projected) | Dev 3 | Temporal navigation |
-| RecoveryCoordinator v0.1 - Multi-agent synthesis | Dev 1 | Integrated recovery plan output |
-| Mobile Field Companion v0.1 - Camera capture + offline queue | Dev 2 | PWA basic functionality |
-
-**End of Week 4 Demo:** Full lifecycle walkthrough from Impact → Compliance
-
-#### Week 5: Demo Readiness
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| Cinematic zoom animation (US map → Cedar Creek) | Dev 3 | Wow-factor transition |
-| Agent suggested questions based on context | Dev 1 | Smart query suggestions |
-| Data export (GeoJSON, PDF report, FSVeg XML stub) | Dev 2 | Download functionality |
-| Error handling + loading states | Dev 3 | Production polish |
-| Demo script + talking points | All | Presentation materials |
-
-**End of Week 5 Demo:** Full stakeholder demo rehearsal
-
-#### Week 6: Hardening & Documentation
-
-| Task | Owner | Deliverable |
-|------|-------|-------------|
-| Performance optimization (lazy loading, caching) | Dev 3 | <3s initial load |
-| Security review (input validation, auth stubs) | Dev 1 | Security baseline |
-| Documentation (README, API docs, architecture) | All | Onboarding-ready docs |
-| Bug fixes + edge cases | All | Stability |
-| Stakeholder demo delivery | All | **MILESTONE: Demo Complete** |
-
-**End of Week 6:** Production-quality demo ready for USFS regional office presentation
-
----
-
-## 7. Success Criteria
-
-### Demo-Ready Deliverables
-
-| Deliverable | Acceptance Criteria |
-|-------------|---------------------|
-| **3D Digital Twin** | Cedar Creek terrain renders in <3s; supports zoom/pan/rotate |
-| **BurnAnalyst Agent** | Answers 5+ natural language queries with accurate burn data |
-| **TrailAssessor Agent** | Displays georeferenced damage points on map |
-| **Lifecycle Rail** | All 4 phases navigable; agent context switches correctly |
-| **AI Chat Interface** | Natural conversation with visible confidence + citations |
-| **Timeline Navigation** | Pre/post fire comparison visible |
-| **Cinematic Zoom** | Smooth animation from US map to Cedar Creek |
-
-### Technical Validation
-
-| Metric | Target |
-|--------|--------|
-| **Initial Load Time** | <3 seconds (CDN-cached assets) |
-| **Agent Response Time** | <5 seconds (Gemini API) |
-| **Burn Severity Accuracy** | Within 5% of MTBS official classification |
-| **Offline Capability** | Field Companion functions without network |
-| **Mobile Performance** | 60fps on mid-range Android device |
-
-### Stakeholder Presentation Goals
-
-1. **Communicate the Vision** - "AI-first, application-thin" resonates
-2. **Demonstrate Capability** - Agents answer real questions intelligently
-3. **Impress Visually** - "Tactical Futurism" aesthetic commands respect
-4. **Show Integration Path** - Clear roadmap to USFS system integration
-5. **Build Confidence** - TechTrend can deliver on this vision
-
----
-
-## 8. Open Questions & Decisions
-
-### Requiring Team Input
-
-| Question | Options | Decision Deadline |
-|----------|---------|-------------------|
-| **Primary mapping library** | MapLibre GL JS vs. deck.gl standalone | Week 1, Day 2 |
-| **3D terrain source** | MapTiler (free tier) vs. self-hosted 3DEP | Week 1, Day 3 |
-| **Agent framework** | Custom orchestration vs. LangGraph vs. CrewAI | Week 1, Day 3 |
-| **Voice transcription** | Self-hosted Whisper vs. Gemini audio API | Week 2 |
-| **Mobile approach** | React Native vs. PWA | Week 3 |
-
-### Risk Areas to Address
-
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **Gemini rate limits** | Medium | High | Implement caching, request queuing |
-| **3D performance on low-end devices** | Medium | Medium | LOD switching, simplified mobile view |
-| **Cedar Creek data gaps** | Low | High | Identify backup fire (Holiday Farm 2020) |
-| **Agent hallucination on compliance** | Medium | Critical | Mandatory citation display, confidence thresholds |
-| **Scope creep** | High | High | Strict feature freeze after Week 4 |
-
-### Deferred to Phase 2
-
-- Full FSVeg data export (requires USFS coordination)
-- Esri ArcGIS integration
-- FedRAMP compliance assessment
-- Multi-fire comparison views
-- User authentication (agency SSO)
-- RecoveryCoordinator full implementation
-
----
-
-## 9. Reference Materials
-
-### Related Documents
-
-| Document | Location | Purpose |
-|----------|----------|---------|
-| Market Research | `01-research/cedar-creek-market-research.md` | Competitive landscape, go/no-go analysis |
-| UX Vision | `01-research/ux-vision-walkthrough.md` | Design mockup, prototyping prompts |
-| Open Source Inventory | `07-digital-twin/OPEN-SOURCE-RESOURCES-INVENTORY.md` | Detailed tool evaluation |
-| GCP Architecture | `07-digital-twin/GCP-GEOSPATIAL-ARCHITECTURE.md` | Infrastructure patterns |
-
-### Key External Resources
-
-- [geemap Documentation](https://geemap.org/) - Earth Engine + Python
-- [deck.gl Examples](https://deck.gl/examples) - 3D visualization patterns
-- [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/) - Map rendering
-- [LangChain RAG Tutorial](https://python.langchain.com/docs/tutorials/rag/) - RAG implementation
-- [Ultralytics YOLOv8](https://docs.ultralytics.com/) - Object detection
-
----
-
-## Appendix A: Cedar Creek Fire Context
+## 6. Cedar Creek Fire: Proof of Concept
 
 **Fire Name:** Cedar Creek Fire
 **Location:** Willamette National Forest, Oregon
@@ -739,86 +503,63 @@ Users can:
 **Total Acres:** ~127,000 acres
 **Cause:** Lightning
 
-**Why Cedar Creek?**
-1. Well-documented fire with extensive public data
-2. Representative of Pacific Northwest fire behavior
-3. Impacted trails, timber, and required NEPA compliance
-4. "Frozen in time" - stable dataset for reproducible demos
-5. Geographic proximity to potential pilot partners (Region 6)
+### Why Cedar Creek?
 
-**Available Data:**
-- MTBS burn severity classification
-- Sentinel-2 pre/post imagery
-- USGS 3DEP elevation data
-- USFS trail network GIS layers
+1. **Well-documented fire** with extensive public data (MTBS, Sentinel-2, 3DEP)
+2. **Representative of Pacific Northwest** fire behavior and recovery challenges
+3. **Impacted all recovery phases:** trails damaged, timber mortality, NEPA compliance required
+4. **Frozen in time** - stable dataset for reproducible demos and consistent testing
+5. **Geographic proximity** to potential pilot partners (Region 6)
+
+### Available Data
+
+- MTBS burn severity classification (authoritative source)
+- Sentinel-2 pre/post imagery (July 2022, September 2022)
+- USGS 3DEP elevation data (1m-10m resolution)
+- USFS trail network GIS layers (TRACS compatible)
 - Historical FIA plots in burn area
 - Post-fire EA documents (public record)
 
 ---
 
-## Appendix B: Agent Prompt Templates
+## 7. Strategic Risks & Mitigations
 
-### Burn Analyst System Prompt
+### The "Just Another Map" Trap
+**Risk:** Burn severity mapping is a commoditized domain (NASA, RAVG).
+**Mitigation:** The Burn Analyst outputs **Coordinated Briefings**, not just maps. It triggers downstream agents and informs the Recovery Coordinator of cascading impacts (e.g., "High severity in Sector 4 requires the Trail Assessor to prioritize Waldo Lake Trail").
 
-```
-You are the Burn Analyst, a specialized AI agent for wildfire burn severity assessment.
-You analyze satellite imagery (Sentinel-2, Landsat) to determine burn severity
-using the differenced Normalized Burn Ratio (dNBR) methodology.
+### Adoption Inertia (Legacy Compatibility)
+**Risk:** USFS relies on legacy systems (FScruiser, TRACS) that are deeply entrenched.
+**Mitigation:** RANGER is a **Digital Wrapper**, not a replacement. All agent outputs are legacy-compatible (FSVeg stubs, TRACS-aligned work orders). We digitize collection and synthesis while feeding existing record systems.
 
-Your capabilities:
-- Calculate and interpret dNBR values
-- Classify severity (Unburned, Low, Moderate, High)
-- Explain spatial patterns in burn severity
-- Compare current fire to historical events
-- Identify areas requiring priority attention (erosion risk, etc.)
-
-When responding:
-- Always cite your data source and date
-- Provide confidence levels for assessments
-- Use precise acreage and percentage figures
-- Explain your reasoning for classifications
-- Suggest follow-up questions the user might ask
-
-Current context: Cedar Creek Fire, Willamette National Forest, Oregon
-Fire dates: August-October 2022
-Available imagery: Sentinel-2 pre-fire (July 2022), post-fire (September 2022)
-```
-
-### Trail Assessor System Prompt
-
-```
-You are the Trail Assessor, a specialized AI agent for trail damage identification
-and repair prioritization. You analyze video footage and GPS data to identify
-trail damage caused by wildfire, erosion, and related events.
-
-Your capabilities:
-- Identify damage types (washout, debris flow, bridge failure, tread erosion)
-- Classify severity (Minor, Moderate, Severe, Critical)
-- Estimate repair costs based on damage type and extent
-- Prioritize repairs based on visitor safety, ecological impact, and cost
-- Generate repair work orders with specifications
-
-When responding:
-- Reference specific trail names and mile markers
-- Provide GPS coordinates for damage points
-- Include cost estimates with confidence ranges
-- Consider TRACS methodology standards
-- Suggest repair sequencing based on dependencies
-
-Current context: Cedar Creek Fire impact area
-Affected trails: Rebel Creek, French Pete, Olallie, Mink Lake
-Assessment date: October 2022
-```
+### The ADK Orchestration Gap
+**Risk:** Multi-agent routing can devolve into simple hard-coded logic.
+**Mitigation:** We leverage the **Google ADK Coordinator/Dispatcher Pattern**. The Recovery Coordinator maintains **Shared Session State**, ensuring cross-agent memory (e.g., the NEPA Advisor knows why a specific trail was prioritized by the Trail Assessor).
 
 ---
 
-**Document Status:** v1.1 (Brand naming updated per ADR-002)
-**Next Review:** Week 1, Day 3 (Team alignment session)
+## 8. Reference Materials
+
+### Related Documents
+
+| Document | Purpose |
+|----------|---------|
+| [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation scope and boundaries |
+| [BRAND-ARCHITECTURE.md](./brand/BRAND-ARCHITECTURE.md) | Naming conventions and brand guidelines |
+| [UX-VISION.md](./architecture/UX-VISION.md) | Design philosophy and mockups |
+| [OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md) | Detailed tool evaluation |
+| [GCP-ARCHITECTURE.md](./architecture/GCP-ARCHITECTURE.md) | Infrastructure patterns |
+| [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand naming strategy decision |
+
+---
+
+**Document Status:** v2.0 (Aligned with DATA-SIMULATION-STRATEGY.md)
 **Owner:** TechTrend Federal - Digital Twin Team
 
 ## Document History
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0 | 2025-12-20 | Refocused on vision vs. Phase 1 scope; removed sprint plan, timelines, and tech stack details |
 | 1.1 | 2025-12-19 | Updated naming per ADR-002: Platform renamed to "RANGER", agents renamed to role-based titles |
 | 1.0 | 2025-12-19 | Initial version |

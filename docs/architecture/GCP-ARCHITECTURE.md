@@ -8,6 +8,10 @@
 
 ---
 
+**Note:** This document describes FUTURE production architecture. Phase 1 runs locally with Docker and simulated data. See `docs/DATA-SIMULATION-STRATEGY.md` for current scope.
+
+---
+
 ## Executive Summary
 
 This document provides specific Google Cloud Platform (GCP) architecture recommendations for building a cost-effective geospatial AI platform using open source components. The architecture is optimized for seasonal fire recovery workloads (intermittent processing patterns) while maintaining production quality and federal compliance requirements.

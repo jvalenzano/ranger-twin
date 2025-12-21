@@ -4,69 +4,64 @@ Guidance for Claude Code when working in this repository.
 
 ## Project Overview
 
-**RANGER** is an agent-first digital twin platform for post-fire forest recovery, built for the US Forest Service.
+**RANGER** is an Agentic OS for post-fire forest recovery—a nerve center that orchestrates AI agents to transform siloed data into coordinated intelligence.
 
-- **Philosophy**: 100% open source stack; 80% investment in AI agents, 20% in UI
+- **Philosophy**: We are the brain, not the sensors. Orchestration over perception.
 - **Tagline**: "Recovery at the speed of insight."
+- **Proof of Concept**: Cedar Creek Fire (Willamette NF, Oregon, 2022)
 
-### Vision Statement
-> **RANGER is an Agentic OS for Natural Resource Recovery**, built on open-source infrastructure and Google ADK orchestration. It transforms siloed fire data into coordinated intelligence through a multi-agent crew.
+### Critical Context
 
-- **Proof of Concept**: Cedar Creek Fire (Willamette NF, Oregon, 2022) — ~127,000 acres
+**Phase 1 uses simulated data.** We are proving that multi-agent orchestration creates value, not that we can process satellite imagery or detect trail damage from video. See `docs/DATA-SIMULATION-STRATEGY.md` for the authoritative scope.
 
-For complete project vision, see `docs/PROJECT-BRIEF.md`.
+## The Crew: One Coordinator, Four Specialists
 
-## The Crew: One Root Coordinator, Four Specialists
+RANGER uses the **Google ADK Coordinator/Dispatcher Pattern**:
 
-RANGER uses the **Google ADK Coordinator/Dispatcher Pattern**. The **Recovery Coordinator** (Root) oversees four specialized sub-agents:
+```
+Command Console (UI)
+        │
+        ▼
+Recovery Coordinator (Root Agent)
+        │
+        ├── Burn Analyst (IMPACT)
+        ├── Trail Assessor (DAMAGE)
+        ├── Cruising Assistant (TIMBER)
+        └── NEPA Advisor (COMPLIANCE)
+```
 
-| Agent | Directory | Role |
-|-------|-----------|------|
-| **Recovery Coordinator** | `services/agents/recovery-coordinator/` | **Root Agent** (Orchestration & Dispatch) |
-| **Burn Analyst** | `services/agents/burn-analyst/` | Sub-agent: Satellite burn severity |
-| **Trail Assessor** | `services/agents/trail-assessor/` | Sub-agent: AI-powered trail damage |
-| **Cruising Assistant** | `services/agents/cruising-assistant/` | Sub-agent: Multimodal timber inventory |
-| **NEPA Advisor** | `services/agents/nepa-advisor/` | Sub-agent: Regulatory guidance (RAG) |
+The Coordinator routes queries, synthesizes cross-agent insights, and maintains session state. Sub-agents receive **simulated data** and produce **real reasoning** via Gemini.
 
 **Naming convention** (per ADR-002):
 - Code: `BurnAnalyst`, `TrailAssessor`, `CruisingAssistant`, `NEPAAdvisor`
 - UI: "Burn Analyst", "Trail Assessor", "Cruising Assistant", "NEPA Advisor"
-- Docs: "The Burn Analyst", "The Trail Assessor", etc.
 
-For agent specs, see `docs/agents/` and `docs/PROJECT-BRIEF.md` section 3.
+## Key Documents (Start Here)
 
-## System Architecture
+| Priority | Document | Purpose |
+|----------|----------|---------|
+| 1 | `docs/DATA-SIMULATION-STRATEGY.md` | **Authoritative scope** — what's simulated vs. real |
+| 2 | `docs/PROJECT-BRIEF.md` | Vision, agent roles, strategic context |
+| 3 | `docs/assets/USER-JOURNEYS-AND-PERSONAS.md` | Sarah, Marcus, Elena, Dr. Park workflows |
+| 4 | `docs/architecture/AGENT-MESSAGING-PROTOCOL.md` | AgentBriefingEvent contract |
+| 5 | `docs/agents/RECOVERY-COORDINATOR-SPEC.md` | Root agent implementation |
 
-### Multi-Agent Hierarchy (Google ADK)
-The **Command Console UI** renders the output; the **Recovery Coordinator** handled the logic.
-- **Root**: `RecoveryCoordinator` (LlmAgent)
-- **Leaves**: `BurnAnalyst`, `TrailAssessor`, `CruisingAssistant`, `NEPAAdvisor` (Sub-agents)
+For documentation cleanup tasks, see `docs/audit/DOCUMENTATION-CLEANUP.md`.
 
-```
-Console (UI) → Recovery Coordinator (Root)
-                    ├── Burn Analyst (Sub-agent)
-                    ├── Trail Assessor (Sub-agent)
-                    ├── Cruising Assistant (Sub-agent)
-                    └── NEPA Advisor (Sub-agent)
-```
-
-### Monorepo Structure
+## Monorepo Structure
 
 ```
 ranger/
 ├── apps/
-│   ├── command-console/       # React desktop UI ("Tactical Futurism")
-│   └── field-companion/       # Mobile PWA for field data capture
+│   └── command-console/       # React desktop UI
 ├── services/
-│   ├── api-gateway/           # FastAPI main router
-│   └── agents/                # AI agent implementations
+│   ├── api-gateway/           # FastAPI router
+│   └── agents/                # Agent implementations
 ├── packages/
-│   ├── twin-core/             # Shared Python utilities
-│   ├── ui-components/         # Shared React components
 │   └── agent-common/          # Shared agent utilities
-├── infrastructure/            # Terraform, Docker
-├── data/                      # GeoJSON, GeoTIFF, PDFs (Git LFS)
-└── docs/                      # All documentation
+├── data/
+│   └── fixtures/              # Simulated data for Cedar Creek
+└── docs/                      # Documentation
 ```
 
 ## Development Commands
@@ -78,87 +73,42 @@ cd apps/command-console && pnpm dev
 # Backend API
 cd services/api-gateway && uvicorn app.main:app --reload
 
-# Run agent
-cd services/agents/burn-analyst && python -m burn_analyst.main
-
 # Tests
 pytest services/
 cd apps/command-console && pnpm test
-
-# Code quality
-black services/ packages/
-ruff check services/ packages/
-cd apps/command-console && pnpm lint && pnpm typecheck
 ```
-
-## Tech Stack (Quick Reference)
-
-| Layer | Technologies |
-|-------|--------------|
-| Frontend | React 18, TypeScript, Vite, Tailwind, MapLibre GL, deck.gl |
-| Backend | FastAPI, PostgreSQL + PostGIS, Redis, Celery, pgvector |
-| AI/ML | Gemini 2.0 Flash, LangChain, YOLOv8, SAM2, Whisper, geemap |
-| Cloud | GCP (Cloud Run, Cloud SQL, Vertex AI) — FedRAMP High |
-
-For detailed stack decisions, see `docs/adr/ADR-001-tech-stack.md`.
-
-## Key Documentation
-
-| Need | Document |
-|------|----------|
-| Full project vision | `docs/PROJECT-BRIEF.md` |
-| Brand/naming rules | `docs/brand/BRAND-ARCHITECTURE.md` |
-| UI design direction | `docs/architecture/UX-VISION.md` |
-| GCP infrastructure | `docs/architecture/GCP-ARCHITECTURE.md` |
-| Tool inventory | `docs/architecture/OPEN-SOURCE-INVENTORY.md` |
-| Next steps | `docs/NEXT-SESSION.md` |
 
 ## Design System
 
-**"Tactical Futurism"** — F-35 cockpit meets National Geographic.
+**"Tactical Futurism"** — Dark mode, glassmorphism, emergency color palette.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--color-safe` | `#10B981` | Success, low severity |
-| `--color-warning` | `#F59E0B` | Moderate, caution |
-| `--color-severe` | `#EF4444` | High severity, critical |
+| `--color-safe` | `#10B981` | Low severity |
+| `--color-warning` | `#F59E0B` | Moderate |
+| `--color-severe` | `#EF4444` | Critical |
 | `--color-background` | `#0F172A` | Dark canvas |
-| `--color-surface` | `#1E293B` | Panel backgrounds |
+| `--color-surface` | `#1E293B` | Panels |
 
-- Dark mode only
-- Glassmorphism (translucent panels with backdrop blur)
-- See `docs/architecture/UX-VISION.md` for mockups
+## What We're Proving (Phase 1)
 
-## Agent API Pattern
+- Multi-agent coordination works
+- Reasoning transparency builds trust
+- Cross-lifecycle synthesis creates value
+- Legacy export compatibility is achievable
+- The "Nervous System" UX is compelling
 
-All agents expose a consistent interface:
+## What We're NOT Building (Phase 1)
 
-```python
-response = await agent.query(
-    question="What percentage is high severity?",
-    context={"fire_id": "cedar-creek-2022"}
-)
-# Returns: answer, confidence, sources, suggestions
-```
+- Satellite imagery pipelines
+- Computer vision models
+- Field capture mobile apps
+- Real-time data ingestion
 
-## Environment Variables
-
-```bash
-GCP_PROJECT_ID=ranger-twin
-GCP_REGION=us-east4
-DATABASE_URL=postgresql://...
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json
-```
-
-## Federal Compliance
-
-- **FedRAMP High** services only
-- **Region**: `us-east4` (Northern Virginia)
-- **Encryption**: FIPS 140-2 at rest and in transit
+These are future capabilities. Phase 1 proves the orchestration layer.
 
 ## Git Workflow
 
 - **Main branch**: `main` (protected)
 - **Development**: `develop`
 - **Features**: `feature/description`
-- **Large files**: Git LFS (GeoJSON, GeoTIFF, PDF)

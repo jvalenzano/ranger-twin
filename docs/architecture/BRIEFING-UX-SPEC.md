@@ -1,5 +1,8 @@
 # RANGER Briefing UX Specification
 
+**Status:** Authoritative
+**Phase 1 Scope:** All behaviors described work with simulated data per `DATA-SIMULATION-STRATEGY.md`
+
 This document defines how the "Agentic Interface" translates `AgentBriefingEvent` objects into a mission-critical tactical interface.
 
 ## 1. UI Target Rendering
@@ -24,9 +27,9 @@ To prevent the "Black Box" problem and ensure federal trust, the UI must make th
 ### Citation Drill-Down
 - **Inline Preview:** Hovering over a citation link displays a small tooltip with the `excerpt` from the source.
 - **Source Verification:** Clicking a citation:
-  - **Satellite (Sentinel-2):** Toggles the map to the specific imagery layer and date referenced.
-  - **Directives (FSM/FSH):** Opens a split-pane PDF viewer at the exact chapter/section.
-  - **Legacy (TRACS/FSVeg):** Highlights the specific record in the data grid.
+  - **Satellite (Sentinel-2):** *(Phase 1: Static GeoJSON)* Toggles the map to the simulated burn severity layer referenced in the citation.
+  - **Directives (FSM/FSH):** *(Real in Phase 1)* Opens a split-pane PDF viewer at the exact chapter/section.
+  - **Legacy (TRACS/FSVeg):** *(Phase 1: Simulated fixtures)* Highlights the specific record in the data grid using fixture data.
 
 ## 3. Action Flow
 

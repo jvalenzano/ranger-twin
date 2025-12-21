@@ -6,6 +6,8 @@
 
 The Command Console is the primary interface for strategic planners, District Rangers, and regional office staff. It provides a 3D digital twin visualization with AI agent interaction panels.
 
+**Status:** Active Development (Track B1 Complete)
+
 ## Design Philosophy
 
 - **F-35 Cockpit meets National Geographic**
@@ -19,23 +21,24 @@ The Command Console is the primary interface for strategic planners, District Ra
 - **Framework**: React 18 + TypeScript
 - **Build**: Vite
 - **Styling**: Tailwind CSS
-- **Mapping**: MapLibre GL JS + deck.gl
-- **Charts**: Recharts
+- **Icons**: Lucide React
 - **State**: Zustand
+- **Future**: MapLibre GL JS + deck.gl
 
-## Key Components
+## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── map/                 # 3D viewport, layers, controls
-│   ├── agents/              # Agent chat panels, insight cards
-│   ├── lifecycle/           # Rail navigation (Impact→Damage→Timber→Compliance)
-│   └── common/              # Glassmorphic cards, buttons, inputs
-├── hooks/                   # Custom React hooks
-├── stores/                  # Zustand state stores
-├── api/                     # API client for agent queries
-└── styles/                  # Tailwind config, design tokens
+│   ├── layout/              # Header, Sidebar (Lifecycle Rail)
+│   ├── map/                 # Terrain3D, MapControls, Attribution
+│   ├── panels/              # InsightPanel (agent metrics)
+│   ├── briefing/            # BriefingObserver, renderers (Track B2)
+│   └── ui/                  # Shared UI components
+├── hooks/                   # useBriefingEvents, etc (Track B2)
+├── stores/                  # Zustand stores (Track B2)
+├── types/                   # TypeScript type definitions
+└── styles/                  # CSS utilities
 ```
 
 ## Development
@@ -50,9 +53,6 @@ pnpm dev
 # Build for production
 pnpm build
 
-# Run tests
-pnpm test
-
 # Lint & typecheck
 pnpm lint
 pnpm typecheck
@@ -60,45 +60,34 @@ pnpm typecheck
 
 ## Design Tokens
 
-```css
---color-safe: #10B981;
---color-warning: #F59E0B;
---color-severe: #EF4444;
---color-background: #0F172A;
---color-surface: #1E293B;
---color-glass: rgba(30, 41, 59, 0.8);
-```
+Defined in `tailwind.config.js`:
 
-## Key Features
+| Token | Value | Usage |
+|-------|-------|-------|
+| `safe` | `#10B981` | Success, low severity |
+| `warning` | `#F59E0B` | Moderate, caution |
+| `severe` | `#EF4444` | High severity, critical |
+| `background` | `#020617` | Deep dark canvas |
+| `surface` | `#0F172A` | Panel backgrounds |
 
-- [ ] 3D terrain rendering with deck.gl TerrainLayer
-- [ ] Cinematic zoom from US map to Cedar Creek
-- [ ] Lifecycle Rail navigation
-- [ ] Agent chat interface with confidence scores
-- [ ] Layer toggles (Satellite, 3D Canopy, Infrared, Trails)
-- [ ] Timeline scrubber (pre-fire → post-fire → projected)
-- [ ] Export to GeoJSON, PDF
+## Current Features (Track B1)
 
-## Mockup Reference
+- [x] 3D isometric terrain with animated contour lines
+- [x] Fire perimeter overlay with thermal effects
+- [x] Lifecycle Rail navigation (IMPACT/DAMAGE/TIMBER/COMPLIANCE)
+- [x] InsightPanel with Burn Analyst metrics
+- [x] Glassmorphic UI components
+- [x] HUD scanlines and military aesthetic
 
-![Command Console v1](../../docs/assets/mockup-iterations/ranger-command-console-v1.png)
+## Upcoming (Track B2)
 
-*Approved v1 mockup — December 2025*
-
-## Setup from AI Studio Export
-
-When importing code from Google AI Studio Build mode:
-
-1. Export the ZIP from AI Studio
-2. Extract to a temporary location
-3. Copy relevant components to `src/components/`
-4. Adapt imports and styling to match our structure
-5. Replace placeholder map with MapLibre/deck.gl integration
+- [ ] BriefingObserver WebSocket integration
+- [ ] AgentBriefingEvent renderers (rail_pulse, map_highlight, panel_inject, modal_interrupt)
+- [ ] Zustand store for briefing events
+- [ ] Real-time agent event handling
 
 ## Environment Variables
 
 ```bash
 VITE_API_URL=http://localhost:8000
-VITE_MAPLIBRE_STYLE=https://...
-VITE_MAPTILER_KEY=...
 ```

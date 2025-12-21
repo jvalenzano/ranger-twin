@@ -1,7 +1,7 @@
 # RANGER Brand Architecture
 
-**Version:** 1.0
-**Date:** December 19, 2025
+**Version:** 1.1
+**Date:** December 20, 2025
 **Status:** Accepted (see [ADR-002](../adr/ADR-002-brand-naming-strategy.md))
 
 ---
@@ -24,7 +24,7 @@
 │  PLATFORM                                                                   │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │  RANGER: The USFS Digital Twin                                       │   │
-│  │  "The unified Digital Twin operating system"                         │   │
+│  │  "Agentic OS for Natural Resource Recovery"                          │   │
 │  │  Use for: Product references, technical architecture                 │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                    │                                        │
@@ -40,6 +40,14 @@
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Vision Statement
+
+> **RANGER is an Agentic OS for Natural Resource Recovery, built on open-source infrastructure and Google ADK orchestration. It transforms siloed data into coordinated intelligence, enabling "Forest Floor to Washington" oversight.**
+
+RANGER is the **nerve center**, not the sensors. It orchestrates AI agents that coordinate across the post-fire recovery lifecycle, synthesizing insights from existing data sources rather than replacing them.
 
 ---
 
@@ -66,8 +74,9 @@
 |---------|-------|
 | **Name** | RANGER |
 | **Full Name** | RANGER: The USFS Digital Twin |
+| **Positioning** | Agentic OS for Natural Resource Recovery |
 | **Type** | Platform / product name |
-| **Purpose** | The unified software platform that hosts all AI agents |
+| **Purpose** | Nerve center that orchestrates AI agents coordinating across post-fire recovery |
 | **Use Cases** | Product documentation, technical architecture, user interfaces, code references |
 | **Voice Interaction** | "Hey Ranger, show me the burn severity analysis." |
 
@@ -182,6 +191,7 @@
 ```
 INITIATIVE:  Project RANGER
 PLATFORM:    RANGER: The USFS Digital Twin
+POSITIONING: Agentic OS for Natural Resource Recovery
 TAGLINE:     Recovery at the speed of insight.
 
 THE CREW:
@@ -189,7 +199,7 @@ THE CREW:
 • Trail Assessor — Digitizes damage inventory
 • Cruising Assistant — Transcribes field data
 • NEPA Advisor — Accelerates compliance
-• Recovery Coordinator — Integrates recovery planning
+• Recovery Coordinator — Orchestrates multi-agent coordination
 ```
 
 ### For Technical Documentation

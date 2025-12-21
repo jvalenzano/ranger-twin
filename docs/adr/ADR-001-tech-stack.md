@@ -4,11 +4,13 @@
 **Date:** 2025-12-19
 **Decision Makers:** TechTrend Federal - Digital Twin Team
 
+> **Note:** This ADR documents the full stack architecture. Phase 1 uses a subset of these technologies with simulated data inputs. See [DATA-SIMULATION-STRATEGY.md](../DATA-SIMULATION-STRATEGY.md) for Phase 1 scope boundaries.
+
 ## Context
 
 We are building an AI-first digital twin platform for post-fire forest recovery. The platform must:
 
-1. Support five specialized AI agents (BurnAnalyst, TrailAssessor, TimberCruiser, ComplianceAdvisor, RecoveryCoordinator)
+1. Support five specialized AI agents (BurnAnalyst, TrailAssessor, CruisingAssistant, NEPAAdvisor, RecoveryCoordinator)
 2. Provide a "Tactical Futurism" UI for desktop command centers
 3. Support offline-capable mobile field data capture
 4. Be FedRAMP High compliant for federal deployment
@@ -59,6 +61,41 @@ We will adopt a **"Zero Licensing" open source stack** with strategic use of GCP
 | **Cloud SQL** | Managed PostgreSQL with PostGIS, FedRAMP High | Self-managed, AlloyDB |
 | **Cloud Storage** | Public Sentinel-2/Landsat buckets, no egress for same-region processing | S3 |
 | **Terraform** | Industry standard IaC, good GCP provider | Pulumi, CloudFormation |
+
+## Phase 1 vs. Full Stack
+
+The following table clarifies which components are active in Phase 1 (simulation-based) versus the full production vision:
+
+| Component | Phase 1 | Full Stack | Notes |
+|-----------|---------|------------|-------|
+| **Frontend** |
+| React 18 + TypeScript | ✓ | ✓ | Core UI framework |
+| Vite | ✓ | ✓ | Development server |
+| Tailwind CSS | ✓ | ✓ | Styling system |
+| MapLibre GL JS | ✓ | ✓ | Base map rendering |
+| deck.gl | ✓ | ✓ | WebGL data visualization |
+| Recharts | ✓ | ✓ | Simple charts |
+| **Backend** |
+| FastAPI | ✓ | ✓ | API gateway |
+| PostgreSQL + PostGIS | ✓ | ✓ | Spatial database (minimal Phase 1 usage) |
+| pgvector | ✓ | ✓ | RAG for NEPA Advisor (limited corpus Phase 1) |
+| Redis | ✓ | ✓ | Session state management |
+| Celery | ✗ | ✓ | Async task queue (not needed for static fixtures) |
+| **AI/ML** |
+| Google Gemini 2.0 Flash | ✓ | ✓ | Agent reasoning and synthesis |
+| Google ADK | ✓ | ✓ | Multi-agent orchestration |
+| LangChain | ✓ | ✓ | RAG framework |
+| OpenAI Whisper | ✗ | ✓ | Simulated in Phase 1 |
+| YOLOv8 | ✗ | ✓ | Simulated in Phase 1 |
+| SAM2 | ✗ | ✓ | Simulated in Phase 1 |
+| geemap | ✗ | ✓ | Simulated in Phase 1 |
+| **Infrastructure** |
+| GCP Cloud Run | ✓ | ✓ | Serverless containers |
+| Cloud SQL | ✓ | ✓ | Managed PostgreSQL |
+| Cloud Storage | ✓ | ✓ | Static fixtures (Phase 1), satellite data (Full) |
+| Terraform | ✓ | ✓ | Infrastructure as code |
+
+**Phase 1 Strategy:** Simulated data inputs (static JSON/GeoJSON fixtures) + real agent orchestration + real Gemini synthesis. See [DATA-SIMULATION-STRATEGY.md](../DATA-SIMULATION-STRATEGY.md) for complete details.
 
 ## Consequences
 

@@ -1,0 +1,221 @@
+{
+  "fire_id": "cedar-creek-2022",
+  "fire_name": "Cedar Creek Fire",
+  "discovery_date": "2022-08-01",
+  "containment_date": "2022-10-14",
+  "total_acres": 127341,
+  "forest": "Willamette National Forest",
+  "state": "Oregon",
+  "imagery_date": "2022-09-15",
+  "source": "MTBS",
+  "sectors": [
+    {
+      "id": "NW-1",
+      "name": "Waldo Lake North",
+      "severity": "HIGH",
+      "severity_class": 4,
+      "acres": 18340,
+      "hectares": 7422,
+      "slope_avg": 38,
+      "slope_max": 65,
+      "aspect_dominant": "SW",
+      "elevation_min": 4200,
+      "elevation_max": 6800,
+      "dnbr_mean": 0.72,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.0847, 43.7523],
+          [-122.0234, 43.7523],
+          [-122.0234, 43.8012],
+          [-122.0847, 43.8012],
+          [-122.0847, 43.7523]
+        ]]
+      },
+      "priority_notes": "Critical watershed protection area. High erosion risk due to steep slopes and complete canopy loss."
+    },
+    {
+      "id": "NW-2",
+      "name": "Waldo Lake South",
+      "severity": "HIGH",
+      "severity_class": 4,
+      "acres": 14200,
+      "hectares": 5746,
+      "slope_avg": 42,
+      "slope_max": 58,
+      "aspect_dominant": "W",
+      "elevation_min": 4800,
+      "elevation_max": 6200,
+      "dnbr_mean": 0.68,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.0847, 43.6934],
+          [-122.0234, 43.6934],
+          [-122.0234, 43.7523],
+          [-122.0847, 43.7523],
+          [-122.0847, 43.6934]
+        ]]
+      },
+      "priority_notes": "Adjacent to Waldo Lake Wilderness. Contains old-growth refugia patches."
+    },
+    {
+      "id": "NE-1",
+      "name": "Charlton Lake Area",
+      "severity": "MODERATE",
+      "severity_class": 3,
+      "acres": 12500,
+      "hectares": 5059,
+      "slope_avg": 22,
+      "slope_max": 35,
+      "aspect_dominant": "E",
+      "elevation_min": 5200,
+      "elevation_max": 5800,
+      "dnbr_mean": 0.45,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-121.9621, 43.7523],
+          [-121.9008, 43.7523],
+          [-121.9008, 43.8012],
+          [-121.9621, 43.8012],
+          [-121.9621, 43.7523]
+        ]]
+      },
+      "priority_notes": "Mixed severity mosaic. Natural regeneration potential high."
+    },
+    {
+      "id": "NE-2",
+      "name": "Bobby Lake Basin",
+      "severity": "MODERATE",
+      "severity_class": 3,
+      "acres": 9800,
+      "hectares": 3966,
+      "slope_avg": 18,
+      "slope_max": 28,
+      "aspect_dominant": "NE",
+      "elevation_min": 5400,
+      "elevation_max": 6000,
+      "dnbr_mean": 0.42,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-121.9621, 43.6934],
+          [-121.9008, 43.6934],
+          [-121.9008, 43.7523],
+          [-121.9621, 43.7523],
+          [-121.9621, 43.6934]
+        ]]
+      },
+      "priority_notes": "Recreation corridor. Trail network heavily impacted."
+    },
+    {
+      "id": "SW-1",
+      "name": "Hills Creek Drainage",
+      "severity": "HIGH",
+      "severity_class": 4,
+      "acres": 21500,
+      "hectares": 8702,
+      "slope_avg": 45,
+      "slope_max": 72,
+      "aspect_dominant": "S",
+      "elevation_min": 2800,
+      "elevation_max": 5600,
+      "dnbr_mean": 0.76,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.1460, 43.6345],
+          [-122.0847, 43.6345],
+          [-122.0847, 43.6934],
+          [-122.1460, 43.6934],
+          [-122.1460, 43.6345]
+        ]]
+      },
+      "priority_notes": "Highest priority salvage. Commercial timber value. Critical road access needed."
+    },
+    {
+      "id": "SW-2",
+      "name": "Timpanogas Lake Area",
+      "severity": "LOW",
+      "severity_class": 2,
+      "acres": 8400,
+      "hectares": 3400,
+      "slope_avg": 15,
+      "slope_max": 25,
+      "aspect_dominant": "N",
+      "elevation_min": 5000,
+      "elevation_max": 5600,
+      "dnbr_mean": 0.22,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.1460, 43.5756],
+          [-122.0847, 43.5756],
+          [-122.0847, 43.6345],
+          [-122.1460, 43.6345],
+          [-122.1460, 43.5756]
+        ]]
+      },
+      "priority_notes": "Low severity understory burn. Good fire adaptation potential."
+    },
+    {
+      "id": "SE-1",
+      "name": "Odell Lake Corridor",
+      "severity": "MODERATE",
+      "severity_class": 3,
+      "acres": 15600,
+      "hectares": 6313,
+      "slope_avg": 28,
+      "slope_max": 45,
+      "aspect_dominant": "SE",
+      "elevation_min": 4600,
+      "elevation_max": 5800,
+      "dnbr_mean": 0.48,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.0234, 43.5756],
+          [-121.9621, 43.5756],
+          [-121.9621, 43.6345],
+          [-122.0234, 43.6345],
+          [-122.0234, 43.5756]
+        ]]
+      },
+      "priority_notes": "Highway 58 viewshed. Tourism impact considerations."
+    },
+    {
+      "id": "CORE-1",
+      "name": "Central Fire Origin",
+      "severity": "HIGH",
+      "severity_class": 4,
+      "acres": 27001,
+      "hectares": 10928,
+      "slope_avg": 35,
+      "slope_max": 55,
+      "aspect_dominant": "W",
+      "elevation_min": 3800,
+      "elevation_max": 6400,
+      "dnbr_mean": 0.81,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-122.0847, 43.6345],
+          [-122.0234, 43.6345],
+          [-122.0234, 43.6934],
+          [-122.0847, 43.6934],
+          [-122.0847, 43.6345]
+        ]]
+      },
+      "priority_notes": "Fire origin area. Complete stand replacement. Seed source planning critical."
+    }
+  ],
+  "summary": {
+    "high_severity_acres": 81041,
+    "moderate_severity_acres": 37900,
+    "low_severity_acres": 8400,
+    "high_severity_pct": 63.6,
+    "moderate_severity_pct": 29.8,
+    "low_severity_pct": 6.6
+  }
+}

@@ -8,7 +8,11 @@
 
 | Document | Description |
 |----------|-------------|
-| [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | **Start here.** Master document with vision, agents, 6-week sprint plan |
+| [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) | **Start here.** Authoritative scope document defining Phase 1 boundaries and simulation contract |
+| [PHASED-BUILD-PLAN.md](./PHASED-BUILD-PLAN.md) | **Execution roadmap.** Three-phase plan from static demo to production-ready |
+| [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Master vision document with agents and architecture |
+| [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: unified console vs. separate apps |
+| [SPRINT-FOCUS.md](./SPRINT-FOCUS.md) | Development priorities for Phase 1 (P0-P3) |
 | [../README.md](../README.md) | Repository overview and quick start |
 | [../CLAUDE.md](../CLAUDE.md) | AI development guidance for Claude Code |
 
@@ -27,35 +31,26 @@
 | [architecture/GCP-ARCHITECTURE.md](./architecture/GCP-ARCHITECTURE.md) | GCP infrastructure patterns, serverless design, cost estimates |
 | [architecture/OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md) | Complete inventory of open source tools with GitHub links |
 | [architecture/UX-VISION.md](./architecture/UX-VISION.md) | "Tactical Futurism" design philosophy, mockups, prototyping guide |
+| [architecture/AGENT-MESSAGING-PROTOCOL.md](./architecture/AGENT-MESSAGING-PROTOCOL.md) | AgentBriefingEvent schema and messaging patterns |
+| [architecture/BRIEFING-UX-SPEC.md](./architecture/BRIEFING-UX-SPEC.md) | UI rendering spec for AgentBriefingEvents and reasoning transparency |
+| [architecture/LEGACY-INTEGRATION-SCHEMAS.md](./architecture/LEGACY-INTEGRATION-SCHEMAS.md) | TRACS, FSVeg export schemas for USFS legacy system integration |
 
 ### Agent Specifications ("The Crew")
 
 | Agent | Role Title | Document | Purpose |
 |-------|------------|----------|---------|
+| **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product for Phase 1** |
 | Burn Analyst | The Burn Analyst | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
 | Trail Assessor | The Trail Assessor | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
 | Cruising Assistant | The Cruising Assistant | [agents/TIMBER-CRUISER-SPEC.md](./agents/TIMBER-CRUISER-SPEC.md) | Multimodal timber inventory |
 | NEPA Advisor | The NEPA Advisor | [agents/COMPLIANCE-ADVISOR-SPEC.md](./agents/COMPLIANCE-ADVISOR-SPEC.md) | NEPA regulatory guidance |
 
-### Research
+### Assets & Design
 
 | Document | Description |
 |----------|-------------|
-| [research/MARKET-RESEARCH.md](./research/MARKET-RESEARCH.md) | Competitive landscape, go/no-go analysis, risk assessment |
-| [research/DATA-RESOURCES.md](./research/DATA-RESOURCES.md) | Public data sources, access methods |
-| [research/DATA-STRATEGY.md](./research/DATA-STRATEGY.md) | Data curation and pipeline strategy |
-
-### Assets & Mockup Generation
-
-| Document | Description |
-|----------|-------------|
-| [assets/MOCKUP-SESSION-LOG.md](./assets/MOCKUP-SESSION-LOG.md) | **Active session.** Current progress, pending fixes, next steps |
-| [assets/VIBE-CODING-GUIDE.md](./assets/VIBE-CODING-GUIDE.md) | Vibe coding workflow with Google AI Studio Build mode |
-| [assets/DESIGN-SPEC-HANDOFF.md](./assets/DESIGN-SPEC-HANDOFF.md) | **Engineering handoff.** CSS, typography, map layer specs |
-| [assets/AI-STUDIO-PROMPT.md](./assets/AI-STUDIO-PROMPT.md) | Full prompt with system instructions and iteration strategies |
-| [assets/GOOGLE-AI-STUDIO-WORKFLOW.md](./assets/GOOGLE-AI-STUDIO-WORKFLOW.md) | Legacy Playground workflow (reference) |
-| [assets/MOCKUP-GENERATION.md](./assets/MOCKUP-GENERATION.md) | Design brief, Midjourney/Figma alternatives |
-| [assets/ranger-mockup.png](./assets/ranger-mockup.png) | Current Command Console mockup (placeholder) |
+| [assets/USER-JOURNEYS-AND-PERSONAS.md](./assets/USER-JOURNEYS-AND-PERSONAS.md) | User personas and journey maps for RANGER Command Console |
+| [assets/SYSTEM-ARCHITECTURE-WIREFRAME.md](./assets/SYSTEM-ARCHITECTURE-WIREFRAME.md) | ASCII wireframes for system architecture |
 
 ### Architecture Decision Records
 
@@ -63,6 +58,10 @@
 |-----|-------|--------|
 | [ADR-001](./adr/ADR-001-tech-stack.md) | Technology Stack Selection | Accepted |
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
+
+### Archive
+
+Archived documents from the initial exploration phase are available in [archive/](./archive/). These contain ideation artifacts and research that have been superseded by current documents.
 
 ## Document Conventions
 
