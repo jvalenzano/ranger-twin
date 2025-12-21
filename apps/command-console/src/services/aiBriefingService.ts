@@ -1,10 +1,8 @@
 /**
  * AI Briefing Service - Frontend client for RANGER agent queries
  *
- * Provides an interface to the /api/query endpoint with:
- * - Query execution
- * - Fallback to fixtures on error
- * - Response type mapping
+ * Phase 1: Direct Gemini integration for chat
+ * Phase 2+: Will use backend /api/query endpoint with full agent orchestration
  */
 
 import type {
@@ -55,64 +53,278 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
   'nepa-advisor': 'nepa_advisor',
 };
 
-// API endpoint (use environment variable or default to local)
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Gemini API key from environment
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
+
+// System prompt for RANGER context
+const RANGER_SYSTEM_PROMPT = `You are the Recovery Coordinator for RANGER, an AI-powered forest recovery platform. You help forest rangers analyze post-fire recovery operations for the Cedar Creek Fire (2022) in the Willamette National Forest, Oregon.
+
+Context:
+- The Cedar Creek Fire burned approximately 127,000 acres
+- Your role is to coordinate between specialist agents: Burn Analyst, Trail Assessor, Cruising Assistant, and NEPA Advisor
+- Focus areas: burn severity assessment, trail damage evaluation, timber salvage prioritization, and environmental compliance
+
+When answering questions:
+1. Be concise but thorough
+2. Reference specific data when available (trails, plots, burn areas)
+3. Provide actionable insights for forest recovery operations
+4. Maintain a professional, tactical tone appropriate for emergency operations
+
+Available Data Summary:
+- 5 trails assessed with 16 damage points, 3 complete bridge failures
+- 6 timber plots surveyed (47-ALPHA through 15-ECHO)
+- Burn severity zones: HIGH (red), MODERATE (amber), LOW (green)
+- Priority bridges: Waldo Lake (40ft timber), Bobby Lake (puncheon), Hills Creek (primary)`;
+
+// Simulated responses for when API is rate-limited or unavailable
+const SIMULATED_RESPONSES: Record<string, { agentRole: AgentRole; response: string }> = {
+  trail: {
+    agentRole: 'trail-assessor',
+    response: `Based on our assessment of 5 trails across 40.3 miles, the most severe damage is on:
+
+**Hills Creek Trail** - Priority 1
+- Complete bridge failure (primary crossing)
+- Debris flow burial for 0.3 miles
+- Estimated repair: $238K
+
+**Waldo Lake Trail** - Priority 2
+- 40ft timber bridge destroyed
+- 47 hazard trees identified
+- High visitor access impact
+
+**Bobby Lake Trail** - Priority 3
+- Puncheon bridge failure
+- Tread erosion at 3 locations
+
+Total: 16 damage points, 3 bridge failures, 175+ hazard trees. Estimated 153 crew-days needed for full restoration.`,
+  },
+  burn: {
+    agentRole: 'burn-analyst',
+    response: `Burn severity analysis for Cedar Creek Fire (127,000 acres):
+
+**HIGH Severity Zones** (Red)
+- Concentrated in central fire area
+- dNBR values > 0.66
+- Complete canopy loss, soil damage
+
+**MODERATE Severity** (Amber)
+- Eastern and western flanks
+- dNBR 0.27-0.66
+- Partial canopy survival
+
+**LOW Severity** (Green)
+- Perimeter areas, riparian corridors
+- dNBR < 0.27
+- Surface burn only
+
+Recommendation: Prioritize soil stabilization in HIGH zones before winter precipitation. Salvage timber assessment should focus on MODERATE zones where merchantable timber remains.`,
+  },
+  timber: {
+    agentRole: 'cruising-assistant',
+    response: `Timber salvage priority assessment for 6 surveyed plots:
+
+**HIGHEST Priority**
+- Plot 47-ALPHA: 12.5 MBF/acre, $4,200/acre value
+- Plot 52-FOXTROT: 11.8 MBF/acre, mixed conifer
+
+**HIGH Priority**
+- Plot 23-CHARLIE: 9.2 MBF/acre, Douglas-fir dominant
+- Plot 31-DELTA: 8.7 MBF/acre, accessible via existing roads
+
+**MEDIUM Priority**
+- Plot 15-ECHO: 6.4 MBF/acre, steeper terrain
+- Additional plots pending assessment
+
+Total estimated salvage value: $2.1M across surveyed area. Window for salvage operations: 18-24 months before beetle damage reduces value.`,
+  },
+  nepa: {
+    agentRole: 'nepa-advisor',
+    response: `NEPA compliance pathways for post-fire salvage operations:
+
+**Categorical Exclusion (CE)** - Fastest
+- Applies to: Hazard tree removal along roads/trails
+- Timeline: 2-4 weeks
+- Limitations: 250-acre maximum
+
+**Emergency Situation Determination (ESD)**
+- Applies to: Salvage in high-risk areas
+- Timeline: 30-60 days
+- Allows expedited EA process
+
+**Environmental Assessment (EA)**
+- Required for: Large-scale salvage (>1000 acres)
+- Timeline: 6-12 months
+- Full public comment period
+
+Recommendation: Use CE for immediate trail/road hazard work. Pursue ESD for priority salvage units 47-ALPHA and 52-FOXTROT.`,
+  },
+  default: {
+    agentRole: 'recovery-coordinator',
+    response: `Welcome to RANGER Recovery Coordinator. I can help with:
+
+**Burn Analysis** - Severity mapping, dNBR assessment, soil impacts
+**Trail Assessment** - Damage inventory, bridge status, hazard trees
+**Timber Salvage** - Plot prioritization, volume estimates, value assessment
+**NEPA Compliance** - Pathway selection, timeline planning, documentation
+
+Current Cedar Creek Fire status:
+- 127,000 acres burned
+- 5 trails assessed, 3 bridges destroyed
+- 6 timber plots surveyed
+- Recovery operations in planning phase
+
+What aspect of the recovery would you like to explore?`,
+  },
+};
 
 class AIBriefingService {
   private isLoading = false;
+  private useSimulation = false; // Fall back to simulation after rate limit
 
   /**
-   * Query the RANGER agents via simple chat endpoint
+   * Query the RANGER agents via Gemini (Phase 1 simulation)
+   * Falls back to simulated responses if API is rate-limited
    */
   async query(
     queryText: string,
-    sessionId: string = 'demo-session-123'
+    _sessionId: string = 'demo-session-123'
   ): Promise<QueryResponse> {
     this.isLoading = true;
+    const startTime = Date.now();
+
+    // Determine agent role based on query content
+    const agentRole = this.detectAgentRole(queryText);
+
+    // If we've hit rate limits, use simulation mode
+    if (this.useSimulation || !GEMINI_API_KEY) {
+      console.log('[AIBriefingService] Using simulated response');
+      return this.getSimulatedResponse(queryText, agentRole, startTime);
+    }
 
     try {
-      // The gateway endpoint is /api/v1/chat
-      const response = await fetch(`${API_URL}/v1/chat`, {
+      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: queryText,
-          session_id: sessionId,
+          contents: [
+            {
+              parts: [
+                { text: RANGER_SYSTEM_PROMPT },
+                { text: `\n\nUser Question: ${queryText}` }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1024,
+          }
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      // Handle rate limiting - fall back to simulation
+      if (response.status === 429) {
+        console.warn('[AIBriefingService] Rate limited, switching to simulation mode');
+        this.useSimulation = true;
+        // Reset after 60 seconds
+        setTimeout(() => {
+          this.useSimulation = false;
+          console.log('[AIBriefingService] Rate limit cooldown complete, API available');
+        }, 60000);
+        return this.getSimulatedResponse(queryText, agentRole, startTime);
       }
 
-      const data: { answer: string } = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[AIBriefingService] Gemini API error:', errorData);
+        // Fall back to simulation for any error
+        return this.getSimulatedResponse(queryText, agentRole, startTime);
+      }
 
-      // Adapt the simple answer back to the expected AgentResponse format
-      // In Phase 2+, the full BriefingEvent will arrive via WebSocket
+      const data = await response.json();
+      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated';
+
       const adaptedResponse: QueryResponse = {
         success: true,
         response: {
-          agentRole: 'recovery-coordinator',
-          summary: data.answer,
-          reasoning: ['Synthesized by Recovery Coordinator'],
-          confidence: 90,
+          agentRole,
+          summary: answer,
+          reasoning: ['Query analyzed by Recovery Coordinator', `Routed to ${agentRole} specialist`],
+          confidence: 88,
           citations: [],
         },
+        processingTimeMs: Date.now() - startTime,
       };
 
       return adaptedResponse;
     } catch (error) {
-      console.error('[AIBriefingService] Query failed:', error);
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Query failed',
-      };
+      console.error('[AIBriefingService] Query failed, using simulation:', error);
+      return this.getSimulatedResponse(queryText, agentRole, startTime);
     } finally {
       this.isLoading = false;
     }
+  }
+
+  /**
+   * Get a simulated response based on query keywords
+   */
+  private getSimulatedResponse(
+    queryText: string,
+    _agentRole: AgentRole,
+    startTime: number
+  ): QueryResponse {
+    const lowerQuery = queryText.toLowerCase();
+
+    // Select appropriate simulated response
+    let simKey: keyof typeof SIMULATED_RESPONSES = 'default';
+    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('damage')) {
+      simKey = 'trail';
+    } else if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
+      simKey = 'burn';
+    } else if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('plot')) {
+      simKey = 'timber';
+    } else if (lowerQuery.includes('nepa') || lowerQuery.includes('compliance') || lowerQuery.includes('environmental')) {
+      simKey = 'nepa';
+    }
+
+    // simKey is always a valid key, and we have a default fallback
+    const simulated = SIMULATED_RESPONSES[simKey]!;
+
+    return {
+      success: true,
+      response: {
+        agentRole: simulated.agentRole,
+        summary: simulated.response,
+        reasoning: ['Query analyzed by Recovery Coordinator', `Simulated ${simulated.agentRole} response (API cooldown)`],
+        confidence: 92,
+        citations: [],
+      },
+      processingTimeMs: Date.now() - startTime,
+    };
+  }
+
+  /**
+   * Detect which specialist agent should handle the query
+   */
+  private detectAgentRole(query: string): AgentRole {
+    const lowerQuery = query.toLowerCase();
+
+    if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
+      return 'burn-analyst';
+    }
+    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('damage') || lowerQuery.includes('path')) {
+      return 'trail-assessor';
+    }
+    if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('plot') || lowerQuery.includes('mbf')) {
+      return 'cruising-assistant';
+    }
+    if (lowerQuery.includes('nepa') || lowerQuery.includes('compliance') || lowerQuery.includes('environmental') || lowerQuery.includes('regulation')) {
+      return 'nepa-advisor';
+    }
+
+    return 'recovery-coordinator';
   }
 
   /**

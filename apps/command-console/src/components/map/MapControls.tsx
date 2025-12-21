@@ -31,9 +31,18 @@ const MapControls: React.FC = () => {
   const isIRMode = activeLayer === 'IR';
 
   return (
-    <div className="absolute bottom-6 right-6 flex flex-col gap-4 z-20">
-      {/* Layer Toggle Pill */}
-      <div className={`glass p-1 rounded-full flex flex-col gap-1 shadow-2xl border ${isIRMode ? 'border-orange-500/50' : 'border-white/10'}`}>
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+      {/* Zoom Out */}
+      <button
+        onClick={zoomOut}
+        title="Zoom Out"
+        className="glass w-10 h-10 rounded-full flex items-center justify-center border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
+      >
+        <Minus size={18} />
+      </button>
+
+      {/* Layer Toggle Pill - Horizontal */}
+      <div className={`glass px-1.5 py-1 rounded-full flex items-center gap-1 shadow-2xl border ${isIRMode ? 'border-orange-500/50' : 'border-white/10'}`}>
         {layers.map((layer) => {
           const isActive = activeLayer === layer;
           const isIR = layer === 'IR';
@@ -68,52 +77,42 @@ const MapControls: React.FC = () => {
         })}
       </div>
 
-      {/* Zoom Controls */}
-      <div className="glass p-1 rounded-full flex flex-col gap-1 border border-white/10">
-        <button
-          onClick={zoomIn}
-          title="Zoom In"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
-        >
-          <Plus size={18} />
-        </button>
-        <div className="h-[1px] w-6 mx-auto bg-white/10" />
-        <button
-          onClick={zoomOut}
-          title="Zoom Out"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
-        >
-          <Minus size={18} />
-        </button>
-      </div>
+      {/* Zoom In */}
+      <button
+        onClick={zoomIn}
+        title="Zoom In"
+        className="glass w-10 h-10 rounded-full flex items-center justify-center border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
+      >
+        <Plus size={18} />
+      </button>
 
       {/* Compass */}
       <button
         onClick={resetBearing}
         title="Reset North"
-        className="glass w-12 h-12 rounded-full flex items-center justify-center border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
+        className="glass w-10 h-10 rounded-full flex items-center justify-center border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors active:scale-95"
       >
-        <Compass size={24} strokeWidth={1.5} />
+        <Compass size={20} strokeWidth={1.5} />
       </button>
 
-      {/* IR Mode Legend */}
+      {/* IR Mode Legend - Positioned to the right of controls */}
       {isIRMode && (
-        <div className="glass rounded-lg p-3 border border-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.2)] animate-fadeIn">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400 mb-2">
-            Thermal View
+        <div className="glass rounded-lg px-3 py-2 border border-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.2)] animate-fadeIn flex items-center gap-4">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400">
+            Thermal
           </div>
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-              <span className="text-[10px] text-slate-300">High Severity</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              <span className="text-[9px] text-slate-300">High</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
-              <span className="text-[10px] text-slate-300">Moderate</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
+              <span className="text-[9px] text-slate-300">Med</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
-              <span className="text-[10px] text-slate-300">Low/Cool</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
+              <span className="text-[9px] text-slate-300">Low</span>
             </div>
           </div>
         </div>

@@ -53,7 +53,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <BriefingObserver autoConnect={false}>
-        <div className="relative w-screen h-screen overflow-hidden bg-background flex text-text-primary">
+        <div className="relative w-screen h-screen overflow-hidden bg-background text-text-primary">
           {/* MapLibre GL Map - Cedar Creek Fire (Willamette NF, Oregon) */}
           <Suspense fallback={<MapLoadingSkeleton />}>
             <CedarCreekMap />
@@ -62,47 +62,29 @@ const App: React.FC = () => {
           {/* Demo Tour Overlay - Guided Experience */}
           <DemoTourOverlay />
 
-          {/* Lifecycle Navigation Rail */}
+          {/* Header - Full width at top */}
+          <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
+
+          {/* Lifecycle Navigation Rail - Left side */}
           <Sidebar />
 
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col relative z-10">
-            <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
+          {/* Main Content Area - offset for sidebar */}
+          <main className="absolute top-[48px] left-[64px] right-0 bottom-0 p-6 pointer-events-none">
+            <div className="pointer-events-auto contents">
+              {/* Insight Panel - Top Right */}
+              <InsightPanel />
 
-            <main className="flex-1 relative p-6 pointer-events-none">
-              <div className="pointer-events-auto contents">
-                {/* Insight Panel - Top Right */}
-                <InsightPanel />
+              {/* Map Controls - Bottom Right */}
+              <MapControls />
 
-                {/* Map Controls - Bottom Right */}
-                <MapControls />
+              {/* Attribution - Bottom Left */}
+              <Attribution />
 
-                {/* Attribution - Bottom Left */}
-                <Attribution />
+              {/* Chat Panel - Bottom Right (toggleable) */}
+              {isChatOpen && <ChatPanel />}
+            </div>
 
-                {/* Chat Panel - Bottom Right (toggleable) */}
-                {isChatOpen && <ChatPanel />}
-              </div>
-
-              {/* Geographic Markers */}
-              <div className="absolute top-[28%] left-[32%] flex flex-col items-center gap-1 pointer-events-none opacity-80">
-                <div className="w-2 h-2 bg-accent-cyan rounded-full shadow-[0_0_14px_cyan]" />
-                <span className="text-[11px] mono uppercase tracking-[0.3em] font-bold text-accent-cyan text-shadow-sm">
-                  Lookout Peak
-                </span>
-                <div className="bg-cyan-950/50 px-1.5 py-0.5 border border-accent-cyan/30 text-[9px] mono text-accent-cyan/80 rounded-[2px] backdrop-blur-sm">
-                  4,821 FT
-                </div>
-              </div>
-
-              <div className="absolute top-[68%] left-[58%] flex flex-col items-center gap-1 pointer-events-none opacity-80">
-                <div className="w-2 h-2 bg-safe rounded-full shadow-[0_0_14px_#10B981]" />
-                <span className="text-[11px] mono uppercase tracking-[0.3em] font-bold text-safe text-shadow-sm">
-                  Mill Creek
-                </span>
-              </div>
-            </main>
-          </div>
+          </main>
         </div>
       </BriefingObserver>
     </ErrorBoundary>

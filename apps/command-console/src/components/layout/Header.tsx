@@ -22,9 +22,9 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   };
 
   return (
-    <header className="h-[48px] w-full glass-header z-30 flex items-center justify-between px-8">
-      {/* Left side Wordmark */}
-      <div className="flex items-center pl-12">
+    <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-8">
+      {/* Left side Wordmark - offset to account for sidebar width */}
+      <div className="flex items-center" style={{ marginLeft: '64px' }}>
         <span className="text-[18px] font-bold tracking-[0.05em] text-text-primary">
           RANGER
         </span>

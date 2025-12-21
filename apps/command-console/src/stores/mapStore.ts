@@ -7,7 +7,8 @@
  * - 3D terrain exaggeration
  *
  * Cedar Creek Fire (2022) coordinates:
- * - Center: 43.7°N, 122.1°W (Willamette National Forest, Oregon)
+ * - Center: 43.726°N, 122.167°W (Willamette National Forest, Oregon)
+ * - Source: Wikipedia (43°43′34″N 122°10′01″W)
  */
 
 import { create } from 'zustand';

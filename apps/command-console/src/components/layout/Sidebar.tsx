@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-[64px] h-full glass border-r border-white/10 z-40 flex flex-col items-center py-6">
+    <aside className="absolute top-[48px] left-0 bottom-0 w-[64px] glass border-r border-white/10 z-40 flex flex-col items-center py-6">
       <div className="relative flex flex-col items-center gap-12 w-full h-full">
         <div className="absolute top-6 bottom-6 w-[1px] bg-white/5 left-1/2 -translate-x-1/2 z-0" />
 

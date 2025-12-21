@@ -682,13 +682,17 @@ const CedarCreekMap: React.FC = () => {
     const mapInstance = map.current;
     const currentCenter = mapInstance.getCenter();
     const currentZoom = mapInstance.getZoom();
+    const currentBearing = mapInstance.getBearing();
+    const currentPitch = mapInstance.getPitch();
 
     const centerDiff =
       Math.abs(currentCenter.lng - camera.center[0]) > 0.001 ||
       Math.abs(currentCenter.lat - camera.center[1]) > 0.001;
     const zoomDiff = Math.abs(currentZoom - camera.zoom) > 0.1;
+    const bearingDiff = Math.abs(currentBearing - camera.bearing) > 1;
+    const pitchDiff = Math.abs(currentPitch - camera.pitch) > 1;
 
-    if (centerDiff || zoomDiff) {
+    if (centerDiff || zoomDiff || bearingDiff || pitchDiff) {
       isInternalMove.current = true;
       mapInstance.flyTo({
         center: camera.center,
@@ -698,7 +702,7 @@ const CedarCreekMap: React.FC = () => {
         duration: 1000,
       });
     }
-  }, [camera.center[0], camera.center[1], camera.zoom]);
+  }, [camera.center[0], camera.center[1], camera.zoom, camera.bearing, camera.pitch]);
 
   return (
     <div
