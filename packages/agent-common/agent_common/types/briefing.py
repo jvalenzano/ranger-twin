@@ -242,12 +242,12 @@ class AgentBriefingEvent(BaseModel):
     - Transparent (via proof_layer)
     - Traceable (via correlation_id and parent_event_id)
 
-    Schema Version: 1.0.0
+    Schema Version: 1.1.0
     Reference: docs/architecture/AGENT-MESSAGING-PROTOCOL.md
     """
 
     schema_version: str = Field(
-        default="1.0.0",
+        default="1.1.0",
         description="Schema version for forward compatibility",
     )
     event_id: UUID = Field(

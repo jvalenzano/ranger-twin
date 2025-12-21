@@ -10,7 +10,7 @@ The `AgentBriefingEvent` (formerly `BriefingObject`) is the keystone contract be
 
 ```json
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "event_id": "string (UUID)",
   "parent_event_id": "string (UUID) | null",
   "correlation_id": "string (UUID)",

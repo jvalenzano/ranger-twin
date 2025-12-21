@@ -1,44 +1,54 @@
-# Field Companion
+# RANGER Field Companion
 
-> Mobile PWA for field data capture - offline-first architecture
+> **Mobile Multimodal Sensor for the Digital Twin**
 
 ## Overview
 
-The Field Companion is a Progressive Web App designed for trail crews, timber cruisers, and field foresters. It emphasizes one-handed operation, offline capability, and seamless data sync.
+The Field Companion is a Progressive Web App (PWA) designed to serve as the **Sensory Layer** for the RANGER platform. Unlike traditional field apps that focus on manual data entry, the Field Companion harnesses **multimodal AI** (Video, Voice, and Spatial Data) to automate the capture of forest intelligence.
 
-## Design Philosophy
+It is the primary field interface for the **Trail Assessor** and **Cruising Assistant** agents.
 
-- **Camera-centric**: Primary interface is video capture
-- **One-handed operation**: Large touch targets, swipe gestures
-- **Offline-first**: Full functionality without connectivity
-- **Voice input**: Hands-free data capture via Whisper
+## Design Philosophy: "Observational Assistant"
 
-## Tech Stack
+- **Multimodal Capture**: Simultaneously records video, ambient narration, and high-frequency GPS.
+- **Offline-First**: Engineered for "Green Zone" operation with local SQLite buffering and asynchronous background sync.
+- **Tactical UI**: Large, high-contrast touch targets designed for one-handed use in difficult terrain.
+- **Voice-Native**: Support for voice-triggered data marking to keep hands free for tools or navigation.
 
-- **Framework**: React 18 + TypeScript
-- **Build**: Vite (PWA plugin)
-- **Styling**: Tailwind CSS
-- **Offline**: Workbox service worker
-- **Storage**: IndexedDB (Dexie.js)
-- **Camera**: MediaDevices API
+## Technical Architecture
 
-## Key Components
+The application is structured to manage high-bandwidth data streams while maintaining extreme battery efficiency:
 
+### src/ Structure
 ```
 src/
 ├── components/
-│   ├── camera/              # Video capture, damage marking
-│   ├── voice/               # Voice recording interface
-│   ├── sync/                # Sync queue indicator
-│   └── common/              # Mobile-optimized components
+│   ├── camera/          # Multi-stream video capture + AR overlays
+│   ├── voice/           # Ambient narration & Whisper-pre-processing
+│   ├── spatial/         # High-frequency GPS & IMU (Compass/Gyro/Accel)
+│   └── sync/            # Store-and-Forward background sync manager
 ├── hooks/
-│   ├── useCamera.ts         # Camera access
-│   ├── useGeolocation.ts    # GPS tracking
-│   ├── useOfflineSync.ts    # Sync queue management
-│   └── useVoiceRecorder.ts  # Audio recording
-├── stores/                  # Zustand + IndexedDB persistence
-└── workers/                 # Service worker, background sync
+│   ├── useMultimodal.ts # Coordinates voice/video/GPS fusion
+│   └── useOffline.ts     # SQLite/Dexie persistence logic
+├── services/
+│   ├── agentBridge.ts   # Formatting for Trail Assessor/Cruising Assistant
+│   └── gcsUploader.ts   # Secure chunked upload to Google Cloud Storage
+└── stores/              # Zustand state for ephemeral session data
 ```
+
+## AI Capabilities (Harnessing & Functioning)
+
+The Field Companion is built to "harness" mobile hardware to feed the RANGER "nerve center":
+
+### 1. Trail Assessor Integration
+- **Harnesses**: 1080p+ video and GPS tracks.
+- **Function**: Automatically flags trail deficiencies (washouts, fallen trees) as the user walks throughout the forest.
+- **Output**: Generates a synchronized "Damage Inventory" JSON that is injected into the Command Console.
+
+### 2. Cruising Assistant Integration
+- **Harnesses**: Close-up video (bark texture) and voice dictation.
+- **Function**: "Speak-and-See" verification. When a user says "Douglas Fir, 24 inches," the AI verifies the species and DBH from the video feed.
+- **Output**: Populates FSVeg-compatible plot records with visual proof layers.
 
 ## Development
 
@@ -49,39 +59,12 @@ pnpm install
 # Start dev server
 pnpm dev
 
-# Build for production (includes SW)
+# Build for production (Offline Manifest)
 pnpm build
-
-# Preview PWA
-pnpm preview
 ```
 
-## Key Features
+---
 
-- [ ] Video capture with GPS correlation
-- [ ] Voice note recording
-- [ ] Offline damage point marking
-- [ ] Background sync when online
-- [ ] Trail selection and navigation
-- [ ] Sync queue visualization
-
-## PWA Manifest
-
-```json
-{
-  "name": "RANGER AI Field Companion",
-  "short_name": "Field Companion",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0F172A",
-  "theme_color": "#10B981"
-}
-```
-
-## Offline Strategy
-
-1. Cache app shell on install
-2. Store captured data in IndexedDB
-3. Queue API requests for background sync
-4. Sync when connectivity restored
-5. Show sync status to user
+**Status:** Conceptual Scaffolding (Phase 1 Simulation)
+**Primary Developer:** TBD
+**Strategy Doc:** [FIELD-AI-STRATEGY.md](../../docs/architecture/FIELD-AI-STRATEGY.md)

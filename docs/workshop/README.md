@@ -56,11 +56,12 @@ Workshop term for the coherent narrative that emerges when the Coordinator synth
 
 See [`WORKSHOP-DEMO-ALIGNMENT.md`](./WORKSHOP-DEMO-ALIGNMENT.md) for detailed mapping between the production vision described here and our Phase 1 portfolio demo implementation.
 
-**Key distinction:**
+**Key distinctions:**
 - Workshop describes **$704K / 26-week / 8 FTE** production system
 - Demo is **$0 / Phase 1 static** portfolio proof-of-concept
+- Workshop uses 15,300-acre fire size (hypothetical); demo uses Cedar Creek's actual 127,341 acres
 
-Both share the same architecture and design patterns.
+Both share the same architecture and design patterns. See [`WORKSHOP-DEMO-ALIGNMENT.md`](./WORKSHOP-DEMO-ALIGNMENT.md) for the complete mapping.
 
 ---
 

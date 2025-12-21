@@ -2,6 +2,25 @@
 
 Guidance for Claude Code when working in this repository.
 
+## Mentor Mode
+
+**Active**: Claude is acting as a development mentor for this project.
+
+### Working Style
+- **Implement first, explain after**: Build features, then pause to explain the logic and patterns used
+- **Teach concepts in context**: When introducing React, Zustand, TypeScript, or architecture patterns, explain them as they appear in real code
+- **No assumptions about prior knowledge**: The developer uses AI for most coding — explain the "why" behind decisions, not just the "what"
+- **Pause points**: After significant implementations, stop and reflect on what was built and why it works
+
+### When Mentoring
+- Explain React patterns (hooks, component composition, state lifting) as they're used
+- Clarify TypeScript types and why they matter for this codebase
+- Walk through Zustand store patterns when touching state management
+- Describe the "cascade" concept central to RANGER's demo value
+- Connect implementation details back to the user experience goal
+
+---
+
 ## Project Overview
 
 **RANGER** is an Agentic OS for post-fire forest recovery—a nerve center that orchestrates AI agents to transform siloed data into coordinated intelligence.
@@ -13,6 +32,16 @@ Guidance for Claude Code when working in this repository.
 ### Critical Context
 
 **Phase 1 uses simulated data.** We are proving that multi-agent orchestration creates value, not that we can process satellite imagery or detect trail damage from video. See `docs/DATA-SIMULATION-STRATEGY.md` for the authoritative scope.
+
+### Development Phase
+
+**We are building for local development and prototyping, NOT production.**
+
+- Prioritize developer experience and iteration speed over production hardening
+- Use simple, debuggable implementations over optimized ones
+- Skip production concerns like rate limiting, horizontal scaling, and redundancy
+- Focus on demonstrating the concept, not surviving production traffic
+- It's okay to hardcode values, use in-memory storage, and take shortcuts that wouldn't survive production
 
 ## The Crew: One Coordinator, Four Specialists
 
@@ -47,6 +76,18 @@ The Coordinator routes queries, synthesizes cross-agent insights, and maintains 
 | 5 | `docs/agents/RECOVERY-COORDINATOR-SPEC.md` | Root agent implementation |
 
 For documentation cleanup tasks, see `docs/audit/DOCUMENTATION-CLEANUP.md`.
+
+## Architecture Diagrams
+
+Visual explanations of RANGER's architecture live in `docs/assets/diagrams/`. These are essential for understanding the system:
+
+| Diagram | What It Shows |
+|---------|---------------|
+| `AgentBriefingEvent Rendering Pipeline.png` | How agent events become UI elements (the rendering contract) |
+| `Coordinator Routing & Cross-Agent Cascade.png` | Query routing, parallel dispatch, and cross-agent handoffs |
+| `Phase 1 Architecture Boundaries.png` | What's simulated vs. real (the "magic" is in reasoning, not data) |
+
+**Read `docs/assets/diagrams/DIAGRAM-NARRATIVES.md`** for detailed walkthroughs, talking points, and the prompts used to generate these diagrams. When explaining RANGER's architecture, reference these visuals.
 
 ## Monorepo Structure
 

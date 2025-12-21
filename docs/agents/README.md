@@ -23,8 +23,8 @@ Command Console (UI) → Recovery Coordinator (Root LlmAgent)
 | **Recovery Coordinator** | Recovery Coordinator | [RECOVERY-COORDINATOR-SPEC.md](./RECOVERY-COORDINATOR-SPEC.md) | `services/agents/recovery-coordinator/` | **Root Agent** (P0) |
 | **Burn Analyst** | The Burn Analyst | [BURN-ANALYST-SPEC.md](./BURN-ANALYST-SPEC.md) | `services/agents/burn-analyst/` | Sub-agent (P1) |
 | **Trail Assessor** | The Trail Assessor | [TRAIL-ASSESSOR-SPEC.md](./TRAIL-ASSESSOR-SPEC.md) | `services/agents/trail-assessor/` | Sub-agent (P1) |
-| **Cruising Assistant** | The Cruising Assistant | [TIMBER-CRUISER-SPEC.md](./TIMBER-CRUISER-SPEC.md) | `services/agents/cruising-assistant/` | Sub-agent (P2) |
-| **NEPA Advisor** | The NEPA Advisor | [COMPLIANCE-ADVISOR-SPEC.md](./COMPLIANCE-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Sub-agent (P2) |
+| **Cruising Assistant** | The Cruising Assistant | [CRUISING-ASSISTANT-SPEC.md](./CRUISING-ASSISTANT-SPEC.md) | `services/agents/cruising-assistant/` | Sub-agent (P2) |
+| **NEPA Advisor** | The NEPA Advisor | [NEPA-ADVISOR-SPEC.md](./NEPA-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Sub-agent (P2) |
 
 ## Agent Architecture
 

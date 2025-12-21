@@ -193,7 +193,7 @@ Beyond Phase 1, the NEPA Advisor could evolve to include:
 - [Production-Ready RAG Architecture](https://cloud.google.com/blog/topics/developers-practitioners/production-ready-rag-systems-google-cloud)
 - [Building Grounded AI with Vertex AI](https://cloud.google.com/blog/products/ai-machine-learning/build-grounded-and-responsible-ai-with-vertex-ai)
 - [Forest Service Directives System](https://www.fs.usda.gov/about-agency/regulations-policies)
-- [Cruising Assistant Spec](./TIMBER-CRUISER-SPEC.md) (Template Reference)
+- [Cruising Assistant Spec](./CRUISING-ASSISTANT-SPEC.md) (Template Reference)
 - [Data Simulation Strategy](../DATA-SIMULATION-STRATEGY.md)
 
 ---

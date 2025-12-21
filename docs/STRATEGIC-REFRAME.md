@@ -53,111 +53,17 @@ The "agents" aren't products—they're **workflow lenses** on the same underlyin
 
 ---
 
-## Recovery Coordinator Clarification
+## Recovery Coordinator
 
-The **Recovery Coordinator** is referenced in brand architecture documents (CLAUDE.md, BRAND-ARCHITECTURE.md) as the 5th agent, but **no dedicated spec file exists**. The `docs/agents/README.md` points to PROJECT-BRIEF.md instead of a standalone spec.
-
-### ~~Original Recommendation: Absorb into Console~~ (REVISED)
-
-RANGER moves from siloed tools to an **Agentic OS** through three core shifts:
-1. **One Console, Not Four Apps:** A unified command shell for the entire recovery lifecycle.
-2. **Coordinated Intelligence:** A root **Recovery Coordinator** orchestrating specialist sub-agents using Google ADK.
-3. **Agentic Synthesis:** Shifting from "raw data/maps" to **coordinated briefings** and actionable insights.
-
-See [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) for the live strategic authority. The Recovery Coordinator is implemented as a **distinct root LlmAgent** using the **Coordinator/Dispatcher Pattern**:
+The **Recovery Coordinator** is the root orchestration agent using Google ADK's Coordinator/Dispatcher pattern. See [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) for the full specification.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     RANGER COMMAND CONSOLE (UI)                     │
-│                   (React + MapLibre - Renders output)               │
-└──────────────────────────────┬──────────────────────────────────────┘
-                               │ User queries / displays results
-                               ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                    RECOVERY COORDINATOR AGENT                        │
-│                   (Root LlmAgent - Orchestrates)                     │
-│                                                                      │
-│   model: gemini-2.0-flash (or appropriate orchestration model)      │
-│   instruction: "Route impact queries to Burn Analyst, damage        │
-│                 queries to Trail Assessor, timber queries to        │
-│                 Cruising Assistant, compliance to NEPA Advisor.     │
-│                 Synthesize cross-lifecycle insights when asked."    │
-│                                                                      │
-│   sub_agents: [burn_analyst, trail_assessor, cruising_assistant,    │
-│                nepa_advisor]                                         │
-└─────────────┬─────────────┬─────────────┬─────────────┬─────────────┘
-              │             │             │             │
-              ▼             ▼             ▼             ▼
-        ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐
-        │  Burn   │   │  Trail  │   │Cruising │   │  NEPA   │
-        │ Analyst │   │Assessor │   │Assistant│   │ Advisor │
-        │(LlmAgent│   │(LlmAgent│   │(LlmAgent│   │(LlmAgent│
-        │ + tools)│   │ + tools)│   │ + tools)│   │ + tools)│
-        └─────────┘   └─────────┘   └─────────┘   └─────────┘
-              │             │             │             │
-              ▼             ▼             ▼             ▼
-         MCP/APIs      MCP/APIs      MCP/APIs      MCP/APIs
-        (MTBS,RAVG)   (EDW,TRACS)   (FSVeg,FIA)   (FSM/FSH RAG)
+Console (UI) → Recovery Coordinator (Root Agent)
+                    ├── Burn Analyst (Sub-agent)
+                    ├── Trail Assessor (Sub-agent)
+                    ├── Cruising Assistant (Sub-agent)
+                    └── NEPA Advisor (Sub-agent)
 ```
-
-### Why Recovery Coordinator Must Be a Distinct Agent
-
-Based on Google ADK documentation:
-
-1. **ADK's Coordinator/Dispatcher Pattern** explicitly defines a central `LlmAgent` that manages specialized `sub_agents` via LLM-driven delegation (`transfer_to_agent`).
-
-2. **The coordinator's LLM makes routing decisions** by examining each sub-agent's `description` field. This requires an actual agent with a model, not just UI logic.
-
-3. **Cross-lifecycle synthesis requires AI** - Queries like "What's the overall recovery status?" or "47 fires in recovery across 6 regions" need an LLM to aggregate and interpret outputs from multiple sub-agents.
-
-4. **ADK's agent hierarchy is fundamental** - Parent-child relationships via `sub_agents` parameter, with `parent_agent` auto-set on children.
-
-### ADK Implementation Pattern
-
-```python
-from google.adk.agents import Agent
-
-# Sub-agents (the four lifecycle specialists)
-burn_analyst = Agent(
-    name="burn_analyst",
-    model="gemini-2.0-flash",
-    description="Handles burn severity analysis, dNBR calculations, fire impact assessment.",
-    tools=[get_mtbs_data, get_ravg_data, analyze_burn_severity],
-    # ...
-)
-
-trail_assessor = Agent(
-    name="trail_assessor",
-    description="Handles trail damage detection, video analysis, TRACS work orders.",
-    # ...
-)
-
-# ... cruising_assistant, nepa_advisor ...
-
-# Root agent (Recovery Coordinator)
-recovery_coordinator = Agent(
-    name="recovery_coordinator",
-    model="gemini-2.0-flash",
-    description="Main coordinator for post-fire recovery. Routes queries to specialists.",
-    instruction="""You are the Recovery Coordinator for RANGER.
-    Route queries to the appropriate specialist agent:
-    - Burn severity, fire impact, dNBR → burn_analyst
-    - Trail damage, maintenance, video analysis → trail_assessor
-    - Timber inventory, species ID, cruising → cruising_assistant
-    - NEPA, regulations, compliance → nepa_advisor
-
-    For cross-lifecycle queries (recovery status, resource allocation),
-    synthesize information from multiple agents.""",
-    sub_agents=[burn_analyst, trail_assessor, cruising_assistant, nepa_advisor]
-)
-```
-
-### Action Items
-
-1. **Create `docs/agents/RECOVERY-COORDINATOR-SPEC.md`** - Full spec for the root orchestration agent
-2. **Update code structure** - `services/agents/recovery-coordinator/` IS needed
-3. **Define delegation logic** - Clear instructions for when to route vs. synthesize
-4. **Consider workflow agents** - ADK's `SequentialAgent`, `ParallelAgent` for complex multi-agent workflows
 
 ---
 

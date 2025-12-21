@@ -1,12 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import InsightPanel from '@/components/panels/InsightPanel';
 import MapControls from '@/components/map/MapControls';
 import Attribution from '@/components/map/Attribution';
 import Terrain3D from '@/components/map/Terrain3D';
+import briefingService from '@/services/briefingService';
+import { useBriefingStore } from '@/stores/briefingStore';
 
 const App: React.FC = () => {
+  const [isReady, setIsReady] = useState(false);
+  const addEvent = useBriefingStore((state) => state.addEvent);
+
+  // Connect to gateway on mount
+  useEffect(() => {
+    // Connect to WebSocket
+    briefingService.connect();
+
+    // Subscribe to incoming events
+    const unsubscribe = briefingService.subscribe((event) => {
+      console.log('[App] Received event:', event.event_id);
+      addEvent(event);
+    });
+
+    setIsReady(true);
+    console.log('[App] Briefing service connected');
+
+    return () => {
+      unsubscribe();
+      briefingService.disconnect();
+    };
+  }, [addEvent]);
+
+  // Show loading state while fixtures load
+  if (!isReady) {
+    return (
+      <div className="w-screen h-screen bg-background flex items-center justify-center">
+        <div className="text-text-muted text-sm mono">Loading RANGER...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-background flex text-text-primary">
       {/* 3D Terrain Visualization Layer */}

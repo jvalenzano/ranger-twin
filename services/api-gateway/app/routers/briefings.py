@@ -128,17 +128,20 @@ async def _handle_client_message(
         logger.warning(f"Unknown message type from {session_id}: {msg_type}")
 
 
-# Demo endpoint for testing - sends mock briefing events
+from agent_common import AgentEventPublisher, AgentBriefingEvent
+
+# Global event publisher for demo/internal use
+publisher = AgentEventPublisher()
+
+
+# Demo endpoint for testing - sends mock briefing events via Redis
 @router.get("/briefings/demo/{session_id}")
 async def send_demo_event(session_id: str) -> dict[str, str]:
     """
-    Send a demo briefing event to test the WebSocket connection.
-
-    This is a development/testing endpoint that simulates an agent emitting
-    a briefing event. In production, events come from agents via Redis.
+    Send a demo briefing event to test the full Redis -> WebSocket loop.
     """
-    demo_event = {
-        "schema_version": "1.0.0",
+    demo_event = AgentBriefingEvent.model_validate({
+        "schema_version": "1.1.0",
         "event_id": str(uuid4()),
         "parent_event_id": None,
         "correlation_id": str(uuid4()),
@@ -151,27 +154,24 @@ async def send_demo_event(session_id: str) -> dict[str, str]:
             "geo_reference": None,
         },
         "content": {
-            "summary": "Demo: Sector NW-4 burn severity analysis complete.",
-            "detail": "42% high severity (18,340 acres), 31% moderate, 27% low/unburned.",
+            "summary": "Full Loop Demo: Redis Pub/Sub working.",
+            "detail": "This event was published to Redis and received by the WebSocket subscriber.",
             "suggested_actions": [],
         },
         "proof_layer": {
-            "confidence": 0.94,
-            "citations": [
-                {
-                    "source_type": "Demo",
-                    "id": "demo-001",
-                    "uri": "demo://test",
-                    "excerpt": "This is a demo event for testing",
-                }
-            ],
+            "confidence": 0.99,
+            "citations": [],
             "reasoning_chain": [
-                "1. Demo event generated",
-                "2. Sent to WebSocket clients",
+                "1. API Gateway received demo request",
+                "2. Event published to Redis channel",
+                "3. Subscriber task received and broadcasted to WebSocket",
             ],
         },
-    }
+    })
 
-    await manager.broadcast_to_session(session_id, demo_event)
+    success = publisher.publish(session_id, demo_event)
 
-    return {"status": "sent", "event_id": demo_event["event_id"]}
+    if success:
+        return {"status": "sent_to_redis", "event_id": str(demo_event.event_id)}
+    else:
+        return {"status": "failed", "error": "Redis publish failed"}

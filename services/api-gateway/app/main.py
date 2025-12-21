@@ -16,21 +16,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import briefings, health
 
 
+from app.services.redis_client import close_redis_client, get_redis_client
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Application lifespan manager.
-
-    Handles startup and shutdown events for:
-    - Redis connection pool
-    - Background task cleanup
     """
     # Startup: Initialize connections
-    # TODO: Initialize Redis connection pool when Redis is configured
-    print("RANGER API Gateway starting...")
+    logger.info("RANGER API Gateway starting...")
+    await get_redis_client()
     yield
     # Shutdown: Clean up resources
-    print("RANGER API Gateway shutting down...")
+    logger.info("RANGER API Gateway shutting down...")
+    await close_redis_client()
 
 
 app = FastAPI(
@@ -49,9 +49,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.routers import briefings, health, chat
+
 # Include routers
 app.include_router(health.router, tags=["health"])
 app.include_router(briefings.router, prefix="/ws", tags=["websocket"])
+app.include_router(chat.router, prefix="/api/v1", tags=["chat"])
 
 
 @app.get("/")

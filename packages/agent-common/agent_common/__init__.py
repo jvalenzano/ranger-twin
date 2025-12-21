@@ -9,6 +9,7 @@ from agent_common.types.briefing import (
     UITarget,
     SourceAgent,
 )
+from agent_common.messaging import AgentEventPublisher
 
 __all__ = [
     "AgentBriefingEvent",
@@ -16,6 +17,7 @@ __all__ = [
     "Severity",
     "UITarget",
     "SourceAgent",
+    "AgentEventPublisher",
 ]
 
 __version__ = "0.1.0"

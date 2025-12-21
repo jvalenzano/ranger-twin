@@ -4,7 +4,7 @@
  * TypeScript equivalent of the Python Pydantic models in:
  * packages/agent-common/agent_common/types/briefing.py
  *
- * Schema Version: 1.0.0
+ * Schema Version: 1.1.0
  * Reference: docs/architecture/AGENT-MESSAGING-PROTOCOL.md
  */
 
@@ -171,7 +171,7 @@ export const DATA_TIER_COLORS: Record<DataTier, string> = {
  * - Transparent (via proof_layer)
  * - Traceable (via correlation_id and parent_event_id)
  *
- * Schema Version: 1.0.0
+ * Schema Version: 1.1.0
  */
 export interface AgentBriefingEvent {
   schema_version: string;

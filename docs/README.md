@@ -42,8 +42,8 @@
 | **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product for Phase 1** |
 | Burn Analyst | The Burn Analyst | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
 | Trail Assessor | The Trail Assessor | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
-| Cruising Assistant | The Cruising Assistant | [agents/TIMBER-CRUISER-SPEC.md](./agents/TIMBER-CRUISER-SPEC.md) | Multimodal timber inventory |
-| NEPA Advisor | The NEPA Advisor | [agents/COMPLIANCE-ADVISOR-SPEC.md](./agents/COMPLIANCE-ADVISOR-SPEC.md) | NEPA regulatory guidance |
+| Cruising Assistant | The Cruising Assistant | [agents/CRUISING-ASSISTANT-SPEC.md](./agents/CRUISING-ASSISTANT-SPEC.md) | Multimodal timber inventory |
+| NEPA Advisor | The NEPA Advisor | [agents/NEPA-ADVISOR-SPEC.md](./agents/NEPA-ADVISOR-SPEC.md) | NEPA regulatory guidance |
 
 ### Assets & Design
 
