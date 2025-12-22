@@ -51,7 +51,7 @@ export default {
 
         // Phase-specific colors (Workflow differentiation)
         phase: {
-          impact: '#22d3ee',    // Cyan - Satellite/analysis
+          impact: '#ef4444',    // Red - Fire/burn severity
           damage: '#f59e0b',    // Amber - Warning/assessment
           timber: '#10b981',    // Emerald - Forest/salvage
           compliance: '#a855f7', // Purple - Regulatory/official

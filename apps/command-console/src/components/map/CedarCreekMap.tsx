@@ -76,6 +76,51 @@ const CedarCreekMap: React.FC = () => {
   const exaggeration = useTerrainExaggeration();
   const terrainEnabled = useTerrainEnabled();
   const setCamera = useMapStore((state) => state.setCamera);
+  const resetBearing = useMapStore((state) => state.resetBearing);
+  const zoomIn = useMapStore((state) => state.zoomIn);
+  const zoomOut = useMapStore((state) => state.zoomOut);
+  const setActiveLayer = useMapStore((state) => state.setActiveLayer);
+
+  // Keyboard shortcuts for map controls
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case 'n':
+          e.preventDefault();
+          resetBearing();
+          break;
+        case 's':
+          e.preventDefault();
+          setActiveLayer('SAT');
+          break;
+        case 't':
+          e.preventDefault();
+          setActiveLayer('TER');
+          break;
+        case 'i':
+          e.preventDefault();
+          setActiveLayer('IR');
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          zoomIn();
+          break;
+        case '-':
+          e.preventDefault();
+          zoomOut();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [resetBearing, setActiveLayer, zoomIn, zoomOut]);
 
   // Load GeoJSON data and add layers
   const loadDataLayers = useCallback(async (mapInstance: maplibregl.Map) => {
@@ -765,19 +810,18 @@ const CedarCreekMap: React.FC = () => {
     const pitchDiff = Math.abs(currentPitch - camera.pitch) > 1;
 
     if (centerDiff || zoomDiff || bearingDiff || pitchDiff) {
-      console.log('[CedarCreekMap] Camera sync triggered:', {
-        bearingDiff,
-        pitchDiff,
-        currentBearing,
-        targetBearing: camera.bearing,
-        currentPitch,
-        targetPitch: camera.pitch,
-      });
-
+      // Mark as internal move and set a timeout to reset it
+      // This prevents the moveend listener from syncing back to store during animation
       isInternalMove.current = true;
+
+      // Safety timeout to reset the flag in case moveend doesn't fire
+      const safetyTimeout = setTimeout(() => {
+        isInternalMove.current = false;
+      }, 2500); // Slightly longer than animation duration
 
       // Use 'once' to properly handle the end of this specific animation
       const handleMoveEnd = () => {
+        clearTimeout(safetyTimeout);
         isInternalMove.current = false;
       };
       mapInstance.once('moveend', handleMoveEnd);
@@ -787,7 +831,7 @@ const CedarCreekMap: React.FC = () => {
         zoom: camera.zoom,
         bearing: camera.bearing,
         pitch: camera.pitch,
-        duration: 2000, // Cinematic 2.0s flight
+        duration: 1000, // Faster animation for better responsiveness
         essential: true,
       });
     }

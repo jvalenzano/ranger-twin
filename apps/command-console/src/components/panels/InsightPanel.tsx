@@ -28,12 +28,14 @@ import briefingService from '@/services/briefingService';
 import mockBriefingService from '@/services/mockBriefingService';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { exportTracsWorkOrders, exportFsVegData } from '@/utils/exportUtils';
+import Tooltip from '@/components/ui/Tooltip';
+import { tooltipContent } from '@/config/tooltipContent';
 
 
 // Agent badge colors - using direct classes that Tailwind can detect
 // These match the workflow phase colors
 const AGENT_BADGE_STYLES: Record<SourceAgent, string> = {
-  burn_analyst: 'bg-[#22d3ee] text-slate-900',      // Cyan - Impact
+  burn_analyst: 'bg-[#ef4444] text-white',          // Red - Impact (fire/burn)
   trail_assessor: 'bg-[#f59e0b] text-slate-900',    // Amber - Damage
   cruising_assistant: 'bg-[#10b981] text-slate-900', // Emerald - Timber
   nepa_advisor: 'bg-[#a855f7] text-white',          // Purple - Compliance
@@ -47,6 +49,15 @@ const AGENT_CONFIG: Record<SourceAgent, { icon: LucideIcon; name: string }> = {
   cruising_assistant: { icon: TreePine, name: 'TIMBER ANALYST' },
   nepa_advisor: { icon: FileCheck, name: 'COMPLIANCE ADVISOR' },
   recovery_coordinator: { icon: Brain, name: 'RECOVERY COORDINATOR' },
+};
+
+// Phase accent colors for dynamic UI elements (confidence, expand link, action icons)
+const AGENT_ACCENT_COLORS: Record<SourceAgent, { text: string; hex: string }> = {
+  burn_analyst: { text: 'text-[#ef4444]', hex: '#ef4444' },        // Red - Impact
+  trail_assessor: { text: 'text-[#f59e0b]', hex: '#f59e0b' },      // Amber - Damage
+  cruising_assistant: { text: 'text-[#10b981]', hex: '#10b981' },  // Emerald - Timber
+  nepa_advisor: { text: 'text-[#a855f7]', hex: '#a855f7' },        // Purple - Compliance
+  recovery_coordinator: { text: 'text-[#06b6d4]', hex: '#06b6d4' },
 };
 
 const InsightPanel: React.FC = () => {
@@ -123,11 +134,12 @@ const InsightPanel: React.FC = () => {
 
   const config = AGENT_CONFIG[latestEvent.source_agent];
   const badgeStyle = AGENT_BADGE_STYLES[latestEvent.source_agent];
+  const accentColor = AGENT_ACCENT_COLORS[latestEvent.source_agent];
   const Icon = config.icon;
   const confidencePercent = Math.round(latestEvent.proof_layer.confidence * 100);
 
   return (
-    <div className="absolute top-0 right-0 bottom-0 w-[360px] bg-[#0a0f1a]/95 backdrop-blur-xl border-l border-white/[0.06] z-20 flex flex-col">
+    <div className="absolute top-0 right-0 bottom-0 w-[360px] bg-[#0a0f1a]/65 backdrop-blur-2xl border-l border-white/[0.1] z-20 flex flex-col">
       {/* Header - Fixed */}
       <div className="flex-shrink-0 p-4 border-b border-white/[0.06]">
         <div className="flex items-center justify-between">
@@ -136,15 +148,23 @@ const InsightPanel: React.FC = () => {
             <Icon size={12} />
             {config.name}
           </span>
-          {/* Confidence */}
-          <span className="text-[10px] mono font-bold text-text-muted">
-            {confidencePercent}% CONF
-          </span>
+          {/* Confidence - Dynamic phase color */}
+          <Tooltip content={tooltipContent.confidenceScores.agentConfidence} position="left">
+            <span className={`text-[10px] mono font-bold cursor-help ${accentColor.text}`}>
+              {confidencePercent}% CONF
+            </span>
+          </Tooltip>
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Scrollable Content - Custom scrollbar with phase color */}
+      <div
+        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-phase"
+        style={{
+          ['--scrollbar-color' as string]: accentColor.hex,
+          ['--scrollbar-color-hover' as string]: `${accentColor.hex}cc`,
+        }}
+      >
         {/* Summary */}
         <div>
           <p className="text-[15px] text-text-primary font-medium leading-relaxed">
@@ -171,6 +191,18 @@ const InsightPanel: React.FC = () => {
             </span>
           </button>
 
+          {/* Preview when collapsed */}
+          {!isReasoningExpanded && latestEvent.proof_layer.reasoning_chain.length > 0 && (
+            <div className="mt-2 pl-4 border-l border-white/10">
+              <p className="text-[11px] text-text-muted italic line-clamp-2">
+                "{latestEvent.proof_layer.reasoning_chain[0].substring(0, 80)}..."
+              </p>
+              <span className={`text-[10px] mt-1 inline-block ${accentColor.text}`}>
+                Expand to see full reasoning
+              </span>
+            </div>
+          )}
+
           {isReasoningExpanded && (
             <div className="mt-3 pl-4 border-l border-white/10 space-y-2">
               {latestEvent.proof_layer.reasoning_chain.map((step, index) => (
@@ -193,21 +225,27 @@ const InsightPanel: React.FC = () => {
             </div>
             <div className="space-y-1">
               {latestEvent.proof_layer.confidence_ledger.inputs.slice(0, 3).map((input, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-[11px] text-text-secondary truncate max-w-[200px]">
-                    {input.source}
-                  </span>
-                  <span
-                    className={`text-[10px] mono font-medium ${input.tier === 1
-                      ? 'text-safe'
-                      : input.tier === 2
-                        ? 'text-warning'
-                        : 'text-severe'
-                      }`}
-                  >
-                    {Math.round(input.confidence * 100)}%
-                  </span>
-                </div>
+                <Tooltip
+                  key={index}
+                  content={tooltipContent.confidenceScores.sourceReliability}
+                  position="left"
+                >
+                  <div className="flex items-center justify-between cursor-help">
+                    <span className="text-[11px] text-text-secondary truncate max-w-[200px]">
+                      {input.source}
+                    </span>
+                    <span
+                      className={`text-[10px] mono font-medium ${input.tier === 1
+                        ? 'text-safe'
+                        : input.tier === 2
+                          ? 'text-warning'
+                          : 'text-severe'
+                        }`}
+                    >
+                      {Math.round(input.confidence * 100)}%
+                    </span>
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>
@@ -223,9 +261,10 @@ const InsightPanel: React.FC = () => {
               <button
                 key={action.action_id}
                 onClick={() => handleActionClick(action)}
-                className="w-full flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-warning/30 transition-all group"
+                className="w-full flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] transition-all group"
+                style={{ ['--hover-border' as string]: `${accentColor.hex}50` }}
               >
-                <Zap size={14} className="text-warning group-hover:text-warning" />
+                <Zap size={14} className={accentColor.text} />
                 <div className="text-left flex-1">
                   <div className="text-[12px] text-text-primary font-medium">
                     {action.label}
@@ -240,10 +279,13 @@ const InsightPanel: React.FC = () => {
         )}
       </div>
 
-      {/* Timestamp - Fixed at bottom */}
-      <div className="flex-shrink-0 px-4 py-3 border-t border-white/[0.06]">
-        <span className="text-[10px] text-text-muted mono">
-          {new Date(latestEvent.timestamp).toLocaleTimeString()}
+      {/* Timestamp - Shows when this briefing was generated */}
+      <div className="flex-shrink-0 px-4 py-3 border-t border-white/[0.06] flex items-center justify-between">
+        <span className="text-[9px] text-text-muted uppercase tracking-wider">
+          Briefing Generated
+        </span>
+        <span className={`text-[10px] mono font-medium ${accentColor.text}`}>
+          {new Date(latestEvent.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
     </div>

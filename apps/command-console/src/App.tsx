@@ -3,7 +3,7 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import InsightPanel from '@/components/panels/InsightPanel';
 import MapControls from '@/components/map/MapControls';
-import Attribution from '@/components/map/Attribution';
+// Attribution info moved to Header breadcrumb
 import DemoTourOverlay from '@/components/tour/DemoTourOverlay';
 import ChatPanel from '@/components/chat/ChatPanel';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
@@ -82,9 +82,6 @@ const App: React.FC = () => {
 
               {/* Map Controls - Bottom Right */}
               <MapControls />
-
-              {/* Attribution - Bottom Left */}
-              <Attribution />
 
               {/* Chat Panel - Bottom Right (toggleable) */}
               {isChatOpen && <ChatPanel />}

@@ -2,6 +2,8 @@ import React from 'react';
 import { Layers, ChevronRight, ChevronDown } from 'lucide-react';
 import { useActiveLayer, useLegendExpanded, useMapStore } from '@/stores/mapStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
+import Tooltip from '@/components/ui/Tooltip';
+import { tooltipContent } from '@/config/tooltipContent';
 
 // Severity color palette (normal view)
 const SEVERITY_COLORS = {
@@ -62,38 +64,74 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
     const showTimberPlots = ['TIMBER', 'COMPLIANCE'].includes(activePhase);
 
     return (
-        <div className="mt-2 border-t border-white/5">
-            {/* Legend Header Item */}
-            <button
-                onClick={toggleLegend}
-                className={`
-          group relative w-full flex items-center gap-3 transition-all duration-200
-          ${isExpanded ? 'py-3 px-3' : 'py-3 px-2 justify-center flex-col'}
-          ${legendExpanded && isExpanded ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'}
-        `}
-                aria-expanded={legendExpanded && isExpanded}
-                aria-label="Toggle Map Legend"
-            >
-                <div className="relative flex-shrink-0">
-                    <Layers
-                        size={22}
-                        className={`transition-all ${legendExpanded && isExpanded ? 'text-accent-cyan' : 'text-text-muted group-hover:text-text-primary'}`}
-                    />
-                </div>
+        <div className="px-2 border-t border-white/5 pt-1">
+            {/* Legend Header Item - matches workflow item styling */}
+            <Tooltip content={tooltipContent.legend} position="right" className="block w-full">
+                <button
+                    onClick={toggleLegend}
+                    className={`
+                        group relative w-full flex items-center rounded-r-lg transition-all duration-200
+                        ${isExpanded ? 'py-3 px-3 gap-3' : 'py-2 px-2 gap-0.5 justify-center flex-col'}
+                        ${legendExpanded && isExpanded ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'}
+                    `}
+                    style={{
+                        borderLeft: `3px solid ${legendExpanded && isExpanded ? '#22d3ee' : 'transparent'}`,
+                    }}
+                    aria-expanded={legendExpanded && isExpanded}
+                    aria-label="Toggle Map Legend"
+                >
+                    <div className="relative flex-shrink-0">
+                        <Layers
+                            size={26}
+                            strokeWidth={legendExpanded && isExpanded ? 2.5 : 1.5}
+                            className={`transition-all ${legendExpanded && isExpanded ? 'text-accent-cyan' : 'text-text-muted opacity-60 group-hover:opacity-100'}`}
+                        />
+                    </div>
 
-                {isExpanded && (
-                    <>
-                        <span className={`text-[12px] font-semibold flex-1 text-left ${legendExpanded ? 'text-accent-cyan' : 'text-text-muted group-hover:text-text-primary'}`}>
-                            LEGEND
+                    {isExpanded && (
+                        <>
+                            <div className="flex-1 text-left min-w-0">
+                                <div className="flex items-center gap-2">
+                                    <span className={`text-[12px] font-semibold transition-colors ${legendExpanded ? 'text-accent-cyan' : ''}`}>
+                                        Legend
+                                    </span>
+                                </div>
+                                <span className="text-[10px] text-text-muted block truncate">
+                                    Map layer key
+                                </span>
+                            </div>
+                            {/* Action chevron - matches workflow items */}
+                            {legendExpanded ? (
+                                <ChevronDown
+                                    size={14}
+                                    className="text-text-muted flex-shrink-0"
+                                    style={{ color: '#22d3ee', opacity: 0.6 }}
+                                />
+                            ) : (
+                                <ChevronRight
+                                    size={14}
+                                    className="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                                />
+                            )}
+                        </>
+                    )}
+
+                    {/* Label (collapsed mode) - matches workflow collapsed style */}
+                    {!isExpanded && (
+                        <span
+                            className={`text-[8px] font-bold tracking-wider uppercase transition-all group-hover:opacity-100 ${
+                                legendExpanded ? 'text-accent-cyan opacity-100' : 'text-text-muted opacity-60'
+                            }`}
+                        >
+                            KEY
                         </span>
-                        {legendExpanded ? <ChevronDown size={14} className="text-text-muted" /> : <ChevronRight size={14} className="text-text-muted" />}
-                    </>
-                )}
-            </button>
+                    )}
+                </button>
+            </Tooltip>
 
             {/* Expanded Legend Content */}
             {isExpanded && legendExpanded && (
-                <div className="px-4 py-3 bg-white/[0.02] border-b border-white/5 space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="ml-3 pl-3 py-3 border-l-[3px] border-accent-cyan/20 space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
 
                     {/* Burn Severity Section */}
                     <div className="space-y-2">

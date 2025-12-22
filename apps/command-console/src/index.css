@@ -18,22 +18,22 @@
 }
 
 @layer components {
-  /* Glass morphism panels - Premium Dark Glassmorphism */
+  /* Glass morphism panels - Premium Dark Glassmorphism (light & airy) */
   .glass {
-    background: rgba(10, 15, 26, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(10, 15, 26, 0.6);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
-      0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
 
   .glass-header {
-    background: rgba(10, 15, 26, 0.9);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(10, 15, 26, 0.65);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   /* Monospace text utility */
@@ -132,6 +132,29 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
+  /* Phase-colored scrollbar - uses CSS variable --scrollbar-color */
+  .scrollbar-phase {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-color, #64748b) transparent;
+  }
+
+  .scrollbar-phase::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-phase::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-phase::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color, #64748b);
+    border-radius: 3px;
+  }
+
+  .scrollbar-phase::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-color-hover, var(--scrollbar-color, #94a3b8));
+  }
+
   /* Severity-based ring colors for focus states */
   .ring-severity-safe {
     @apply ring-safe/50;
@@ -178,7 +201,7 @@
 
 /* Glass panel for tour cards */
 .glass-panel {
-  @apply bg-slate-900/90 backdrop-blur-xl;
+  @apply bg-slate-900/75 backdrop-blur-2xl;
 }
 
 /* Mobile Responsiveness */

@@ -15,16 +15,17 @@ export interface Notification {
     message: string;
     type: NotificationType;
     duration?: number;
+    accentColor?: string; // Optional custom color for the icon (hex value)
 }
 
 interface NotificationState {
     notifications: Notification[];
 
     // Actions
-    notify: (message: string, type?: NotificationType, duration?: number) => void;
+    notify: (message: string, type?: NotificationType, duration?: number, accentColor?: string) => void;
     success: (message: string, duration?: number) => void;
     error: (message: string, duration?: number) => void;
-    info: (message: string, duration?: number) => void;
+    info: (message: string, duration?: number, accentColor?: string) => void;
     dismiss: (id: string) => void;
 }
 
@@ -33,9 +34,9 @@ export const useNotificationStore = create<NotificationState>()(
         (set, get) => ({
             notifications: [],
 
-            notify: (message, type = 'info', duration = 5000) => {
+            notify: (message, type = 'info', duration = 2500, accentColor) => {
                 const id = Math.random().toString(36).substring(2, 9);
-                const newNotification: Notification = { id, message, type, duration };
+                const newNotification: Notification = { id, message, type, duration, accentColor };
 
                 set((state) => ({
                     notifications: [...state.notifications, newNotification],
@@ -49,9 +50,9 @@ export const useNotificationStore = create<NotificationState>()(
                 }
             },
 
-            success: (message, duration) => get().notify(message, 'success', duration),
-            error: (message, duration) => get().notify(message, 'error', duration),
-            info: (message, duration) => get().notify(message, 'info', duration),
+            success: (message, duration) => get().notify(message, 'success', duration ?? 3000),
+            error: (message, duration) => get().notify(message, 'error', duration ?? 5000),
+            info: (message, duration, accentColor) => get().notify(message, 'info', duration ?? 2500, accentColor),
 
             dismiss: (id) => {
                 set((state) => ({
