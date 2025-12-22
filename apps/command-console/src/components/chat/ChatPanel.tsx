@@ -18,6 +18,7 @@ import {
   Sparkles,
   AlertCircle,
   Trash2,
+  X,
 } from 'lucide-react';
 import {
   useChatStore,
@@ -155,8 +156,12 @@ const QueryChip: React.FC<{ label: string; onClick: () => void }> = ({
   </button>
 );
 
+interface ChatPanelProps {
+  onClose?: () => void;
+}
+
 // Main ChatPanel component
-const ChatPanel: React.FC = () => {
+const ChatPanel: React.FC<ChatPanelProps> = ({ onClose }) => {
   const [input, setInput] = useState('');
   const messages = useChatMessages();
   const isLoading = useChatLoading();
@@ -190,22 +195,33 @@ const ChatPanel: React.FC = () => {
   };
 
   return (
-    <div className="absolute bottom-6 right-6 w-[400px] h-[500px] glass rounded-lg flex flex-col overflow-hidden shadow-2xl z-40">
+    <div className="absolute top-[48px] bottom-0 right-0 w-[400px] bg-[#0a0f1a]/65 backdrop-blur-2xl border-l border-white/[0.1] flex flex-col overflow-hidden shadow-2xl z-30">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between bg-slate-800/50">
+      <div className="h-[48px] px-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-accent-cyan" />
           <span className="text-sm font-medium text-white">Ask RANGER</span>
         </div>
-        {messages.length > 0 && (
-          <button
-            onClick={clearMessages}
-            className="text-slate-500 hover:text-white transition-colors p-1"
-            title="Clear chat"
-          >
-            <Trash2 size={14} />
-          </button>
-        )}
+        <div className="flex items-center gap-1">
+          {messages.length > 0 && (
+            <button
+              onClick={clearMessages}
+              className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
+              title="Clear chat"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
+              title="Close chat"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}

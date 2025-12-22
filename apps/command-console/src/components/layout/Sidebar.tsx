@@ -147,103 +147,103 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
       style={{ width: sidebarWidth }}
     >
       {/* RANGER Brand Header - matches main header height (48px) */}
-      <div className="h-[48px] flex items-center justify-between px-3 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          {/* Single Tree Circular Badge Logo with Phase Color Gradient */}
-          <div className="flex items-center justify-center flex-shrink-0 group">
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 512 512"
-            fill="none"
-            className="drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.5)] transition-all"
-          >
-            {/* Gradient definitions for phase colors */}
-            <defs>
-              {/* Full cycle gradient ring - represents recovery phases */}
-              <linearGradient id="phaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ef4444" />      {/* Red - Impact */}
-                <stop offset="33%" stopColor="#f59e0b" />     {/* Amber - Damage */}
-                <stop offset="66%" stopColor="#10b981" />     {/* Emerald - Timber */}
-                <stop offset="100%" stopColor="#a855f7" />    {/* Purple - Compliance */}
-              </linearGradient>
-              {/* Subtle inner glow */}
-              <radialGradient id="innerGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="85%" stopColor="#0f172a" />
-                <stop offset="100%" stopColor="#1e293b" />
-              </radialGradient>
-            </defs>
-
-            {/* Outer gradient ring - phase colors */}
-            <circle
-              cx="256"
-              cy="256"
-              r="248"
-              fill="none"
-              stroke="url(#phaseGradient)"
-              strokeWidth="16"
-              opacity="0.9"
-            />
-
-            {/* Dark inner circle background */}
-            <circle cx="256" cy="256" r="232" fill="url(#innerGlow)" />
-
-            {/* Subtle inner border */}
-            <circle
-              cx="256"
-              cy="256"
-              r="232"
-              fill="none"
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="1"
-            />
-
-            {/* Back mountain ridge - subtle */}
-            <path
-              d="M 56 280 L 100 220 L 150 250 L 220 180 L 256 210 L 300 160 L 360 220 L 420 190 L 456 280"
-              stroke="rgba(255,255,255,0.2)"
-              strokeWidth="4"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Front mountain ridge */}
-            <path
-              d="M 56 320 L 120 270 L 180 295 L 240 240 L 300 275 L 360 230 L 420 280 L 456 320"
-              stroke="rgba(255,255,255,0.4)"
-              strokeWidth="6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Evergreen tree - white/light for contrast on dark bg */}
-            <g transform="translate(256, 100)">
-              <path
-                d="M0 0 L-60 70 L-35 70 L-75 130 L-45 130 L-85 195 L-50 195 L-95 265 L95 265 L50 195 L85 195 L45 130 L75 130 L35 70 L60 70 Z"
-                fill="rgba(255,255,255,0.9)"
-              />
-              <rect x="-22" y="265" width="44" height="70" fill="rgba(255,255,255,0.9)" />
-            </g>
-          </svg>
-        </div>
-          {isExpanded && (
-            <span
-              className="text-[22px] font-bold tracking-[0.08em] bg-gradient-to-r from-red-400 via-amber-400 to-emerald-400 bg-clip-text text-transparent"
-            >
-              RANGER
-            </span>
-          )}
-        </div>
-
-        {/* Collapse/Expand toggle - in header for intuitive sidebar control */}
+      <div className="h-[48px] flex items-center justify-between px-2 border-b border-white/10">
+        {/* Clickable logo area - toggles sidebar */}
         <button
           onClick={toggleExpanded}
-          className="p-1.5 rounded hover:bg-white/10 text-text-muted hover:text-text-primary transition-colors"
+          className="flex items-center gap-2 p-1 rounded-lg hover:bg-white/5 transition-all group cursor-pointer"
           title={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
         >
-          {isExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+          {/* Single Tree Circular Badge Logo with Phase Color Gradient */}
+          <div className="flex items-center justify-center flex-shrink-0 relative">
+            <svg
+              width="36"
+              height="36"
+              viewBox="0 0 512 512"
+              fill="none"
+              className="drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.5)] transition-all"
+            >
+              {/* Gradient definitions for phase colors */}
+              <defs>
+                {/* Full cycle gradient ring - represents recovery phases */}
+                <linearGradient id="phaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ef4444" />      {/* Red - Impact */}
+                  <stop offset="33%" stopColor="#f59e0b" />     {/* Amber - Damage */}
+                  <stop offset="66%" stopColor="#10b981" />     {/* Emerald - Timber */}
+                  <stop offset="100%" stopColor="#a855f7" />    {/* Purple - Compliance */}
+                </linearGradient>
+                {/* Subtle inner glow */}
+                <radialGradient id="innerGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="85%" stopColor="#0f172a" />
+                  <stop offset="100%" stopColor="#1e293b" />
+                </radialGradient>
+              </defs>
+
+              {/* Outer gradient ring - phase colors */}
+              <circle
+                cx="256"
+                cy="256"
+                r="248"
+                fill="none"
+                stroke="url(#phaseGradient)"
+                strokeWidth="16"
+                opacity="0.9"
+              />
+
+              {/* Dark inner circle background */}
+              <circle cx="256" cy="256" r="232" fill="url(#innerGlow)" />
+
+              {/* Subtle inner border */}
+              <circle
+                cx="256"
+                cy="256"
+                r="232"
+                fill="none"
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth="1"
+              />
+
+              {/* Back mountain ridge - subtle */}
+              <path
+                d="M 56 280 L 100 220 L 150 250 L 220 180 L 256 210 L 300 160 L 360 220 L 420 190 L 456 280"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="4"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Front mountain ridge */}
+              <path
+                d="M 56 320 L 120 270 L 180 295 L 240 240 L 300 275 L 360 230 L 420 280 L 456 320"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Evergreen tree - white/light for contrast on dark bg */}
+              <g transform="translate(256, 100)">
+                <path
+                  d="M0 0 L-60 70 L-35 70 L-75 130 L-45 130 L-85 195 L-50 195 L-95 265 L95 265 L50 195 L85 195 L45 130 L75 130 L35 70 L60 70 Z"
+                  fill="rgba(255,255,255,0.9)"
+                />
+                <rect x="-22" y="265" width="44" height="70" fill="rgba(255,255,255,0.9)" />
+              </g>
+            </svg>
+          </div>
+          {isExpanded && (
+            <>
+              <span
+                className="text-[22px] font-bold tracking-[0.08em] bg-gradient-to-r from-red-400 via-amber-400 to-emerald-400 bg-clip-text text-transparent"
+              >
+                RANGER
+              </span>
+              {/* Chevron indicator */}
+              <ChevronLeft size={16} className="text-slate-500 group-hover:text-slate-300 transition-colors ml-1" />
+            </>
+          )}
         </button>
       </div>
 

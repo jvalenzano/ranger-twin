@@ -254,21 +254,12 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
           onClick={onChatToggle}
           className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all ${
             isChatOpen
-              ? 'bg-purple-500/20 border border-purple-500/50 text-purple-400'
+              ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
               : 'bg-transparent border border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:border-slate-500/50 hover:text-white'
           }`}
         >
-          {isChatOpen ? (
-            <>
-              <X size={10} />
-              Close
-            </>
-          ) : (
-            <>
-              <MessageSquare size={10} />
-              Chat
-            </>
-          )}
+          <MessageSquare size={10} />
+          Chat
         </button>
 
         {/* Timezone & Timestamp */}

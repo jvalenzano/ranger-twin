@@ -82,12 +82,11 @@ const App: React.FC = () => {
 
               {/* Map Controls - Bottom Right */}
               <MapControls />
-
-              {/* Chat Panel - Bottom Right (toggleable) */}
-              {isChatOpen && <ChatPanel />}
             </div>
-
           </main>
+
+          {/* Chat Panel - Full height right side (toggleable) */}
+          {isChatOpen && <ChatPanel onClose={() => setIsChatOpen(false)} />}
         </div>
       </BriefingObserver>
     </ErrorBoundary>

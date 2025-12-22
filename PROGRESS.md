@@ -269,7 +269,74 @@ Last updated: 2025-12-22
 - `mapStore.ts` - Legend state management
 - `DemoTourOverlay.tsx` - Auto-expand legend logic
 
-**Commit:** Pending
+**Commit:** `3b40d3b` - feat: relocate map legend to sidebar and refine IR view
+
+### 2025-12-22 - UI Polish: Tooltips, Translucency & Chat Enhancements
+
+**Completed:**
+1. **Tooltip System:**
+   - Created `Tooltip.tsx` with portal-based rendering and smart positioning
+   - Created `tooltipContent.ts` with content for all UI elements
+   - Added tooltip toggle in Profile dropdown (persisted via `preferencesStore.ts`)
+   - Tooltips auto-dismiss on scroll, support keyboard navigation
+
+2. **Glass Panel Translucency:**
+   - Increased translucency across all panels (0.65 opacity, 28px blur)
+   - Updated `index.css` global `.glass` and `.glass-header` classes
+   - Matched Sidebar, InsightPanel, ChatPanel, Header dropdowns
+
+3. **Sidebar Improvements:**
+   - Fixed header height alignment (56px → 48px to match main header)
+   - Made logo + RANGER text clickable to toggle expand/collapse
+   - Added integrated chevron indicator on hover
+   - Standardized workflow item widths with aligned chevrons
+   - Shortened descriptions to prevent text truncation
+
+4. **Header Enhancements:**
+   - Added layer info pill to breadcrumb (SAT/TER/IR with source & date)
+   - Unified layer color scheme: SAT=cyan, TER=amber, IR=orange
+   - Changed Chat button active state from purple to cyan
+
+5. **Toast Notifications:**
+   - Reduced default duration from 5000ms to 2500ms
+   - Added phase-colored icons via `accentColor` parameter
+   - Updated `notificationStore.ts` and `ToastContainer.tsx`
+
+6. **InsightPanel Dynamic Colors:**
+   - Confidence score, expand link, action icons match phase color
+   - Scrollbar color matches phase via CSS variables
+
+7. **ChatPanel Full Height:**
+   - Extended to full height (top-48px to bottom)
+   - Added close button (X) in header
+   - Moved outside `<main>` element for proper positioning
+   - Matching translucency with other panels
+
+8. **Customizable Toolbar:**
+   - Created `toolbarStore.ts` for pinned tool preferences
+   - Map controls section shows only pinned tools
+   - Settings gear opens customization panel
+
+**Files Created:**
+- `Tooltip.tsx` - Reusable tooltip component
+- `tooltipContent.ts` - Centralized tooltip content
+- `preferencesStore.ts` - User preferences (tooltip toggle)
+- `toolbarStore.ts` - Toolbar customization state
+
+**Files Modified:**
+- `index.css` - Glass translucency, scrollbar utilities
+- `Sidebar.tsx` - Clickable logo, height fix, descriptions
+- `SidebarLegend.tsx` - Tooltip integration, chevron alignment
+- `Header.tsx` - Layer pill, dropdowns, tooltip toggle
+- `InsightPanel.tsx` - Dynamic phase colors
+- `ChatPanel.tsx` - Full height, close button
+- `App.tsx` - ChatPanel positioning
+- `ToastContainer.tsx` - Accent color support
+- `notificationStore.ts` - Duration & color params
+
+**Commits:**
+- `cc71b24` - feat: enhance UI with tooltips, translucency, and sidebar improvements
+- Pending - feat: chat panel full height and clickable logo toggle
 
 ---
 
