@@ -38,9 +38,9 @@ const SEVERITY_COLORS = {
 
 // IR/Thermal color palette (heat signature style)
 const IR_SEVERITY_COLORS = {
-  HIGH: '#FFFFFF',     // Hot white
-  MODERATE: '#FFD700', // Yellow/gold
-  LOW: '#0066FF',      // Cool blue
+  HIGH: '#EF4444',     // Red (Consistent)
+  MODERATE: '#F59E0B', // Amber (Consistent)
+  LOW: '#10B981',      // Green (Consistent)
 };
 
 // Trail damage type colors
@@ -192,9 +192,9 @@ const CedarCreekMap: React.FC = () => {
           'line-color': [
             'match',
             ['get', 'severity'],
-            'HIGH', '#FF6B00',
-            'MODERATE', '#FFD700',
-            'LOW', '#0088FF',
+            'HIGH', '#EF4444',
+            'MODERATE', '#F59E0B',
+            'LOW', '#10B981',
             '#333344',
           ],
           'line-width': 3,
@@ -335,11 +335,51 @@ const CedarCreekMap: React.FC = () => {
         },
         layers: [
           {
-            id: 'satellite-layer',
+            id: 'satellite-layer-sat',
             type: 'raster',
             source: 'satellite',
+            layout: {
+              visibility: activeLayer === 'SAT' ? 'visible' : 'none',
+            },
             paint: {
               'raster-opacity': 1,
+              'raster-saturation': 0,
+              'raster-contrast': 0,
+              'raster-brightness-min': 0,
+              'raster-brightness-max': 1,
+              'raster-hue-rotate': 0,
+            },
+          },
+          {
+            id: 'satellite-layer-ter',
+            type: 'raster',
+            source: 'satellite',
+            layout: {
+              visibility: activeLayer === 'TER' ? 'visible' : 'none',
+            },
+            paint: {
+              'raster-opacity': 1,
+              'raster-saturation': -0.7,
+              'raster-contrast': 0.4,
+              'raster-brightness-min': 0.1,
+              'raster-brightness-max': 0.85,
+              'raster-hue-rotate': 30,
+            },
+          },
+          {
+            id: 'satellite-layer-ir',
+            type: 'raster',
+            source: 'satellite',
+            layout: {
+              visibility: activeLayer === 'IR' ? 'visible' : 'none',
+            },
+            paint: {
+              'raster-opacity': 1,
+              'raster-saturation': -1,
+              'raster-contrast': 0.3,
+              'raster-brightness-min': 0.05,
+              'raster-brightness-max': 0.4,
+              'raster-hue-rotate': 0,
             },
           },
         ],
@@ -361,7 +401,11 @@ const CedarCreekMap: React.FC = () => {
       bearing: camera.bearing,
       pitch: camera.pitch,
       maxPitch: 85,
+      attributionControl: false,
     });
+
+    // Add compact attribution control to bottom-left
+    map.current.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left');
 
     // Load GeoJSON data once map is ready
     map.current.on('load', () => {
@@ -505,7 +549,7 @@ const CedarCreekMap: React.FC = () => {
     });
 
     // Toggle IR thermal layers
-    const irSeverityLayers = ['burn-severity-ir-fill', 'burn-severity-ir-glow', 'burn-severity-ir-outline'];
+    const irSeverityLayers = ['burn-severity-ir-fill', 'burn-severity-ir-outline'];
     irSeverityLayers.forEach((layerId) => {
       if (mapInstance.getLayer(layerId)) {
         mapInstance.setLayoutProperty(
@@ -517,60 +561,26 @@ const CedarCreekMap: React.FC = () => {
     });
 
     if (activeLayer === 'SAT') {
-      if (!mapInstance.getSource('satellite')) {
-        mapInstance.addSource('satellite', {
-          type: 'raster',
-          tiles: [TILE_SOURCES.SAT],
-          tileSize: 512,
-        });
-      }
-
-      if (mapInstance.getLayer('satellite-layer')) {
-        mapInstance.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', 0);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
-      }
       // Reset terrain exaggeration for SAT mode
       if (mapInstance.getTerrain()) {
         mapInstance.setTerrain({
           source: 'terrain-dem',
-          exaggeration: 1.5, // Default exaggeration
+          exaggeration: 1.5,
         });
       }
     }
 
     if (activeLayer === 'TER') {
-      // Topographic style: desaturated with enhanced contrast for terrain visibility
-      if (mapInstance.getLayer('satellite-layer')) {
-        mapInstance.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.7); // More desaturated
-        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.4);    // Higher contrast
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.1);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.85);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 30);   // Slight sepia tint
-      }
       // Increase terrain exaggeration for TER mode
       if (mapInstance.getTerrain()) {
         mapInstance.setTerrain({
           source: 'terrain-dem',
-          exaggeration: 2.5, // More pronounced terrain
+          exaggeration: 2.5,
         });
       }
     }
 
     if (activeLayer === 'IR') {
-      // Dark, desaturated base for thermal effect
-      if (mapInstance.getLayer('satellite-layer')) {
-        mapInstance.setLayoutProperty('satellite-layer', 'visibility', 'visible');
-        mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -1); // Full grayscale
-        mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.3);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.05);
-        mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.4); // Darker base
-        mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
-      }
       // Reset terrain exaggeration for IR mode
       if (mapInstance.getTerrain()) {
         mapInstance.setTerrain({
@@ -580,62 +590,49 @@ const CedarCreekMap: React.FC = () => {
       }
     }
 
-    console.log(`[CedarCreekMap] Layer switched to: ${activeLayer}`);
+    console.log(`[CedarCreekMap] Layer visibility updated for: ${activeLayer}`);
   }, [activeLayer, dataLayers.burnSeverity.visible]);
 
-  // Track the current layer to apply styling consistently
-  const currentLayerRef = useRef(activeLayer);
-  currentLayerRef.current = activeLayer;
 
-  // Function to apply layer styling (called on idle to maintain consistency after tile loads)
-  const applyLayerStyling = useCallback(() => {
-    if (!map.current) return;
-    const mapInstance = map.current;
-    const layer = currentLayerRef.current;
-
-    if (!mapInstance.getLayer('satellite-layer')) return;
-
-    // Apply styling based on current layer mode
-    // Note: We use slightly non-zero values for SAT to ensure properties are "active"
-    if (layer === 'SAT') {
-      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', 0.0);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.0);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.0);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 1.0);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
-    } else if (layer === 'TER') {
-      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -0.7);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.4);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.1);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.85);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 30);
-    } else if (layer === 'IR') {
-      mapInstance.setPaintProperty('satellite-layer', 'raster-saturation', -1.0);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-contrast', 0.3);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-min', 0.05);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-brightness-max', 0.4);
-      mapInstance.setPaintProperty('satellite-layer', 'raster-hue-rotate', 0);
-    }
-  }, []);
+  // Function to apply layer styling (deprecated: now handled by layer visibility)
+  const applyLayerStyling = useCallback(() => { }, []);
 
   useEffect(() => {
     if (!map.current) return;
 
     const mapInstance = map.current;
 
-    if (mapInstance.isStyleLoaded()) {
+    const applyStyles = () => {
+      // 1. Update general layout visibility
       updateLayer();
-      // Apply styling immediately on layer change
-      applyLayerStyling();
-      // Force immediate repaint by triggering a tiny resize
-      mapInstance.triggerRepaint();
-    } else {
-      mapInstance.once('load', () => {
-        updateLayer();
-        applyLayerStyling();
+
+      // 2. Toggle specific style layers
+      const baseLayers: Record<string, string> = {
+        SAT: 'satellite-layer-sat',
+        TER: 'satellite-layer-ter',
+        IR: 'satellite-layer-ir',
+      };
+
+      Object.entries(baseLayers).forEach(([key, layerId]) => {
+        if (mapInstance.getLayer(layerId)) {
+          mapInstance.setLayoutProperty(
+            layerId,
+            'visibility',
+            activeLayer === key ? 'visible' : 'none'
+          );
+        }
       });
+
+      // 3. Trigger immediate repaint
+      mapInstance.triggerRepaint();
+    };
+
+    if (mapInstance.isStyleLoaded()) {
+      applyStyles();
+    } else {
+      mapInstance.once('load', applyStyles);
     }
-  }, [activeLayer, updateLayer, applyLayerStyling]);
+  }, [activeLayer, updateLayer]);
 
   // Handle data layer visibility changes
   useEffect(() => {
@@ -720,37 +717,6 @@ const CedarCreekMap: React.FC = () => {
     });
   }, [dataLayers, activeLayer]);
 
-  // IR glow animation - pulsing heat signature effect
-  useEffect(() => {
-    if (!map.current || activeLayer !== 'IR') return;
-
-    const mapInstance = map.current;
-    let animationFrame: number;
-    let startTime: number | null = null;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-
-      // Oscillate opacity between 0.15 and 0.45 over 2 seconds
-      const opacity = 0.3 + 0.15 * Math.sin((elapsed / 1000) * Math.PI);
-
-      if (mapInstance.getLayer('burn-severity-ir-glow')) {
-        mapInstance.setPaintProperty('burn-severity-ir-glow', 'fill-opacity', opacity);
-      }
-
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [activeLayer]);
-
   // Handle terrain exaggeration changes
   useEffect(() => {
     if (!map.current) return;
@@ -816,12 +782,13 @@ const CedarCreekMap: React.FC = () => {
       };
       mapInstance.once('moveend', handleMoveEnd);
 
-      mapInstance.easeTo({
+      mapInstance.flyTo({
         center: camera.center,
         zoom: camera.zoom,
         bearing: camera.bearing,
         pitch: camera.pitch,
-        duration: 500,
+        duration: 2000, // Cinematic 2.0s flight
+        essential: true,
       });
     }
   }, [camera.center[0], camera.center[1], camera.zoom, camera.bearing, camera.pitch]);

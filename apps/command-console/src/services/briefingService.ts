@@ -17,9 +17,8 @@ class BriefingService {
     private socket: WebSocket | null = null;
     private listeners: Set<(event: AgentBriefingEvent) => void> = new Set();
     private sessionId: string;
-    private reconnectTimeout: number = 2000;
-    private maxReconnectAttempts: number = 5;
     private reconnectAttempts: number = 0;
+    private maxReconnectAttempts: number = 20;
 
     constructor() {
         // Session ID should be persistent for a user session
@@ -79,9 +78,14 @@ class BriefingService {
 
     private handleReconnect(): void {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            // Exponential backoff: 1s, 2s, 4s, 8s... max 30s
+            const backoff = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
             this.reconnectAttempts++;
-            console.log(`[BriefingService] Reconnecting in ${this.reconnectTimeout}ms (Attempt ${this.reconnectAttempts})`);
-            setTimeout(() => this.connect(), this.reconnectTimeout);
+
+            console.log(`[BriefingService] Reconnecting in ${backoff}ms (Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            setTimeout(() => this.connect(), backoff);
+        } else {
+            console.error('[BriefingService] Max reconnection attempts reached');
         }
     }
 

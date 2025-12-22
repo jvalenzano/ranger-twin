@@ -45,6 +45,9 @@ interface MapState {
   terrainExaggeration: number;
   terrainEnabled: boolean;
 
+  // UI State
+  legendExpanded: boolean;
+
   // Actions
   setActiveLayer: (layer: MapLayerType) => void;
   toggleDataLayer: (layer: DataLayerType) => void;
@@ -57,6 +60,7 @@ interface MapState {
   setVisibleLayers: (layers: DataLayerType[]) => void;
   setTerrainExaggeration: (value: number) => void;
   toggleTerrain: () => void;
+  setLegendExpanded: (expanded: boolean) => void;
   reset: () => void;
 }
 
@@ -89,6 +93,7 @@ export const useMapStore = create<MapState>()(
       camera: { ...initialCamera },
       terrainExaggeration: 1.5,
       terrainEnabled: true,
+      legendExpanded: false,
 
       setActiveLayer: (layer) => {
         set({ activeLayer: layer });
@@ -181,6 +186,10 @@ export const useMapStore = create<MapState>()(
         set((state) => ({ terrainEnabled: !state.terrainEnabled }));
       },
 
+      setLegendExpanded: (expanded) => {
+        set({ legendExpanded: expanded });
+      },
+
       reset: () => {
         set({
           activeLayer: 'SAT',
@@ -203,6 +212,7 @@ export const useDataLayer = (layer: DataLayerType) =>
   useMapStore((state) => state.dataLayers[layer]);
 export const useTerrainExaggeration = () => useMapStore((state) => state.terrainExaggeration);
 export const useTerrainEnabled = () => useMapStore((state) => state.terrainEnabled);
+export const useLegendExpanded = () => useMapStore((state) => state.legendExpanded);
 
 // Export constants for use elsewhere
 export const CEDAR_CREEK = {

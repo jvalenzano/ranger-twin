@@ -22,9 +22,13 @@ import {
 } from 'lucide-react';
 
 import { useBriefingStore } from '@/stores/briefingStore';
-import { useLifecycleStore } from '@/stores/lifecycleStore';
+import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
 import type { AgentBriefingEvent, SourceAgent } from '@/types/briefing';
 import briefingService from '@/services/briefingService';
+import mockBriefingService from '@/services/mockBriefingService';
+import { useNotificationStore } from '@/stores/notificationStore';
+import { exportTracsWorkOrders, exportFsVegData } from '@/utils/exportUtils';
+
 
 // Agent badge colors - using direct classes that Tailwind can detect
 // These match the workflow phase colors
@@ -49,27 +53,56 @@ const InsightPanel: React.FC = () => {
   const [isReasoningExpanded, setIsReasoningExpanded] = useState(false);
   const events = useBriefingStore((state) => state.events);
   const pulsePhase = useLifecycleStore((state) => state.pulsePhase);
+  const setActivePhase = useLifecycleStore((state) => state.setActivePhase);
+  const success = useNotificationStore((state) => state.success);
 
   // Get the most recent event (top of the list)
   const latestEvent: AgentBriefingEvent | undefined = events[0];
 
   // Handle suggested action click
-  const handleActionClick = (targetAgent: SourceAgent) => {
-    // Map agent to phase
-    const agentToPhase: Record<SourceAgent, 'IMPACT' | 'DAMAGE' | 'TIMBER' | 'COMPLIANCE'> = {
+  const handleActionClick = (action: any) => {
+    const { target_agent: targetAgent, action_id: actionId, label } = action;
+
+    // 1. Handle Exports (Immediate)
+    if (actionId === 'act_004') {
+      exportTracsWorkOrders();
+      success('Exporting TRACS Work Orders (CSV + JSON)...');
+      return;
+    }
+    if (actionId === 'act_007') {
+      exportFsVegData();
+      success('Exporting FSVeg Data (CSV)...');
+      return;
+    }
+    if (actionId === 'act_012') {
+      success('Generating Full Recovery Briefing PDF...');
+      return;
+    }
+
+    // 2. Identify Target Phase for Optimistic UI
+    const agentToPhase: Record<string, LifecyclePhase> = {
       burn_analyst: 'IMPACT',
       trail_assessor: 'DAMAGE',
       cruising_assistant: 'TIMBER',
       nepa_advisor: 'COMPLIANCE',
-      recovery_coordinator: 'IMPACT', // Coordinator doesn't have its own phase
+      recovery_coordinator: 'IMPACT',
     };
-
     const phase = agentToPhase[targetAgent];
 
-    // Pulse the target phase to draw attention
-    pulsePhase(phase);
+    if (phase) {
+      // OPTIMISTIC UPDATE: Update UI state immediately regardless of network
+      setActivePhase(phase);
 
-    // Trigger real backend action
+      // Pulse the target phase to draw attention
+      pulsePhase(phase);
+
+      // Trigger mock event to ensure UI updates in demo mode
+      mockBriefingService.triggerPhase(phase);
+
+      success(`Triggered ${label}`);
+    }
+
+    // 3. Trigger real backend action (Fire-and-forget in demo)
     if (targetAgent === 'burn_analyst') {
       briefingService.triggerBurnAnalysis('Sector NW-4');
     } else if (targetAgent === 'trail_assessor') {
@@ -80,7 +113,7 @@ const InsightPanel: React.FC = () => {
       briefingService.triggerNepaReview('Cedar Creek Recovery');
     }
 
-    console.log(`[InsightPanel] Action clicked: trigger ${targetAgent}`);
+    console.log(`[InsightPanel] Action clicked: trigger ${targetAgent} (${actionId})`);
   };
 
   // If no event, don't show anything - sidebar provides guidance
@@ -189,7 +222,7 @@ const InsightPanel: React.FC = () => {
             {latestEvent.content.suggested_actions.map((action) => (
               <button
                 key={action.action_id}
-                onClick={() => handleActionClick(action.target_agent)}
+                onClick={() => handleActionClick(action)}
                 className="w-full flex items-center gap-2 p-2 rounded bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-warning/30 transition-all group"
               >
                 <Zap size={14} className="text-warning group-hover:text-warning" />

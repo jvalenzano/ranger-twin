@@ -32,10 +32,10 @@ const AGENT_COLORS: Record<string, string> = {
 
 const AGENT_LABELS: Record<string, string> = {
   coordinator: 'Recovery Coordinator',
-  'burn-analyst': 'Burn Analyst',
-  'trail-assessor': 'Trail Assessor',
-  'cruising-assistant': 'Cruising Assistant',
-  'nepa-advisor': 'NEPA Advisor',
+  'burn-analyst': 'IMPACT ANALYST',
+  'trail-assessor': 'DAMAGE ASSESSOR',
+  'cruising-assistant': 'TIMBER ANALYST',
+  'nepa-advisor': 'COMPLIANCE ADVISOR',
 };
 
 // Progress dots component
@@ -206,8 +206,7 @@ const TourMapSync: React.FC<{ step: TourStep }> = ({ step }) => {
     // Set visible data layers
     setVisibleLayers(step.visibleLayers);
 
-    // Note: We're setting the camera but we need to also handle bearing/pitch
-    // The mapStore's flyTo doesn't support bearing/pitch yet, so we'll set it via setCamera
+    // Handle bearing/pitch
     const setCamera = useMapStore.getState().setCamera;
     setCamera({
       center: step.camera.center,
@@ -215,6 +214,13 @@ const TourMapSync: React.FC<{ step: TourStep }> = ({ step }) => {
       bearing: step.camera.bearing ?? 0,
       pitch: step.camera.pitch ?? 45,
     });
+
+    // Auto-expand legend if step references data layers
+    const setLegendExpanded = useMapStore.getState().setLegendExpanded;
+    const hasDataLayers = step.visibleLayers.length > 0;
+    if (hasDataLayers) {
+      setLegendExpanded(true);
+    }
   }, [step, flyTo, setActiveLayer, setVisibleLayers, setActivePhase]);
 
   return null;

@@ -36,6 +36,8 @@ import { useMeasureStore, useMeasureMode } from '@/stores/measureStore';
 import mockBriefingService, {
   type LifecyclePhase as MockPhase,
 } from '@/services/mockBriefingService';
+import { useNotificationStore } from '@/stores/notificationStore';
+import SidebarLegend from './SidebarLegend';
 
 interface LifecycleStep {
   id: LifecyclePhase;
@@ -101,6 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
   const activePhase = useLifecycleStore((state) => state.activePhase);
   const setActivePhase = useLifecycleStore((state) => state.setActivePhase);
   const clearPulse = useLifecycleStore((state) => state.clearPulse);
+  const info = useNotificationStore((state) => state.info);
 
   // Notify parent of width changes
   useEffect(() => {
@@ -113,6 +116,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
 
     // Fire the event for this phase from fixtures
     mockBriefingService.triggerPhase(phase as MockPhase);
+
+    info(`Viewing ${phase} analysis`);
 
     // Auto-collapse after first interaction to maximize map space
     if (!hasInteracted) {
@@ -264,6 +269,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           );
         })}
       </div>
+
+      {/* RANGER Sidebar Legend - Contextual Key */}
+      <SidebarLegend isExpanded={isExpanded} onExpandSidebar={() => setIsExpanded(true)} />
 
       {/* Map Controls Section */}
       <MapControlsSection isExpanded={isExpanded} />

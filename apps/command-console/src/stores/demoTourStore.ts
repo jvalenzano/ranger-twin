@@ -39,6 +39,14 @@ export interface TourStep {
   cardPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
 }
 
+const AGENT_LABELS: Record<string, string> = {
+  coordinator: 'Recovery Coordinator',
+  'burn-analyst': 'IMPACT ANALYST',
+  'trail-assessor': 'DAMAGE ASSESSOR',
+  'cruising-assistant': 'TIMBER ANALYST',
+  'nepa-advisor': 'COMPLIANCE ADVISOR',
+};
+
 // The 7 tour steps as specified in the Manifesto
 const TOUR_STEPS: TourStep[] = [
   {
@@ -65,10 +73,10 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 'burn-analysis',
-    title: 'Burn Analyst',
+    title: 'Impact Analyst',
     subtitle: 'Impact Assessment Intelligence',
     description:
-      'The Burn Analyst processes satellite imagery to classify burn severity. Sarah Chen (Fire Management Officer) needs this before any recovery planning can begin.',
+      'The Impact Analyst processes satellite imagery to classify burn severity. Sarah Chen (Fire Management Officer) needs this before any recovery planning can begin.',
     lookFor: [
       'High severity zones concentrated in the northwest sector',
       'Moderate severity creating a buffer around the core',
@@ -88,10 +96,10 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 'trail-assessment',
-    title: 'Trail Assessor',
+    title: 'Damage Assessor',
     subtitle: 'Infrastructure Damage Analysis',
     description:
-      'The Trail Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (Recreation Technician) uses this to prioritize crew deployments.',
+      'The Damage Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (Recreation Technician) uses this to prioritize crew deployments.',
     lookFor: [
       'Trail damage points sized by severity',
       'Bridge failures (red) requiring immediate attention',
@@ -111,10 +119,10 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 'timber-salvage',
-    title: 'Cruising Assistant',
+    title: 'Timber Analyst',
     subtitle: 'Salvage Operations Planning',
     description:
-      'The Cruising Assistant analyzes timber stands for salvage potential. Elena Vasquez (Timber Cruiser) identifies priority plots based on species composition, burn severity, and market conditions.',
+      'The Timber Analyst analyzes timber stands for salvage potential. Elena Vasquez (Timber Cruiser) identifies priority plots based on species composition, burn severity, and market conditions.',
     lookFor: [
       'Timber plot markers colored by priority',
       'High-value plots in the eastern corridor',
@@ -134,10 +142,10 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 'nepa-compliance',
-    title: 'NEPA Advisor',
+    title: 'Compliance Advisor',
     subtitle: 'Regulatory Navigation',
     description:
-      'The NEPA Advisor helps Dr. James Park (Environmental Coordinator) navigate categorical exclusions and streamlined pathways. Real citations from current regulations.',
+      'The Compliance Advisor helps Dr. James Park (Environmental Coordinator) navigate categorical exclusions and streamlined pathways. Includes real-time citations from federal regulations.',
     lookFor: [
       'How burn severity informs NEPA pathways',
       'Overlap between timber plots and sensitive areas',
@@ -160,7 +168,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'The Recovery Cascade',
     subtitle: 'Connected Intelligence',
     description:
-      'This is RANGER\'s secret: agents don\'t work in isolation. The Burn Analyst\'s severity map informs the Trail Assessor\'s priorities. The Cruising Assistant considers NEPA constraints. Every insight feeds forward.',
+      'This is RANGER\'s secret: agents don\'t work in isolation. The Impact Analyst\'s severity map informs the Damage Assessor\'s priorities. The Timber Analyst considers compliance constraints. Every insight feeds forward.',
     lookFor: [
       'All layers visible simultaneously',
       'How high-severity zones correlate with trail damage',

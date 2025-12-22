@@ -11,6 +11,7 @@ import MapLoadingSkeleton from '@/components/common/MapLoadingSkeleton';
 import mockBriefingService from '@/services/mockBriefingService';
 import { useBriefingStore } from '@/stores/briefingStore';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
+import { ToastContainer } from '@/components/ui/ToastContainer';
 
 // Lazy load the heavy map component
 const CedarCreekMap = lazy(() => import('@/components/map/CedarCreekMap'));
@@ -55,6 +56,7 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <BriefingObserver autoConnect={false}>
         <div className="relative w-screen h-screen overflow-hidden bg-background text-text-primary">
+          <ToastContainer />
           {/* MapLibre GL Map - Cedar Creek Fire (Willamette NF, Oregon) */}
           <Suspense fallback={<MapLoadingSkeleton />}>
             <CedarCreekMap />
