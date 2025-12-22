@@ -154,23 +154,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           className="flex items-center gap-2 p-1 rounded-lg hover:bg-white/5 transition-all group cursor-pointer"
           title={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
         >
-          {/* Single Tree Circular Badge Logo with Phase Color Gradient */}
+          {/* Single Tree Circular Badge Logo with Chrome Silver Gradient */}
           <div className="flex items-center justify-center flex-shrink-0 relative">
             <svg
               width="36"
               height="36"
               viewBox="0 0 512 512"
               fill="none"
-              className="drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.5)] transition-all"
+              className="drop-shadow-[0_0_6px_rgba(148,163,184,0.4)] group-hover:drop-shadow-[0_0_10px_rgba(148,163,184,0.6)] transition-all"
             >
-              {/* Gradient definitions for phase colors */}
+              {/* Gradient definitions for chrome/silver effect */}
               <defs>
-                {/* Full cycle gradient ring - represents recovery phases */}
-                <linearGradient id="phaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#ef4444" />      {/* Red - Impact */}
-                  <stop offset="33%" stopColor="#f59e0b" />     {/* Amber - Damage */}
-                  <stop offset="66%" stopColor="#10b981" />     {/* Emerald - Timber */}
-                  <stop offset="100%" stopColor="#a855f7" />    {/* Purple - Compliance */}
+                {/* Chrome gradient ring - silver metallic */}
+                <linearGradient id="chromeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#e2e8f0" />      {/* Light silver */}
+                  <stop offset="25%" stopColor="#94a3b8" />     {/* Slate */}
+                  <stop offset="50%" stopColor="#cbd5e1" />     {/* Bright silver */}
+                  <stop offset="75%" stopColor="#64748b" />     {/* Dark slate */}
+                  <stop offset="100%" stopColor="#e2e8f0" />    {/* Light silver */}
                 </linearGradient>
                 {/* Subtle inner glow */}
                 <radialGradient id="innerGlow" cx="50%" cy="50%" r="50%">
@@ -179,15 +180,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
                 </radialGradient>
               </defs>
 
-              {/* Outer gradient ring - phase colors */}
+              {/* Outer gradient ring - chrome silver */}
               <circle
                 cx="256"
                 cy="256"
                 r="248"
                 fill="none"
-                stroke="url(#phaseGradient)"
+                stroke="url(#chromeGradient)"
                 strokeWidth="16"
-                opacity="0.9"
+                opacity="0.95"
               />
 
               {/* Dark inner circle background */}
@@ -236,7 +237,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           {isExpanded && (
             <>
               <span
-                className="text-[22px] font-bold tracking-[0.08em] bg-gradient-to-r from-red-400 via-amber-400 to-emerald-400 bg-clip-text text-transparent"
+                className="text-[20px] font-semibold tracking-[0.2em] text-white/90 group-hover:text-white transition-colors"
               >
                 RANGER
               </span>
