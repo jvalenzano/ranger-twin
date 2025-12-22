@@ -99,16 +99,21 @@ RANGER is the **nerve center**, not the sensors. It orchestrates AI agents that 
 
 ---
 
-## Naming Conventions by Context
+## Naming Hierarchy (Context-Dependent)
 
-| Context | Format | Examples |
-|---------|--------|----------|
-| **Code (classes, modules)** | PascalCase | `BurnAnalyst`, `TrailAssessor`, `CruisingAssistant` |
-| **Code (directories)** | kebab-case | `burn-analyst/`, `trail-assessor/`, `cruising-assistant/` |
-| **API Endpoints** | kebab-case | `/api/agents/burn-analyst/query` |
-| **UI Labels** | Title Case | "Burn Analyst", "Trail Assessor" |
-| **Documentation** | "The" prefix | "The Burn Analyst provides...", "Ask the NEPA Advisor" |
-| **Informal speech** | Shortened | "the analyst", "the assessor", "the advisor" |
+To optimize for both professional depth and onboarding approachability, RANGER uses a three-tier naming system across the interface:
+
+| Context | Style | Example | Purpose |
+|---------|-------|---------|---------|
+| **Sidebar Rail** | Phase Name | IMPACT, DAMAGE, TIMBER, COMPLIANCE | Strategic grouping of workflows |
+| **Insight Panel** | Role Title | IMPACT ANALYST, DAMAGE ASSESSOR | Professional "digital colleague" identity |
+| **Tour Cards** | Friendly Name | Burn Analyst, Trail Assessor | Humanized onboarding experience |
+
+This ensures that while the system feels like a "Nervous System" of professional intelligence, the initial learning curve is softened by humanized terminology during the tour.
+
+---
+
+## Naming Conventions by Context
 
 ---
 

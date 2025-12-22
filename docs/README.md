@@ -33,6 +33,8 @@
 | [architecture/AGENT-MESSAGING-PROTOCOL.md](./architecture/AGENT-MESSAGING-PROTOCOL.md) | AgentBriefingEvent schema and messaging patterns |
 | [architecture/BRIEFING-UX-SPEC.md](./architecture/BRIEFING-UX-SPEC.md) | UI rendering spec for AgentBriefingEvents and reasoning transparency |
 | [architecture/LEGACY-INTEGRATION-SCHEMAS.md](./architecture/LEGACY-INTEGRATION-SCHEMAS.md) | TRACS, FSVeg export schemas for USFS legacy system integration |
+| [architecture/FIXTURE-DATA-FORMATS.md](./architecture/FIXTURE-DATA-FORMATS.md) | **Phase 1 fixture schemas** (burn severity, trails, timber, briefings) |
+| [architecture/DATA-INGESTION-ADAPTERS.md](./architecture/DATA-INGESTION-ADAPTERS.md) | External data source adapter pattern and specifications |
 
 ### Agent Specifications ("The Crew")
 
@@ -69,6 +71,14 @@ Expert panel workshop outputs describing the full production vision. See [worksh
 | [workshop/ranger_roadmap.md](./workshop/ranger_roadmap.md) | 26-week implementation blueprint ($704K) |
 | [workshop/ranger_executive.md](./workshop/ranger_executive.md) | Executive summary and funding request |
 | [workshop/WORKSHOP-DEMO-ALIGNMENT.md](./workshop/WORKSHOP-DEMO-ALIGNMENT.md) | **How workshop vision maps to our demo** |
+
+### Research & Integration
+
+| Document | Description |
+|----------|-------------|
+| [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | **Phase 1 → Phase 2 transition plan** for external data sources |
+| [research/PUBLIC-API-INVENTORY.md](./research/PUBLIC-API-INVENTORY.md) | NIFC, NASA FIRMS, MTBS, InciWeb, IRWIN API research |
+| [research/USFS-INTERVIEW-MATERIALS.md](./research/USFS-INTERVIEW-MATERIALS.md) | Stakeholder interview templates and guides |
 
 ### Audit
 

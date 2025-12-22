@@ -31,6 +31,8 @@ export interface TourStep {
   visibleLayers: DataLayerType[];
   // Base layer
   baseLayer: MapLayerType;
+  // Which lifecycle phase this step relates to (IMPACT, DAMAGE, TIMBER, COMPLIANCE)
+  lifecyclePhase?: 'IMPACT' | 'DAMAGE' | 'TIMBER' | 'COMPLIANCE';
   // Which agent this step relates to (for UI highlighting)
   agent?: 'coordinator' | 'burn-analyst' | 'trail-assessor' | 'cruising-assistant' | 'nepa-advisor';
   // Position of the annotation card
@@ -44,11 +46,11 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Welcome to RANGER',
     subtitle: 'The Nerve Center for Forest Recovery',
     description:
-      'RANGER orchestrates AI agents to transform siloed data into coordinated intelligence. This is the Cedar Creek Fire (2022) in Oregon\'s Willamette National Forest—127,000 acres of complex recovery decisions.',
+      'Watch how a single burn finding cascades through trail assessment, timber analysis, and compliance review — automatically. This is the Cedar Creek Fire (2022) in Oregon\'s Willamette National Forest—127,000 acres of complex recovery decisions.',
     lookFor: [
       'The fire perimeter (dashed white line)',
       'Burn severity zones (red = high, yellow = moderate, green = low)',
-      '3D terrain showing the mountainous landscape',
+      'The lifecycle rail on the left showing four recovery phases',
     ],
     camera: {
       center: [-122.1, 43.7],
@@ -58,6 +60,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'IMPACT',
     cardPosition: 'top-right',
   },
   {
@@ -65,7 +68,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Burn Analyst',
     subtitle: 'Impact Assessment Intelligence',
     description:
-      'The Burn Analyst processes satellite imagery and dNBR data to classify burn severity. Sarah Chen (GIS Specialist) needs this before any recovery planning can begin.',
+      'The Burn Analyst processes satellite imagery to classify burn severity. Sarah Chen (Fire Management Officer) needs this before any recovery planning can begin.',
     lookFor: [
       'High severity zones concentrated in the northwest sector',
       'Moderate severity creating a buffer around the core',
@@ -79,6 +82,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'IMPACT',
     agent: 'burn-analyst',
     cardPosition: 'top-right',
   },
@@ -87,7 +91,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Trail Assessor',
     subtitle: 'Infrastructure Damage Analysis',
     description:
-      'The Trail Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (District Ranger) uses this to prioritize crew deployments.',
+      'The Trail Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (Recreation Technician) uses this to prioritize crew deployments.',
     lookFor: [
       'Trail damage points sized by severity',
       'Bridge failures (red) requiring immediate attention',
@@ -101,6 +105,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'trailDamage'],
     baseLayer: 'TER',
+    lifecyclePhase: 'DAMAGE',
     agent: 'trail-assessor',
     cardPosition: 'top-right',
   },
@@ -109,7 +114,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Cruising Assistant',
     subtitle: 'Salvage Operations Planning',
     description:
-      'The Cruising Assistant analyzes timber stands for salvage potential. Priority plots are identified based on species composition, burn severity, and market conditions.',
+      'The Cruising Assistant analyzes timber stands for salvage potential. Elena Vasquez (Timber Cruiser) identifies priority plots based on species composition, burn severity, and market conditions.',
     lookFor: [
       'Timber plot markers colored by priority',
       'High-value plots in the eastern corridor',
@@ -123,6 +128,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'timberPlots'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'TIMBER',
     agent: 'cruising-assistant',
     cardPosition: 'top-right',
   },
@@ -131,7 +137,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'NEPA Advisor',
     subtitle: 'Regulatory Navigation',
     description:
-      'The NEPA Advisor helps Elena Vasquez (Environmental Planner) navigate categorical exclusions and streamlined pathways. Real citations from current regulations.',
+      'The NEPA Advisor helps Dr. James Park (Environmental Coordinator) navigate categorical exclusions and streamlined pathways. Real citations from current regulations.',
     lookFor: [
       'How burn severity informs NEPA pathways',
       'Overlap between timber plots and sensitive areas',
@@ -145,6 +151,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'trailDamage', 'timberPlots'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'COMPLIANCE',
     agent: 'nepa-advisor',
     cardPosition: 'top-right',
   },
@@ -178,8 +185,7 @@ const TOUR_STEPS: TourStep[] = [
       'What once took weeks of manual coordination now happens in minutes. RANGER doesn\'t replace foresters—it amplifies them. Sarah, Marcus, Elena, and Dr. Park each get exactly what they need, when they need it.',
     lookFor: [
       'The complete picture of Cedar Creek recovery',
-      'Try clicking any layer element for details',
-      'Use the lifecycle phases on the left to explore',
+      'Four workflows, one coordinated plan',
     ],
     camera: {
       center: [-122.1, 43.7],
@@ -189,7 +195,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'trailDamage', 'timberPlots'],
     baseLayer: 'SAT',
-    cardPosition: 'center',
+    cardPosition: 'top-right',
   },
 ];
 

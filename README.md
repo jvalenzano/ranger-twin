@@ -112,6 +112,9 @@ docker-compose up -d
 # Frontend: http://localhost:5173
 # API: http://localhost:8000
 # API Docs: http://localhost:8000/docs
+
+> [!NOTE]
+> For detailed setup, testing procedures, and verification workflows, see the **[Local Development & Testing Guide](docs/onboarding/LOCAL-DEVELOPMENT-GUIDE.md)**.
 ```
 
 ### Development

@@ -48,7 +48,7 @@ const DAMAGE_COLORS = {
   BRIDGE_FAILURE: '#EF4444',
   DEBRIS_FLOW: '#F97316',
   HAZARD_TREES: '#EAB308',
-  TREAD_EROSION: '#84CC16',
+  TREAD_EROSION: '#F59E0B', // Amber
   SIGNAGE: '#22C55E',
 };
 
@@ -66,6 +66,7 @@ const CedarCreekMap: React.FC = () => {
   const isInitialized = useRef(false);
   const isInternalMove = useRef(false);
   const dataLoaded = useRef(false);
+  const activePopup = useRef<maplibregl.Popup | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
   const activeLayer = useActiveLayer();
@@ -235,6 +236,23 @@ const CedarCreekMap: React.FC = () => {
         },
       });
 
+      mapInstance.addLayer({
+        id: 'trail-damage-labels',
+        type: 'symbol',
+        source: 'trail-damage',
+        layout: {
+          'text-field': ['get', 'damage_id'],
+          'text-size': 10,
+          'text-offset': [0, 1.5],
+          'text-anchor': 'top',
+        },
+        paint: {
+          'text-color': '#FFFFFF',
+          'text-halo-color': '#0F172A',
+          'text-halo-width': 1,
+        },
+      });
+
       // Add timber plots source and layer
       mapInstance.addSource('timber-plots', {
         type: 'geojson',
@@ -371,87 +389,87 @@ const CedarCreekMap: React.FC = () => {
       });
     });
 
-    // Add popup on click for data layers
-    map.current.on('click', 'trail-damage-points', (e) => {
-      if (!e.features?.[0]) return;
-      const props = e.features[0].properties;
-      if (!props) return;
+    // Unified click handler for prioritizing point features over areas
+    map.current.on('click', (e) => {
+      if (!map.current) return;
 
-      new maplibregl.Popup({ className: 'ranger-popup' })
-        .setLngLat(e.lngLat)
-        .setHTML(`
+      const layers = ['timber-plots-points', 'trail-damage-points', 'burn-severity-fill'];
+      const features = map.current.queryRenderedFeatures(e.point, { layers });
+
+      if (!features.length) return;
+
+      // queryRenderedFeatures returns features in visual Z-order (topmost first)
+      const feature = features[0];
+      if (!feature || !feature.properties) return;
+
+      const props = feature.properties;
+
+      // Close existing popup (Singleton)
+      if (activePopup.current) {
+        activePopup.current.remove();
+      }
+
+      let content = '';
+      if (feature.layer.id === 'trail-damage-points') {
+        content = `
           <div class="p-2">
             <div class="font-bold text-sm">${props.trail_name}</div>
             <div class="text-xs text-amber-400">${props.type.replace('_', ' ')}</div>
             <div class="text-xs mt-1">${props.description}</div>
             <div class="text-xs mt-1 text-red-400">Severity: ${props.severity}/5</div>
           </div>
-        `)
-        .addTo(map.current!);
-    });
+        `;
+      } else if (feature.layer.id === 'timber-plots-points') {
+        const priorityColor = props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
+          props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
+            props.priority === 'MEDIUM' ? PRIORITY_COLORS.MEDIUM :
+              PRIORITY_COLORS.LOW;
 
-    map.current.on('click', 'timber-plots-points', (e) => {
-      if (!e.features?.[0]) return;
-      const props = e.features[0].properties;
-      if (!props) return;
-
-      new maplibregl.Popup({ className: 'ranger-popup' })
-        .setLngLat(e.lngLat)
-        .setHTML(`
+        content = `
           <div class="p-2">
             <div class="font-bold text-sm">Plot ${props.plot_id}</div>
             <div class="text-xs text-cyan-400">${props.stand_type}</div>
             <div class="text-xs mt-1">MBF/acre: ${props.mbf_per_acre}</div>
             <div class="text-xs">Value/acre: $${props.salvage_value_per_acre?.toLocaleString()}</div>
-            <div class="text-xs mt-1 font-medium" style="color: ${props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
-            props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
-              props.priority === 'MEDIUM' ? PRIORITY_COLORS.MEDIUM :
-                PRIORITY_COLORS.LOW
-          }">Priority: ${props.priority}</div>
+            <div class="text-xs mt-1 font-medium" style="color: ${priorityColor}">Priority: ${props.priority}</div>
           </div>
-        `)
-        .addTo(map.current!);
-    });
+        `;
+      } else if (feature.layer.id === 'burn-severity-fill') {
+        const severityColor = props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
+          props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
+            SEVERITY_COLORS.LOW;
 
-    map.current.on('click', 'burn-severity-fill', (e) => {
-      if (!e.features?.[0]) return;
-      const props = e.features[0].properties;
-      if (!props) return;
-
-      new maplibregl.Popup({ className: 'ranger-popup' })
-        .setLngLat(e.lngLat)
-        .setHTML(`
+        content = `
           <div class="p-2">
             <div class="font-bold text-sm">${props.name}</div>
-            <div class="text-xs" style="color: ${props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
-            props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
-              SEVERITY_COLORS.LOW
-          }">${props.severity} Severity</div>
+            <div class="text-xs" style="color: ${severityColor}">${props.severity} Severity</div>
             <div class="text-xs mt-1">${props.acres?.toLocaleString()} acres</div>
             <div class="text-xs">dNBR: ${props.dnbr_mean}</div>
           </div>
-        `)
-        .addTo(map.current!);
+        `;
+      }
+
+      if (content) {
+        const popup = new maplibregl.Popup({ className: 'ranger-popup' })
+          .setLngLat(e.lngLat)
+          .setHTML(content)
+          .addTo(map.current!);
+
+        activePopup.current = popup;
+        popup.on('close', () => {
+          if (activePopup.current === popup) {
+            activePopup.current = null;
+          }
+        });
+      }
     });
 
-    // Change cursor on hover
-    map.current.on('mouseenter', 'trail-damage-points', () => {
-      if (map.current) map.current.getCanvas().style.cursor = 'pointer';
-    });
-    map.current.on('mouseleave', 'trail-damage-points', () => {
-      if (map.current) map.current.getCanvas().style.cursor = '';
-    });
-    map.current.on('mouseenter', 'timber-plots-points', () => {
-      if (map.current) map.current.getCanvas().style.cursor = 'pointer';
-    });
-    map.current.on('mouseleave', 'timber-plots-points', () => {
-      if (map.current) map.current.getCanvas().style.cursor = '';
-    });
-    map.current.on('mouseenter', 'burn-severity-fill', () => {
-      if (map.current) map.current.getCanvas().style.cursor = 'pointer';
-    });
-    map.current.on('mouseleave', 'burn-severity-fill', () => {
-      if (map.current) map.current.getCanvas().style.cursor = '';
+    // Unified cursor handler
+    map.current.on('mousemove', (e) => {
+      if (!map.current) return;
+      const layers = ['timber-plots-points', 'trail-damage-points', 'burn-severity-fill'];
+      const features = map.current.queryRenderedFeatures(e.point, { layers });
+      map.current.getCanvas().style.cursor = features.length ? 'pointer' : '';
     });
 
     console.log('[CedarCreekMap] Initialized at Cedar Creek Fire location');
@@ -693,6 +711,13 @@ const CedarCreekMap: React.FC = () => {
         'visibility',
         dataLayers.trailDamage.visible ? 'visible' : 'none'
       );
+      if (mapInstance.getLayer('trail-damage-labels')) {
+        mapInstance.setLayoutProperty(
+          'trail-damage-labels',
+          'visibility',
+          dataLayers.trailDamage.visible ? 'visible' : 'none'
+        );
+      }
       if (isIR) {
         mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-color', '#00FFFF');
         mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-width', 3);

@@ -54,6 +54,7 @@ interface MapState {
   zoomOut: () => void;
   resetBearing: () => void;
   flyTo: (center: [number, number], zoom?: number) => void;
+  setVisibleLayers: (layers: DataLayerType[]) => void;
   setTerrainExaggeration: (value: number) => void;
   toggleTerrain: () => void;
   reset: () => void;
@@ -159,6 +160,17 @@ export const useMapStore = create<MapState>()(
             zoom: zoom ?? state.camera.zoom,
           },
         }));
+      },
+
+      setVisibleLayers: (layers) => {
+        set((state) => {
+          const newDataLayers = { ...state.dataLayers };
+          // Set all to false first, then enable requested ones
+          (Object.keys(newDataLayers) as DataLayerType[]).forEach((key) => {
+            newDataLayers[key] = { ...newDataLayers[key], visible: layers.includes(key) };
+          });
+          return { dataLayers: newDataLayers };
+        });
       },
 
       setTerrainExaggeration: (value) => {
