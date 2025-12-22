@@ -627,33 +627,14 @@ const CedarCreekMap: React.FC = () => {
       updateLayer();
       // Apply styling immediately on layer change
       applyLayerStyling();
+      // Force immediate repaint by triggering a tiny resize
+      mapInstance.triggerRepaint();
     } else {
       mapInstance.once('load', () => {
         updateLayer();
         applyLayerStyling();
       });
     }
-
-    // Reapply styling when map becomes idle (after tiles load)
-    const handleIdle = () => {
-      applyLayerStyling();
-    };
-
-    // Also reapply on sourcedata for tile loads during zoom/pan
-    const handleSourceData = (e: maplibregl.MapSourceDataEvent) => {
-      // Only respond to satellite source tile events
-      if (e.sourceId === 'satellite' && e.tile) {
-        applyLayerStyling();
-      }
-    };
-
-    mapInstance.on('idle', handleIdle);
-    mapInstance.on('sourcedata', handleSourceData);
-
-    return () => {
-      mapInstance.off('idle', handleIdle);
-      mapInstance.off('sourcedata', handleSourceData);
-    };
   }, [activeLayer, updateLayer, applyLayerStyling]);
 
   // Handle data layer visibility changes

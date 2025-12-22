@@ -6,17 +6,23 @@
  * - Collapsed: Icon only with label below (64px)
  *
  * Automatically collapses after first workflow selection for more map space.
+ * Includes map controls section at the bottom.
  */
 
 import React, { useState, useEffect } from 'react';
 import {
   Flame,
-  Map,
+  AlertTriangle,
   TreePine,
   FileCheck,
   Check,
   ChevronLeft,
   ChevronRight,
+  Plus,
+  Minus,
+  Compass,
+  Ruler,
+  PenTool,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -25,6 +31,8 @@ import {
   useAllPhases,
   type LifecyclePhase,
 } from '@/stores/lifecycleStore';
+import { useMapStore, useActiveLayer, type MapLayerType } from '@/stores/mapStore';
+import { useMeasureStore, useMeasureMode } from '@/stores/measureStore';
 import mockBriefingService, {
   type LifecyclePhase as MockPhase,
 } from '@/services/mockBriefingService';
@@ -35,6 +43,15 @@ interface LifecycleStep {
   label: string;
   description: string;
 }
+
+// Phase color configuration - using direct hex values for reliability
+// These MUST match the values in tailwind.config.js
+const PHASE_HEX_COLORS: Record<LifecyclePhase, string> = {
+  IMPACT: '#22d3ee',    // Cyan
+  DAMAGE: '#f59e0b',    // Amber
+  TIMBER: '#10b981',    // Emerald
+  COMPLIANCE: '#a855f7', // Purple
+};
 
 // Consistent naming: Workflow → Agent
 // Impact Analysis → Impact Analyst
@@ -50,7 +67,7 @@ const LIFECYCLE_STEPS: LifecycleStep[] = [
   },
   {
     id: 'DAMAGE',
-    icon: Map,
+    icon: AlertTriangle,
     label: 'Damage',
     description: 'Trail & infrastructure',
   },
@@ -114,19 +131,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
 
   return (
     <aside
-      className="absolute top-0 left-0 bottom-0 glass border-r border-white/10 z-40 flex flex-col transition-all duration-300 ease-out"
+      className="absolute top-0 left-0 bottom-0 z-40 flex flex-col transition-all duration-300 ease-out bg-[#0a0f1a]/95 backdrop-blur-xl border-r border-white/[0.06]"
       style={{ width: sidebarWidth }}
     >
       {/* RANGER Brand Header */}
-      <div className="h-[48px] flex items-center gap-2 px-3 border-b border-white/10">
-        {/* Shield Badge */}
-        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-safe/20 to-safe/5 border border-safe/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.2)] flex-shrink-0">
+      <div className="h-[56px] flex items-center gap-3 px-3 border-b border-white/10">
+        {/* Shield Badge - Clean, no box */}
+        <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 group">
           <svg
-            width="18"
-            height="18"
+            width="28"
+            height="28"
             viewBox="0 0 24 24"
             fill="none"
-            className="text-safe"
+            className="text-safe drop-shadow-[0_0_8px_rgba(16,185,129,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(16,185,129,0.6)] transition-all"
           >
             <path
               d="M12 2L4 6v6c0 5.25 3.4 10.15 8 11.5 4.6-1.35 8-6.25 8-11.5V6l-8-4z"
@@ -142,7 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           </svg>
         </div>
         {isExpanded && (
-          <span className="text-[16px] font-bold tracking-[0.05em] text-text-primary">
+          <span className="text-[18px] font-bold tracking-[0.08em] text-text-primary">
             RANGER
           </span>
         )}
@@ -165,62 +182,50 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
       </div>
 
       {/* Workflow steps */}
-      <div className="flex-1 py-4 px-2 space-y-2 overflow-y-auto">
-        {LIFECYCLE_STEPS.map((step, index) => {
+      <div className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
+        {LIFECYCLE_STEPS.map((step) => {
           const Icon = step.icon;
           const phaseState = phases[step.id];
           const isActive = activePhase === step.id;
           const isComplete = phaseState.status === 'complete';
           const hasPulse = phaseState.hasNewInsight;
-          const isFirst = index === 0 && !hasInteracted;
+          const phaseColor = PHASE_HEX_COLORS[step.id];
 
           return (
             <button
               key={step.id}
               onClick={() => handlePhaseClick(step.id)}
               className={`
-                relative w-full flex items-center gap-3 rounded-lg border transition-all duration-200
-                ${isExpanded ? 'p-3' : 'p-2 justify-center flex-col'}
-                ${isActive
-                  ? 'bg-safe/10 border-safe/40 text-safe shadow-[0_0_20px_rgba(16,185,129,0.15)]'
-                  : hasPulse
-                    ? 'bg-warning/10 border-warning/40 text-warning'
-                    : isFirst
-                      ? 'bg-accent-cyan/5 border-accent-cyan/30 text-accent-cyan hover:bg-accent-cyan/10'
-                      : 'bg-slate-900/30 border-white/5 text-text-muted hover:bg-slate-800/50 hover:border-white/10 hover:text-text-secondary'
-                }
+                group relative w-full flex items-center gap-3 rounded-r-lg transition-all duration-200
+                ${isExpanded ? 'py-3 px-3' : 'py-2 px-2 justify-center flex-col'}
+                ${hasPulse ? 'bg-warning/5' : isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'}
               `}
+              style={{
+                borderLeft: `3px solid ${isActive ? phaseColor : hasPulse ? '#f59e0b' : 'transparent'}`,
+              }}
               aria-label={`${step.label}: ${step.description}`}
               aria-pressed={isActive}
             >
-              {/* Icon */}
-              <div
-                className={`
-                  relative flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-md
-                  ${isActive
-                    ? 'bg-safe/20'
-                    : hasPulse
-                      ? 'bg-warning/20'
-                      : isFirst
-                        ? 'bg-accent-cyan/10'
-                        : 'bg-slate-800/50'
-                  }
-                `}
-              >
-                <Icon size={18} strokeWidth={isActive ? 2.5 : 1.5} />
+              {/* Icon - always uses phase color */}
+              <div className="relative flex-shrink-0">
+                <Icon
+                  size={22}
+                  strokeWidth={isActive ? 2.5 : 1.5}
+                  style={{
+                    color: hasPulse ? '#f59e0b' : phaseColor,
+                    opacity: isActive || hasPulse ? 1 : 0.6,
+                  }}
+                  className="transition-all group-hover:opacity-100"
+                />
 
                 {/* Completion badge */}
                 {isComplete && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-safe rounded-full flex items-center justify-center border-2 border-background shadow-lg">
-                    <Check size={10} strokeWidth={3} className="text-background" />
-                  </div>
-                )}
-
-                {/* Pulse animation */}
-                {(hasPulse || isFirst) && (
                   <div
-                    className={`absolute inset-0 rounded-md border-2 animate-ping opacity-50 ${hasPulse ? 'border-warning' : 'border-accent-cyan'}`}
-                  />
+                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center border-2 border-background shadow-lg"
+                    style={{ backgroundColor: phaseColor }}
+                  >
+                    <Check size={10} strokeWidth={3} className="text-slate-900" />
+                  </div>
                 )}
               </div>
 
@@ -229,15 +234,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
                 <div className="flex-1 text-left min-w-0">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`text-[12px] font-semibold ${isActive ? 'text-safe' : hasPulse ? 'text-warning' : isFirst ? 'text-accent-cyan' : 'text-text-primary'}`}
+                      className="text-[12px] font-semibold transition-colors"
+                      style={{
+                        color: hasPulse ? '#f59e0b' : isActive ? phaseColor : undefined,
+                      }}
                     >
                       {step.label}
                     </span>
-                    {isFirst && (
-                      <span className="text-[9px] bg-accent-cyan/20 text-accent-cyan px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
-                        Start
-                      </span>
-                    )}
                   </div>
                   <span className="text-[10px] text-text-muted block truncate">
                     {step.description}
@@ -248,7 +251,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
               {/* Label (collapsed mode) */}
               {!isExpanded && (
                 <span
-                  className={`text-[8px] font-bold tracking-wider uppercase mt-1 ${isActive ? 'text-safe' : hasPulse ? 'text-warning' : 'text-text-muted'}`}
+                  className="text-[8px] font-bold tracking-wider uppercase mt-1 transition-all group-hover:opacity-100"
+                  style={{
+                    color: hasPulse ? '#f59e0b' : phaseColor,
+                    opacity: isActive || hasPulse ? 1 : 0.6,
+                  }}
                 >
                   {step.id.slice(0, 3)}
                 </span>
@@ -257,6 +264,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           );
         })}
       </div>
+
+      {/* Map Controls Section */}
+      <MapControlsSection isExpanded={isExpanded} />
 
       {/* Expanded mode: helper text at bottom */}
       {isExpanded && !hasInteracted && (
@@ -267,6 +277,126 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
         </div>
       )}
     </aside>
+  );
+};
+
+// Map Controls Section Component
+const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
+  const activeLayer = useActiveLayer();
+  const setActiveLayer = useMapStore((state) => state.setActiveLayer);
+  const zoomIn = useMapStore((state) => state.zoomIn);
+  const zoomOut = useMapStore((state) => state.zoomOut);
+  const resetBearing = useMapStore((state) => state.resetBearing);
+
+  const measureMode = useMeasureMode();
+  const setMeasureMode = useMeasureStore((state) => state.setMode);
+  const clearMeasure = useMeasureStore((state) => state.clear);
+
+  const layers: MapLayerType[] = ['SAT', 'TER', 'IR'];
+
+  const handleDistanceClick = () => {
+    if (measureMode === 'distance') {
+      clearMeasure();
+    } else {
+      setMeasureMode('distance');
+    }
+  };
+
+  const handleAreaClick = () => {
+    if (measureMode === 'area') {
+      clearMeasure();
+    } else {
+      setMeasureMode('area');
+    }
+  };
+
+  const ControlButton: React.FC<{
+    onClick: () => void;
+    isActive?: boolean;
+    title: string;
+    children: React.ReactNode;
+  }> = ({ onClick, isActive = false, title, children }) => (
+    <button
+      onClick={onClick}
+      title={title}
+      className={`
+        w-9 h-9 rounded-lg flex items-center justify-center transition-all
+        ${isActive
+          ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40'
+          : 'bg-white/[0.03] text-slate-400 border border-white/5 hover:bg-white/[0.06] hover:text-slate-300'
+        }
+      `}
+    >
+      {children}
+    </button>
+  );
+
+  return (
+    <div className="px-3 py-4 border-t border-white/10">
+      {/* Section Header */}
+      {isExpanded && (
+        <div className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3">
+          Map Controls
+        </div>
+      )}
+
+      {/* Layer Toggle */}
+      <div className={`flex ${isExpanded ? 'gap-1 mb-3' : 'flex-col gap-1 items-center mb-3'}`}>
+        {layers.map((layer) => {
+          const isActive = activeLayer === layer;
+          const isIR = layer === 'IR';
+
+          return (
+            <button
+              key={layer}
+              onClick={() => setActiveLayer(layer)}
+              title={layer === 'SAT' ? 'Satellite' : layer === 'TER' ? 'Terrain' : 'Infrared'}
+              className={`
+                ${isExpanded ? 'flex-1' : 'w-9'} h-8 rounded-md text-[10px] font-bold tracking-tight transition-all
+                ${isActive && isIR
+                  ? 'bg-gradient-to-br from-orange-500/30 to-red-600/30 text-orange-400 border border-orange-500/40'
+                  : isActive
+                    ? 'bg-safe/20 text-safe border border-safe/40'
+                    : 'bg-white/[0.03] text-slate-400 border border-white/5 hover:bg-white/[0.06] hover:text-slate-300'
+                }
+              `}
+            >
+              {layer}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Zoom & Navigation Controls */}
+      <div className={`flex ${isExpanded ? 'gap-2' : 'flex-col gap-1 items-center'}`}>
+        <ControlButton onClick={zoomOut} title="Zoom Out">
+          <Minus size={16} />
+        </ControlButton>
+        <ControlButton onClick={zoomIn} title="Zoom In">
+          <Plus size={16} />
+        </ControlButton>
+        <ControlButton onClick={resetBearing} title="Reset North">
+          <Compass size={16} />
+        </ControlButton>
+
+        {isExpanded && <div className="w-px h-6 bg-white/10 mx-1" />}
+
+        <ControlButton
+          onClick={handleDistanceClick}
+          isActive={measureMode === 'distance'}
+          title="Measure Distance"
+        >
+          <Ruler size={16} />
+        </ControlButton>
+        <ControlButton
+          onClick={handleAreaClick}
+          isActive={measureMode === 'area'}
+          title="Measure Area"
+        >
+          <PenTool size={16} />
+        </ControlButton>
+      </div>
+    </div>
   );
 };
 

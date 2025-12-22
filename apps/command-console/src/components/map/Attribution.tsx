@@ -14,7 +14,7 @@ const Attribution: React.FC = () => {
   const activeLayer = useActiveLayer();
 
   return (
-    <div className="absolute bottom-6 left-6 z-20">
+    <div className="absolute top-4 left-6 z-20">
       {activeLayer === 'SAT' && (
         <div className="glass rounded-lg px-3 py-2 border border-white/20 animate-fadeIn flex items-center gap-4">
           <div className="text-[9px] font-bold uppercase tracking-wider text-accent-cyan">

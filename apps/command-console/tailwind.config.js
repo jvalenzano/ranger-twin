@@ -4,6 +4,23 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Safelist phase colors for dynamic class generation
+  safelist: [
+    // Phase colors - core variants
+    'text-phase-impact', 'text-phase-damage', 'text-phase-timber', 'text-phase-compliance',
+    'bg-phase-impact', 'bg-phase-damage', 'bg-phase-timber', 'bg-phase-compliance',
+    'border-phase-impact', 'border-phase-damage', 'border-phase-timber', 'border-phase-compliance',
+    // Left border accents for sidebar workflow items
+    'border-l-phase-impact', 'border-l-phase-damage', 'border-l-phase-timber', 'border-l-phase-compliance',
+    // Background opacity variants
+    'bg-phase-impact/5', 'bg-phase-damage/5', 'bg-phase-timber/5', 'bg-phase-compliance/5',
+    'bg-phase-impact/10', 'bg-phase-damage/10', 'bg-phase-timber/10', 'bg-phase-compliance/10',
+    'bg-phase-impact/20', 'bg-phase-damage/20', 'bg-phase-timber/20', 'bg-phase-compliance/20',
+    // Border opacity variants
+    'border-phase-impact/20', 'border-phase-damage/20', 'border-phase-timber/20', 'border-phase-compliance/20',
+    'border-phase-impact/30', 'border-phase-damage/30', 'border-phase-timber/30', 'border-phase-compliance/30',
+    'border-phase-impact/40', 'border-phase-damage/40', 'border-phase-timber/40', 'border-phase-compliance/40',
+  ],
   theme: {
     extend: {
       colors: {
@@ -30,6 +47,14 @@ export default {
         accent: {
           cyan: '#06B6D4',    // Peak/high elevation
           emerald: '#10B981', // Safe/active states
+        },
+
+        // Phase-specific colors (Workflow differentiation)
+        phase: {
+          impact: '#22d3ee',    // Cyan - Satellite/analysis
+          damage: '#f59e0b',    // Amber - Warning/assessment
+          timber: '#10b981',    // Emerald - Forest/salvage
+          compliance: '#a855f7', // Purple - Regulatory/official
         },
       },
       fontFamily: {

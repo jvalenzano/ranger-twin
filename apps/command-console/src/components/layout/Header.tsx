@@ -1,8 +1,14 @@
-import React from 'react';
-import { Bell, ChevronRight, Play, Sparkles, MessageSquare, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, ChevronRight, Play, MessageSquare, X } from 'lucide-react';
 
 import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
+
+// Format timestamp as HH:MM:SS UTC
+const formatTimestamp = () => {
+  const now = new Date();
+  return now.toISOString().slice(11, 19) + ' UTC';
+};
 
 // Map phase IDs to user-friendly labels (consistent naming)
 const PHASE_LABELS: Record<LifecyclePhase, string> = {
@@ -10,6 +16,14 @@ const PHASE_LABELS: Record<LifecyclePhase, string> = {
   DAMAGE: 'Damage Assessment',
   TIMBER: 'Timber Salvage',
   COMPLIANCE: 'Compliance Review',
+};
+
+// Phase-specific colors for breadcrumb indicator
+const PHASE_TEXT_COLORS: Record<LifecyclePhase, string> = {
+  IMPACT: 'text-phase-impact',
+  DAMAGE: 'text-phase-damage',
+  TIMBER: 'text-phase-timber',
+  COMPLIANCE: 'text-phase-compliance',
 };
 
 interface HeaderProps {
@@ -22,6 +36,15 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   const endTour = useDemoTourStore((state) => state.endTour);
   const isTourActive = useTourActive();
   const activePhase = useLifecycleStore((state) => state.activePhase);
+  const [timestamp, setTimestamp] = useState(formatTimestamp());
+
+  // Update timestamp every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimestamp(formatTimestamp());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleDemoClick = () => {
     if (isTourActive) {
@@ -32,17 +55,14 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-8">
-      {/* Left side - spacer for sidebar */}
-      <div style={{ width: '200px' }} />
-
-      {/* Center Breadcrumb - Dynamic phase indicator */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-text-secondary text-[12px] font-medium tracking-wide">
-        <span>Willamette NF</span>
-        <ChevronRight size={14} className="opacity-40" />
+    <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-4 md:px-8">
+      {/* Left side - Breadcrumb (responsive positioning) */}
+      <div className="flex items-center gap-2 text-text-secondary text-[11px] md:text-[12px] font-medium tracking-wide ml-12 md:ml-16">
+        <span className="hidden sm:inline">Willamette NF</span>
+        <ChevronRight size={14} className="opacity-40 hidden sm:inline" />
         <span>Cedar Creek Fire</span>
         <ChevronRight size={14} className="opacity-40" />
-        <span className="text-text-primary transition-all duration-300">
+        <span className={`${PHASE_TEXT_COLORS[activePhase]} font-semibold transition-all duration-300`}>
           {PHASE_LABELS[activePhase]}
         </span>
       </div>
@@ -59,13 +79,13 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
         >
           {isTourActive ? (
             <>
-              <Sparkles size={10} className="text-accent-cyan animate-pulse" />
-              Tour Active
+              <X size={10} />
+              Stop
             </>
           ) : (
             <>
               <Play size={10} className="fill-accent-cyan group-hover:scale-110 transition-transform" />
-              Run Demo
+              Demo
             </>
           )}
         </button>
@@ -86,15 +106,20 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
           ) : (
             <>
               <MessageSquare size={10} />
-              Ask
+              Chat
             </>
           )}
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-safe live-dot shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-          <span className="text-safe uppercase text-[10px] font-bold tracking-widest">
-            Live
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-safe live-dot shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <span className="text-safe uppercase text-[10px] font-bold tracking-wider">
+              Online
+            </span>
+          </div>
+          <span className="text-text-muted text-[10px] mono hidden sm:inline">
+            {timestamp}
           </span>
         </div>
         <button className="text-text-secondary hover:text-text-primary transition-colors">
