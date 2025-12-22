@@ -214,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
               {/* Icon - always uses phase color */}
               <div className="relative flex-shrink-0">
                 <Icon
-                  size={22}
+                  size={26}
                   strokeWidth={isActive ? 2.5 : 1.5}
                   style={{
                     color: hasPulse ? '#f59e0b' : phaseColor,

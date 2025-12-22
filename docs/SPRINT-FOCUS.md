@@ -4,13 +4,14 @@ This document establishes development priorities for Phase 1 of RANGER, focused 
 
 ## Strategic Priorities
 
-| Priority | Component | Rationale |
-|----------|-----------|-----------|
-| **P0** | **Recovery Coordinator** | Root agent orchestration engine (ADK-based routing, correlation IDs, cross-agent synthesis). |
-| **P0** | **Command Console UI Shell** | Core rendering layer for AgentBriefingEvents, shared chrome, map integration. |
-| **P1** | **Agent Orchestration Demo** | Complete Cedar Creek cascade with all 4 agents using simulated fixture data. |
-| **P2** | **Reasoning Transparency UX** | Expandable proof layers, citations, reasoning chain visualization in UI. |
-| **P3** | **Legacy Export Validation** | TRACS CSV and FSVeg XML stubs that parse correctly for integration testing. |
+| Priority | Component | Status | Rationale |
+|----------|-----------|--------|-----------|
+| **P0** | **Command Console UI Shell** | ✅ Complete | Core rendering layer for AgentBriefingEvents, shared chrome, map integration. |
+| **P0** | **Static Demo Experience** | ✅ Complete | Full Cedar Creek demo with guided tour, map layers, and phase transitions. |
+| **P1** | **Recovery Coordinator** | 🚧 In Progress | Root agent orchestration engine (ADK-based routing, correlation IDs, cross-agent synthesis). |
+| **P1** | **Agent Orchestration Demo** | 🚧 In Progress | Complete Cedar Creek cascade with all 4 agents using simulated fixture data. |
+| **P2** | **Reasoning Transparency UX** | 📋 Planned | Expandable proof layers, citations, reasoning chain visualization in UI. |
+| **P3** | **Legacy Export Validation** | 📋 Planned | TRACS CSV and FSVeg XML stubs that parse correctly for integration testing. |
 
 ## What We're Proving
 

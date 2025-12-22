@@ -4,7 +4,7 @@
  * Shows relevant data for each mode:
  * - SAT: Imagery source and date
  * - TER: Elevation and terrain info
- * - IR: Thermal signature legend
+ * - IR: Thermal data source and analysis type
  */
 
 import React from 'react';
@@ -50,19 +50,12 @@ const Attribution: React.FC = () => {
           <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400">
             Thermal
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-              <span className="text-[9px] text-slate-300">High</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.6)]" />
-              <span className="text-[9px] text-slate-300">Med</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-              <span className="text-[9px] text-slate-300">Low</span>
-            </div>
+          <div className="flex items-center gap-3 text-[9px] text-slate-300">
+            <span>Post-Fire Analysis</span>
+            <span className="text-white/30">•</span>
+            <span>dNBR Index</span>
+            <span className="text-white/30">•</span>
+            <span>Oct 2024</span>
           </div>
         </div>
       )}

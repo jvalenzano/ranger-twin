@@ -1,6 +1,6 @@
 # RANGER Demo Progress
 
-Last updated: 2025-12-21
+Last updated: 2025-12-22
 
 ## Completed Milestones
 
@@ -234,6 +234,42 @@ Last updated: 2025-12-21
 - `InsightPanel.tsx` - Agent naming consistency
 - `MeasureTool.tsx` - TypeScript fixes
 - `index.css` - Measuring cursor CSS
+
+### 2025-12-22 - Map Legend Relocation & IR View Refinements
+
+**Completed:**
+1. **Map Legend Relocation to Sidebar:**
+   - Created `SidebarLegend.tsx` component with phase-aware filtering
+   - Integrated legend between workflow steps and MAP CONTROLS
+   - Added `legendExpanded` state to `mapStore.ts` for persistence
+   - Updated `DemoTourOverlay.tsx` to auto-expand legend for data layer steps
+   - Icon size (22px) matches workflow items for visual consistency
+   - Removed "LGD" label in collapsed sidebar mode (icon-only)
+
+2. **IR View Color Consistency:**
+   - Updated `IR_SEVERITY_COLORS` from White/Yellow/Blue to Red/Amber/Green
+   - Removed pulsing orange animation from IR thermal view
+   - Updated IR outline layer colors in `CedarCreekMap.tsx`
+   - Updated `SidebarLegend.tsx` to display consistent colors in IR mode
+
+3. **IR Attribution Enhancement:**
+   - Replaced redundant color legend in `Attribution.tsx` with informational metadata
+   - New content: "Post-Fire Analysis • dNBR Index • Oct 2024"
+   - Matches style and format of SAT and TER attribution bars
+
+4. **Workflow Icon Size Increase:**
+   - Increased sidebar workflow icons from 22px to 26px for better visual prominence
+   - Text sizes remain unchanged for optimal readability
+
+**Files Modified:**
+- `SidebarLegend.tsx` - [NEW] Sidebar-integrated legend component
+- `Sidebar.tsx` - Legend integration, icon size increase
+- `CedarCreekMap.tsx` - IR color updates, animation removal
+- `Attribution.tsx` - IR metadata replacement
+- `mapStore.ts` - Legend state management
+- `DemoTourOverlay.tsx` - Auto-expand legend logic
+
+**Commit:** Pending
 
 ---
 
