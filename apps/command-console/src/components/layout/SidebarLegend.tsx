@@ -112,7 +112,7 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                                 </span>
                             </div>
                             {/* Detach button */}
-                            <Tooltip content={{ title: 'Float legend', description: 'Detach legend to drag over map' }} position="left">
+                            <Tooltip content={{ title: 'Float legend', description: 'Detach legend to drag over map' }} position="top">
                                 <button
                                     onClick={handleDetach}
                                     className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-white/10 text-text-muted hover:text-accent-cyan transition-all flex-shrink-0"
