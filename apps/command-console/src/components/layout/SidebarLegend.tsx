@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layers, ChevronRight, ChevronDown } from 'lucide-react';
-import { useActiveLayer, useLegendExpanded, useMapStore } from '@/stores/mapStore';
+import { Layers, ChevronRight, ChevronDown, PanelRightOpen } from 'lucide-react';
+import { useActiveLayer, useLegendExpanded, useLegendMode, useMapStore } from '@/stores/mapStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
 import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent } from '@/config/tooltipContent';
@@ -44,7 +44,9 @@ interface SidebarLegendProps {
 const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSidebar }) => {
     const activeLayer = useActiveLayer();
     const legendExpanded = useLegendExpanded();
+    const legendMode = useLegendMode();
     const setLegendExpanded = useMapStore((state) => state.setLegendExpanded);
+    const detachLegend = useMapStore((state) => state.detachLegend);
     const { activePhase } = useLifecycleStore();
     const isIR = activeLayer === 'IR';
 
@@ -58,10 +60,19 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
         }
     };
 
+    const handleDetach = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        detachLegend();
+    };
+
     // Determine visibility based on active phase
-    const showBurnSeverity = true;
     const showTrailDamage = ['DAMAGE', 'TIMBER', 'COMPLIANCE'].includes(activePhase);
     const showTimberPlots = ['TIMBER', 'COMPLIANCE'].includes(activePhase);
+
+    // Don't render if legend is floating
+    if (legendMode === 'floating') {
+        return null;
+    }
 
     return (
         <div className="px-2 border-t border-white/5 pt-1">
@@ -100,6 +111,15 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                                     Map layer key
                                 </span>
                             </div>
+                            {/* Detach button */}
+                            <Tooltip content={{ title: 'Float legend', description: 'Detach legend to drag over map' }} position="left">
+                                <button
+                                    onClick={handleDetach}
+                                    className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-white/10 text-text-muted hover:text-accent-cyan transition-all flex-shrink-0"
+                                >
+                                    <PanelRightOpen size={12} />
+                                </button>
+                            </Tooltip>
                             {/* Action chevron - matches workflow items */}
                             {legendExpanded ? (
                                 <ChevronDown

@@ -19,6 +19,15 @@ export type MapLayerType = 'SAT' | 'TER' | 'IR';
 // Data overlay layers
 export type DataLayerType = 'firePerimeter' | 'burnSeverity' | 'trailDamage' | 'timberPlots';
 
+// Legend display mode
+export type LegendMode = 'docked' | 'floating';
+
+// Position for floating legend
+export interface LegendPosition {
+  x: number;
+  y: number;
+}
+
 interface MapCamera {
   center: [number, number]; // [lng, lat]
   zoom: number;
@@ -29,6 +38,13 @@ interface MapCamera {
 interface DataLayerState {
   visible: boolean;
   highlighted: boolean; // For agent event highlights
+}
+
+// Feature identification for hover/selection
+export interface MapFeatureId {
+  layer: string;
+  id: string | number;
+  properties?: Record<string, unknown>;
 }
 
 interface MapState {
@@ -47,6 +63,13 @@ interface MapState {
 
   // UI State
   legendExpanded: boolean;
+  legendMode: LegendMode;
+  legendPosition: LegendPosition;
+  legendCompact: boolean; // Summary mode (color dots only)
+
+  // Hover/Selection state for map features
+  hoveredFeature: MapFeatureId | null;
+  selectedFeature: MapFeatureId | null;
 
   // Actions
   setActiveLayer: (layer: MapLayerType) => void;
@@ -61,6 +84,14 @@ interface MapState {
   setTerrainExaggeration: (value: number) => void;
   toggleTerrain: () => void;
   setLegendExpanded: (expanded: boolean) => void;
+  setLegendMode: (mode: LegendMode) => void;
+  setLegendPosition: (position: LegendPosition) => void;
+  setLegendCompact: (compact: boolean) => void;
+  detachLegend: () => void;
+  dockLegend: () => void;
+  setHoveredFeature: (feature: MapFeatureId | null) => void;
+  setSelectedFeature: (feature: MapFeatureId | null) => void;
+  clearSelection: () => void;
   reset: () => void;
 }
 
@@ -85,6 +116,29 @@ const initialDataLayers: Record<DataLayerType, DataLayerState> = {
   timberPlots: { visible: true, highlighted: false },
 };
 
+// Default floating legend position (bottom-left of map area)
+const DEFAULT_LEGEND_POSITION: LegendPosition = { x: 20, y: 100 };
+
+// Load persisted legend state from localStorage
+const loadLegendState = (): { mode: LegendMode; position: LegendPosition; compact: boolean } => {
+  try {
+    const stored = localStorage.getItem('ranger-legend-state');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        mode: parsed.mode || 'docked',
+        position: parsed.position || DEFAULT_LEGEND_POSITION,
+        compact: parsed.compact || false,
+      };
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return { mode: 'docked', position: DEFAULT_LEGEND_POSITION, compact: false };
+};
+
+const persistedLegendState = loadLegendState();
+
 export const useMapStore = create<MapState>()(
   devtools(
     (set) => ({
@@ -94,6 +148,11 @@ export const useMapStore = create<MapState>()(
       terrainExaggeration: 1.5,
       terrainEnabled: true,
       legendExpanded: false,
+      legendMode: persistedLegendState.mode,
+      legendPosition: persistedLegendState.position,
+      legendCompact: persistedLegendState.compact,
+      hoveredFeature: null,
+      selectedFeature: null,
 
       setActiveLayer: (layer) => {
         set({ activeLayer: layer });
@@ -190,6 +249,76 @@ export const useMapStore = create<MapState>()(
         set({ legendExpanded: expanded });
       },
 
+      setLegendMode: (mode) => {
+        set({ legendMode: mode });
+        // Persist to localStorage
+        try {
+          const current = localStorage.getItem('ranger-legend-state');
+          const state = current ? JSON.parse(current) : {};
+          localStorage.setItem('ranger-legend-state', JSON.stringify({ ...state, mode }));
+        } catch {
+          // Ignore localStorage errors
+        }
+      },
+
+      setLegendPosition: (position) => {
+        set({ legendPosition: position });
+        // Persist to localStorage
+        try {
+          const current = localStorage.getItem('ranger-legend-state');
+          const state = current ? JSON.parse(current) : {};
+          localStorage.setItem('ranger-legend-state', JSON.stringify({ ...state, position }));
+        } catch {
+          // Ignore localStorage errors
+        }
+      },
+
+      setLegendCompact: (compact) => {
+        set({ legendCompact: compact });
+        // Persist to localStorage
+        try {
+          const current = localStorage.getItem('ranger-legend-state');
+          const state = current ? JSON.parse(current) : {};
+          localStorage.setItem('ranger-legend-state', JSON.stringify({ ...state, compact }));
+        } catch {
+          // Ignore localStorage errors
+        }
+      },
+
+      detachLegend: () => {
+        set({ legendMode: 'floating', legendExpanded: true });
+        try {
+          const current = localStorage.getItem('ranger-legend-state');
+          const state = current ? JSON.parse(current) : {};
+          localStorage.setItem('ranger-legend-state', JSON.stringify({ ...state, mode: 'floating' }));
+        } catch {
+          // Ignore localStorage errors
+        }
+      },
+
+      dockLegend: () => {
+        set({ legendMode: 'docked' });
+        try {
+          const current = localStorage.getItem('ranger-legend-state');
+          const state = current ? JSON.parse(current) : {};
+          localStorage.setItem('ranger-legend-state', JSON.stringify({ ...state, mode: 'docked' }));
+        } catch {
+          // Ignore localStorage errors
+        }
+      },
+
+      setHoveredFeature: (feature) => {
+        set({ hoveredFeature: feature });
+      },
+
+      setSelectedFeature: (feature) => {
+        set({ selectedFeature: feature });
+      },
+
+      clearSelection: () => {
+        set({ selectedFeature: null });
+      },
+
       reset: () => {
         set({
           activeLayer: 'SAT',
@@ -197,7 +326,19 @@ export const useMapStore = create<MapState>()(
           camera: { ...initialCamera },
           terrainExaggeration: 1.5,
           terrainEnabled: true,
+          legendExpanded: false,
+          legendMode: 'docked',
+          legendPosition: DEFAULT_LEGEND_POSITION,
+          legendCompact: false,
+          hoveredFeature: null,
+          selectedFeature: null,
         });
+        // Clear persisted legend state
+        try {
+          localStorage.removeItem('ranger-legend-state');
+        } catch {
+          // Ignore localStorage errors
+        }
       },
     }),
     { name: 'map-store' }
@@ -213,6 +354,11 @@ export const useDataLayer = (layer: DataLayerType) =>
 export const useTerrainExaggeration = () => useMapStore((state) => state.terrainExaggeration);
 export const useTerrainEnabled = () => useMapStore((state) => state.terrainEnabled);
 export const useLegendExpanded = () => useMapStore((state) => state.legendExpanded);
+export const useLegendMode = () => useMapStore((state) => state.legendMode);
+export const useLegendPosition = () => useMapStore((state) => state.legendPosition);
+export const useLegendCompact = () => useMapStore((state) => state.legendCompact);
+export const useHoveredFeature = () => useMapStore((state) => state.hoveredFeature);
+export const useSelectedFeature = () => useMapStore((state) => state.selectedFeature);
 
 // Export constants for use elsewhere
 export const CEDAR_CREEK = {

@@ -149,7 +149,7 @@ const InsightPanel: React.FC = () => {
             {config.name}
           </span>
           {/* Confidence - Dynamic phase color */}
-          <Tooltip content={tooltipContent.confidenceScores.agentConfidence} position="left">
+          <Tooltip content={tooltipContent.confidenceScores.agentConfidence!} position="left">
             <span className={`text-[10px] mono font-bold cursor-help ${accentColor.text}`}>
               {confidencePercent}% CONF
             </span>
@@ -195,7 +195,7 @@ const InsightPanel: React.FC = () => {
           {!isReasoningExpanded && latestEvent.proof_layer.reasoning_chain.length > 0 && (
             <div className="mt-2 pl-4 border-l border-white/10">
               <p className="text-[11px] text-text-muted italic line-clamp-2">
-                "{latestEvent.proof_layer.reasoning_chain[0].substring(0, 80)}..."
+                "{latestEvent.proof_layer.reasoning_chain[0]?.substring(0, 80)}..."
               </p>
               <span className={`text-[10px] mt-1 inline-block ${accentColor.text}`}>
                 Expand to see full reasoning
@@ -227,7 +227,7 @@ const InsightPanel: React.FC = () => {
               {latestEvent.proof_layer.confidence_ledger.inputs.slice(0, 3).map((input, index) => (
                 <Tooltip
                   key={index}
-                  content={tooltipContent.confidenceScores.sourceReliability}
+                  content={tooltipContent.confidenceScores.sourceReliability!}
                   position="left"
                 >
                   <div className="flex items-center justify-between cursor-help">

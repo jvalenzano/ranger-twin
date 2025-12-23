@@ -14,7 +14,7 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers } from '@/stores/mapStore';
+import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers, type MapFeatureId } from '@/stores/mapStore';
 import { useMeasureMode } from '@/stores/measureStore';
 import MeasureTool from './MeasureTool';
 
@@ -80,6 +80,10 @@ const CedarCreekMap: React.FC = () => {
   const zoomIn = useMapStore((state) => state.zoomIn);
   const zoomOut = useMapStore((state) => state.zoomOut);
   const setActiveLayer = useMapStore((state) => state.setActiveLayer);
+  const setHoveredFeature = useMapStore((state) => state.setHoveredFeature);
+
+  // Track hover state for visual effects
+  const hoveredFeatureRef = useRef<{ source: string; id: string | number } | null>(null);
 
   // Keyboard shortcuts for map controls
   useEffect(() => {
@@ -184,8 +188,19 @@ const CedarCreekMap: React.FC = () => {
             'LOW', SEVERITY_COLORS.LOW,
             '#888888',
           ],
-          'line-width': 2,
-          'line-opacity': 0.8,
+          // Thicker line on hover for visual feedback
+          'line-width': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            4, // hovered
+            2, // default
+          ],
+          'line-opacity': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            1, // hovered
+            0.8, // default
+          ],
         },
       });
 
@@ -258,12 +273,14 @@ const CedarCreekMap: React.FC = () => {
         type: 'circle',
         source: 'trail-damage',
         paint: {
+          // Scale based on severity, with additional hover boost
           'circle-radius': [
-            'interpolate',
-            ['linear'],
-            ['get', 'severity'],
-            1, 6,
-            5, 12,
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            // Hovered: +2 to base radius
+            ['+', 2, ['interpolate', ['linear'], ['get', 'severity'], 1, 6, 5, 12]],
+            // Default
+            ['interpolate', ['linear'], ['get', 'severity'], 1, 6, 5, 12],
           ],
           'circle-color': [
             'match',
@@ -275,8 +292,19 @@ const CedarCreekMap: React.FC = () => {
             'SIGNAGE', DAMAGE_COLORS.SIGNAGE,
             '#888888',
           ],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#FFFFFF',
+          // Thicker stroke on hover
+          'circle-stroke-width': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            3, // hovered
+            2, // default
+          ],
+          'circle-stroke-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#00D9FF', // cyan stroke on hover for contrast
+            '#FFFFFF', // default white stroke
+          ],
           'circle-opacity': 0.9,
         },
       });
@@ -309,7 +337,13 @@ const CedarCreekMap: React.FC = () => {
         type: 'circle',
         source: 'timber-plots',
         paint: {
-          'circle-radius': 10,
+          // Scale up on hover (1.2x effect)
+          'circle-radius': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            12, // hovered
+            10, // default
+          ],
           'circle-color': [
             'match',
             ['get', 'priority'],
@@ -319,8 +353,19 @@ const CedarCreekMap: React.FC = () => {
             'LOW', PRIORITY_COLORS.LOW,
             '#888888',
           ],
-          'circle-stroke-width': 3,
-          'circle-stroke-color': '#1E293B',
+          // Thicker stroke on hover
+          'circle-stroke-width': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            4, // hovered
+            3, // default
+          ],
+          'circle-stroke-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#FFFFFF', // white stroke on hover
+            '#1E293B', // default dark stroke
+          ],
           'circle-opacity': 0.9,
         },
       });
@@ -553,12 +598,63 @@ const CedarCreekMap: React.FC = () => {
       }
     });
 
-    // Unified cursor handler
+    // Enhanced hover handler with visual feedback
     map.current.on('mousemove', (e) => {
       if (!map.current) return;
+      const mapInstance = map.current;
       const layers = ['timber-plots-points', 'trail-damage-points', 'burn-severity-fill'];
-      const features = map.current.queryRenderedFeatures(e.point, { layers });
-      map.current.getCanvas().style.cursor = features.length ? 'pointer' : '';
+      const features = mapInstance.queryRenderedFeatures(e.point, { layers });
+
+      // Update cursor
+      mapInstance.getCanvas().style.cursor = features.length ? 'pointer' : '';
+
+      // Clear previous hover state
+      if (hoveredFeatureRef.current) {
+        mapInstance.setFeatureState(
+          { source: hoveredFeatureRef.current.source, id: hoveredFeatureRef.current.id },
+          { hover: false }
+        );
+        hoveredFeatureRef.current = null;
+        setHoveredFeature(null);
+      }
+
+      // Set new hover state
+      const feature = features[0];
+      if (feature) {
+        const featureId = feature.id ?? feature.properties?.['id'] ?? feature.properties?.['plot_id'];
+
+        if (featureId !== undefined) {
+          const source = feature.source;
+          hoveredFeatureRef.current = { source, id: featureId };
+
+          // Set MapLibre feature state for hover styling
+          mapInstance.setFeatureState(
+            { source, id: featureId },
+            { hover: true }
+          );
+
+          // Update store for cross-component access
+          const mapFeature: MapFeatureId = {
+            layer: feature.layer.id,
+            id: featureId,
+            properties: feature.properties as Record<string, unknown>,
+          };
+          setHoveredFeature(mapFeature);
+        }
+      }
+    });
+
+    // Clear hover on mouse leave
+    map.current.on('mouseleave', () => {
+      if (!map.current) return;
+      if (hoveredFeatureRef.current) {
+        map.current.setFeatureState(
+          { source: hoveredFeatureRef.current.source, id: hoveredFeatureRef.current.id },
+          { hover: false }
+        );
+        hoveredFeatureRef.current = null;
+        setHoveredFeature(null);
+      }
     });
 
     console.log('[CedarCreekMap] Initialized at Cedar Creek Fire location');
@@ -639,8 +735,6 @@ const CedarCreekMap: React.FC = () => {
   }, [activeLayer, dataLayers.burnSeverity.visible]);
 
 
-  // Function to apply layer styling (deprecated: now handled by layer visibility)
-  const applyLayerStyling = useCallback(() => { }, []);
 
   useEffect(() => {
     if (!map.current) return;

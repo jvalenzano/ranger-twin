@@ -21,7 +21,7 @@ import {
 
 import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
-import { useActiveLayer, type MapLayer } from '@/stores/mapStore';
+import { useActiveLayer, type MapLayerType } from '@/stores/mapStore';
 import { usePreferencesStore } from '@/stores/preferencesStore';
 
 // Timezone options relevant for USFS operations
@@ -80,7 +80,7 @@ const PHASE_TEXT_COLORS: Record<LifecyclePhase, string> = {
 
 // Layer info for header display - includes date for data freshness context
 // Color scheme: SAT=cyan (sky/space), TER=amber (earth), IR=orange (heat)
-const LAYER_INFO: Record<MapLayer, { label: string; source: string; date: string; color: string; borderColor: string }> = {
+const LAYER_INFO: Record<MapLayerType, { label: string; source: string; date: string; color: string; borderColor: string }> = {
   SAT: { label: 'SAT', source: 'Sentinel-2 L2A', date: 'Oct 2024', color: 'text-cyan-400', borderColor: 'border-cyan-400/30' },
   TER: { label: 'TER', source: '3DEP 10m DEM', date: '2023', color: 'text-amber-400', borderColor: 'border-amber-400/30' },
   IR: { label: 'IR', source: 'dNBR Analysis', date: 'Oct 2024', color: 'text-orange-400', borderColor: 'border-orange-400/30' },
@@ -211,18 +211,20 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
           {PHASE_LABELS[activePhase]}
         </span>
         {/* Layer info pill - subtle container with layer-colored accent */}
-        <span className={`hidden md:inline-flex items-center gap-2 ml-3 px-2.5 py-1 rounded border bg-white/[0.02] ${LAYER_INFO[activeLayer].borderColor}`}>
-          <span className={`text-[9px] font-bold uppercase tracking-wider ${LAYER_INFO[activeLayer].color}`}>
-            {LAYER_INFO[activeLayer].label}
+        {LAYER_INFO[activeLayer] && (
+          <span className={`hidden md:inline-flex items-center gap-2 ml-3 px-2.5 py-1 rounded border bg-white/[0.02] ${LAYER_INFO[activeLayer].borderColor}`}>
+            <span className={`text-[9px] font-bold uppercase tracking-wider ${LAYER_INFO[activeLayer].color}`}>
+              {LAYER_INFO[activeLayer].label}
+            </span>
+            <span className="text-[10px] text-text-secondary">
+              {LAYER_INFO[activeLayer].source}
+            </span>
+            <span className="text-white/20">·</span>
+            <span className="text-[10px] text-text-muted">
+              {LAYER_INFO[activeLayer].date}
+            </span>
           </span>
-          <span className="text-[10px] text-text-secondary">
-            {LAYER_INFO[activeLayer].source}
-          </span>
-          <span className="text-white/20">·</span>
-          <span className="text-[10px] text-text-muted">
-            {LAYER_INFO[activeLayer].date}
-          </span>
-        </span>
+        )}
       </div>
 
       {/* Right side status/user/actions */}

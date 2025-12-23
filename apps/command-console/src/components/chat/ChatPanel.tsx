@@ -7,9 +7,11 @@
  * - Suggested query chips
  * - Loading states
  * - Agent role badges
+ * - Resizable panel width (300-600px)
+ * - Minimize to FAB mode
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Send,
   Loader2,
@@ -19,6 +21,11 @@ import {
   AlertCircle,
   Trash2,
   X,
+  GripVertical,
+  Download,
+  Copy,
+  Check,
+  Minus,
 } from 'lucide-react';
 import {
   useChatStore,
@@ -27,6 +34,13 @@ import {
   type ChatMessage,
 } from '@/stores/chatStore';
 import type { AgentRole } from '@/services/aiBriefingService';
+import { ChatReasoningChain } from '@/components/briefing/ReasoningChain';
+
+// Panel width constraints
+const MIN_WIDTH = 300;
+const MAX_WIDTH = 600;
+const DEFAULT_WIDTH = 400;
+const STORAGE_KEY = 'ranger-chat-panel-width';
 
 // Suggested queries for quick start
 const SUGGESTED_QUERIES = [
@@ -115,20 +129,9 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
           </p>
         </div>
 
-        {/* Reasoning chain for assistant */}
+        {/* Reasoning chain for assistant - using new prominent component */}
         {!isUser && message.reasoning && message.reasoning.length > 0 && (
-          <details className="text-xs text-slate-500 mt-1 cursor-pointer">
-            <summary className="hover:text-slate-300 transition-colors">
-              View reasoning ({message.reasoning.length} steps)
-            </summary>
-            <ol className="mt-2 pl-4 space-y-1 list-decimal list-inside">
-              {message.reasoning.map((step, idx) => (
-                <li key={idx} className="text-slate-400">
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </details>
+          <ChatReasoningChain steps={message.reasoning} />
         )}
 
         {/* Timestamp */}
@@ -156,23 +159,106 @@ const QueryChip: React.FC<{ label: string; onClick: () => void }> = ({
   </button>
 );
 
+// Load persisted panel width
+function loadWidth(): number {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const width = parseInt(stored, 10);
+      if (width >= MIN_WIDTH && width <= MAX_WIDTH) {
+        return width;
+      }
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return DEFAULT_WIDTH;
+}
+
+// Save panel width
+function saveWidth(width: number): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, String(width));
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
 interface ChatPanelProps {
   onClose?: () => void;
+  onMinimize?: () => void;
 }
 
 // Main ChatPanel component
-const ChatPanel: React.FC<ChatPanelProps> = ({ onClose }) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({ onClose, onMinimize }) => {
   const [input, setInput] = useState('');
+  const [panelWidth, setPanelWidth] = useState(loadWidth);
+  const [isResizing, setIsResizing] = useState(false);
+  const [copied, setCopied] = useState(false);
   const messages = useChatMessages();
   const isLoading = useChatLoading();
   const sendMessage = useChatStore((state) => state.sendMessage);
   const clearMessages = useChatStore((state) => state.clearMessages);
+  const exportConversation = useChatStore((state) => state.exportConversation);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle resize
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = window.innerWidth - e.clientX;
+      const clampedWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, newWidth));
+      setPanelWidth(clampedWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      saveWidth(panelWidth);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, panelWidth]);
+
+  // Handle copy to clipboard
+  const handleCopy = useCallback(() => {
+    const json = exportConversation();
+    navigator.clipboard.writeText(json).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [exportConversation]);
+
+  // Handle download
+  const handleDownload = useCallback(() => {
+    const json = exportConversation();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ranger-chat-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [exportConversation]);
 
   // Handle send
   const handleSend = () => {
@@ -195,7 +281,19 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="absolute top-[48px] bottom-0 right-0 w-[400px] bg-[#0a0f1a]/65 backdrop-blur-2xl border-l border-white/[0.1] flex flex-col overflow-hidden shadow-2xl z-30">
+    <div
+      ref={panelRef}
+      className={`absolute top-[48px] bottom-0 right-0 bg-[#0a0f1a]/65 backdrop-blur-2xl border-l border-white/[0.1] flex flex-col overflow-hidden shadow-2xl z-30 ${isResizing ? 'select-none' : ''}`}
+      style={{ width: panelWidth }}
+    >
+      {/* Resize Handle */}
+      <div
+        onMouseDown={handleResizeStart}
+        className={`absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize group z-10 flex items-center justify-center ${isResizing ? 'bg-accent-cyan/20' : 'hover:bg-accent-cyan/10'}`}
+      >
+        <GripVertical size={12} className={`text-text-muted opacity-0 group-hover:opacity-100 ${isResizing ? 'opacity-100 text-accent-cyan' : ''}`} />
+      </div>
+
       {/* Header */}
       <div className="h-[48px] px-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
@@ -204,14 +302,44 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose }) => {
         </div>
         <div className="flex items-center gap-1">
           {messages.length > 0 && (
+            <>
+              {/* Copy to clipboard */}
+              <button
+                onClick={handleCopy}
+                className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
+                title="Copy conversation"
+              >
+                {copied ? <Check size={14} className="text-safe" /> : <Copy size={14} />}
+              </button>
+              {/* Download */}
+              <button
+                onClick={handleDownload}
+                className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
+                title="Download conversation"
+              >
+                <Download size={14} />
+              </button>
+              {/* Clear */}
+              <button
+                onClick={clearMessages}
+                className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
+                title="Clear chat"
+              >
+                <Trash2 size={14} />
+              </button>
+            </>
+          )}
+          {/* Minimize */}
+          {onMinimize && (
             <button
-              onClick={clearMessages}
+              onClick={onMinimize}
               className="text-slate-500 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5"
-              title="Clear chat"
+              title="Minimize to button"
             >
-              <Trash2 size={14} />
+              <Minus size={14} />
             </button>
           )}
+          {/* Close */}
           {onClose && (
             <button
               onClick={onClose}

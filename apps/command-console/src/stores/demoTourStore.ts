@@ -39,13 +39,6 @@ export interface TourStep {
   cardPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
 }
 
-const AGENT_LABELS: Record<string, string> = {
-  coordinator: 'Recovery Coordinator',
-  'burn-analyst': 'IMPACT ANALYST',
-  'trail-assessor': 'DAMAGE ASSESSOR',
-  'cruising-assistant': 'TIMBER ANALYST',
-  'nepa-advisor': 'COMPLIANCE ADVISOR',
-};
 
 // The 7 tour steps as specified in the Manifesto
 const TOUR_STEPS: TourStep[] = [

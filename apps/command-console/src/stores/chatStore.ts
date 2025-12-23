@@ -2,14 +2,20 @@
  * Chat Store - Manages conversation state
  *
  * Controls:
- * - Message history
+ * - Message history with 7-day localStorage persistence
  * - Loading state
  * - Error handling
+ * - Export/clear functionality
  */
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import aiBriefingService, { type AgentRole } from '@/services/aiBriefingService';
+
+// localStorage configuration
+const STORAGE_KEY = 'ranger-chat-history';
+const RETENTION_DAYS = 7;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export interface ChatMessage {
   id: string;
@@ -22,6 +28,11 @@ export interface ChatMessage {
   isError?: boolean;
 }
 
+interface PersistedChatState {
+  messages: ChatMessage[];
+  lastUpdated: string;
+}
+
 interface ChatState {
   messages: ChatMessage[];
   isLoading: boolean;
@@ -31,6 +42,8 @@ interface ChatState {
   sendMessage: (query: string) => Promise<void>;
   clearMessages: () => void;
   clearError: () => void;
+  exportConversation: () => string;
+  loadPersistedMessages: () => void;
 }
 
 // Generate unique message ID
@@ -38,10 +51,56 @@ function generateId(): string {
   return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+// Filter out messages older than retention period
+function filterExpiredMessages(messages: ChatMessage[]): ChatMessage[] {
+  const cutoff = Date.now() - (RETENTION_DAYS * MS_PER_DAY);
+  return messages.filter((msg) => new Date(msg.timestamp).getTime() > cutoff);
+}
+
+// Load messages from localStorage
+function loadFromStorage(): ChatMessage[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed: PersistedChatState = JSON.parse(stored);
+      // Filter expired messages
+      return filterExpiredMessages(parsed.messages);
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return [];
+}
+
+// Save messages to localStorage
+function saveToStorage(messages: ChatMessage[]): void {
+  try {
+    const state: PersistedChatState = {
+      messages: filterExpiredMessages(messages),
+      lastUpdated: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Ignore localStorage errors (quota exceeded, etc.)
+  }
+}
+
+// Clear stored messages
+function clearStorage(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
+// Load initial messages on store creation
+const initialMessages = loadFromStorage();
+
 export const useChatStore = create<ChatState>()(
   devtools(
-    (set) => ({
-      messages: [],
+    (set, get) => ({
+      messages: initialMessages,
       isLoading: false,
       error: null,
 
@@ -54,11 +113,15 @@ export const useChatStore = create<ChatState>()(
         };
 
         // Add user message and set loading
-        set((state) => ({
-          messages: [...state.messages, userMessage],
-          isLoading: true,
-          error: null,
-        }));
+        set((state) => {
+          const newMessages = [...state.messages, userMessage];
+          saveToStorage(newMessages);
+          return {
+            messages: newMessages,
+            isLoading: true,
+            error: null,
+          };
+        });
 
         try {
           // Query the AI
@@ -75,10 +138,14 @@ export const useChatStore = create<ChatState>()(
               reasoning: response.response.reasoning,
             };
 
-            set((state) => ({
-              messages: [...state.messages, assistantMessage],
-              isLoading: false,
-            }));
+            set((state) => {
+              const newMessages = [...state.messages, assistantMessage];
+              saveToStorage(newMessages);
+              return {
+                messages: newMessages,
+                isLoading: false,
+              };
+            });
           } else {
             // Handle error response
             const errorMessage: ChatMessage = {
@@ -89,11 +156,15 @@ export const useChatStore = create<ChatState>()(
               isError: true,
             };
 
-            set((state) => ({
-              messages: [...state.messages, errorMessage],
-              isLoading: false,
-              error: response.error || 'Query failed',
-            }));
+            set((state) => {
+              const newMessages = [...state.messages, errorMessage];
+              saveToStorage(newMessages);
+              return {
+                messages: newMessages,
+                isLoading: false,
+                error: response.error || 'Query failed',
+              };
+            });
           }
         } catch (error) {
           const errorMessage: ChatMessage = {
@@ -104,20 +175,46 @@ export const useChatStore = create<ChatState>()(
             isError: true,
           };
 
-          set((state) => ({
-            messages: [...state.messages, errorMessage],
-            isLoading: false,
-            error: error instanceof Error ? error.message : 'Unexpected error',
-          }));
+          set((state) => {
+            const newMessages = [...state.messages, errorMessage];
+            saveToStorage(newMessages);
+            return {
+              messages: newMessages,
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Unexpected error',
+            };
+          });
         }
       },
 
       clearMessages: () => {
+        clearStorage();
         set({ messages: [], error: null });
       },
 
       clearError: () => {
         set({ error: null });
+      },
+
+      exportConversation: () => {
+        const { messages } = get();
+        const exportData = {
+          exportedAt: new Date().toISOString(),
+          messageCount: messages.length,
+          messages: messages.map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+            timestamp: msg.timestamp,
+            agentRole: msg.agentRole,
+            confidence: msg.confidence,
+          })),
+        };
+        return JSON.stringify(exportData, null, 2);
+      },
+
+      loadPersistedMessages: () => {
+        const messages = loadFromStorage();
+        set({ messages });
       },
     }),
     { name: 'chat-store' }

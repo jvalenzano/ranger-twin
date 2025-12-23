@@ -3,9 +3,11 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import InsightPanel from '@/components/panels/InsightPanel';
 import MapControls from '@/components/map/MapControls';
+import FloatingLegend from '@/components/map/FloatingLegend';
 // Attribution info moved to Header breadcrumb
 import DemoTourOverlay from '@/components/tour/DemoTourOverlay';
 import ChatPanel from '@/components/chat/ChatPanel';
+import ChatFAB from '@/components/chat/ChatFAB';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import MapLoadingSkeleton from '@/components/common/MapLoadingSkeleton';
 import mockBriefingService from '@/services/mockBriefingService';
@@ -13,14 +15,23 @@ import { useBriefingStore } from '@/stores/briefingStore';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 
+// Chat mode: 'closed' | 'open' | 'minimized'
+type ChatMode = 'closed' | 'open' | 'minimized';
+
 // Lazy load the heavy map component
 const CedarCreekMap = lazy(() => import('@/components/map/CedarCreekMap'));
 
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMode, setChatMode] = useState<ChatMode>('closed');
   const [sidebarWidth, setSidebarWidth] = useState(200); // Start expanded
   const addEvent = useBriefingStore((state) => state.addEvent);
+
+  // Chat mode handlers
+  const handleOpenChat = () => setChatMode('open');
+  const handleCloseChat = () => setChatMode('closed');
+  const handleMinimizeChat = () => setChatMode('minimized');
+  const handleToggleChat = () => setChatMode(chatMode === 'open' ? 'closed' : 'open');
 
   // Connect to gateway on mount
   useEffect(() => {
@@ -65,8 +76,11 @@ const App: React.FC = () => {
           {/* Demo Tour Overlay - Guided Experience */}
           <DemoTourOverlay />
 
+          {/* Floating Legend - Draggable over map */}
+          <FloatingLegend />
+
           {/* Header - Full width at top */}
-          <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
+          <Header onChatToggle={handleToggleChat} isChatOpen={chatMode === 'open'} />
 
           {/* Lifecycle Navigation - Left side (expandable) */}
           <Sidebar onWidthChange={setSidebarWidth} />
@@ -86,7 +100,12 @@ const App: React.FC = () => {
           </main>
 
           {/* Chat Panel - Full height right side (toggleable) */}
-          {isChatOpen && <ChatPanel onClose={() => setIsChatOpen(false)} />}
+          {chatMode === 'open' && (
+            <ChatPanel onClose={handleCloseChat} onMinimize={handleMinimizeChat} />
+          )}
+
+          {/* Chat FAB - When minimized */}
+          {chatMode === 'minimized' && <ChatFAB onClick={handleOpenChat} />}
         </div>
       </BriefingObserver>
     </ErrorBoundary>
