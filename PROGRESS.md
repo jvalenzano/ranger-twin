@@ -1,6 +1,6 @@
 # RANGER Demo Progress
 
-Last updated: 2025-12-22
+Last updated: 2025-12-22 (Monday)
 
 ## Completed Milestones
 
@@ -337,6 +337,52 @@ Last updated: 2025-12-22
 **Commits:**
 - `cc71b24` - feat: enhance UI with tooltips, translucency, and sidebar improvements
 - Pending - feat: chat panel full height and clickable logo toggle
+
+### 2025-12-22 - Architecture Documentation & AI Stack Decisions
+
+**Completed:**
+1. **Local Development Stack Diagram Review:**
+   - Verified accuracy of "RANGER Local Development Stack: The Complete Picture" diagram
+   - Confirmed fixture data counts (8 burn sectors, 16 damage points/5 trails, 6 timber plots)
+   - Validated port assignments (3000, 8000-8005)
+   - Verified production system mappings match documentation
+   - Minor suggestions provided (port 3000 vs 5173, NEPA Advisor annotation)
+
+2. **ADR Review & Corrections:**
+   - **ADR-001 (Tech Stack):** Found and corrected 3 inaccuracies:
+     - Updated "Gemini 2.0 Flash" → "Gemini 3 Flash"
+     - Removed LangChain references (contradicted pure ADK architecture)
+     - Added Gemini File Search Tool, updated pgvector status
+     - Added amendment to decision log with ADR-003 reference
+   - **ADR-002 (Brand Naming):** Verified accurate, no changes needed
+
+3. **ADR-003 Created: Gemini 3 Flash and File Search Tool for RAG:**
+   - Documented migration from Gemini 2.5 Flash to Gemini 3 Flash
+   - Documented adoption of Gemini File Search Tool for NEPA Advisor RAG
+   - Reaffirmed pure Google ADK approach (no hybrid frameworks)
+   - Included implementation code samples for:
+     - Knowledge base setup (one-time PDF indexing)
+     - `search_regulations()` tool implementation
+     - `identify_nepa_pathway()` tool implementation
+   - Listed required FSM/FSH documents with sources
+   - Estimated indexing cost: ~$0.04 one-time
+
+4. **Key Research Findings:**
+   - **Gemini 3 Flash (Dec 17, 2025):** 3x faster than 2.5 Pro, 78% SWE-bench, 90.4% GPQA Diamond
+   - **File Search Tool (Nov 6, 2025):** Fully managed RAG with built-in citations, PDF support, free storage/queries
+   - Gemini 2.5 Flash being sunset; 3 Flash is now default
+
+**Files Created:**
+- `docs/adr/ADR-003-gemini-3-flash-file-search.md` - Comprehensive ADR with implementation details
+
+**Files Modified:**
+- `docs/adr/ADR-001-tech-stack.md` - AI/ML section corrections, decision log amendment
+
+**Next Steps:**
+- Download FSM/FSH PDFs from fs.usda.gov/im/directives
+- Create File Search store and index documents
+- Update agent configs to use `gemini-3-flash`
+- Implement NEPA Advisor tools with File Search integration
 
 ---
 

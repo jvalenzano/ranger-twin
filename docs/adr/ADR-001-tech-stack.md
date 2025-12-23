@@ -45,8 +45,9 @@ We will adopt a **"Zero Licensing" open source stack** with strategic use of GCP
 
 | Choice | Rationale | Alternatives Considered |
 |--------|-----------|------------------------|
-| **Google Gemini 2.0 Flash** | Multimodal, cost-effective, Vertex AI integration | GPT-4o, Claude 3 |
-| **LangChain** | RAG framework, mature ecosystem, good docs | LlamaIndex, Haystack |
+| **Google Gemini 3 Flash** | Frontier reasoning at Flash speed, 3x faster than 2.5 Pro, FedRAMP High via Vertex AI | GPT-4o, Claude 3 |
+| **Google ADK** | Pure ADK for multi-agent orchestration; no hybrid frameworks (see ADR-003) | LangChain, SmolAgents |
+| **Gemini File Search Tool** | Fully managed RAG built into Gemini API; handles chunking, embeddings, citations | pgvector, Pinecone, Vertex AI Search |
 | **OpenAI Whisper** | Best open source ASR, self-hostable | Google Cloud Speech ($), AssemblyAI ($) |
 | **YOLOv8 (Ultralytics)** | State-of-art object detection, easy fine-tuning | Detectron2, DETR |
 | **SAM2** | Universal segmentation, zero-shot capability | Mask R-CNN |
@@ -78,13 +79,13 @@ The following table clarifies which components are active in Phase 1 (simulation
 | **Backend** |
 | FastAPI | ✓ | ✓ | API gateway |
 | PostgreSQL + PostGIS | ✓ | ✓ | Spatial database (minimal Phase 1 usage) |
-| pgvector | ✓ | ✓ | RAG for NEPA Advisor (limited corpus Phase 1) |
+| pgvector | ✗ | ✓ | General vector search (NEPA uses Gemini File Search instead) |
 | Redis | ✓ | ✓ | Session state management |
 | Celery | ✗ | ✓ | Async task queue (not needed for static fixtures) |
 | **AI/ML** |
-| Google Gemini 2.0 Flash | ✓ | ✓ | Agent reasoning and synthesis |
-| Google ADK | ✓ | ✓ | Multi-agent orchestration |
-| LangChain | ✓ | ✓ | RAG framework |
+| Google Gemini 3 Flash | ✓ | ✓ | Agent reasoning and synthesis (see ADR-003) |
+| Google ADK | ✓ | ✓ | Multi-agent orchestration (pure ADK, no hybrid) |
+| Gemini File Search Tool | ✓ | ✓ | NEPA Advisor RAG over FSM/FSH documents |
 | OpenAI Whisper | ✗ | ✓ | Simulated in Phase 1 |
 | YOLOv8 | ✗ | ✓ | Simulated in Phase 1 |
 | SAM2 | ✗ | ✓ | Simulated in Phase 1 |
@@ -151,6 +152,7 @@ Compare to commercial alternatives:
 
 ## References
 
+- [ADR-003: Gemini 3 Flash and File Search Tool](./ADR-003-gemini-3-flash-file-search.md) — LLM and RAG decisions
 - [Open Source Resources Inventory](../architecture/OPEN-SOURCE-INVENTORY.md)
 - [GCP Architecture Guide](../architecture/GCP-ARCHITECTURE.md)
 - [Project Brief](../PROJECT-BRIEF.md)
@@ -160,3 +162,4 @@ Compare to commercial alternatives:
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2025-12-19 | Accepted | Team consensus; aligns with zero-licensing philosophy |
+| 2025-12-22 | Amended | Updated AI/ML stack: Gemini 2.0 → 3 Flash, removed LangChain (pure ADK), added Gemini File Search Tool for RAG. See ADR-003 for detailed rationale. |

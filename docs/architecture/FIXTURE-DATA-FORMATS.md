@@ -36,6 +36,24 @@ All fixture files are located in two primary locations:
 | `cedar-creek-geojson.json` | GeoJSON | 13 KB | Map components | Combined GeoJSON with fire perimeter, burn severity, trail damage, and timber plots |
 | `briefing-events.json` | JSON | 18 KB | Demo tour | Same as backend version, loaded for cascade demos |
 
+> [!NOTE]
+> **NEPA Advisor Fixture:** The NEPA Advisor agent does not have a dedicated fixture file. It receives upstream context from other agents (burn severity, trail damage, timber value) and uses embedded FSM/FSH regulatory citations within `briefing-events.json` (see event `evt_nepa_001`). In Phase 2, it will use a RAG pipeline over the full Forest Service Manual corpus.
+
+### Why Two Fixture Locations?
+
+**Backend fixtures** (`/data/fixtures/cedar-creek/`):
+- Consumed by Python agents via file I/O
+- Authoritative source for data schemas
+- Version-controlled with repo
+
+**Frontend fixtures** (`/apps/command-console/public/fixtures/`):
+- Consumed by React app via static imports
+- Subset of backend fixtures optimized for browser
+- **Currently duplicates `briefing-events.json` for demo tour**
+
+**Phase 1 Strategy:** Manually sync when fixtures change.  
+**Phase 2 Strategy:** Agents serve data via API; frontend fixtures discontinued.
+
 ---
 
 ## 1. Burn Severity Data

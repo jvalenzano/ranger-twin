@@ -14,7 +14,7 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 | Diagram | Audience | Question It Answers |
 |---------|----------|---------------------|
-| [RANGER Local Development Stack](RANGER%20Local%20Development%20Stack.png) | Developers | "What's running where, on which port, with what data?" |
+| [Local Developer Stack](Local%20Developer%20Stack.png) | Developers | "What's running where, on which port, with what data?" |
 | [How the pieces fit together](How%20the%20pieces%20fit%20together.png) | Developers | "How does Phase 1 vs Phase 2 work?" |
 | [Agentic AI Architecture](Agentic%20AI%20Architecture.png) | Developers | "How does the local vs cloud workflow operate?" |
 | [AgentBriefingEvent Rendering Pipeline](AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" |

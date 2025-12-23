@@ -5,6 +5,15 @@
 **Last Updated:** 2025-12-21
 **Purpose:** Define the adapter pattern for normalizing external data sources into RANGER's internal schema
 
+> [!IMPORTANT]
+> **Phase Context:** This document specifies Phase 2+ architecture for real data integration.
+> 
+> **Phase 1 Reality:** All adapters return fixture data from `data/fixtures/cedar-creek/`.
+> The adapter *interfaces* are implemented, but they load static JSON instead of calling
+> external APIs.
+> 
+> **See:** [`DATA-SIMULATION-STRATEGY.md`](../DATA-SIMULATION-STRATEGY.md) for the authoritative Phase 1 scope.
+
 ---
 
 ## 1. Overview

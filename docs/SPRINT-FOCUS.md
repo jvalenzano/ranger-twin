@@ -1,5 +1,7 @@
 # RANGER: Sprint Focus & Development Priorities
 
+**Last Updated:** 2025-12-22 (Monday)
+
 This document establishes development priorities for Phase 1 of RANGER, focused on proving orchestration value with simulated data inputs.
 
 ## Strategic Priorities
@@ -10,8 +12,28 @@ This document establishes development priorities for Phase 1 of RANGER, focused 
 | **P0** | **Static Demo Experience** | ✅ Complete | Full Cedar Creek demo with guided tour, map layers, and phase transitions. |
 | **P1** | **Recovery Coordinator** | 🚧 In Progress | Root agent orchestration engine (ADK-based routing, correlation IDs, cross-agent synthesis). |
 | **P1** | **Agent Orchestration Demo** | 🚧 In Progress | Complete Cedar Creek cascade with all 4 agents using simulated fixture data. |
+| **P1** | **Gemini 3 Flash Migration** | 📋 Planned | Update all agents to use `gemini-3-flash` (see ADR-003). |
+| **P1** | **NEPA Advisor RAG** | 📋 Planned | Implement File Search Tool with FSM/FSH documents (see ADR-003). |
 | **P2** | **Reasoning Transparency UX** | 📋 Planned | Expandable proof layers, citations, reasoning chain visualization in UI. |
 | **P3** | **Legacy Export Validation** | 📋 Planned | TRACS CSV and FSVeg XML stubs that parse correctly for integration testing. |
+
+## AI Stack Decisions (ADR-003)
+
+As of 2025-12-22, the following AI stack decisions have been finalized:
+
+| Component | Decision | Rationale |
+|-----------|----------|-----------|
+| **LLM Model** | Gemini 3 Flash | 3x faster than 2.5 Pro, 78% SWE-bench, FedRAMP High via Vertex AI |
+| **RAG Strategy** | Gemini File Search Tool | Fully managed, built-in citations, PDF support, free queries |
+| **Framework** | Pure Google ADK | No hybrid frameworks (LangChain rejected) |
+
+**Key Implementation Tasks:**
+1. Download FSM/FSH PDFs from [fs.usda.gov/im/directives](https://www.fs.usda.gov/im/directives/)
+2. Create File Search store and index regulatory documents (~$0.04 one-time cost)
+3. Update all agent configs from `gemini-2.5-flash` to `gemini-3-flash`
+4. Implement `search_regulations()` and `identify_nepa_pathway()` tools
+
+See [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) for full implementation details.
 
 ## What We're Proving
 

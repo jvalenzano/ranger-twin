@@ -445,9 +445,9 @@ This diagram resolves the primary confusion about "where the AI lives" in a loca
 
 ---
 
-## 8. RANGER Local Development Stack
+## 8. Local Developer Stack
 
-**File:** `RANGER Local Development Stack.png`
+**File:** `Local Developer Stack.png`
 
 **One-Sentence Summary:** A comprehensive developer reference showing all services, ports, fixture data, and production system mappings for the complete RANGER local development environment.
 

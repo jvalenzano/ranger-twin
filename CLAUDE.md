@@ -10,6 +10,15 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 - **Authoritative Document:** `docs/DATA-SIMULATION-STRATEGY.md` defines what is simulated vs. real
 - **Naming Convention:** Use context-dependent names: Sidebar (Phases: IMPACT), Panel (Roles: IMPACT ANALYST), Tour (Friendly: Burn Analyst).
 
+## Data Terminology
+
+- **Fixtures** (`data/fixtures/cedar-creek/`): Hand-crafted JSON files simulating Phase 1 upstream data (ACTIVE)
+- **Synthetic** (`data/synthetic/`): Reserved for future AI-generated test data (empty in Phase 1)
+- **Layers** (`data/layers/`): Reserved for real GeoJSON in Phase 2+ (empty in Phase 1)
+- **Mock services** (code only): Frontend service layer stubs (e.g., `mockBriefingService.ts`)
+
+**Phase 1 reality:** Only `fixtures/` contains active data. Other directories are placeholders.
+
 ## Architecture
 
 **Pattern:** Google ADK Coordinator/Dispatcher
@@ -79,8 +88,11 @@ packages/
   agent-common/        # Shared agent base classes, prompt loader, Gemini client
   ui-components/       # Shared React components
 data/
-  fixtures/            # Simulated input data (Cedar Creek fire) - see FIXTURE-DATA-FORMATS.md
-  layers/              # GeoJSON (fire perimeter, severity, trails, plots)
+  fixtures/            # Phase 1: Cedar Creek simulation data (ACTIVE) - see FIXTURE-DATA-FORMATS.md
+  synthetic/           # Phase 2+: AI-generated test data (empty)
+  layers/              # Phase 2+: Real GeoJSON (empty)
+  rasters/             # Phase 2+: Satellite imagery (empty)
+  documents/           # NEPA reference docs
 docs/
   architecture/        # System design specs (agents, adapters, UX)
   research/            # API inventory, interview materials

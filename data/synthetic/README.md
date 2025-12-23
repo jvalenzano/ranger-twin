@@ -6,6 +6,10 @@ This folder is reserved for AI-generated and simulated data for testing and deve
 
 Phase 1 uses hand-crafted fixture data in `data/fixtures/cedar-creek/`.
 
+**Why this is empty:** Phase 1 focuses on proving multi-agent orchestration with carefully curated scenarios. AI-generated synthetic data will be used in Phase 2+ for expanded testing and edge case coverage.
+
+**See:** [`data/fixtures/cedar-creek/README.md`](../fixtures/cedar-creek/README.md) for active simulation data used in Phase 1.
+
 ## Future Use (Phase 2+)
 
 This folder will contain:

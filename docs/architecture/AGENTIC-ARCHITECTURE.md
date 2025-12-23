@@ -76,6 +76,9 @@ RANGER uses **Google ADK (Agent Development Kit)** with **ToolCallingAgents** to
    └─────────────────────────────────────────┘
 ```
 
+> [!NOTE]
+> **NEPA Advisor Data Source:** The NEPA Advisor does not have a dedicated fixture file. It receives project context from other agents and uses embedded FSM/FSH citations. In Phase 2, it will use a RAG pipeline over the full Forest Service Manual corpus. See [`briefing-events.json`](../../data/fixtures/cedar-creek/briefing-events.json) event `evt_nepa_001` for the current approach.
+
 ---
 
 ## Design Decisions
@@ -197,12 +200,7 @@ The expert panel suggested consolidating to 3 agents. We retain 5 because:
 
 Each agent's tools simulate data from real USFS production systems. In Phase 2, only the tool implementations change—agent code remains identical.
 
-| Agent | Fixture Data | Production Systems (Phase 2) |
-|-------|--------------|------------------------------|
-| **Burn Analyst** | `burn-severity.json` | **MTBS** (Monitoring Trends in Burn Severity), **RAVG** (Rapid Assessment of Vegetation), **Sentinel-2** / **Landsat** satellite imagery |
-| **Trail Assessor** | `trail-damage.json` | **TRACS** (Trail Condition Assessment System), **Survey123** / **ArcGIS Field Maps** field data collection |
-| **Cruising Assistant** | `timber-plots.json` | **FSVeg** (Field Sampled Vegetation), **FACTS** (Forest Activity Tracking System), **Common Stand Exam** protocols |
-| **NEPA Advisor** | Policy documents | **Forest Service Manual** RAG, **ePlanning** NEPA database |
+**See:** [`FIXTURE-DATA-FORMATS.md - Production Systems Mapping`](./FIXTURE-DATA-FORMATS.md#real-world-data-source-mapping) for the comprehensive production system table showing which real APIs each fixture file will be replaced with in Phase 2.
 
 ### Export Compatibility
 
