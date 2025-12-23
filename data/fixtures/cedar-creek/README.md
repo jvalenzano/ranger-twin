@@ -31,6 +31,27 @@ This is **simulated data** based on real patterns from the Cedar Creek Fire:
 
 ---
 
+## Production System Mapping
+
+Each fixture file simulates data from real USFS production systems:
+
+| Fixture File | Production Systems Replicated |
+|--------------|-------------------------------|
+| `burn-severity.json` | **MTBS** (Monitoring Trends in Burn Severity), **RAVG** (Rapid Assessment of Vegetation), **Sentinel-2** / **Landsat** satellite imagery |
+| `trail-damage.json` | **TRACS** (Trail Condition Assessment System), **Survey123** / **ArcGIS Field Maps** field collection |
+| `timber-plots.json` | **FSVeg** (Field Sampled Vegetation), **FACTS** (Forest Activity Tracking System), **Common Stand Exam** protocols |
+| `briefing-events.json` | N/A - Agent-generated events (pre-composed for demo) |
+
+### Why This Matters
+
+In **Phase 2**, these fixtures will be replaced by real API calls to these systems. The fixture schemas are designed to match production data formats, so:
+
+- **Agent code never changes** - only the data source implementation
+- **Export formats already work** - TRACS CSV and FSVeg XML exports are production-ready
+- **Schema validation passes** - fixtures conform to federal data standards
+
+---
+
 ## Demo Narrative
 
 The `briefing-events.json` file contains a complete cascade demonstrating:

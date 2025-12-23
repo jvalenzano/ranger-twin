@@ -790,19 +790,59 @@ Phase 2 adapters should inject:
 
 ## Real-World Data Source Mapping
 
-| Fixture Type | Real Source | API/Format | Integration Complexity |
-|--------------|-------------|------------|------------------------|
-| Burn Severity | MTBS / RAVG | GeoJSON API | Low (public API, standard format) |
-| Trail Damage | TRACS Database | SQL/CSV export | Medium (internal USFS database) |
-| Timber Plots | FSVeg / NRM | XML/API | High (complex schema, authentication) |
-| Fire Perimeter | NIFC / InciWeb | GeoJSON/KML | Low (public API) |
+### Production Systems by Fixture
+
+| Fixture File | Production System | Description | API/Format |
+|--------------|-------------------|-------------|------------|
+| **burn-severity.json** | **MTBS** | Monitoring Trends in Burn Severity | GeoJSON API |
+| | **RAVG** | Rapid Assessment of Vegetation | GeoTIFF/GeoJSON |
+| | **Sentinel-2** | ESA satellite imagery | Cloud-Optimized GeoTIFF |
+| | **Landsat** | USGS satellite imagery | GeoTIFF |
+| **trail-damage.json** | **TRACS** | Trail Condition Assessment System (1999) | CSV export |
+| | **Survey123** | Esri field data collection | REST API / Feature Service |
+| | **ArcGIS Field Maps** | Mobile GIS data capture | Feature Service |
+| | **Collector for ArcGIS** | Legacy mobile capture | Feature Service |
+| **timber-plots.json** | **FSVeg** | Field Sampled Vegetation database | XML export |
+| | **FACTS** | Forest Activity Tracking System | Oracle DB / REST |
+| | **Common Stand Exam** | Timber cruise protocols | FSVeg XML |
+| | **NRM** | Natural Resource Manager suite | Various |
+| **Fire perimeter** | **NIFC** | National Interagency Fire Center | GeoJSON/KML |
+| | **InciWeb** | Incident Information System | KML/GeoJSON |
+| | **IRWIN** | Integrated Reporting of Wildfire Info | REST API |
+
+### Integration Complexity Assessment
+
+| Production System | Complexity | Notes |
+|-------------------|------------|-------|
+| MTBS | Low | Public API, standard GeoJSON format |
+| RAVG | Low | Public raster data, GDAL processing |
+| Sentinel-2 | Low | Google Earth Engine or direct access |
+| Survey123 | Medium | Requires ArcGIS Online credentials |
+| TRACS | Medium | Internal USFS database, CSV export |
+| FSVeg | High | Complex XML schema, NRM authentication |
+| FACTS | High | Oracle database, VPN access required |
+| IRWIN | Medium | REST API with authentication |
+
+### Field Data Collection Tools
+
+For **trail-damage.json**, the primary field collection tools in use by USFS are:
+
+1. **Survey123 for ArcGIS** - Form-based data collection, most widely adopted
+2. **ArcGIS Field Maps** - Map-centric collection with offline support
+3. **Collector for ArcGIS** - Legacy app (being phased out)
+4. **Avenza Maps** - PDF-based field maps with GPS markup
+
+RANGER's trail damage schema is designed to accept data from any of these sources via adapter normalization.
 
 ### USFS Data Standards References
 
 - **MTBS**: [https://www.mtbs.gov/](https://www.mtbs.gov/)
+- **RAVG**: [https://fsapps.nwcg.gov/ravg/](https://fsapps.nwcg.gov/ravg/)
 - **TRACS**: FSH 2309.18 (Trail Assessment and Condition Survey Handbook)
 - **FSVeg**: FSH 2409.12 (Common Stand Exam Field Guide)
+- **Survey123**: [https://survey123.arcgis.com/](https://survey123.arcgis.com/)
 - **NIFC Fire Perimeters**: [https://data-nifc.opendata.arcgis.com/](https://data-nifc.opendata.arcgis.com/)
+- **IRWIN**: [https://irwin.doi.gov/](https://irwin.doi.gov/)
 
 ---
 

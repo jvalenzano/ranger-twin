@@ -193,6 +193,31 @@ The expert panel suggested consolidating to 3 agents. We retain 5 because:
 
 ---
 
+## Production System Mapping
+
+Each agent's tools simulate data from real USFS production systems. In Phase 2, only the tool implementations change—agent code remains identical.
+
+| Agent | Fixture Data | Production Systems (Phase 2) |
+|-------|--------------|------------------------------|
+| **Burn Analyst** | `burn-severity.json` | **MTBS** (Monitoring Trends in Burn Severity), **RAVG** (Rapid Assessment of Vegetation), **Sentinel-2** / **Landsat** satellite imagery |
+| **Trail Assessor** | `trail-damage.json` | **TRACS** (Trail Condition Assessment System), **Survey123** / **ArcGIS Field Maps** field data collection |
+| **Cruising Assistant** | `timber-plots.json` | **FSVeg** (Field Sampled Vegetation), **FACTS** (Forest Activity Tracking System), **Common Stand Exam** protocols |
+| **NEPA Advisor** | Policy documents | **Forest Service Manual** RAG, **ePlanning** NEPA database |
+
+### Export Compatibility
+
+RANGER generates outputs compatible with existing USFS systems:
+
+| Agent | Export Format | Target System |
+|-------|---------------|---------------|
+| Trail Assessor | TRACS CSV | Trail Condition Assessment System |
+| Cruising Assistant | FSVeg XML | Field Sampled Vegetation database |
+| NEPA Advisor | EA/CE templates | ePlanning / SOPA |
+
+This "Legacy Bridge" approach means USFS staff can import RANGER outputs into their existing workflows without system changes.
+
+---
+
 ## Tool Interface Standard
 
 All tools follow a consistent interface pattern:
