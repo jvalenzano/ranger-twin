@@ -18,13 +18,13 @@ Command Console (UI) → Recovery Coordinator (Root LlmAgent)
 
 ## The Five Agents
 
-| Agent | Role Title | Spec Document | Service Directory | Priority |
-|-------|------------|---------------|-------------------|----------|
-| **Recovery Coordinator** | Recovery Coordinator | [RECOVERY-COORDINATOR-SPEC.md](./RECOVERY-COORDINATOR-SPEC.md) | `services/agents/recovery-coordinator/` | **Root Agent** (P0) |
-| **Burn Analyst** | The Burn Analyst | [BURN-ANALYST-SPEC.md](./BURN-ANALYST-SPEC.md) | `services/agents/burn-analyst/` | Sub-agent (P1) |
-| **Trail Assessor** | The Trail Assessor | [TRAIL-ASSESSOR-SPEC.md](./TRAIL-ASSESSOR-SPEC.md) | `services/agents/trail-assessor/` | Sub-agent (P1) |
-| **Cruising Assistant** | The Cruising Assistant | [CRUISING-ASSISTANT-SPEC.md](./CRUISING-ASSISTANT-SPEC.md) | `services/agents/cruising-assistant/` | Sub-agent (P2) |
-| **NEPA Advisor** | The NEPA Advisor | [NEPA-ADVISOR-SPEC.md](./NEPA-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Sub-agent (P2) |
+| Agent | Role Title | Port | Spec Document | Service Directory | Priority |
+|-------|------------|------|---------------|-------------------|----------|
+| **Recovery Coordinator** | Recovery Coordinator | 8005 | [RECOVERY-COORDINATOR-SPEC.md](./RECOVERY-COORDINATOR-SPEC.md) | `services/agents/recovery-coordinator/` | **Root Agent** (P0) |
+| **Burn Analyst** | The Burn Analyst | 8001 | [BURN-ANALYST-SPEC.md](./BURN-ANALYST-SPEC.md) | `services/agents/burn-analyst/` | Sub-agent (P1) |
+| **Trail Assessor** | The Trail Assessor | 8002 | [TRAIL-ASSESSOR-SPEC.md](./TRAIL-ASSESSOR-SPEC.md) | `services/agents/trail-assessor/` | Sub-agent (P2) |
+| **Cruising Assistant** | The Cruising Assistant | 8003 | [CRUISING-ASSISTANT-SPEC.md](./CRUISING-ASSISTANT-SPEC.md) | `services/agents/cruising-assistant/` | Sub-agent (P2) |
+| **NEPA Advisor** | The NEPA Advisor | 8004 | [NEPA-ADVISOR-SPEC.md](./NEPA-ADVISOR-SPEC.md) | `services/agents/nepa-advisor/` | Sub-agent (P2) |
 
 ## Agent Architecture
 
@@ -73,6 +73,54 @@ All agents communicate via the **AgentBriefingEvent** schema (see [AGENT-MESSAGI
 - `data_received` — Input confirmation
 
 For schema details and examples, see the [BRIEFING-UX-SPEC.md](../architecture/BRIEFING-UX-SPEC.md).
+
+## Tool Interface Standard
+
+All agent tools follow a consistent interface pattern defined in [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md):
+
+- **Typed parameters**: Use `TypedDict` for clear contracts
+- **Confidence scores**: Every `ToolResult` includes a confidence value (0-1)
+- **Source attribution**: Cite data sources for transparency
+- **Reasoning traces**: Explain methodology for auditability
+- **Phase-agnostic interface**: Same signature for fixtures and real APIs
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class ExampleParams(TypedDict):
+    fire_id: str
+    bbox: tuple[float, float, float, float]
+
+def example_tool(params: ExampleParams) -> ToolResult:
+    return ToolResult(
+        data=...,
+        confidence=0.85,
+        source="MTBS (simulated)",
+        reasoning="Explanation of methodology"
+    )
+```
+
+## Production System Mapping
+
+Each agent's tools simulate data from real USFS production systems. In Phase 2, only the tool implementations change—agent code remains identical.
+
+| Agent | Fixture Data | Production Systems (Phase 2) |
+|-------|--------------|------------------------------|
+| **Burn Analyst** | `burn-severity.json` | MTBS, RAVG, Sentinel-2, Landsat |
+| **Trail Assessor** | `trail-damage.json` | TRACS, Survey123, ArcGIS Field Maps |
+| **Cruising Assistant** | `timber-plots.json` | FSVeg, FACTS, Common Stand Exam |
+| **NEPA Advisor** | Policy documents | Forest Service Manual RAG, ePlanning |
+
+### Export Compatibility
+
+RANGER generates outputs compatible with existing USFS systems:
+
+| Agent | Export Format | Target System |
+|-------|---------------|---------------|
+| Trail Assessor | TRACS CSV | Trail Condition Assessment System |
+| Cruising Assistant | FSVeg XML | Field Sampled Vegetation database |
+| NEPA Advisor | EA/CE templates | ePlanning / SOPA |
 
 ## Phase 1: Simulation Strategy
 

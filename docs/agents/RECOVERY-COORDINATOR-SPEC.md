@@ -3,8 +3,10 @@
 > *Root LlmAgent for the RANGER Command Console — Orchestrates lifecycle specialists*
 
 **Status:** Phase 1 (Core Implementation)
-**Priority:** 0 (Critical)
+**Port:** 8005
+**Priority:** P0 (Root Agent)
 **Developer:** TBD
+**Architecture:** [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md)
 
 ---
 
@@ -139,6 +141,61 @@ recovery_coordinator = Agent(
 | **Reasoning & Planning** | Decides which sub-agents are needed for complex multi-step queries |
 | **Text Synthesis** | Combines structured data from sub-agents into narrative briefings |
 | **Context Management** | Keeps track of the "active fire" and lifecycle phase |
+
+---
+
+## Tools (ADK ToolCallingAgent)
+
+All tools follow the standard interface pattern from [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md).
+
+### route_to_specialist
+
+Delegate a query to a specialist agent.
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class RouteParams(TypedDict):
+    agent: str  # "burn_analyst" | "trail_assessor" | "cruising_assistant" | "nepa_advisor"
+    query: str
+
+def route_to_specialist(params: RouteParams) -> ToolResult:
+    """
+    Delegate query to specialist agent via ADK transfer_to_agent.
+    Returns specialist's response with confidence and reasoning.
+    """
+    return ToolResult(
+        data=specialist_response,
+        confidence=0.91,
+        source=f"{params['agent']}",
+        reasoning="Routed based on domain expertise match"
+    )
+```
+
+### aggregate_briefings
+
+Combine multiple specialist outputs into unified briefing.
+
+```python
+class AggregateBriefingsParams(TypedDict):
+    briefings: list[dict]  # List of AgentBriefingEvents
+
+def aggregate_briefings(params: AggregateBriefingsParams) -> ToolResult:
+    """Synthesize multi-agent outputs into coherent summary."""
+```
+
+### generate_summary
+
+Create executive summary from aggregated context.
+
+```python
+class SummaryParams(TypedDict):
+    context: dict  # Combined agent outputs and session state
+
+def generate_summary(params: SummaryParams) -> ToolResult:
+    """Generate executive briefing for recovery leadership."""
+```
 
 ---
 

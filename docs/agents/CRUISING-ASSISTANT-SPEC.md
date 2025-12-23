@@ -3,8 +3,10 @@
 > *Formerly "TimberScribe" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
 
 **Status:** Phase 1 (Simulation)
-**Priority:** 1 (Primary)
+**Port:** 8003
+**Priority:** P2 (Sub-agent)
 **Developer:** JASON VALENZANO
+**Architecture:** [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md)
 
 ---
 
@@ -92,6 +94,82 @@ The Cruising Assistant is a **"Speak-and-See" inventory assistant** that allows 
 | **Reasoning Chain Generation** | Show volume calculation steps, value projections | Trust and transparency |
 | **Citation Linking** | Reference timber price data, beetle risk models | Defensible recommendations |
 | **Cross-Domain Synthesis** | Combine fire data, timber value, access constraints | Holistic salvage planning |
+
+---
+
+## Production System Mapping
+
+| Fixture Data | Production Systems (Phase 2) |
+|--------------|------------------------------|
+| `timber-plots.json` | FSVeg, FACTS, Common Stand Exam |
+
+---
+
+## Tools (ADK ToolCallingAgent)
+
+All tools follow the standard interface pattern from [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md).
+
+### query_timber_plots
+
+Query timber plot inventory data for a sector.
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class TimberPlotParams(TypedDict):
+    sector_id: str
+
+def query_timber_plots(params: TimberPlotParams) -> ToolResult:
+    """
+    Phase 1: Returns fixture data from data/fixtures/
+    Phase 2: Calls FSVeg/FACTS APIs (same interface)
+    """
+    return ToolResult(
+        data=plot_inventory,
+        confidence=0.91,
+        source="FSVeg (simulated)",
+        reasoning="Plot data from Common Stand Exam protocols"
+    )
+```
+
+### calculate_board_feet
+
+Calculate merchantable volume for a plot.
+
+```python
+class BoardFeetParams(TypedDict):
+    plot_id: str
+    species: str  # FIA species code (e.g., "PSME" for Douglas Fir)
+
+def calculate_board_feet(params: BoardFeetParams) -> ToolResult:
+    """Calculate board-feet using PNW regional volume equations."""
+```
+
+### estimate_salvage_value
+
+Estimate economic value of salvage timber.
+
+```python
+class SalvageValueParams(TypedDict):
+    volume: float  # Board feet
+    grade: str  # "sawlog" | "pulp" | "biomass"
+
+def estimate_salvage_value(params: SalvageValueParams) -> ToolResult:
+    """Calculate salvage value using current regional timber prices."""
+```
+
+### generate_cruise_report
+
+Generate FSVeg-compatible cruise report.
+
+```python
+class CruiseReportParams(TypedDict):
+    plot_ids: list[str]
+
+def generate_cruise_report(params: CruiseReportParams) -> ToolResult:
+    """Generate FSVeg XML for timber sale package."""
+```
 
 ---
 

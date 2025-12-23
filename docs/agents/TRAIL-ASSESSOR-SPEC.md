@@ -3,8 +3,10 @@
 > *Formerly "TrailScan AI" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
 
 **Status:** Phase 1 (Simulation)
-**Priority:** 2 (Secondary)
+**Port:** 8002
+**Priority:** P2 (Sub-agent)
 **Developer:** TBD
+**Architecture:** [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md)
 
 ---
 
@@ -92,10 +94,16 @@ The Trail Assessor addresses the Forest Service's $8.6 billion deferred maintena
 |-----------|------------|----------------------|
 | **Input** | Static JSON fixtures | Simulated damage inventory in `data/fixtures/cedar-creek/trail-damage.json` |
 | **Agent Core** | Gemini 2.0 Flash + ADK | Real AI reasoning over simulated data |
-| **Cost Database** | Mock MCP tool | Returns fixture cost data |
+| **Fixture Tools** | ADK ToolCallingAgent | Returns fixture data via standard ToolResult |
 | **TRACS Export** | Python (lxml) | Real XML/CSV generation |
 | **Map Output** | GeoJSON | Real coordinate projection |
 | **UI Integration** | AgentBriefingEvent | Real event emission to Command Console |
+
+### Production System Mapping
+
+| Fixture Data | Production Systems (Phase 2) |
+|--------------|------------------------------|
+| `trail-damage.json` | TRACS, Survey123, ArcGIS Field Maps |
 
 ### Sample Simulated Input
 
@@ -144,6 +152,75 @@ The Trail Assessor addresses the Forest Service's $8.6 billion deferred maintena
 | `/api/v1/agents/trail-assessor/analyze` | POST | Process damage inventory JSON |
 | `/api/v1/agents/trail-assessor/workorder/{id}` | GET | Export TRACS work order |
 | `/api/v1/agents/trail-assessor/events` | GET | Retrieve AgentBriefingEvents |
+
+---
+
+## Tools (ADK ToolCallingAgent)
+
+All tools follow the standard interface pattern from [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md).
+
+### query_trail_damage
+
+Query damage assessment data for a trail segment.
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class TrailDamageParams(TypedDict):
+    trail_id: str
+
+def query_trail_damage(params: TrailDamageParams) -> ToolResult:
+    """
+    Phase 1: Returns fixture data from data/fixtures/
+    Phase 2: Calls TRACS/Survey123 APIs (same interface)
+    """
+    return ToolResult(
+        data=damage_inventory,
+        confidence=0.87,
+        source="TRACS (simulated)",
+        reasoning="Damage inventory from field assessment data"
+    )
+```
+
+### prioritize_repairs
+
+Rank damage points by severity and trail usage.
+
+```python
+class PrioritizeParams(TypedDict):
+    criteria: str  # "severity" | "usage" | "cost" | "safety"
+    trail_ids: list[str]
+
+def prioritize_repairs(params: PrioritizeParams) -> ToolResult:
+    """Generate priority-ranked repair list based on criteria."""
+```
+
+### estimate_repair_cost
+
+Generate cost estimates for damage types.
+
+```python
+class RepairCostParams(TypedDict):
+    damage_type: str  # "BRIDGE_FAILURE" | "DEBRIS_FLOW" | "EROSION" | etc.
+    severity: int  # 1-5
+
+def estimate_repair_cost(params: RepairCostParams) -> ToolResult:
+    """Calculate repair cost using FS Trail Cost Guide."""
+```
+
+### generate_work_order
+
+Generate TRACS-compatible work order.
+
+```python
+class WorkOrderParams(TypedDict):
+    trail_id: str
+    damage_ids: list[str]
+
+def generate_work_order(params: WorkOrderParams) -> ToolResult:
+    """Generate TRACS CSV/XML work order for maintenance queue."""
+```
 
 ---
 

@@ -3,8 +3,10 @@
 > *Formerly "PolicyPilot" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
 
 **Status:** Phase 1 (Limited RAG)
-**Priority:** 3 (Tertiary)
+**Port:** 8004
+**Priority:** P2 (Sub-agent)
 **Developer:** TBD
+**Architecture:** [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md)
 
 ---
 
@@ -93,6 +95,83 @@ The NEPA Advisor is a **regulatory compliance assistant** that uses Retrieval-Au
 | **District Ranger** | Signs decision documents | Liability for compliance gaps | AI pre-screening before review |
 | **Resource Specialist** | Wildlife/water/timber SME | Staying current on policy updates | Single query interface to full corpus |
 | **New Employee** | Recently hired staff | Steep learning curve on regulations | Ask questions, learn by exploration |
+
+---
+
+## Production System Mapping
+
+| Fixture Data | Production Systems (Phase 2) |
+|--------------|------------------------------|
+| Policy documents (FSM/FSH PDFs) | Forest Service Manual RAG, ePlanning |
+
+---
+
+## Tools (ADK ToolCallingAgent)
+
+All tools follow the standard interface pattern from [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md).
+
+### search_regulations
+
+Search the FSM/FSH corpus for relevant regulations.
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class RegulationSearchParams(TypedDict):
+    query: str
+
+def search_regulations(params: RegulationSearchParams) -> ToolResult:
+    """
+    Phase 1: RAG over curated FSM/FSH excerpts
+    Phase 2: Full corpus with Vertex AI Search
+    """
+    return ToolResult(
+        data=retrieved_sections,
+        confidence=0.92,
+        source="FSM 2670.31",
+        reasoning="Retrieved via semantic similarity from policy corpus"
+    )
+```
+
+### identify_nepa_pathway
+
+Determine applicable NEPA pathway for an action.
+
+```python
+class NEPAPathwayParams(TypedDict):
+    action_type: str  # "timber_salvage" | "trail_repair" | "road_reconstruction"
+    acres: float
+    estimated_cost: float
+
+def identify_nepa_pathway(params: NEPAPathwayParams) -> ToolResult:
+    """Determine if CE, EA, or EIS is required based on action thresholds."""
+```
+
+### generate_compliance_checklist
+
+Generate required documentation checklist.
+
+```python
+class ComplianceChecklistParams(TypedDict):
+    pathway: str  # "CE" | "EA" | "EIS"
+    action_type: str
+
+def generate_compliance_checklist(params: ComplianceChecklistParams) -> ToolResult:
+    """Generate checklist of required documentation per FSH 1909.15."""
+```
+
+### cite_authority
+
+Generate formatted regulatory citations.
+
+```python
+class CiteAuthorityParams(TypedDict):
+    regulation_id: str  # e.g., "36-CFR-220.6(e)(6)"
+
+def cite_authority(params: CiteAuthorityParams) -> ToolResult:
+    """Return formatted citation with URI and excerpt."""
+```
 
 ---
 

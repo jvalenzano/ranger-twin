@@ -2,9 +2,11 @@
 
 > *Formerly "FireSight Lite" — see [ADR-002](../adr/ADR-002-brand-naming-strategy.md) for naming rationale*
 
-**Status:** 🟡 Phase 1 (Simulation)
-**Priority:** Core Agent
+**Status:** Phase 1 (Simulation)
+**Port:** 8001
+**Priority:** P1 (Sub-agent)
 **Developer:** TBD
+**Architecture:** [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md)
 
 ---
 
@@ -109,13 +111,13 @@ The Burn Analyst is a **post-fire damage assessment accelerator** that uses sate
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Static    │────▶│  Mock MCP   │────▶│   Gemini    │────▶│ AgentBriefing│
-│  GeoJSON    │     │   Layer     │     │  Synthesis  │     │   Events    │
-│  Fixtures   │     │  (returns)  │     │  + Routing  │     │ + Outputs   │
+│   Static    │────▶│  Fixture    │────▶│   Gemini    │────▶│ AgentBriefing│
+│  GeoJSON    │     │   Tools     │     │  Synthesis  │     │   Events    │
+│  Fixtures   │     │  (ADK)      │     │  + Routing  │     │ + Outputs   │
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
      │                    │                    │                    │
-     │ MTBS-derived       │ Simulated          │ Real reasoning     │ Events, Maps
-     │ burn severity      │ data               │ chains             │ Reports
+     │ MTBS-derived       │ ToolResult         │ Real reasoning     │ Events, Maps
+     │ burn severity      │ with confidence    │ chains             │ Reports
 ```
 
 ### Core Components (Phase 1)
@@ -123,12 +125,18 @@ The Burn Analyst is a **post-fire damage assessment accelerator** that uses sate
 | Component | Technology | Notes |
 |-----------|------------|-------|
 | **Data Source** | Static GeoJSON fixtures | MTBS data for Cedar Creek |
-| **Mock MCP Layer** | Python mock functions | Returns fixture data on query |
+| **Fixture Tools** | ADK ToolCallingAgent | Returns fixture data via standard ToolResult |
 | **AI Analysis** | Gemini 2.0 Flash | Real synthesis and reasoning |
 | **Terrain Data** | Pre-computed slope metadata | Included in GeoJSON fixtures |
 | **GIS Output** | GeoJSON | Standard BAER format |
 | **Report Generation** | Gemini + Document templates | BAER report sections |
 | **Event Output** | AgentBriefingEvent JSON | Cross-agent triggers |
+
+### Production System Mapping
+
+| Fixture Data | Production Systems (Phase 2) |
+|--------------|------------------------------|
+| `burn-severity.json` | MTBS, RAVG, Sentinel-2, Landsat |
 
 ### Burn Severity Classification
 
@@ -148,6 +156,64 @@ The Burn Analyst is a **post-fire damage assessment accelerator** that uses sate
 | `/api/v1/agents/burn-analyst/query` | POST | Agent query interface (unified pattern) |
 | `/api/v1/agents/burn-analyst/severity-map` | GET | Retrieve severity map (GeoJSON) |
 | `/api/v1/agents/burn-analyst/briefing` | GET | Generate BAER briefing sections |
+
+---
+
+## Tools (ADK ToolCallingAgent)
+
+All tools follow the standard interface pattern from [AGENTIC-ARCHITECTURE.md](../architecture/AGENTIC-ARCHITECTURE.md).
+
+### query_burn_severity
+
+Query burn severity data for a fire perimeter.
+
+```python
+from typing import TypedDict
+from packages.twin_core.models import ToolResult
+
+class BurnSeverityParams(TypedDict):
+    fire_id: str
+    bbox: tuple[float, float, float, float]  # (min_lng, min_lat, max_lng, max_lat)
+    source: str  # "mtbs" | "dnbr" | "ndvi"
+
+def query_burn_severity(params: BurnSeverityParams) -> ToolResult:
+    """
+    Phase 1: Returns fixture data from data/fixtures/
+    Phase 2: Calls real MTBS/RAVG APIs (same interface)
+    """
+    return ToolResult(
+        data=geojson_feature_collection,
+        confidence=0.85,
+        source="MTBS (simulated)",
+        reasoning="Burn severity derived from dNBR classification"
+    )
+```
+
+### calculate_severity_stats
+
+Compute area statistics by severity class for a polygon.
+
+```python
+class SeverityStatsParams(TypedDict):
+    polygon: dict  # GeoJSON Polygon
+    fire_id: str
+
+def calculate_severity_stats(params: SeverityStatsParams) -> ToolResult:
+    """Calculate acreage by severity class (unburned/low/moderate/high)."""
+```
+
+### identify_hot_spots
+
+Find high-severity clusters that exceed a threshold.
+
+```python
+class HotSpotParams(TypedDict):
+    fire_id: str
+    threshold: float  # Minimum cluster size in acres
+
+def identify_hot_spots(params: HotSpotParams) -> ToolResult:
+    """Identify contiguous high-severity zones for priority treatment."""
+```
 
 ---
 
