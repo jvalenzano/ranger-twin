@@ -367,17 +367,17 @@
       {
         "type": "Feature",
         "properties": {
-          "damage_id": "BL-001",
-          "trail_name": "Bobby Lake Trail #3526",
-          "type": "BRIDGE_FAILURE",
-          "severity": 5,
-          "description": "Puncheon bridge completely destroyed."
+          "damage_id": "WL-002",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "DEBRIS_FLOW",
+          "severity": 4,
+          "description": "Major debris accumulation from post-fire erosion. Trail obliterated for 200 meters."
         },
         "geometry": {
           "type": "Point",
           "coordinates": [
-            -121.9345,
-            43.7123
+            -122.0289,
+            43.7456
           ]
         }
       },
@@ -401,6 +401,40 @@
       {
         "type": "Feature",
         "properties": {
+          "damage_id": "WL-004",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "TREAD_EROSION",
+          "severity": 2,
+          "description": "Minor rill erosion on south-facing slope."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9834,
+            43.7891
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "BL-001",
+          "trail_name": "Bobby Lake Trail #3526",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Puncheon bridge completely destroyed."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9345,
+            43.7123
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
           "damage_id": "BL-002",
           "trail_name": "Bobby Lake Trail #3526",
           "type": "HAZARD_TREES",
@@ -412,6 +446,23 @@
           "coordinates": [
             -121.9278,
             43.7234
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "BL-003",
+          "trail_name": "Bobby Lake Trail #3526",
+          "type": "DEBRIS_FLOW",
+          "severity": 3,
+          "description": "Moderate debris deposit. Trail passable but requires clearing and drainage restoration."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9189,
+            43.7345
           ]
         }
       },
@@ -435,17 +486,68 @@
       {
         "type": "Feature",
         "properties": {
-          "damage_id": "WL-004",
-          "trail_name": "Waldo Lake Trail #3536",
-          "type": "TREAD_EROSION",
-          "severity": 2,
-          "description": "Minor rill erosion on south-facing slope."
+          "damage_id": "CL-002",
+          "trail_name": "Charlton Lake Trail #3578",
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Trailhead sign and two wayfinding markers destroyed. Posts remain."
         },
         "geometry": {
           "type": "Point",
           "coordinates": [
-            -121.9834,
-            43.7891
+            -121.8923,
+            43.7756
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-001",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Primary bridge over Hills Creek destroyed. Critical access point."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1234,
+            43.6567
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-002",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "DEBRIS_FLOW",
+          "severity": 5,
+          "description": "Massive debris flow from steep slopes. Trail completely buried for 400 meters."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1089,
+            43.6678
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-003",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Large diameter Douglas-fir mortality. High value timber, also high risk."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0945,
+            43.6789
           ]
         }
       },
@@ -463,6 +565,40 @@
           "coordinates": [
             -122.0823,
             43.6856
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "TL-001",
+          "trail_name": "Timpanogas Lake Trail #3527",
+          "type": "HAZARD_TREES",
+          "severity": 2,
+          "description": "Scattered hazard trees. Low density, manageable with hand crews."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1345,
+            43.5923
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "TL-002",
+          "trail_name": "Timpanogas Lake Trail #3527",
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Lake overlook interpretive sign damaged. Frame salvageable."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1267,
+            43.5989
           ]
         }
       }
