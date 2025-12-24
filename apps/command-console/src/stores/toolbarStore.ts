@@ -17,7 +17,9 @@ export type ToolId =
   | 'zoom-out'
   | 'reset-north'
   | 'measure-distance'
-  | 'measure-area';
+  | 'measure-area'
+  | 'visual-audit'
+  | 'layer-switch';
 
 export interface ToolConfig {
   id: ToolId;
@@ -81,6 +83,16 @@ export const TOOLBAR_TOOLS: ToolConfig[] = [
     defaultPinned: true,
   },
   // Measurement tools
+  // NOTE: visual-audit remains available for investigating areas without mapped features.
+  // Intel Probe (feature popup) is preferred for mapped features.
+  {
+    id: 'visual-audit',
+    label: 'Forensic Audit',
+    shortLabel: 'Audit',
+    description: 'Multi-modal research mission.',
+    category: 'navigation',
+    defaultPinned: true,
+  },
   {
     id: 'measure-distance',
     label: 'Measure Distance',

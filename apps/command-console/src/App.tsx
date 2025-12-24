@@ -14,6 +14,10 @@ import mockBriefingService from '@/services/mockBriefingService';
 import { useBriefingStore } from '@/stores/briefingStore';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
 import { ToastContainer } from '@/components/ui/ToastContainer';
+import { VisualAuditOverlay } from '@/components/map/VisualAuditOverlay';
+import { ForensicReportModal } from '@/components/modals/ForensicReportModal';
+import { AnalysisHistoryPanel } from '@/components/map/AnalysisHistoryPanel';
+import { useAnalysisHistoryStore } from '@/stores/analysisHistoryStore';
 
 // Chat mode: 'closed' | 'open' | 'minimized'
 type ChatMode = 'closed' | 'open' | 'minimized';
@@ -25,7 +29,9 @@ const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
   const [chatMode, setChatMode] = useState<ChatMode>('closed');
   const [sidebarWidth, setSidebarWidth] = useState(200); // Start expanded
+  const [historyOpen, setHistoryOpen] = useState(false);
   const addEvent = useBriefingStore((state) => state.addEvent);
+  const analysisCount = useAnalysisHistoryStore((state) => state.analyses.length);
 
   // Chat mode handlers
   const handleOpenChat = () => setChatMode('open');
@@ -54,12 +60,31 @@ const App: React.FC = () => {
     };
   }, [addEvent]);
 
+  // Simple URL-based routing for experiments
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
   // Show loading state while fixtures load
   if (!isReady) {
     return (
       <div className="w-screen h-screen bg-background flex items-center justify-center">
         <div className="text-text-muted text-sm mono">Loading RANGER...</div>
       </div>
+    );
+  }
+
+  // Lab Route (isolated)
+  if (currentPath === '/lab/forensic-insight') {
+    const ForensicInsightLab = lazy(() => import('@/prototypes/ForensicInsightLab'));
+    return (
+      <Suspense fallback={<div className="p-10 mono text-xs">Initializing Lab...</div>}>
+        <ForensicInsightLab />
+      </Suspense>
     );
   }
 
@@ -106,6 +131,24 @@ const App: React.FC = () => {
 
           {/* Chat FAB - When minimized */}
           {chatMode === 'minimized' && <ChatFAB onClick={handleOpenChat} />}
+
+          {/* Forensic Engine - Integrated Overlays */}
+          <VisualAuditOverlay />
+          <ForensicReportModal />
+          <AnalysisHistoryPanel isOpen={historyOpen} onClose={() => setHistoryOpen(false)} />
+
+          {/* Analysis History FAB - Shows when there are saved analyses */}
+          {analysisCount > 0 && !historyOpen && (
+            <button
+              onClick={() => setHistoryOpen(true)}
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#0f111a]/90 backdrop-blur-sm border border-white/10 rounded-full shadow-xl hover:bg-white/10 transition-all flex items-center gap-2 group"
+              title="View saved analyses"
+            >
+              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted group-hover:text-white transition-colors">
+                {analysisCount} Saved {analysisCount === 1 ? 'Analysis' : 'Analyses'}
+              </span>
+            </button>
+          )}
         </div>
       </BriefingObserver>
     </ErrorBoundary>

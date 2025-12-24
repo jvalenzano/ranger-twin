@@ -1,12 +1,13 @@
 /**
- * Map Store - Manages map state for the Cedar Creek visualization
+ * Map Store - Manages map state for fire visualization
  *
  * Controls:
  * - Layer visibility (SAT/TER/IR)
  * - Camera position (center, zoom, bearing, pitch)
  * - 3D terrain exaggeration
  *
- * Cedar Creek Fire (2022) coordinates:
+ * Note: Camera position is now coordinated with fireContextStore.
+ * Default coordinates are for Cedar Creek Fire (2022):
  * - Center: 43.726°N, 122.167°W (Willamette National Forest, Oregon)
  * - Source: Wikipedia (43°43′34″N 122°10′01″W)
  */
@@ -70,6 +71,7 @@ interface MapState {
   // Hover/Selection state for map features
   hoveredFeature: MapFeatureId | null;
   selectedFeature: MapFeatureId | null;
+  mapInstance: maplibregl.Map | null;
 
   // Actions
   setActiveLayer: (layer: MapLayerType) => void;
@@ -91,6 +93,7 @@ interface MapState {
   dockLegend: () => void;
   setHoveredFeature: (feature: MapFeatureId | null) => void;
   setSelectedFeature: (feature: MapFeatureId | null) => void;
+  setMapInstance: (instance: maplibregl.Map | null) => void;
   clearSelection: () => void;
   reset: () => void;
 }
@@ -153,6 +156,7 @@ export const useMapStore = create<MapState>()(
       legendCompact: persistedLegendState.compact,
       hoveredFeature: null,
       selectedFeature: null,
+      mapInstance: null,
 
       setActiveLayer: (layer) => {
         set({ activeLayer: layer });
@@ -313,6 +317,9 @@ export const useMapStore = create<MapState>()(
 
       setSelectedFeature: (feature) => {
         set({ selectedFeature: feature });
+      },
+      setMapInstance: (instance) => {
+        set({ mapInstance: instance as any });
       },
 
       clearSelection: () => {

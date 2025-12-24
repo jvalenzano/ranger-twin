@@ -3,6 +3,9 @@
  *
  * Phase 1: Direct Gemini integration for chat
  * Phase 2+: Will use backend /api/query endpoint with full agent orchestration
+ *
+ * Supports dynamic fire context - system prompts are generated based on
+ * the active fire from fireContextStore.
  */
 
 import type {
@@ -11,6 +14,9 @@ import type {
   EventType,
   Severity,
 } from '@/types/briefing';
+
+import type { FireContext } from '@/types/fire';
+import { DEFAULT_FIRE } from '@/types/fire';
 
 // Agent role type matching the backend
 export type AgentRole =
@@ -55,13 +61,23 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
 
 // Gemini API key from environment - Updated per ADR-003 (2025-12-22)
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-// System prompt for RANGER context
-const RANGER_SYSTEM_PROMPT = `You are the Recovery Coordinator for RANGER, an AI-powered forest recovery platform. You help forest rangers analyze post-fire recovery operations for the Cedar Creek Fire (2022) in the Willamette National Forest, Oregon.
+/**
+ * Generate system prompt based on fire context
+ * Dynamically adjusts context for any fire in the system
+ */
+function generateSystemPrompt(fire: FireContext): string {
+  // Format acres for display
+  const acresFormatted = fire.acres >= 1000
+    ? `${Math.round(fire.acres / 1000)}K`
+    : fire.acres.toString();
+
+  return `You are the Recovery Coordinator for RANGER, an AI-powered forest recovery platform. You help forest rangers analyze post-fire recovery operations for the ${fire.name} (${fire.year}) in the ${fire.forest}, ${fire.state}.
 
 Context:
-- The Cedar Creek Fire burned approximately 127,000 acres
+- The ${fire.name} burned approximately ${acresFormatted} acres
+- Current status: ${fire.status}
 - Your role is to coordinate between specialist agents: Burn Analyst, Trail Assessor, Cruising Assistant, and NEPA Advisor
 - Focus areas: burn severity assessment, trail damage evaluation, timber salvage prioritization, and environmental compliance
 
@@ -71,11 +87,15 @@ When answering questions:
 3. Provide actionable insights for forest recovery operations
 4. Maintain a professional, tactical tone appropriate for emergency operations
 
-Available Data Summary:
-- 5 trails assessed with 16 damage points, 3 complete bridge failures
-- 6 timber plots surveyed (47-ALPHA through 15-ECHO)
-- Burn severity zones: HIGH (red), MODERATE (amber), LOW (green)
-- Priority bridges: Waldo Lake (40ft timber), Bobby Lake (puncheon), Hills Creek (primary)`;
+Data Availability:
+- Perimeter: ${fire.data_status.perimeter.available ? `Available (${fire.data_status.perimeter.source})` : 'Pending'}
+- Burn Severity: ${fire.data_status.burn_severity.available ? `Available (${fire.data_status.burn_severity.source})` : 'Pending'}
+- Trail Damage: ${fire.data_status.trail_damage.available ? `Available (${fire.data_status.trail_damage.source})` : 'Pending'}
+- Timber Plots: ${fire.data_status.timber_plots.available ? `Available (${fire.data_status.timber_plots.source})` : 'Pending'}`;
+}
+
+// Default system prompt (Cedar Creek - for fallback)
+const DEFAULT_SYSTEM_PROMPT = generateSystemPrompt(DEFAULT_FIRE);
 
 // Simulated responses for when API is rate-limited or unavailable
 const SIMULATED_RESPONSES: Record<string, { agentRole: AgentRole; response: string }> = {
@@ -185,22 +205,38 @@ class AIBriefingService {
   /**
    * Query the RANGER agents via Gemini (Phase 1 simulation)
    * Falls back to simulated responses if API is rate-limited
+   *
+   * @param queryText - The user's question
+   * @param sessionId - Session identifier for conversation context
+   * @param fireContext - Optional fire context for dynamic system prompt
    */
   async query(
     queryText: string,
-    _sessionId: string = 'demo-session-123'
+    _sessionId: string = 'demo-session-123',
+    fireContext?: FireContext
   ): Promise<QueryResponse> {
     this.isLoading = true;
     const startTime = Date.now();
 
+    // Generate system prompt based on fire context
+    const systemPrompt = fireContext
+      ? generateSystemPrompt(fireContext)
+      : DEFAULT_SYSTEM_PROMPT;
+
     // Determine agent role based on query content
     const agentRole = this.detectAgentRole(queryText);
 
+    // Debug: Log API key status
+    console.log('[AIBriefingService] API Key available:', !!GEMINI_API_KEY, 'Simulation mode:', this.useSimulation);
+
     // If we've hit rate limits, use simulation mode
     if (this.useSimulation || !GEMINI_API_KEY) {
-      console.log('[AIBriefingService] Using simulated response');
+      console.log('[AIBriefingService] Using simulated response - reason:', !GEMINI_API_KEY ? 'No API key' : 'Rate limited');
+      this.isLoading = false;
       return this.getSimulatedResponse(queryText, agentRole, startTime);
     }
+
+    console.log('[AIBriefingService] Making real Gemini API call...');
 
     try {
       const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -212,7 +248,7 @@ class AIBriefingService {
           contents: [
             {
               parts: [
-                { text: RANGER_SYSTEM_PROMPT },
+                { text: systemPrompt },
                 { text: `\n\nUser Question: ${queryText}` }
               ]
             }
