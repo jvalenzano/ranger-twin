@@ -25,6 +25,8 @@ import {
   PenTool,
   Settings,
   Pin,
+  Maximize,
+  Search,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -43,6 +45,7 @@ import SidebarLegend from './SidebarLegend';
 import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent, type TooltipContent } from '@/config/tooltipContent';
 import { useToolbarStore, TOOLBAR_TOOLS, type ToolId } from '@/stores/toolbarStore';
+import { useVisualAuditStore } from '@/stores/visualAuditStore';
 
 interface LifecycleStep {
   id: LifecyclePhase;
@@ -386,6 +389,10 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
   const togglePin = useToolbarStore((state) => state.togglePin);
   const resetToDefaults = useToolbarStore((state) => state.resetToDefaults);
 
+  const visualAuditStatus = useVisualAuditStore((state) => state.status);
+  const startVisualAudit = useVisualAuditStore((state) => state.startSelection);
+  const cancelVisualAudit = useVisualAuditStore((state) => state.cancel);
+
   // Close customize panel when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -413,6 +420,19 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     }
   };
 
+  const handleAuditClick = () => {
+    // Blur active element to dismiss any tooltips
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    if (visualAuditStatus === 'selecting') {
+      cancelVisualAudit();
+    } else {
+      startVisualAudit();
+    }
+  };
+
   // Tool action handlers
   const toolActions: Record<ToolId, () => void> = {
     'layer-sat': () => setActiveLayer('SAT'),
@@ -423,6 +443,8 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     'reset-north': resetBearing,
     'measure-distance': handleDistanceClick,
     'measure-area': handleAreaClick,
+    'visual-audit': handleAuditClick,
+    'layer-switch': () => { }, // Placeholder for layer switching UI
   };
 
   // Tool active states
@@ -433,6 +455,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'layer-ir': return activeLayer === 'IR';
       case 'measure-distance': return measureMode === 'distance';
       case 'measure-area': return measureMode === 'area';
+      case 'visual-audit': return visualAuditStatus === 'selecting';
       default: return false;
     }
   };
@@ -449,6 +472,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'reset-north': return <Compass size={size} />;
       case 'measure-distance': return <Ruler size={size} />;
       case 'measure-area': return <PenTool size={size} />;
+      case 'visual-audit': return <Maximize size={size} />;
     }
   };
 
@@ -463,6 +487,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       'reset-north': tooltipContent.mapControls.resetNorth,
       'measure-distance': tooltipContent.mapControls.measureDistance,
       'measure-area': tooltipContent.mapControls.measureArea,
+      'visual-audit': tooltipContent.mapControls.visualAudit,
     };
     return tooltipMap[toolId] || null;
   };

@@ -23,6 +23,8 @@ import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
 import { useActiveLayer, type MapLayerType } from '@/stores/mapStore';
 import { usePreferencesStore } from '@/stores/preferencesStore';
+import { useActiveFire } from '@/stores/fireContextStore';
+import { FireSelector } from '@/components/fire';
 
 // Timezone options relevant for USFS operations
 const TIMEZONE_OPTIONS = [
@@ -151,6 +153,12 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   const activeLayer = useActiveLayer();
   const tooltipsEnabled = usePreferencesStore((state) => state.tooltipsEnabled);
   const toggleTooltips = usePreferencesStore((state) => state.toggleTooltips);
+  const activeFire = useActiveFire();
+
+  // Shorten forest name for breadcrumb display
+  const shortForestName = activeFire.forest
+    .replace(' National Forest', ' NF')
+    .replace('National Forest', 'NF');
 
   // Default to Pacific time (Willamette NF is in Oregon)
   const [selectedTimezone, setSelectedTimezone] = useState('America/Los_Angeles');
@@ -203,9 +211,9 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
     <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-4 md:px-8">
       {/* Left side - Breadcrumb with layer info */}
       <div className="flex items-center gap-2 text-text-secondary text-[11px] md:text-[12px] font-medium tracking-wide ml-12 md:ml-16">
-        <span className="hidden sm:inline">Willamette NF</span>
+        <span className="hidden sm:inline">{shortForestName}</span>
         <ChevronRight size={14} className="opacity-40 hidden sm:inline" />
-        <span>Cedar Creek Fire</span>
+        <FireSelector />
         <ChevronRight size={14} className="opacity-40" />
         <span className={`${PHASE_TEXT_COLORS[activePhase]} font-semibold transition-all duration-300`}>
           {PHASE_LABELS[activePhase]}

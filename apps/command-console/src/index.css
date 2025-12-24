@@ -119,6 +119,26 @@
   padding: 4px 8px;
 }
 
+/* Site Analysis Button in Popups */
+.ranger-popup .site-analysis-btn {
+  min-height: 44px; /* Glove-friendly touch target */
+}
+
+.ranger-popup .site-analysis-btn:active {
+  transform: scale(0.98);
+}
+
+/* Chip selection feedback */
+.quick-query-chip-selected {
+  animation: chip-select 0.15s ease-out;
+}
+
+@keyframes chip-select {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
 /* Measurement Tool - Force crosshair cursor on map canvas when measuring */
 .measuring-active,
 .measuring-active canvas,

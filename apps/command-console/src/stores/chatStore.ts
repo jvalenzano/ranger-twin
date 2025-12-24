@@ -11,6 +11,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import aiBriefingService, { type AgentRole } from '@/services/aiBriefingService';
+import { useFireContextStore } from '@/stores/fireContextStore';
 
 // localStorage configuration
 const STORAGE_KEY = 'ranger-chat-history';
@@ -124,8 +125,11 @@ export const useChatStore = create<ChatState>()(
         });
 
         try {
-          // Query the AI
-          const response = await aiBriefingService.query(query);
+          // Get the active fire context for dynamic prompts
+          const activeFire = useFireContextStore.getState().activeFire;
+
+          // Query the AI with fire context
+          const response = await aiBriefingService.query(query, 'demo-session-123', activeFire);
 
           if (response.success && response.response) {
             const assistantMessage: ChatMessage = {

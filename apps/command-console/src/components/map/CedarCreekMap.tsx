@@ -16,6 +16,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers, type MapFeatureId } from '@/stores/mapStore';
 import { useMeasureMode } from '@/stores/measureStore';
+import { useActiveFire, useActiveFireId } from '@/stores/fireContextStore';
 import MeasureTool from './MeasureTool';
 
 // MapTiler tile URLs
@@ -68,6 +69,7 @@ const CedarCreekMap: React.FC = () => {
   const dataLoaded = useRef(false);
   const activePopup = useRef<maplibregl.Popup | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const prevFireIdRef = useRef<string | null>(null);
 
   const activeLayer = useActiveLayer();
   const measureMode = useMeasureMode();
@@ -78,6 +80,10 @@ const CedarCreekMap: React.FC = () => {
   const setCamera = useMapStore((state) => state.setCamera);
   const resetBearing = useMapStore((state) => state.resetBearing);
   const zoomIn = useMapStore((state) => state.zoomIn);
+
+  // Fire context for dynamic positioning
+  const activeFire = useActiveFire();
+  const activeFireId = useActiveFireId();
   const zoomOut = useMapStore((state) => state.zoomOut);
   const setActiveLayer = useMapStore((state) => state.setActiveLayer);
   const setHoveredFeature = useMapStore((state) => state.setHoveredFeature);
@@ -492,6 +498,7 @@ const CedarCreekMap: React.FC = () => {
       pitch: camera.pitch,
       maxPitch: 85,
       attributionControl: false,
+      preserveDrawingBuffer: true,
     });
 
     // Add compact attribution control to bottom-left
@@ -500,6 +507,7 @@ const CedarCreekMap: React.FC = () => {
     // Load GeoJSON data once map is ready
     map.current.on('load', () => {
       if (map.current) {
+        useMapStore.getState().setMapInstance(map.current);
         loadDataLayers(map.current);
         setMapReady(true);
       }
@@ -537,66 +545,117 @@ const CedarCreekMap: React.FC = () => {
       if (!feature || !feature.properties) return;
 
       const props = feature.properties;
+      const layerId = feature.layer.id as 'trail-damage-points' | 'timber-plots-points' | 'burn-severity-fill';
 
       // Close existing popup (Singleton)
       if (activePopup.current) {
         activePopup.current.remove();
       }
 
-      let content = '';
-      if (feature.layer.id === 'trail-damage-points') {
-        content = `
-          <div class="p-2">
-            <div class="font-bold text-sm">${props.trail_name}</div>
-            <div class="text-xs text-amber-400">${props.type.replace('_', ' ')}</div>
-            <div class="text-xs mt-1">${props.description}</div>
-            <div class="text-xs mt-1 text-red-400">Severity: ${props.severity}/5</div>
-          </div>
+      // Create popup content as DOM element for event handling
+      const popupContent = document.createElement('div');
+      popupContent.className = 'p-2';
+
+      // Build content based on feature type
+      let headerHtml = '';
+      let detailsHtml = '';
+      let featureName = '';
+
+      if (layerId === 'trail-damage-points') {
+        featureName = props.trail_name || 'Unknown Trail';
+        headerHtml = `
+          <div class="font-bold text-sm">${props.trail_name}</div>
+          <div class="text-xs text-amber-400">${(props.type || '').replace('_', ' ')}</div>
         `;
-      } else if (feature.layer.id === 'timber-plots-points') {
+        detailsHtml = `
+          <div class="text-xs mt-1">${props.description || ''}</div>
+          <div class="text-xs mt-1 text-red-400">Severity: ${props.severity}/5</div>
+        `;
+      } else if (layerId === 'timber-plots-points') {
+        featureName = `Plot ${props.plot_id}`;
         const priorityColor = props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
           props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
             props.priority === 'MEDIUM' ? PRIORITY_COLORS.MEDIUM :
               PRIORITY_COLORS.LOW;
-
-        content = `
-          <div class="p-2">
-            <div class="font-bold text-sm">Plot ${props.plot_id}</div>
-            <div class="text-xs text-cyan-400">${props.stand_type}</div>
-            <div class="text-xs mt-1">MBF/acre: ${props.mbf_per_acre}</div>
-            <div class="text-xs">Value/acre: $${props.salvage_value_per_acre?.toLocaleString()}</div>
-            <div class="text-xs mt-1 font-medium" style="color: ${priorityColor}">Priority: ${props.priority}</div>
-          </div>
+        headerHtml = `
+          <div class="font-bold text-sm">Plot ${props.plot_id}</div>
+          <div class="text-xs text-cyan-400">${props.stand_type}</div>
         `;
-      } else if (feature.layer.id === 'burn-severity-fill') {
+        detailsHtml = `
+          <div class="text-xs mt-1">MBF/acre: ${props.mbf_per_acre}</div>
+          <div class="text-xs">Value/acre: $${props.salvage_value_per_acre?.toLocaleString()}</div>
+          <div class="text-xs mt-1 font-medium" style="color: ${priorityColor}">Priority: ${props.priority}</div>
+        `;
+      } else if (layerId === 'burn-severity-fill') {
+        featureName = props.name || 'Burn Zone';
         const severityColor = props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
           props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
             SEVERITY_COLORS.LOW;
-
-        content = `
-          <div class="p-2">
-            <div class="font-bold text-sm">${props.name}</div>
-            <div class="text-xs" style="color: ${severityColor}">${props.severity} Severity</div>
-            <div class="text-xs mt-1">${props.acres?.toLocaleString()} acres</div>
-            <div class="text-xs">dNBR: ${props.dnbr_mean}</div>
-          </div>
+        headerHtml = `
+          <div class="font-bold text-sm">${props.name}</div>
+          <div class="text-xs" style="color: ${severityColor}">${props.severity} Severity</div>
+        `;
+        detailsHtml = `
+          <div class="text-xs mt-1">${props.acres?.toLocaleString()} acres</div>
+          <div class="text-xs">dNBR: ${props.dnbr_mean}</div>
         `;
       }
 
-      if (content) {
-        const popup = new maplibregl.Popup({ className: 'ranger-popup' })
-          .setLngLat(e.lngLat)
-          .setHTML(content)
-          .addTo(map.current!);
+      // Assemble popup HTML with Site Analysis button
+      popupContent.innerHTML = `
+        ${headerHtml}
+        ${detailsHtml}
+        <button class="site-analysis-btn mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-accent-cyan/20 hover:bg-accent-cyan/30 border border-accent-cyan/40 hover:border-accent-cyan/60 text-accent-cyan rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Analyze Site
+        </button>
+        <div class="text-[9px] text-center text-text-muted mt-1">Cross-reference with USFS records</div>
+      `;
 
-        activePopup.current = popup;
-        popup.on('close', () => {
-          if (activePopup.current === popup) {
-            activePopup.current = null;
-          }
+      // Attach click handler to button
+      const analyzeBtn = popupContent.querySelector('.site-analysis-btn');
+      analyzeBtn?.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+
+        // Get coordinates from feature geometry
+        const coords = feature.geometry.type === 'Point'
+          ? feature.geometry.coordinates as [number, number]
+          : e.lngLat.toArray() as [number, number];
+
+        // Import store action dynamically to avoid hook issues
+        import('@/stores/visualAuditStore').then(({ useVisualAuditStore }) => {
+          useVisualAuditStore.getState().startFeatureAnalysis({
+            featureId: props.damage_id || props.plot_id || props.zone_id || String(feature.id),
+            featureType: layerId,
+            featureName,
+            properties: { ...props },
+            coordinates: coords,
+          });
         });
-      }
+
+        // Close popup
+        if (activePopup.current) {
+          activePopup.current.remove();
+          activePopup.current = null;
+        }
+      });
+
+      // Create and show popup using setDOMContent
+      const popup = new maplibregl.Popup({ className: 'ranger-popup' })
+        .setLngLat(e.lngLat)
+        .setDOMContent(popupContent)
+        .addTo(map.current!);
+
+      activePopup.current = popup;
+      popup.on('close', () => {
+        if (activePopup.current === popup) {
+          activePopup.current = null;
+        }
+      });
     });
+
 
     // Enhanced hover handler with visual feedback
     map.current.on('mousemove', (e) => {
@@ -930,6 +989,44 @@ const CedarCreekMap: React.FC = () => {
       });
     }
   }, [camera.center[0], camera.center[1], camera.zoom, camera.bearing, camera.pitch]);
+
+  // Handle fire context changes - fly to new fire location
+  useEffect(() => {
+    if (!map.current || !mapReady) return;
+
+    // Skip initial render - only respond to actual fire switches
+    if (prevFireIdRef.current === null) {
+      prevFireIdRef.current = activeFireId;
+      return;
+    }
+
+    // Only fly if fire actually changed
+    if (prevFireIdRef.current !== activeFireId) {
+      prevFireIdRef.current = activeFireId;
+
+      console.log(`[CedarCreekMap] Fire context changed to: ${activeFire.name}`);
+
+      // Fly to the new fire's centroid
+      isInternalMove.current = true;
+      map.current.flyTo({
+        center: activeFire.centroid,
+        zoom: 10,
+        duration: 2000,
+        essential: true,
+      });
+
+      // Update the map store camera
+      setCamera({
+        center: activeFire.centroid,
+        zoom: 10,
+      });
+
+      // Reset flag after animation
+      setTimeout(() => {
+        isInternalMove.current = false;
+      }, 2500);
+    }
+  }, [activeFireId, activeFire.centroid, activeFire.name, mapReady, setCamera]);
 
   // Determine if measuring is active for cursor styling
   const isMeasuring = measureMode !== null;

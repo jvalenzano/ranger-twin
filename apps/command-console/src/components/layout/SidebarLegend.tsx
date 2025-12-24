@@ -111,14 +111,17 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                                     Map layer key
                                 </span>
                             </div>
-                            {/* Detach button */}
+                            {/* Detach button - using div to avoid button-in-button DOM error */}
                             <Tooltip content={{ title: 'Float legend', description: 'Detach legend to drag over map' }} position="top">
-                                <button
+                                <div
+                                    role="button"
+                                    tabIndex={0}
                                     onClick={handleDetach}
-                                    className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-white/10 text-text-muted hover:text-accent-cyan transition-all flex-shrink-0"
+                                    onKeyDown={(e) => e.key === 'Enter' && handleDetach(e as unknown as React.MouseEvent)}
+                                    className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-white/10 text-text-muted hover:text-accent-cyan transition-all flex-shrink-0 cursor-pointer"
                                 >
                                     <PanelRightOpen size={12} />
-                                </button>
+                                </div>
                             </Tooltip>
                             {/* Action chevron - matches workflow items */}
                             {legendExpanded ? (
@@ -139,9 +142,8 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                     {/* Label (collapsed mode) - matches workflow collapsed style */}
                     {!isExpanded && (
                         <span
-                            className={`text-[8px] font-bold tracking-wider uppercase transition-all group-hover:opacity-100 ${
-                                legendExpanded ? 'text-accent-cyan opacity-100' : 'text-text-muted opacity-60'
-                            }`}
+                            className={`text-[8px] font-bold tracking-wider uppercase transition-all group-hover:opacity-100 ${legendExpanded ? 'text-accent-cyan opacity-100' : 'text-text-muted opacity-60'
+                                }`}
                         >
                             KEY
                         </span>
