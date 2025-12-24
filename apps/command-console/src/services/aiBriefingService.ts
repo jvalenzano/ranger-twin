@@ -59,9 +59,9 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
   'nepa-advisor': 'nepa_advisor',
 };
 
-// Gemini API key from environment - Updated per ADR-003 (2025-12-22)
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+// OpenRouter API key from environment - Updated per ADR-004 (2025-12-24)
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 /**
  * Generate system prompt based on fire context
@@ -227,36 +227,40 @@ class AIBriefingService {
     const agentRole = this.detectAgentRole(queryText);
 
     // Debug: Log API key status
-    console.log('[AIBriefingService] API Key available:', !!GEMINI_API_KEY, 'Simulation mode:', this.useSimulation);
+    console.log('[AIBriefingService] API Key available:', !!OPENROUTER_API_KEY, 'Simulation mode:', this.useSimulation);
 
     // If we've hit rate limits, use simulation mode
-    if (this.useSimulation || !GEMINI_API_KEY) {
-      console.log('[AIBriefingService] Using simulated response - reason:', !GEMINI_API_KEY ? 'No API key' : 'Rate limited');
+    if (this.useSimulation || !OPENROUTER_API_KEY) {
+      console.log('[AIBriefingService] Using simulated response - reason:', !OPENROUTER_API_KEY ? 'No API key' : 'Rate limited');
       this.isLoading = false;
       return this.getSimulatedResponse(queryText, agentRole, startTime);
     }
 
-    console.log('[AIBriefingService] Making real Gemini API call...');
+    console.log('[AIBriefingService] Making real OpenRouter API call...');
 
     try {
-      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(OPENROUTER_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://ranger-demo.vercel.app', // Required by OpenRouter
+          'X-Title': 'RANGER Recovery Coordinator', // Optional
         },
         body: JSON.stringify({
-          contents: [
+          model: 'google/gemini-2.0-flash-exp:free', // Using free tier for now
+          messages: [
             {
-              parts: [
-                { text: systemPrompt },
-                { text: `\n\nUser Question: ${queryText}` }
-              ]
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: queryText
             }
           ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1024,
-          }
+          temperature: 0.7,
+          max_tokens: 1024,
         }),
       });
 
@@ -280,7 +284,7 @@ class AIBriefingService {
       }
 
       const data = await response.json();
-      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated';
+      const answer = data.choices?.[0]?.message?.content || 'No response generated';
 
       const adaptedResponse: QueryResponse = {
         success: true,

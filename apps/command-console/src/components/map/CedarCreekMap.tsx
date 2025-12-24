@@ -136,8 +136,13 @@ const CedarCreekMap: React.FC = () => {
   const loadDataLayers = useCallback(async (mapInstance: maplibregl.Map) => {
     if (dataLoaded.current) return;
 
+    // Use dynamic path based on active fire's fixtures path
+    const fixturesPath = activeFire.fixturesPath || 'cedar-creek';
+    const geojsonUrl = `/fixtures/${fixturesPath}-geojson.json`;
+
     try {
-      const response = await fetch('/fixtures/cedar-creek-geojson.json');
+      console.log(`[CedarCreekMap] Loading GeoJSON from: ${geojsonUrl}`);
+      const response = await fetch(geojsonUrl);
       const data = await response.json();
 
       // Add fire perimeter source and layer
@@ -395,11 +400,11 @@ const CedarCreekMap: React.FC = () => {
       });
 
       dataLoaded.current = true;
-      console.log('[CedarCreekMap] GeoJSON data layers loaded');
+      console.log('[CedarCreekMap] GeoJSON data layers loaded for:', activeFire.fire_id);
     } catch (error) {
       console.error('[CedarCreekMap] Failed to load GeoJSON data:', error);
     }
-  }, []);
+  }, [activeFire.fixturesPath, activeFire.fire_id]);
 
   // Initialize map
   useEffect(() => {
@@ -728,6 +733,56 @@ const CedarCreekMap: React.FC = () => {
       }
     };
   }, [loadDataLayers]);
+
+  // Handle fire context changes - reload GeoJSON when fire switches
+  const previousFireIdRef = useRef(activeFireId);
+  useEffect(() => {
+    if (!map.current || !mapReady) return;
+    if (previousFireIdRef.current === activeFireId) return;
+
+    console.log(`[CedarCreekMap] Fire context changed: ${previousFireIdRef.current} -> ${activeFireId}`);
+    previousFireIdRef.current = activeFireId;
+
+    const mapInstance = map.current;
+
+    // Remove existing GeoJSON sources and layers
+    const sourcesToRemove = ['fire-perimeter', 'burn-severity', 'trail-damage', 'timber-plots', 'trails'];
+    const layersToRemove = [
+      'fire-perimeter-line',
+      'burn-severity-fill', 'burn-severity-outline',
+      'burn-severity-ir-fill', 'burn-severity-ir-outline',
+      'trail-damage-points', 'trail-damage-labels',
+      'timber-plots-circles', 'timber-plot-labels',
+      'trails-line',
+    ];
+
+    // Remove layers first (before sources)
+    layersToRemove.forEach((layerId) => {
+      if (mapInstance.getLayer(layerId)) {
+        mapInstance.removeLayer(layerId);
+      }
+    });
+
+    // Then remove sources
+    sourcesToRemove.forEach((sourceId) => {
+      if (mapInstance.getSource(sourceId)) {
+        mapInstance.removeSource(sourceId);
+      }
+    });
+
+    // Reset data loaded flag and reload
+    dataLoaded.current = false;
+    loadDataLayers(mapInstance);
+
+    // Fly to new fire's centroid
+    if (activeFire.centroid) {
+      mapInstance.flyTo({
+        center: activeFire.centroid,
+        zoom: 10,
+        duration: 2000,
+      });
+    }
+  }, [activeFireId, mapReady, loadDataLayers, activeFire.centroid]);
 
   // Handle base layer changes
   const updateLayer = useCallback(() => {

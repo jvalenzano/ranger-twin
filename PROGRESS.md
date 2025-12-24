@@ -79,6 +79,15 @@ Last updated: 2025-12-22 (Monday)
 - [x] Add mobile responsive CSS utilities
 - [x] Add responsive breakpoints for sidebar, header, panels
 
+### Milestone 8: Site Analysis Feature ✅
+- [x] Implement feature-triggered analysis flow (`VisualAuditOverlay`)
+- [x] Create Quick Query Chips with context-aware templates
+- [x] Integrate real Gemini AI via `aiBriefingService`
+- [x] Implement Analysis History with localStorage persistence
+- [x] Create History Panel for viewing/downloading reports
+- [x] Migrate to OpenRouter for reliable API access (ADR-004)
+- [x] Clean up console errors and accessibility issues
+
 ## Complete
 
 ---
@@ -448,3 +457,58 @@ The RANGER Demo is ready for deployment:
 - Production polish (error handling, loading states, SEO)
 - **NEPA Advisor RAG** with Gemini File Search over FSM/FSH documents
 - **Gemini 3 Flash** migration across all agents (ADR-003)
+
+### 2025-12-24 - Site Analysis & OpenRouter Migration
+
+**Completed:**
+1. **Site Analysis Feature:**
+   - Implemented popup-triggered analysis workflow
+   - Created `QuickQueryChips` component with 2-column touch-friendly layout
+   - Added `siteAnalysisChips.ts` configuration with USFS-aligned query templates
+   - Updated `VisualAuditOverlay` to switch between 'area' and 'feature' modes
+
+2. **Real AI Integration:**
+   - Replaced demo simulation with live `aiBriefingService.query()` calls
+   - Migrated from direct Gemini API to **OpenRouter** (ADR-004) to resolve rate limiting
+   - Updated model to `gemini-2.0-flash-exp:free` via OpenRouter
+
+3. **Analysis History Persistence:**
+   - Created `analysisHistoryStore` with localStorage persistence
+   - Implemented `HistoryPanel` for viewing saved reports
+   - Added "Save" and "Download" (markdown) functionality to analysis results
+
+4. **Console Cleanup:**
+   - Fixed DOM nesting error in `SidebarLegend`
+   - Added `mobile-web-app-capable` meta tag
+   - Cleared deprecated warnings
+
+**Files Created:**
+- `ADR-004-site-analysis-openrouter.md`
+- `AnalysisHistoryPanel.tsx`
+- `QuickQueryChips.tsx`
+- `siteAnalysisChips.ts`
+- `analysisHistoryStore.ts`
+- Feature specs in `docs/features/`
+
+**Commit:** `de5806f` - feat(site-analysis): Add feature-triggered AI analysis with Quick Query Chips
+
+### 2025-12-24 - OpenRouter Integration & Configuration
+
+**Completed:**
+1. **OpenRouter Migration:**
+   - Switched from direct Google Gemini API to OpenRouter for improved reliability.
+   - Updated `aiBriefingService.ts` to use OpenRouter endpoint and headers.
+   - Added `VITE_OPENROUTER_API_KEY` to environment configuration.
+
+2. **MapTiler Configuration:**
+   - Verified and updated `VITE_MAPTILER_API_KEY` in `.env.local`.
+   - Updated `.env.example` to reflect current requirements.
+
+**Files Modified:**
+- `apps/command-console/.env.example`
+- `apps/command-console/README.md`
+- `apps/command-console/src/services/aiBriefingService.ts`
+- `apps/command-console/src/components/map/CedarCreekMap.tsx`
+
+**Commit:** `pending` - feat: Implement OpenRouter integration and update MapTiler config
+
