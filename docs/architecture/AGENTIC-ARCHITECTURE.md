@@ -339,10 +339,10 @@ Displayed in UI via `ReasoningChain` component.
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
-│  Vertex AI (Gemini 2.5 Flash)                               │
-│  - Agent reasoning                                           │
-│  - Tool selection                                            │
-│  - Response synthesis                                        │
+│  Vertex AI (Gemini 3 Flash)                                 │
+│  - Released Dec 17, 2025                                     │
+│  - 78% SWE-bench • 3x faster than 2.5 Pro                   │
+│  - Agent reasoning, tool selection, response synthesis       │
 └─────────────────────────────────────────────────────────────┘
                       │
 ┌─────────────────────▼───────────────────────────────────────┐

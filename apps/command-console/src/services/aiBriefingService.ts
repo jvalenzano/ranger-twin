@@ -53,9 +53,9 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
   'nepa-advisor': 'nepa_advisor',
 };
 
-// Gemini API key from environment
+// Gemini API key from environment - Updated per ADR-003 (2025-12-22)
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent';
 
 // System prompt for RANGER context
 const RANGER_SYSTEM_PROMPT = `You are the Recovery Coordinator for RANGER, an AI-powered forest recovery platform. You help forest rangers analyze post-fire recovery operations for the Cedar Creek Fire (2022) in the Willamette National Forest, Oregon.

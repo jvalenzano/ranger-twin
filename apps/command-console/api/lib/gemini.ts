@@ -2,7 +2,8 @@
  * Gemini Client Utility
  *
  * Provides a configured Gemini client for agent interactions.
- * Uses Gemini 1.5 Flash for fast responses suitable for demo.
+ * Uses Gemini 3 Flash for fast responses suitable for demo.
+ * Updated per ADR-003 (2025-12-22)
  */
 
 import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
@@ -23,7 +24,7 @@ const DEFAULT_CONFIG: GenerationConfig = {
  */
 export function getGeminiModel(config?: Partial<GenerationConfig>): GenerativeModel {
   return genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-3-flash',
     generationConfig: {
       ...DEFAULT_CONFIG,
       ...config,

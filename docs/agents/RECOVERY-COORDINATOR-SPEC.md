@@ -103,7 +103,7 @@ from google.adk.agents import Agent
 
 recovery_coordinator = Agent(
     name="recovery_coordinator",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003
     description="Main coordinator for RANGER. Routes to lifecycle specialists.",
     instruction="""
     You are the RANGER Recovery Coordinator. Your job is to:
@@ -205,7 +205,7 @@ def generate_summary(params: SummaryParams) -> ToolResult:
 
 | Component | Technology | Notes |
 |-----------|------------|-------|
-| **Root Agent** | Gemini 2.0 Flash | Cost-effective, high-speed orchestration |
+| **Root Agent** | Gemini 3 Flash | Cost-effective, high-speed orchestration (Updated per ADR-003) |
 | **Framework** | Google ADK | Native multi-agent support |
 | **State Store** | Redis | Per-session agent context and sub-agent output cache |
 | **API Gateway** | FastAPI | Unified entry point for the Command Console |

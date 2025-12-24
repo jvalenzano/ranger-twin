@@ -194,8 +194,10 @@ These are not optional. Every milestone must maintain:
 | State | Zustand |
 | Styling | Tailwind CSS |
 | Maps | MapLibre GL JS + MapTiler |
-| AI | Google Gemini (via Vercel Edge Functions) |
-| Hosting | Vercel |
+| AI | Gemini 3 Flash via Google ADK (see [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md)) |
+| RAG | Gemini File Search (FSM/FSH documents for NEPA Advisor) |
+| Agents | 5 FastAPI services (ports 8001-8005) + Recovery Coordinator |
+| Hosting | Vercel (frontend) / Docker (agents) |
 | Data | GeoJSON fixtures (Cedar Creek specific) |
 
 ---
@@ -222,22 +224,46 @@ Milestone 7 (Polish)       ←── Ship it
 
 ## Current Status
 
-| Milestone | Status |
-|-----------|--------|
-| Milestone 1 | Not Started |
-| Milestone 2 | Partial (fixtures exist, not on map) |
-| Milestone 3 | Spec Written |
-| Milestone 4 | Spec Written |
-| Milestone 5 | Not Started |
-| Milestone 6 | Not Started |
-| Milestone 7 | Not Started |
+**Last Updated:** 2025-12-22
+
+| Milestone | Status | Notes |
+|-----------|--------|-------|
+| Milestone 1: Living Map | ✅ Complete | MapLibre + MapTiler, 3D terrain, SAT/TER/IR toggle |
+| Milestone 2: Fire Story | ✅ Complete | Cedar Creek perimeter, burn severity, trails, timber plots |
+| Milestone 3: Guided Experience | ✅ Complete | 7-step demo tour with map sync |
+| Milestone 4: Intelligent Core | ✅ Complete | Gemini 3 Flash, 5 agents, ADK orchestration |
+| Milestone 5: Conversation | ✅ Complete | Chat with persistence, suggested queries |
+| Milestone 6: IR Layer | ✅ Complete | Thermal visualization mode |
+| Milestone 7: Polish | ✅ Complete | Loading states, error handling, SEO |
+| **Milestone 8: NEPA RAG** | ✅ Complete | File Search with FSM/FSH documents (ADR-003) |
 
 ---
 
-## Let's Go
+## Post-Launch Enhancements (Completed 2025-12-22)
 
-This document is the north star. Every task ties back to the goal:
+| Enhancement | Description |
+|-------------|-------------|
+| **Gemini 3 Flash Migration** | All agents updated to latest model per ADR-003 |
+| **NEPA Advisor File Search** | RAG over 5 indexed FSM/FSH regulatory documents |
+| **Agent Architecture Docs** | AGENTIC-ARCHITECTURE.md, agent specs updated |
+| **Floating Legend** | Detachable legend with tooltips |
+| **Chat Persistence** | Conversation history maintained across sessions |
+
+---
+
+## Related Documents
+
+- [SPRINT-FOCUS.md](./SPRINT-FOCUS.md) — Current development priorities
+- [PROGRESS.md](../PROGRESS.md) — Detailed session logs
+- [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) — AI stack decisions
+- [AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) — Agent system design
+
+---
+
+## Mission Accomplished
+
+This document was the north star. The goal has been achieved:
 
 > A fully functional demo that makes people say "Holy shit, this actually works."
 
-Start with Milestone 1. The map is the foundation.
+All 8 milestones are complete. The RANGER Demo is live and ready for stakeholder presentations.

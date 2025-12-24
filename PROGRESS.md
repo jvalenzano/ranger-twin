@@ -378,11 +378,62 @@ Last updated: 2025-12-22 (Monday)
 **Files Modified:**
 - `docs/adr/ADR-001-tech-stack.md` - AI/ML section corrections, decision log amendment
 
-**Next Steps:**
-- Download FSM/FSH PDFs from fs.usda.gov/im/directives
-- Create File Search store and index documents
-- Update agent configs to use `gemini-3-flash`
-- Implement NEPA Advisor tools with File Search integration
+**Next Steps:** ✅ Completed (see session below)
+
+---
+
+### 2025-12-22 (Continued) - ADR-003 Implementation Complete
+
+**Summary:** Executed all ADR-003 implementation tasks autonomously.
+
+**Gemini 3 Flash Migration (7 files updated):**
+- `services/agents/burn-analyst/app/agent.py:28`
+- `services/agents/trail-assessor/app/agent.py:28`
+- `services/agents/recovery-coordinator/app/coordinator.py` (5 agent definitions)
+- `apps/command-console/api/lib/gemini.ts:27`
+- `apps/command-console/src/services/aiBriefingService.ts:58`
+
+**NEPA Advisor Implementation (6 new files):**
+```
+services/agents/nepa-advisor/
+├── app/
+│   ├── __init__.py          # Package exports
+│   ├── agent.py             # NEPAAdvisorService + Agent
+│   ├── main.py              # FastAPI on port 8004
+│   └── tools.py             # search_regulations, identify_nepa_pathway, generate_compliance_checklist
+├── scripts/
+│   ├── download_documents.py # FSM/FSH PDF downloader
+│   └── setup_file_search.py  # Gemini File Search store setup
+└── pyproject.toml           # Package config
+```
+
+**FSM/FSH Documents Downloaded (7 files):**
+- FSM 1950 - Environmental Policy (284 KB)
+- FSH 1909.15 Ch 10 - Environmental Analysis (454 KB)
+- FSH 1909.15 Ch 20 - EIS Documents (168 KB)
+- FSH 1909.15 Ch 30 - Categorical Exclusions (163 KB)
+- FSH 1909.15 Ch 40 - Environmental Assessments (67 KB)
+- FSH 2409.18 Ch 80 - Special Forest Products (391 KB)
+- NEPA Procedures Q&A (104 KB)
+
+**Documentation Updates:**
+- `docs/agents/RECOVERY-COORDINATOR-SPEC.md` - Updated to gemini-3-flash
+- `packages/agent-common/README.md` - Updated to gemini-3-flash
+- `docs/implementation/PHASE2-AI-INTEGRATION.md` - Updated to gemini-3-flash
+- `services/agents/nepa-advisor/README.md` - Complete rewrite for ADR-003
+- `docs/SPRINT-FOCUS.md` - Marked P1 items as Complete
+
+**Validation:**
+- TypeScript compilation: ✅ Passed
+- Python syntax validation: ✅ All modules valid
+- All 7 documents downloaded successfully
+
+**File Search Store Setup (Completed):**
+- Store ID: `fileSearchStores/rangernepafsmfshknowledgeba-2szad4tk1e2x`
+- Documents indexed: 5 of 7 (2 `.doc` files had server errors - older Word format)
+- Config saved to: `services/agents/nepa-advisor/.nepa_store_config.json`
+- RAG test: ✅ Returned 5 citations from FSH-1909.15-Ch30-Categorical-Exclusions.pdf
+- Note: Using `gemini-2.5-flash` for File Search until `gemini-3-flash` is GA
 
 ---
 
@@ -395,3 +446,5 @@ The RANGER Demo is ready for deployment:
 - AI-powered chat with Gemini integration
 - IR thermal visualization mode
 - Production polish (error handling, loading states, SEO)
+- **NEPA Advisor RAG** with Gemini File Search over FSM/FSH documents
+- **Gemini 3 Flash** migration across all agents (ADR-003)

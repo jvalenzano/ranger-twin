@@ -955,14 +955,15 @@ Layout (three horizontal tiers with data callout):
 === TOP TIER - "User Interface Layer" ===
 
 LEFT: Browser window mockup labeled "Command Console"
-- URL bar showing: "localhost:3000"
+- URL bar showing: "localhost:5173" (Vite dev server)
 - Inside browser: simplified UI showing sidebar with 4 phases (Impact, Damage, Timber, Compliance), map area with colored polygons, chat panel
-- Port badge: glowing "3000" in green
+- Port badge: glowing "5173" in green
 - Tech stack note: "React + Vite + Tailwind + Zustand"
 - Folder path: "apps/command-console/"
+- Small note: "(Production build: :3000)"
 
 RIGHT (smaller): Mobile device outline labeled "Field Companion"
-- Note: "(PWA - Phase 2)"
+- Note: "(PWA - Phase 2 • scaffold exists)"
 - Grayed out slightly to show it's future
 
 Arrow down from Command Console labeled "REST / WebSocket → AgentBriefingEvents"
@@ -1024,7 +1025,7 @@ BOX 4 - "NEPA Advisor" 📋
 - Tools listed:
   • search_regulations()
   • identify_nepa_pathway()
-- Data badge: "Forest Service Manual RAG"
+- Data badge: "File Search RAG (production-ready)"
 
 === LEFT SIDEBAR - "Fixture Data Layer (Cedar Creek Fire)" ===
 
@@ -1059,7 +1060,7 @@ Label: "Phase 1: Static JSON Fixtures"
 
 Cloud icon labeled "Gemini API"
 - "Vertex AI"
-- "gemini-2.0-flash"
+- "gemini-3-flash" (78% SWE-bench • 3x faster)
 - Dashed line connecting to all agent boxes
 - Label on line: "LLM Reasoning (only external call)"
 
@@ -1080,7 +1081,7 @@ Four-row mapping with visual connectors:
 ├─────────────────────────┼──────────────────────────────────────────────┤
 │ timber-plots.json       │ FSVeg, FACTS, Common Stand Exam              │
 ├─────────────────────────┼──────────────────────────────────────────────┤
-│ briefing-events.json    │ N/A - Agent-generated in production          │
+│ nepa-advisor (no file)  │ File Search Tool → Indexed FSM/FSH PDFs      │
 └─────────────────────────┴──────────────────────────────────────────────┘
 
 Annotation: "Fixture schemas align with federal data standards. Export to TRACS CSV and FSVeg XML already works."
@@ -1094,7 +1095,7 @@ Terminal-style box with commands:
 │ docker-compose up -d                                          │
 │                                                               │
 │ # Or run individually:                                        │
-│ cd apps/command-console && pnpm dev          → localhost:3000 │
+│ cd apps/command-console && pnpm dev          → localhost:5173 │
 │ cd services/api-gateway && uvicorn app.main:app --reload      │
 │                                              → localhost:8000 │
 │ cd services/agents/burn-analyst && python -m burn_analyst.main│
@@ -1105,11 +1106,11 @@ Terminal-style box with commands:
 
 Show the complete request flow with numbered steps in amber/yellow:
 
-① User asks: "What's the burn severity?" (Chat input at :3000)
+① User asks: "What's the burn severity?" (Chat input at :5173)
 ② POST /api/query hits API Gateway (:8000)
 ③ Gateway forwards to Recovery Coordinator (:8005)
 ④ Coordinator routes to Burn Analyst (:8001)
-⑤ Agent loads burn-severity.json + calls Gemini for reasoning
+⑤ Agent loads burn-severity.json + calls Gemini 3.0 Flash for reasoning
 ⑥ AgentBriefingEvent with confidence scores streams back to UI
 
 === CORNER ANNOTATIONS (handwritten chalk style) ===

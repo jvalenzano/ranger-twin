@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Core agent logic
 burn_analyst_agent = Agent(
     name="burn_analyst",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in burn severity analysis and satellite imagery interpretation.",
     instruction="""
     You are the RANGER Burn Analyst. You process satellite imagery (Sentinel-2, Landsat) 

@@ -26,7 +26,7 @@ Vercel Edge Function (/api/query)
     ├── Inject fixture data as context
     │
     ▼
-Gemini API (gemini-1.5-flash)
+Gemini API (gemini-3-flash)  # Updated per ADR-003
     │
     ▼
 Structured AgentBriefingEvent
@@ -77,7 +77,7 @@ export async function generateContent(
   userQuery: string,
   context: string
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3-flash' });  // Updated per ADR-003
 
   const prompt = `${systemPrompt}
 
