@@ -734,7 +734,7 @@ This file is consumed by `CedarCreekMap.tsx` for:
 │                                                             │
 │                          ↓                                  │
 │                                                             │
-│              Agent Reasoning (Gemini 2.0)                   │
+│              Agent Reasoning (Gemini 3 Flash)               │
 │                          ↓                                  │
 │                                                             │
 │              AgentBriefingEvent Emission                    │
