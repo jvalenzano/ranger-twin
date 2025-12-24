@@ -1,0 +1,382 @@
+{
+  "metadata": {
+    "fire_id": "cedar-creek-2022",
+    "generated_at": "2022-12-01T10:00:00Z",
+    "source": "SIMULATION",
+    "schema_version": "1.1.0",
+    "description": "Pre-composed AgentBriefingEvent payloads for Phase 1 demo"
+  },
+  "events": [
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_burn_001",
+      "parent_event_id": null,
+      "correlation_id": "session_demo_001",
+      "timestamp": "2022-12-01T10:00:00Z",
+      "type": "insight",
+      "source_agent": "burn_analyst",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[-122.2, 43.8], [-121.9, 43.8], [-121.9, 43.6], [-122.2, 43.6], [-122.2, 43.8]]]
+          },
+          "properties": {
+            "label": "Cedar Creek Fire Perimeter",
+            "sector": "SW-1"
+          }
+        }
+      },
+      "content": {
+        "summary": "Cedar Creek Fire: Severe burn patterns detected across 81,000 acres (63.6% high severity).",
+        "detail": "Analysis of MTBS satellite imagery reveals 63.6% of the 127,341-acre fire perimeter experienced high-severity burn. Hills Creek drainage (SW-1) and central fire origin (CORE-1) show complete stand replacement with significant erosion risk. High severity: 81,041 acres. Moderate: 37,900 acres. Low: 8,400 acres.",
+        "suggested_actions": [
+          {
+            "action_id": "act_001",
+            "label": "Trigger Trail Assessment",
+            "target_agent": "trail_assessor",
+            "description": "Initiate damage inventory for trails in high-severity sectors SW-1, NW-1, CORE-1",
+            "rationale": "Trail network intersects all high-severity sectors; damage assessment needed before salvage access"
+          },
+          {
+            "action_id": "act_002",
+            "label": "View Severity Map",
+            "target_agent": "recovery_coordinator",
+            "description": "Display burn severity overlay on 3D terrain",
+            "rationale": "Visual context for severity distribution across fire perimeter"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.92,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "MTBS burn severity classification", "confidence": 0.95, "tier": 1},
+            {"source": "Sentinel-2 post-fire imagery", "confidence": 0.94, "tier": 1},
+            {"source": "dNBR threshold analysis", "confidence": 0.88, "tier": 1}
+          ],
+          "analysis_confidence": 0.92,
+          "recommendation_confidence": 0.90
+        },
+        "citations": [
+          {
+            "source_type": "MTBS",
+            "id": "cite_001",
+            "uri": "https://mtbs.gov/viewer/",
+            "excerpt": "Cedar Creek Fire burn severity mosaic, accessed 2022-10-01"
+          }
+        ],
+        "reasoning_chain": [
+          "Analyzing MTBS burn severity classification across fire perimeter",
+          "dNBR values range from 0.22 (low) to 0.81 (high) across 8 sectors",
+          "Identifying priority areas based on severity and slope interaction",
+          "SW-1 and CORE-1 combine high severity (dNBR >0.7) with steep slopes (>35%)",
+          "Recommending immediate assessment triggers for downstream agents"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_trail_001",
+      "parent_event_id": "evt_burn_001",
+      "correlation_id": "session_demo_001",
+      "timestamp": "2022-12-01T10:01:30Z",
+      "type": "insight",
+      "source_agent": "trail_assessor",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-122.0412, 43.7234]
+          },
+          "properties": {
+            "label": "Waldo Lake Bridge Failure",
+            "damage_id": "WL-001"
+          }
+        }
+      },
+      "content": {
+        "summary": "Critical trail infrastructure damage: 3 bridges destroyed, $447K in repairs needed across 40.3 miles.",
+        "detail": "Assessment of 5 trails reveals 16 damage points including 3 complete bridge failures. Hills Creek Trail requires $238K due to primary bridge loss and debris flow burial. Waldo Lake Trail is priority 1 for visitor access. Bridge failures: Waldo Lake (40ft timber), Bobby Lake (puncheon), Hills Creek (primary). 175+ hazard trees identified. 153 crew-days needed.",
+        "suggested_actions": [
+          {
+            "action_id": "act_003",
+            "label": "Trigger Timber Cruise",
+            "target_agent": "cruising_assistant",
+            "description": "Initiate salvage assessment for accessible high-value sectors in SW-1",
+            "rationale": "Hills Creek Trail repair enables salvage haul access to SW-1 priority timber"
+          },
+          {
+            "action_id": "act_004",
+            "label": "Export TRACS Work Orders",
+            "target_agent": "recovery_coordinator",
+            "description": "Generate TRACS-compatible CSV for work order submission",
+            "rationale": "Standardized format for district maintenance budget allocation"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.88,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "TRACS trail condition survey", "confidence": 0.90, "tier": 1},
+            {"source": "R6 maintenance cost standards", "confidence": 0.92, "tier": 1},
+            {"source": "Burn severity overlay correlation", "confidence": 0.85, "tier": 2}
+          ],
+          "analysis_confidence": 0.88,
+          "recommendation_confidence": 0.86
+        },
+        "citations": [
+          {
+            "source_type": "TRACS",
+            "id": "cite_002",
+            "uri": "ranger://tracs/fsh-2309.18",
+            "excerpt": "Trail Assessment and Condition Survey Standards, FSH 2309.18"
+          },
+          {
+            "source_type": "Willamette NF",
+            "id": "cite_003",
+            "uri": "ranger://wnf/trail-costs-fy2022",
+            "excerpt": "Trail Maintenance Cost Standards FY2022, Regional Supplement R6"
+          }
+        ],
+        "reasoning_chain": [
+          "Correlating burn severity with trail network intersections",
+          "Hills Creek Trail traverses SW-1 (highest severity); Waldo Lake Trail crosses NW-1 and NW-2",
+          "Prioritizing based on visitor use patterns and access criticality",
+          "Waldo Lake Trail: 15,000 annual visitors; Hills Creek: salvage access route",
+          "Generating TRACS-compatible work order estimates from R6 standard rates"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_timber_001",
+      "parent_event_id": "evt_trail_001",
+      "correlation_id": "session_demo_001",
+      "timestamp": "2022-12-01T10:03:00Z",
+      "type": "insight",
+      "source_agent": "cruising_assistant",
+      "severity": "warning",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-122.1278, 43.6478]
+          },
+          "properties": {
+            "label": "Plot 52-FOXTROT Premium Stand",
+            "plot_id": "52-FOXTROT"
+          }
+        }
+      },
+      "content": {
+        "summary": "Salvage opportunity: $13.9M in recoverable timber across 8,500 acres (230,350 MBF).",
+        "detail": "Cruise data from 6 plots indicates 230,350 MBF salvageable. Plot 52-FOXTROT in SW-1 contains premium large-diameter Douglas-fir ($3,225/acre) with immediate extraction priority. Blue stain degradation requires action within 18 months. Species mix: 45% Douglas-fir, 22% Lodgepole Pine, 12% Western Redcedar. Access constraint: Hills Creek bridge repair prerequisite.",
+        "suggested_actions": [
+          {
+            "action_id": "act_006",
+            "label": "Trigger NEPA Review",
+            "target_agent": "nepa_advisor",
+            "description": "Initiate regulatory compliance assessment for salvage EA",
+            "rationale": "230,350 MBF volume requires environmental analysis pathway determination"
+          },
+          {
+            "action_id": "act_007",
+            "label": "Export FSVeg Data",
+            "target_agent": "recovery_coordinator",
+            "description": "Generate FSVeg-compatible XML for NRM upload",
+            "rationale": "Cruise data meets Region 6 standards; ready for timber sale package"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.85,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "BAF 20 cruise plot data", "confidence": 0.90, "tier": 1},
+            {"source": "R6 salvage appraisal standards", "confidence": 0.88, "tier": 1},
+            {"source": "Severity-based acreage extrapolation", "confidence": 0.75, "tier": 2}
+          ],
+          "analysis_confidence": 0.85,
+          "recommendation_confidence": 0.82
+        },
+        "citations": [
+          {
+            "source_type": "FSVeg",
+            "id": "cite_004",
+            "uri": "ranger://fsveg/fsh-2409.12",
+            "excerpt": "Common Stand Exam Field Guide, FSH 2409.12"
+          },
+          {
+            "source_type": "PNW Region",
+            "id": "cite_005",
+            "uri": "ranger://r6/salvage-appraisal-2022",
+            "excerpt": "Salvage Timber Appraisal Standards, R6 Supplement 2022"
+          }
+        ],
+        "reasoning_chain": [
+          "Analyzing plot data for salvage value and extraction feasibility",
+          "6 plots sampled using BAF 20; extrapolated to 8,500 salvageable acres",
+          "Prioritizing by timber value, access, and time sensitivity",
+          "Large-diameter Douglas-fir degrades fastest; SW-1 has best road access post-repair",
+          "Cross-referencing trail damage: HC-001 bridge repair ($120K) enables $3.2M access"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_nepa_001",
+      "parent_event_id": "evt_timber_001",
+      "correlation_id": "session_demo_001",
+      "timestamp": "2022-12-01T10:04:30Z",
+      "type": "insight",
+      "source_agent": "nepa_advisor",
+      "severity": "warning",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": null
+      },
+      "content": {
+        "summary": "Salvage EA pathway identified: Emergency situation determination recommended (6-month timeline).",
+        "detail": "Analysis of FSM 2520 and 36 CFR 220.6 indicates Cedar Creek salvage qualifies for emergency situation categorical exclusion. Given $13.9M value and 18-month degradation window, recommend expedited EA. Required: Level III cultural resource survey for SW-1. Spotted owl: No known activity centers within 0.25 miles. Waldo Lake Scenic Area buffer required for NW-1 viewshed.",
+        "suggested_actions": [
+          {
+            "action_id": "act_009",
+            "label": "Generate EA Outline",
+            "target_agent": "recovery_coordinator",
+            "description": "Create draft Environmental Assessment structure with Cedar Creek context",
+            "rationale": "Template-based EA accelerates documentation while maintaining compliance"
+          },
+          {
+            "action_id": "act_010",
+            "label": "View Regulatory Constraints",
+            "target_agent": "recovery_coordinator",
+            "description": "Display sensitive areas and buffer zones on map",
+            "rationale": "Visual overlay of owl habitat, scenic viewshed, and cultural constraints"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.82,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "FSM 2520 emergency situation criteria", "confidence": 0.95, "tier": 1},
+            {"source": "36 CFR 220.6 CE provisions", "confidence": 0.95, "tier": 1},
+            {"source": "Spotted owl activity center database", "confidence": 0.80, "tier": 2},
+            {"source": "Cultural resource sensitivity model", "confidence": 0.70, "tier": 2}
+          ],
+          "analysis_confidence": 0.82,
+          "recommendation_confidence": 0.78
+        },
+        "citations": [
+          {
+            "source_type": "FSM",
+            "id": "cite_006",
+            "uri": "https://www.fs.usda.gov/im/directives/fsm/2500/wo_2520.docx",
+            "excerpt": "FSM 2520.4 Emergency Situations - deteriorating resource condition threshold"
+          },
+          {
+            "source_type": "CFR",
+            "id": "cite_007",
+            "uri": "https://www.ecfr.gov/current/title-36/chapter-II/part-220",
+            "excerpt": "36 CFR 220.6(e)(6) permits salvage up to 250 acres without extraordinary circumstances"
+          },
+          {
+            "source_type": "FSH",
+            "id": "cite_008",
+            "uri": "ranger://fsh/1909.15-ch30",
+            "excerpt": "FSH 1909.15 Chapter 30 - Categorical Exclusion procedures"
+          }
+        ],
+        "reasoning_chain": [
+          "Evaluating NEPA pathway options for post-fire salvage",
+          "FSM 2520.4 establishes emergency situation criteria; Cedar Creek meets deteriorating resource threshold",
+          "36 CFR 220.6(e)(6) permits salvage up to 250 acres without extraordinary circumstances",
+          "No designated wilderness, wild & scenic rivers, or inventoried roadless areas in SW-1",
+          "Recommending hybrid approach: CE for initial 250 acres; EA for remaining 8,250 acres parallel"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_coordinator_001",
+      "parent_event_id": null,
+      "correlation_id": "session_demo_001",
+      "timestamp": "2022-12-01T10:05:00Z",
+      "type": "action_required",
+      "source_agent": "recovery_coordinator",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "modal_interrupt",
+        "geo_reference": null
+      },
+      "content": {
+        "summary": "Cedar Creek Recovery Synthesis: Integrated action plan ready. $120K bridge investment unlocks $13.9M salvage value.",
+        "detail": "Cross-agent analysis complete. Critical dependency: Hills Creek bridge repair ($120K) unlocks $13.9M in salvage and enables trail restoration. Recommended sequence: 1) Emergency bridge repair, 2) Salvage CE for 250 acres, 3) Parallel EA for full project, 4) Trail restoration concurrent with salvage. Total investment: $2.55M. Projected return: 27:1 ROI. Risk: Spotted owl breeding (Feb-Jul) may delay NW access.",
+        "suggested_actions": [
+          {
+            "action_id": "act_011",
+            "label": "Approve Recovery Plan",
+            "target_agent": "recovery_coordinator",
+            "description": "Advance to detailed project planning phase",
+            "rationale": "All specialist agents have provided input; synthesis complete"
+          },
+          {
+            "action_id": "act_012",
+            "label": "Export Full Briefing",
+            "target_agent": "recovery_coordinator",
+            "description": "Download complete recovery analysis as PDF with maps and citations",
+            "rationale": "Shareable format for leadership review and stakeholder briefing"
+          },
+          {
+            "action_id": "act_013",
+            "label": "Request Human Review",
+            "target_agent": "recovery_coordinator",
+            "description": "Flag synthesis for District Ranger review before proceeding",
+            "rationale": "High-stakes decision warrants human oversight"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.91,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "Burn Analyst severity assessment", "confidence": 0.92, "tier": 1, "notes": "evt_burn_001"},
+            {"source": "Trail Assessor damage inventory", "confidence": 0.88, "tier": 1, "notes": "evt_trail_001"},
+            {"source": "Cruising Assistant salvage analysis", "confidence": 0.85, "tier": 1, "notes": "evt_timber_001"},
+            {"source": "NEPA Advisor compliance guidance", "confidence": 0.82, "tier": 1, "notes": "evt_nepa_001"}
+          ],
+          "analysis_confidence": 0.91,
+          "recommendation_confidence": 0.89
+        },
+        "citations": [],
+        "reasoning_chain": [
+          "Synthesizing outputs from 4 specialist agents",
+          "Burn severity → trail damage → timber value → regulatory pathway forms coherent narrative",
+          "Identifying cross-domain dependencies: HC-001 bridge in both trail and timber outputs",
+          "Calculating integrated ROI: trail repair enables timber access; salvage funds restoration",
+          "Time-sensitivity of 18-month salvage window drives recommended action sequence"
+        ]
+      }
+    }
+  ],
+  "demo_sequence": {
+    "description": "Recommended order for demo playback via cascade triggers",
+    "steps": [
+      {"event_id": "evt_burn_001", "trigger": "lifecycle_rail_click", "rail_phase": "IMPACT", "delay_ms": 0},
+      {"event_id": "evt_trail_001", "trigger": "suggested_action", "action_id": "act_001", "delay_ms": 1500},
+      {"event_id": "evt_timber_001", "trigger": "suggested_action", "action_id": "act_003", "delay_ms": 1500},
+      {"event_id": "evt_nepa_001", "trigger": "suggested_action", "action_id": "act_006", "delay_ms": 1500},
+      {"event_id": "evt_coordinator_001", "trigger": "cascade_complete", "delay_ms": 500}
+    ]
+  }
+}

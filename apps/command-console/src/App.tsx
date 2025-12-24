@@ -18,6 +18,7 @@ import { VisualAuditOverlay } from '@/components/map/VisualAuditOverlay';
 import { ForensicReportModal } from '@/components/modals/ForensicReportModal';
 import { AnalysisHistoryPanel } from '@/components/map/AnalysisHistoryPanel';
 import { useAnalysisHistoryStore } from '@/stores/analysisHistoryStore';
+import { FireOnboardingWizard } from '@/components/fire';
 
 // Chat mode: 'closed' | 'open' | 'minimized'
 type ChatMode = 'closed' | 'open' | 'minimized';
@@ -39,15 +40,16 @@ const App: React.FC = () => {
   const handleMinimizeChat = () => setChatMode('minimized');
   const handleToggleChat = () => setChatMode(chatMode === 'open' ? 'closed' : 'open');
 
-  // Connect to gateway on mount
+  // Connect to gateway on mount and load fixtures for active fire
   useEffect(() => {
-    // Load fixture data
+    // Load fixture data for the active fire
     mockBriefingService.loadFixtures()
       .then(() => {
         setIsReady(true);
       })
       .catch(() => {
         // Still set ready to true so we can see the UI even if fixtures fail
+        setIsReady(true);
       });
 
     // Subscribe to incoming events
@@ -101,11 +103,14 @@ const App: React.FC = () => {
           {/* Demo Tour Overlay - Guided Experience */}
           <DemoTourOverlay />
 
+          {/* Fire Onboarding Wizard - Add new fires */}
+          <FireOnboardingWizard />
+
           {/* Floating Legend - Draggable over map */}
           <FloatingLegend />
 
           {/* Header - Full width at top */}
-          <Header onChatToggle={handleToggleChat} isChatOpen={chatMode === 'open'} />
+          <Header onChatToggle={handleToggleChat} isChatOpen={chatMode === 'open'} sidebarWidth={sidebarWidth} />
 
           {/* Lifecycle Navigation - Left side (expandable) */}
           <Sidebar onWidthChange={setSidebarWidth} />

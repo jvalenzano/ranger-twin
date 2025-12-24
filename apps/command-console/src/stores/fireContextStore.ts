@@ -25,6 +25,9 @@ import {
   ONBOARDING_STEPS,
 } from '@/types/fire';
 
+import mockBriefingService from '@/services/mockBriefingService';
+import { useBriefingStore } from '@/stores/briefingStore';
+
 interface FireContextState {
   // Active fire context
   activeFireId: string;
@@ -84,6 +87,14 @@ export const useFireContextStore = create<FireContextState>()(
             set({
               activeFireId: fireId,
               activeFire: fire,
+            });
+
+            // Clear existing briefing events when switching fires
+            useBriefingStore.getState().clearEvents();
+
+            // Switch mockBriefingService fixtures for the new fire
+            mockBriefingService.switchFire(fireId).catch((error) => {
+              console.error('[FireContextStore] Failed to switch briefing fixtures:', error);
             });
           }
         },

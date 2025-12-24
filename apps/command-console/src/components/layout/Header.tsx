@@ -143,9 +143,14 @@ const MOCK_USER = {
 interface HeaderProps {
   onChatToggle?: () => void;
   isChatOpen?: boolean;
+  sidebarWidth?: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => {
+const Header: React.FC<HeaderProps> = ({
+  onChatToggle,
+  isChatOpen = false,
+  sidebarWidth = 64 // Default to collapsed width if not provided
+}) => {
   const startTour = useDemoTourStore((state) => state.startTour);
   const endTour = useDemoTourStore((state) => state.endTour);
   const isTourActive = useTourActive();
@@ -208,9 +213,15 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
   const unreadCount = MOCK_ALERTS.filter((a) => a.unread).length;
 
   return (
-    <header className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between px-4 md:px-8">
+    <header
+      className="absolute top-0 left-0 right-0 h-[48px] glass-header z-30 flex items-center justify-between transition-[padding] duration-300 ease-out"
+      style={{
+        paddingLeft: `${sidebarWidth + 24}px`,
+        paddingRight: '32px'
+      }}
+    >
       {/* Left side - Breadcrumb with layer info */}
-      <div className="flex items-center gap-2 text-text-secondary text-[11px] md:text-[12px] font-medium tracking-wide ml-12 md:ml-16">
+      <div className="flex items-center gap-2 text-text-secondary text-[11px] md:text-[12px] font-medium tracking-wide">
         <span className="hidden sm:inline">{shortForestName}</span>
         <ChevronRight size={14} className="opacity-40 hidden sm:inline" />
         <FireSelector />
@@ -240,11 +251,10 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
         {/* Demo Button - outline style */}
         <button
           onClick={handleDemoClick}
-          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all group ${
-            isTourActive
+          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all group ${isTourActive
               ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
               : 'bg-transparent border border-accent-cyan/40 text-accent-cyan hover:bg-accent-cyan/10 hover:border-accent-cyan/60'
-          }`}
+            }`}
         >
           {isTourActive ? (
             <>
@@ -262,11 +272,10 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
         {/* Chat Button */}
         <button
           onClick={onChatToggle}
-          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all ${
-            isChatOpen
+          className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all ${isChatOpen
               ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
               : 'bg-transparent border border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:border-slate-500/50 hover:text-white'
-          }`}
+            }`}
         >
           <MessageSquare size={10} />
           Chat
@@ -309,9 +318,8 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
                       setSelectedTimezone(tz.id);
                       setTimezoneOpen(false);
                     }}
-                    className={`w-full px-3 py-2 flex items-center justify-between text-[11px] hover:bg-slate-700/50 transition-colors ${
-                      selectedTimezone === tz.id ? 'text-accent-cyan' : 'text-slate-300'
-                    }`}
+                    className={`w-full px-3 py-2 flex items-center justify-between text-[11px] hover:bg-slate-700/50 transition-colors ${selectedTimezone === tz.id ? 'text-accent-cyan' : 'text-slate-300'
+                      }`}
                   >
                     <span className="font-medium">{tz.label}</span>
                     <span className="text-slate-500 mono text-[10px]">
@@ -363,9 +371,8 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
                   return (
                     <div
                       key={alert.id}
-                      className={`px-4 py-3 border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors cursor-pointer ${
-                        alert.unread ? 'bg-slate-700/20' : ''
-                      }`}
+                      className={`px-4 py-3 border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors cursor-pointer ${alert.unread ? 'bg-slate-700/20' : ''
+                        }`}
                     >
                       <div className="flex gap-3">
                         <div className={`mt-0.5 ${alert.color}`}>
@@ -469,14 +476,12 @@ const Header: React.FC<HeaderProps> = ({ onChatToggle, isChatOpen = false }) => 
                     Tooltips
                   </div>
                   <div
-                    className={`relative w-8 h-4 rounded-full transition-colors ${
-                      tooltipsEnabled ? 'bg-accent-cyan' : 'bg-slate-600'
-                    }`}
+                    className={`relative w-8 h-4 rounded-full transition-colors ${tooltipsEnabled ? 'bg-accent-cyan' : 'bg-slate-600'
+                      }`}
                   >
                     <div
-                      className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${
-                        tooltipsEnabled ? 'translate-x-4' : 'translate-x-0.5'
-                      }`}
+                      className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${tooltipsEnabled ? 'translate-x-4' : 'translate-x-0.5'
+                        }`}
                     />
                   </div>
                 </button>

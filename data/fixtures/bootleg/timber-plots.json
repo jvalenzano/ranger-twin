@@ -1,0 +1,339 @@
+{
+  "fire_id": "bootleg-2021",
+  "cruise_date": "2021-11-20",
+  "cruiser": "Fremont-Winema Timber Staff",
+  "method": "Variable radius plot - BAF 20",
+  "plots": [
+    {
+      "plot_id": "BOOT-47-ALPHA",
+      "name": "Sprague River Unit A",
+      "coordinates": [-121.41, 42.53],
+      "elevation_ft": 5420,
+      "aspect": "NW",
+      "slope_pct": 18,
+      "burn_severity": "high",
+      "access_road": "FR 3411",
+      "access_notes": "Road intact; 0.5mi from plot; staging area available",
+      "trees": [
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 24,
+          "height_ft": 95,
+          "count": 18,
+          "condition": "fire-killed",
+          "mbf": 8.2
+        },
+        {
+          "species": "White Fir",
+          "species_code": "WF",
+          "dbh_in": 16,
+          "height_ft": 72,
+          "count": 12,
+          "condition": "fire-killed",
+          "mbf": 3.1
+        },
+        {
+          "species": "Lodgepole Pine",
+          "species_code": "LP",
+          "dbh_in": 12,
+          "height_ft": 55,
+          "count": 24,
+          "condition": "fire-killed",
+          "mbf": 2.8
+        }
+      ],
+      "total_mbf_per_acre": 14.1,
+      "estimated_value_per_acre": 4800,
+      "salvage_priority": "highest",
+      "notes": "Premium ponderosa; beetle activity beginning; urgent extraction. Operates best Oct-June."
+    },
+    {
+      "plot_id": "BOOT-52-BRAVO",
+      "name": "Gearhart West Unit",
+      "coordinates": [-121.21, 42.39],
+      "elevation_ft": 6180,
+      "aspect": "SW",
+      "slope_pct": 32,
+      "burn_severity": "high",
+      "access_road": "FR 3372",
+      "access_notes": "Road damaged in fire; 1.2mi reconstruction needed before access",
+      "trees": [
+        {
+          "species": "Lodgepole Pine",
+          "species_code": "LP",
+          "dbh_in": 14,
+          "height_ft": 62,
+          "count": 45,
+          "condition": "fire-killed",
+          "mbf": 6.8
+        },
+        {
+          "species": "White Fir",
+          "species_code": "WF",
+          "dbh_in": 18,
+          "height_ft": 78,
+          "count": 8,
+          "condition": "fire-killed",
+          "mbf": 2.4
+        }
+      ],
+      "total_mbf_per_acre": 9.2,
+      "estimated_value_per_acre": 3100,
+      "salvage_priority": "high",
+      "notes": "Dense lodgepole salvage; steep terrain requires cable logging. Adjacent to wilderness boundary."
+    },
+    {
+      "plot_id": "BOOT-38-CHARLIE",
+      "name": "Sycan Plateau",
+      "coordinates": [-121.49, 42.47],
+      "elevation_ft": 5650,
+      "aspect": "E",
+      "slope_pct": 8,
+      "burn_severity": "moderate",
+      "access_road": "FR 3239",
+      "access_notes": "Good access; flat terrain suitable for ground-based equipment",
+      "trees": [
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 22,
+          "height_ft": 88,
+          "count": 14,
+          "condition": "partial-mortality",
+          "mbf": 5.8
+        },
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 18,
+          "height_ft": 75,
+          "count": 8,
+          "condition": "fire-killed",
+          "mbf": 2.6
+        },
+        {
+          "species": "White Fir",
+          "species_code": "WF",
+          "dbh_in": 14,
+          "height_ft": 65,
+          "count": 6,
+          "condition": "fire-killed",
+          "mbf": 1.2
+        }
+      ],
+      "total_mbf_per_acre": 9.6,
+      "estimated_value_per_acre": 3400,
+      "salvage_priority": "high",
+      "notes": "Mixed condition; selective harvest possible; retain green trees for seed source."
+    },
+    {
+      "plot_id": "BOOT-61-DELTA",
+      "name": "Bly Mountain North",
+      "coordinates": [-121.42, 42.41],
+      "elevation_ft": 5890,
+      "aspect": "N",
+      "slope_pct": 25,
+      "burn_severity": "high",
+      "access_road": "FR 3411-140",
+      "access_notes": "Spur road; minor clearing needed; 0.3mi to plot",
+      "trees": [
+        {
+          "species": "White Fir",
+          "species_code": "WF",
+          "dbh_in": 20,
+          "height_ft": 85,
+          "count": 22,
+          "condition": "fire-killed",
+          "mbf": 7.4
+        },
+        {
+          "species": "Lodgepole Pine",
+          "species_code": "LP",
+          "dbh_in": 10,
+          "height_ft": 48,
+          "count": 30,
+          "condition": "fire-killed",
+          "mbf": 2.1
+        }
+      ],
+      "total_mbf_per_acre": 9.5,
+      "estimated_value_per_acre": 3200,
+      "salvage_priority": "high",
+      "notes": "Good white fir sawlog potential. Northern spotted owl habitat - survey required before operations."
+    },
+    {
+      "plot_id": "BOOT-29-ECHO",
+      "name": "Summer Lake Rim",
+      "coordinates": [-121.11, 42.58],
+      "elevation_ft": 5980,
+      "aspect": "SE",
+      "slope_pct": 42,
+      "burn_severity": "high",
+      "access_road": "FR 2918",
+      "access_notes": "Remote; 8mi from improved road; helicopter or long-line required",
+      "trees": [
+        {
+          "species": "Lodgepole Pine",
+          "species_code": "LP",
+          "dbh_in": 16,
+          "height_ft": 68,
+          "count": 38,
+          "condition": "fire-killed",
+          "mbf": 7.2
+        },
+        {
+          "species": "Mountain Hemlock",
+          "species_code": "MH",
+          "dbh_in": 18,
+          "height_ft": 72,
+          "count": 6,
+          "condition": "fire-killed",
+          "mbf": 1.8
+        }
+      ],
+      "total_mbf_per_acre": 9.0,
+      "estimated_value_per_acre": 2800,
+      "salvage_priority": "medium",
+      "notes": "High extraction cost; scenic viewshed - visual quality objectives apply. Consider leaving."
+    },
+    {
+      "plot_id": "BOOT-44-FOXTROT",
+      "name": "Campbell Creek",
+      "coordinates": [-121.51, 42.59],
+      "elevation_ft": 5340,
+      "aspect": "W",
+      "slope_pct": 15,
+      "burn_severity": "moderate",
+      "access_road": "FR 3484",
+      "access_notes": "Excellent access; campground infrastructure nearby",
+      "trees": [
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 26,
+          "height_ft": 102,
+          "count": 10,
+          "condition": "partial-mortality",
+          "mbf": 6.2
+        },
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 20,
+          "height_ft": 82,
+          "count": 6,
+          "condition": "fire-killed",
+          "mbf": 2.4
+        },
+        {
+          "species": "White Fir",
+          "species_code": "WF",
+          "dbh_in": 12,
+          "height_ft": 58,
+          "count": 8,
+          "condition": "fire-killed",
+          "mbf": 0.9
+        }
+      ],
+      "total_mbf_per_acre": 9.5,
+      "estimated_value_per_acre": 3500,
+      "salvage_priority": "high",
+      "notes": "Recreation corridor; maintain screening from road. Good potential for concurrent trail work."
+    },
+    {
+      "plot_id": "BOOT-17-GOLF",
+      "name": "Yamsay Flats",
+      "coordinates": [-121.22, 42.48],
+      "elevation_ft": 5520,
+      "aspect": "Flat",
+      "slope_pct": 3,
+      "burn_severity": "moderate",
+      "access_road": "FR 3300",
+      "access_notes": "Level terrain; dry conditions required; spring wet season limits",
+      "trees": [
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 28,
+          "height_ft": 108,
+          "count": 8,
+          "condition": "fire-killed",
+          "mbf": 6.8
+        },
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 22,
+          "height_ft": 90,
+          "count": 6,
+          "condition": "fire-killed",
+          "mbf": 3.2
+        },
+        {
+          "species": "Lodgepole Pine",
+          "species_code": "LP",
+          "dbh_in": 8,
+          "height_ft": 42,
+          "count": 35,
+          "condition": "fire-killed",
+          "mbf": 1.4
+        }
+      ],
+      "total_mbf_per_acre": 11.4,
+      "estimated_value_per_acre": 4200,
+      "salvage_priority": "highest",
+      "notes": "Large-diameter ponderosa; high value sawlogs. Volcanic soils - minimize compaction."
+    },
+    {
+      "plot_id": "BOOT-55-HOTEL",
+      "name": "Chiloquin Buffer",
+      "coordinates": [-121.62, 42.49],
+      "elevation_ft": 4980,
+      "aspect": "SW",
+      "slope_pct": 12,
+      "burn_severity": "low",
+      "access_road": "FR 2128",
+      "access_notes": "Near community; noise restrictions may apply; coordinate with Chiloquin",
+      "trees": [
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 18,
+          "height_ft": 78,
+          "count": 12,
+          "condition": "green",
+          "mbf": 4.2
+        },
+        {
+          "species": "Ponderosa Pine",
+          "species_code": "PP",
+          "dbh_in": 14,
+          "height_ft": 62,
+          "count": 8,
+          "condition": "scorched",
+          "mbf": 1.6
+        }
+      ],
+      "total_mbf_per_acre": 5.8,
+      "estimated_value_per_acre": 2100,
+      "salvage_priority": "low",
+      "notes": "Mostly survived; fuels reduction priority over salvage. WUI zone - community protection focus."
+    }
+  ],
+  "summary": {
+    "total_plots_surveyed": 8,
+    "total_mbf_surveyed": 77.1,
+    "estimated_total_value": 27100,
+    "highest_priority_plots": 2,
+    "high_priority_plots": 4,
+    "medium_priority_plots": 1,
+    "low_priority_plots": 1,
+    "species_breakdown": {
+      "ponderosa_pine_pct": 52,
+      "lodgepole_pine_pct": 26,
+      "white_fir_pct": 19,
+      "other_pct": 3
+    }
+  }
+}

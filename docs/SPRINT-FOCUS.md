@@ -14,6 +14,7 @@ This document establishes development priorities for Phase 1 of RANGER, focused 
 | **P1** | **Agent Orchestration Demo** | 🚧 In Progress | Complete Cedar Creek cascade with all 4 agents using simulated fixture data. |
 | **P1** | **Gemini 3 Flash Migration** | ✅ Complete | All agents updated to `gemini-3-flash` (see ADR-003). |
 | **P1** | **NEPA Advisor RAG** | ✅ Complete | File Search Tools + FSM/FSH documents implemented (see ADR-003). |
+| **P1** | **Site Analysis Feature** | ✅ Complete | Feature-triggered AI analysis with History & Persistence (ADR-004). |
 | **P2** | **Reasoning Transparency UX** | 📋 Planned | Expandable proof layers, citations, reasoning chain visualization in UI. |
 | **P3** | **Legacy Export Validation** | 📋 Planned | TRACS CSV and FSVeg XML stubs that parse correctly for integration testing. |
 
@@ -38,6 +39,17 @@ As of 2025-12-22, the following AI stack decisions have been finalized:
 **Note:** File Search queries use `gemini-2.5-flash` until `gemini-3-flash` exits preview.
 
 See [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) for full implementation details.
+
+## API Infrastructure Decisions (ADR-004)
+
+As of 2025-12-24, we have migrated the frontend AI gateway:
+
+| Component | Decision | Rationale |
+|-----------|----------|-----------|
+| **API Gateway** | OpenRouter | Overcome Gemini direct API rate limits (10 RPM vs 20 RPM via OpenRouter) |
+| **Feature analysis** | Local Persistence | Browser localStorage for offline-capable history |
+
+See [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) for full details.
 
 ## What We're Proving
 
