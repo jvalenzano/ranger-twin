@@ -21,57 +21,46 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 
 ## Architecture
 
-**Pattern:** Google ADK Coordinator/Dispatcher
+**Hybrid Architecture (Frontend-Led Demo):**
+- **Orchestration:** `src/services/aiBriefingService.ts` handles logic in the browser.
+- **Routing:**
+    - **General Queries**: OpenRouter (`google/gemini-2.0-flash-exp:free` -> `google/gemma-2-9b-it:free`)
+    - **NEPA RAG**: Direct Google API (`gemini-2.0-flash-exp`) for private RAG context.
 
+**Backend Microservices (Reference Implementation):**
 ```
 Recovery Coordinator (Root Orchestrator, port 8005)
-├── BurnAnalyst (port 8001) - Burn severity → Gemini briefing
-├── TrailAssessor (port 8002) - Trail damage → Work orders
-├── CruisingAssistant (port 8003) - Timber plots → FSVeg export
-└── NEPAAdvisor (port 8004) - Regulatory context → Compliance guidance
+├── BurnAnalyst (port 8001)
+├── TrailAssessor (port 8002)
+├── CruisingAssistant (port 8003)
+└── NEPAAdvisor (port 8004)
 ```
-
-**Data Flow:** Static JSON fixtures → Agents (real Gemini reasoning) → UI via AgentBriefingEvent
 
 **Key Contracts:**
 - `docs/architecture/AGENT-MESSAGING-PROTOCOL.md` - AgentBriefingEvent JSON schema
-- `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec (4 event types: map_highlight, rail_pulse, panel_inject, modal_interrupt)
+- `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec (4 event types)
 
 **Data & Integration Docs:**
-- `docs/architecture/FIXTURE-DATA-FORMATS.md` - Phase 1 fixture schemas (burn severity, trail damage, timber plots)
-- `docs/architecture/DATA-INGESTION-ADAPTERS.md` - External data source adapter architecture
-- `docs/research/PUBLIC-API-INVENTORY.md` - NIFC, NASA FIRMS, MTBS, InciWeb, IRWIN API research
-- `docs/research/USFS-INTERVIEW-MATERIALS.md` - Stakeholder interview templates
-
-**Integration Philosophy:** RANGER is the "nerve center, not the sensors." Field Companion is a demo tool; production data comes from existing USFS systems (Survey123, Collector, IRWIN) via adapters.
+- `docs/architecture/FIXTURE-DATA-FORMATS.md` - Phase 1 fixture schemas
+- `docs/research/APIs_AND_DATASETS.md` - API strategy for Phase 2
 
 ## Commands
 
 ```bash
-# Full stack (Docker)
-docker-compose up -d
-# Frontend: http://localhost:5173 | API: http://localhost:8000/docs
-
 # Frontend development
-cd apps/command-console && pnpm dev
+cd apps/command-console && npm run dev
+
+# TypeScript validation
+cd apps/command-console && npm run typecheck
+
+# Linting
+cd apps/command-console && npm run lint
 
 # Backend development
 cd services/api-gateway && uvicorn app.main:app --reload --port 8000
 
-# Individual agent (example)
-cd services/agents/burn-analyst && python -m burn_analyst.main
-
-# TypeScript validation
-cd apps/command-console && pnpm typecheck
-
-# Find unused exports
-cd apps/command-console && npx knip
-
-# Python tests with coverage
-pytest
-
-# Python formatting/linting
-black packages/ services/ && ruff check packages/ services/
+# Full stack (Docker)
+docker-compose up -d
 ```
 
 ## Project Structure
@@ -79,23 +68,19 @@ black packages/ services/ && ruff check packages/ services/
 ```
 apps/
   command-console/     # React + Vite + Tailwind (desktop UI)
-  field-companion/     # React PWA (mobile)
+    scripts/           # Verification utilities (e.g., verify-openrouter.js)
+  field-companion/     # React PWA (mobile - Planned)
 services/
-  api-gateway/         # FastAPI router (port 8000)
-  agents/              # 5 FastAPI agent services (ports 8001-8005)
+  api-gateway/         # FastAPI router
+  agents/              # 5 FastAPI agent services
 packages/
-  twin-core/           # Shared Python: models, geo utils, clients
-  agent-common/        # Shared agent base classes, prompt loader, Gemini client
-  ui-components/       # Shared React components
+  twin-core/           # Shared Python models
 data/
-  fixtures/            # Phase 1: Cedar Creek simulation data (ACTIVE) - see FIXTURE-DATA-FORMATS.md
-  synthetic/           # Phase 2+: AI-generated test data (empty)
-  layers/              # Phase 2+: Real GeoJSON (empty)
-  rasters/             # Phase 2+: Satellite imagery (empty)
-  documents/           # NEPA reference docs
+  fixtures/            # Phase 1: Cedar Creek simulation data (ACTIVE)
 docs/
-  architecture/        # System design specs (agents, adapters, UX)
-  research/            # API inventory, interview materials
+  architecture/        # System design specs
+  features/            # Feature specifications & checklists
+  research/            # API inventory
 ```
 
 ## State Management
@@ -104,10 +89,12 @@ Frontend uses Zustand stores in `apps/command-console/src/stores/`:
 - `chatStore` - Messages, agent responses, reasoning chains
 - `briefingStore` - AgentBriefingEvent display
 - `mapStore` - Camera, layers, terrain
-- `lifecycleStore` - Workflow steps (Impact → Damage → Timber → Compliance)
+- `lifecycleStore` - Workflow steps
+- `analysisHistoryStore` - Site Analysis reports & persistence
+- `preferencesStore` - User settings (tooltips, etc.)
 
 ## Code Style
 
-- **Design aesthetic:** "Tactical Futurism" - dark mode, glassmorphism, high contrast, monospace fonts
-- **Phase 1 fixtures:** Hardcode simulated data to unblock UI/orchestration work
+- **Design aesthetic:** "Tactical Futurism" - dark mode, glassmorphism, high contrast
+- **Component Style:** Functional React components with hooks. Lucid React icons.
 - **Agent responses:** Must include confidence scores, citations, and reasoning chains (proof layer)

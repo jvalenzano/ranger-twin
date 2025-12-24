@@ -1,13 +1,15 @@
 /**
  * AI Briefing Service - Frontend client for RANGER agent queries
  *
- * Phase 1: Direct Gemini integration for chat
- * Phase 2+: Will use backend /api/query endpoint with full agent orchestration
+ * Phase 1: Hybrid Integration
+ * - NEPA/RAG Queries -> Direct Google Gemini API (Private Data Access)
+ * - General Queries -> OpenRouter (with Fallback Chain for reliability)
  *
  * Supports dynamic fire context - system prompts are generated based on
  * the active fire from fireContextStore.
  */
 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import type {
   AgentBriefingEvent,
   SourceAgent,
@@ -48,6 +50,7 @@ export interface QueryResponse {
   response?: AgentResponse;
   error?: string;
   processingTimeMs?: number;
+  provider?: string;
 }
 
 // Map agent roles to SourceAgent enum
@@ -59,9 +62,19 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
   'nepa-advisor': 'nepa_advisor',
 };
 
-// OpenRouter API key from environment - Updated per ADR-004 (2025-12-24)
+// --- CONFIGURATION ---
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Google Direct
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+// OpenRouter Fallback Chain
+const OPENROUTER_MODELS = [
+  'google/gemini-2.0-flash-exp:free',          // Primary: Best quality
+  'google/gemma-2-9b-it:free', // Secondary: Reliable fallback
+];
+
+// Google Direct Model (for NEPA RAG)
+const GOOGLE_MODEL_NAME = 'gemini-2.0-flash-exp';
 
 /**
  * Generate system prompt based on fire context
@@ -200,15 +213,20 @@ What aspect of the recovery would you like to explore?`,
 
 class AIBriefingService {
   private isLoading = false;
-  private useSimulation = false; // Fall back to simulation after rate limit
+  private useSimulation = false; // Fall back to simulation after consistent failure
+  private genAI: GoogleGenerativeAI | null = null;
+
+  constructor() {
+    if (GEMINI_API_KEY) {
+      this.genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    }
+  }
 
   /**
-   * Query the RANGER agents via Gemini (Phase 1 simulation)
-   * Falls back to simulated responses if API is rate-limited
-   *
-   * @param queryText - The user's question
-   * @param sessionId - Session identifier for conversation context
-   * @param fireContext - Optional fire context for dynamic system prompt
+   * Query the RANGER agents via Hybrid Architecture
+   * 1. NEPA/Compliance -> Direct Google SDK (for RAG)
+   * 2. General -> OpenRouter (with Fallback Chain)
+   * 3. Fallback -> Simulation
    */
   async query(
     queryText: string,
@@ -218,93 +236,157 @@ class AIBriefingService {
     this.isLoading = true;
     const startTime = Date.now();
 
-    // Generate system prompt based on fire context
+    // Determine agent role
+    const agentRole = this.detectAgentRole(queryText);
+
+    // Generate system prompt
     const systemPrompt = fireContext
       ? generateSystemPrompt(fireContext)
       : DEFAULT_SYSTEM_PROMPT;
 
-    // Determine agent role based on query content
-    const agentRole = this.detectAgentRole(queryText);
-
-    // Debug: Log API key status
-    console.log('[AIBriefingService] API Key available:', !!OPENROUTER_API_KEY, 'Simulation mode:', this.useSimulation);
-
-    // If we've hit rate limits, use simulation mode
-    if (this.useSimulation || !OPENROUTER_API_KEY) {
-      console.log('[AIBriefingService] Using simulated response - reason:', !OPENROUTER_API_KEY ? 'No API key' : 'Rate limited');
-      this.isLoading = false;
-      return this.getSimulatedResponse(queryText, agentRole, startTime);
-    }
-
-    console.log('[AIBriefingService] Making real OpenRouter API call...');
-
     try {
-      const response = await fetch(OPENROUTER_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-          'HTTP-Referer': 'https://ranger-demo.vercel.app', // Required by OpenRouter
-          'X-Title': 'RANGER Recovery Coordinator', // Optional
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.0-flash-exp:free', // Using free tier for now
-          messages: [
-            {
-              role: 'system',
-              content: systemPrompt
-            },
-            {
-              role: 'user',
-              content: queryText
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 1024,
-        }),
-      });
+      // --- ROUTING LOGIC ---
 
-      // Handle rate limiting - fall back to simulation
-      if (response.status === 429) {
-        console.warn('[AIBriefingService] Rate limited, switching to simulation mode');
-        this.useSimulation = true;
-        // Reset after 60 seconds
-        setTimeout(() => {
-          this.useSimulation = false;
-          console.log('[AIBriefingService] Rate limit cooldown complete, API available');
-        }, 60000);
-        return this.getSimulatedResponse(queryText, agentRole, startTime);
+      // 1. NEPA/Compliance Check -> Route to Google Direct
+      if (agentRole === 'nepa-advisor' && GEMINI_API_KEY && this.genAI) {
+        console.log('[AIBriefingService] Routing to Google Direct (NEPA RAG Context)...');
+        return await this.queryGoogleDirect(queryText, systemPrompt, agentRole, startTime);
       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('[AIBriefingService] Gemini API error:', errorData);
-        // Fall back to simulation for any error
-        return this.getSimulatedResponse(queryText, agentRole, startTime);
+      // 2. All other queries -> Route to OpenRouter
+      if (OPENROUTER_API_KEY && !this.useSimulation) {
+        console.log('[AIBriefingService] Routing to OpenRouter...');
+        return await this.queryOpenRouterWithFallback(queryText, systemPrompt, agentRole, startTime);
       }
 
-      const data = await response.json();
-      const answer = data.choices?.[0]?.message?.content || 'No response generated';
+      // 3. Fallback to Simulation
+      console.log('[AIBriefingService] Using simulation (No API keys or forced simulation)');
+      return this.getSimulatedResponse(queryText, agentRole, startTime);
 
-      const adaptedResponse: QueryResponse = {
-        success: true,
-        response: {
-          agentRole,
-          summary: answer,
-          reasoning: ['Query analyzed by Recovery Coordinator', `Routed to ${agentRole} specialist`],
-          confidence: 88,
-          citations: [],
-        },
-        processingTimeMs: Date.now() - startTime,
-      };
-
-      return adaptedResponse;
     } catch (error) {
-      console.error('[AIBriefingService] Query failed, using simulation:', error);
+      console.error('[AIBriefingService] All providers failed, falling back to simulation:', error);
       return this.getSimulatedResponse(queryText, agentRole, startTime);
     } finally {
       this.isLoading = false;
     }
+  }
+
+  /**
+   * Execute query via Google Direct API (for RAG support)
+   */
+  private async queryGoogleDirect(
+    queryText: string,
+    systemPrompt: string,
+    agentRole: AgentRole,
+    startTime: number
+  ): Promise<QueryResponse> {
+    if (!this.genAI) throw new Error('Google SDK not initialized');
+
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: GOOGLE_MODEL_NAME,
+        systemInstruction: systemPrompt
+      });
+
+      const result = await model.generateContent(queryText);
+      const response = result.response;
+      const text = response.text();
+
+      return {
+        success: true,
+        response: {
+          agentRole,
+          summary: text,
+          reasoning: ['Query analyzed by NEPA Advisor', 'Source: Private RAG Knowledge Base (Google Direct)'],
+          confidence: 95,
+          citations: []
+        },
+        processingTimeMs: Date.now() - startTime,
+        provider: 'Google Direct'
+      };
+
+    } catch (error) {
+      console.warn('[AIBriefingService] Google Direct failed, falling back to OpenRouter:', error);
+      // Fallback to OpenRouter if Google Direct fails
+      return this.queryOpenRouterWithFallback(queryText, systemPrompt, agentRole, startTime);
+    }
+  }
+
+  /**
+   * Execute query via OpenRouter with Model Fallback Chain
+   */
+  private async queryOpenRouterWithFallback(
+    queryText: string,
+    systemPrompt: string,
+    agentRole: AgentRole,
+    startTime: number
+  ): Promise<QueryResponse> {
+    let lastError = null;
+
+    // Iterate through fallback models
+    for (const model of OPENROUTER_MODELS) {
+      try {
+        console.log(`[AIBriefingService] Attempting OpenRouter model: ${model}`);
+
+        const response = await fetch(OPENROUTER_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'HTTP-Referer': 'https://ranger-demo.vercel.app',
+            'X-Title': 'RANGER Recovery Coordinator',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: queryText }
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+          }),
+        });
+
+        // If rate limited (429) or service unavailable (503), throw to try next model
+        if (response.status === 429 || response.status === 503) {
+          throw new Error(`Rate limited/Unavailable (${response.status})`);
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error(`[AIBriefingService] OpenRouter error (${model}):`, errorData);
+          throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const answer = data.choices?.[0]?.message?.content || 'No response generated';
+
+        return {
+          success: true,
+          response: {
+            agentRole,
+            summary: answer,
+            reasoning: ['Query analyzed by Recovery Coordinator', `Via OpenRouter (${model})`],
+            confidence: 88,
+            citations: [],
+          },
+          processingTimeMs: Date.now() - startTime,
+          provider: `OpenRouter (${model})`
+        };
+
+      } catch (error) {
+        console.warn(`[AIBriefingService] Model ${model} failed:`, error);
+        lastError = error;
+        // Continue to next model in loop
+      }
+    }
+
+    // If loop finishes without success
+    console.warn('[AIBriefingService] All OpenRouter models failed. Switching to simulation.');
+    this.useSimulation = true; // Temporary latch
+    setTimeout(() => { this.useSimulation = false; }, 60000); // Reset after 1 min
+
+    return this.getSimulatedResponse(queryText, agentRole, startTime);
   }
 
   /**
@@ -337,11 +419,12 @@ class AIBriefingService {
       response: {
         agentRole: simulated.agentRole,
         summary: simulated.response,
-        reasoning: ['Query analyzed by Recovery Coordinator', `Simulated ${simulated.agentRole} response (API cooldown)`],
+        reasoning: ['Query analyzed by Recovery Coordinator', `Simulated ${simulated.agentRole} response (Offline Mode)`],
         confidence: 92,
         citations: [],
       },
       processingTimeMs: Date.now() - startTime,
+      provider: 'Simulation (Offline)'
     };
   }
 

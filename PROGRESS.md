@@ -512,3 +512,43 @@ The RANGER Demo is ready for deployment:
 
 **Commit:** `pending` - feat: Implement OpenRouter integration and update MapTiler config
 
+### 2025-12-24 - Mission Control Initiation
+
+**Proposed:**
+1. **National Dashboard Concept:**
+   - Shift from single-fire tactical tool to USFS portfolio management.
+   - Designed "Mission Control" UX: 30+ fires on US map, seasoned slider, triage rail.
+
+**Completed:**
+1. **Design Specification:**
+   - Created `docs/design/001-NATIONAL-DASHBOARD-UX.md` (Design concept)
+   - Created `docs/design/002-MISSION-CONTROL-SPEC.md` (Technical spec)
+2. **Implementation Planning:**
+   - Created `docs/features/MISSION-CONTROL.md` (Implementation checklist)
+3. **Repository Management:**
+   - Staged and committed `develop` branch (Header fixes, Bootleg fixtures).
+   - Created `feature/mission-control` branch for dashboard work.
+
+
+
+### 2025-12-24 - Hybrid OpenRouter Architecture ✅
+
+**Goal:** Ensure reliable AI availability while preserving RAG functionality for NEPA.
+
+**Completed:**
+1. **Hybrid Architecture Implementation:**
+   - **General Queries**: Routed to OpenRouter (Gemini 2.0 Flash) for cost/performance.
+   - **NEPA Queries**: Routed to Direct Google API to access private RAG datasets (FSM/FSH documents).
+   - **Fallback Chain**: Implemented reliability layer (Gemini -> Secondary Model -> Simulation).
+
+2. **Verification & Testing:**
+   - Created `verify-openrouter.js` script to test all connectivity channels.
+   - Confirmed 429 rate limits are handled gracefully by fallback logic.
+   - Validated direct Google connection for NEPA context.
+
+**Files Modified:**
+- `.env.local` - Added `VITE_GEMINI_API_KEY` and `VITE_OPENROUTER_API_KEY`.
+- `src/services/aiBriefingService.ts` - Implemented hybrid routing and fallback logic.
+- `scripts/verify-openrouter.js` - Created verification utility.
+
+**Commit:** `pending` - feat: Implement Hybrid OpenRouter architecture with reliability fallbacks

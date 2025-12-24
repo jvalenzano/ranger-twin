@@ -9,6 +9,7 @@ This document establishes development priorities for Phase 1 of RANGER, focused 
 | Priority | Component | Status | Rationale |
 |----------|-----------|--------|-----------|
 | **P0** | **Command Console UI Shell** | ✅ Complete | Core rendering layer for AgentBriefingEvents, shared chrome, map integration. |
+| **P0** | **National Mission Control** | 🚧 In Progress | Multi-fire national dashboard with Holo-Table, Season Slider, and Triage Rail. |
 | **P0** | **Static Demo Experience** | ✅ Complete | Full Cedar Creek demo with guided tour, map layers, and phase transitions. |
 | **P1** | **Recovery Coordinator** | 🚧 In Progress | Root agent orchestration engine (ADK-based routing, correlation IDs, cross-agent synthesis). |
 | **P1** | **Agent Orchestration Demo** | 🚧 In Progress | Complete Cedar Creek cascade with all 4 agents using simulated fixture data. |
@@ -47,6 +48,7 @@ As of 2025-12-24, we have migrated the frontend AI gateway:
 | Component | Decision | Rationale |
 |-----------|----------|-----------|
 | **API Gateway** | OpenRouter | Overcome Gemini direct API rate limits (10 RPM vs 20 RPM via OpenRouter) |
+| **Hybrid Routing** | Local Fallback | Direct Google API for NEPA RAG; OpenRouter for all others |
 | **Feature analysis** | Local Persistence | Browser localStorage for offline-capable history |
 
 See [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) for full details.
