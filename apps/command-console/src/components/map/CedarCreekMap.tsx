@@ -15,9 +15,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers, type MapFeatureId } from '@/stores/mapStore';
-import { useMeasureMode } from '@/stores/measureStore';
 import { useActiveFire, useActiveFireId } from '@/stores/fireContextStore';
-import MeasureTool from './MeasureTool';
 
 // MapTiler tile URLs
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
@@ -72,7 +70,6 @@ const CedarCreekMap: React.FC = () => {
   const prevFireIdRef = useRef<string | null>(null);
 
   const activeLayer = useActiveLayer();
-  const measureMode = useMeasureMode();
   const camera = useMapCamera();
   const dataLayers = useDataLayers();
   const exaggeration = useTerrainExaggeration();
@@ -1083,22 +1080,12 @@ const CedarCreekMap: React.FC = () => {
     }
   }, [activeFireId, activeFire.centroid, activeFire.name, mapReady, setCamera]);
 
-  // Determine if measuring is active for cursor styling
-  const isMeasuring = measureMode !== null;
-
   return (
-    <>
-      <div
-        ref={mapContainer}
-        className={`absolute inset-0 w-full h-full ${isMeasuring ? 'measuring-active' : ''}`}
-        style={{
-          background: '#0f172a',
-          cursor: isMeasuring ? 'crosshair' : undefined,
-        }}
-      />
-      {/* Measurement tool - handles map interactions when active */}
-      {mapReady && <MeasureTool map={map.current} />}
-    </>
+    <div
+      ref={mapContainer}
+      className="absolute inset-0 w-full h-full"
+      style={{ background: '#0f172a' }}
+    />
   );
 };
 

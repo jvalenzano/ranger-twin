@@ -16,8 +16,6 @@ export type ToolId =
   | 'zoom-in'
   | 'zoom-out'
   | 'reset-north'
-  | 'measure-distance'
-  | 'measure-area'
   | 'visual-audit'
   | 'layer-switch';
 
@@ -26,7 +24,7 @@ export interface ToolConfig {
   label: string;
   shortLabel: string;
   description: string;
-  category: 'layers' | 'navigation' | 'measurement';
+  category: 'layers' | 'navigation';
   defaultPinned: boolean;
 }
 
@@ -82,7 +80,7 @@ export const TOOLBAR_TOOLS: ToolConfig[] = [
     category: 'navigation',
     defaultPinned: true,
   },
-  // Measurement tools
+  // Analysis tools
   // NOTE: visual-audit remains available for investigating areas without mapped features.
   // Intel Probe (feature popup) is preferred for mapped features.
   {
@@ -91,22 +89,6 @@ export const TOOLBAR_TOOLS: ToolConfig[] = [
     shortLabel: 'Audit',
     description: 'Multi-modal research mission.',
     category: 'navigation',
-    defaultPinned: true,
-  },
-  {
-    id: 'measure-distance',
-    label: 'Measure Distance',
-    shortLabel: 'Dist',
-    description: 'Calculate distances on the map',
-    category: 'measurement',
-    defaultPinned: true,
-  },
-  {
-    id: 'measure-area',
-    label: 'Measure Area',
-    shortLabel: 'Area',
-    description: 'Calculate areas on the map',
-    category: 'measurement',
     defaultPinned: true,
   },
 ];

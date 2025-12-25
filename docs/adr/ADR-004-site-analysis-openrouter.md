@@ -14,8 +14,8 @@ RANGER's Command Console needed a way for field rangers to get AI-powered analys
 ### Problem Statement
 
 1. **Feature-Level Analysis Gap** — Rangers can view map features but lack contextual AI analysis for individual sites
-2. **UX Friction** — Current chat panel requires context-switching; rangers want analysis triggered directly from map features  
-3. **API Rate Limiting** — Direct Gemini API free tier limits (10 RPM, 100 RPD) proved insufficient during development and would fail at scale
+2. **UX Friction** — Current chat panel requires context-switching; rangers want analysis triggered directly from map features
+3. **API Rate Limiting** — Direct Google Generative AI API free tier limits (10 RPM, 100 RPD) proved insufficient during development and would fail at scale
 4. **Results Persistence** — Analysis results disappear when closing the modal; no way to save or compare analyses
 
 ### Requirements
@@ -67,9 +67,9 @@ We implemented a **Zustand store with localStorage persistence** for saving anal
 | **Mobile/glove UX** | Difficult keyboard input | Touch-friendly 44px chip targets |
 | **Workflow alignment** | Generic chat interface | USFS-aligned terminology and patterns |
 
-### Why OpenRouter over Direct Gemini API
+### Why OpenRouter over Direct Google Generative AI API
 
-| Factor | Direct Gemini API | OpenRouter |
+| Factor | Direct Google Generative AI API | OpenRouter |
 |--------|-------------------|------------|
 | **Free tier rate limits** | 10 RPM, 100 RPD (severely constrained) | 50 RPD free, unlimited with $10 credit |
 | **Gemini access via OpenRouter** | N/A | 20 RPM, 200 RPD for Gemini models |
@@ -79,7 +79,7 @@ We implemented a **Zustand store with localStorage persistence** for saving anal
 | **Cost overhead** | Direct token pricing | 5% platform fee |
 | **Provider stability** | Subject to Google's rate limit changes | Abstracts provider instability |
 
-**Key finding:** During development testing, we hit Gemini's 429 rate limits within minutes, causing silent fallback to simulation mode. OpenRouter's rate limits are 2-10x more generous for the same models.
+**Key finding:** During development testing, we hit the Google Generative AI API 429 rate limits within minutes, causing silent fallback to simulation mode. OpenRouter's rate limits are 2-10x more generous for the same models.
 
 ### Why localStorage for Analysis History
 
@@ -131,7 +131,7 @@ query: "Check NFS trail database for {trail_name}. What is the official trail cl
 
 **API endpoint change:**
 ```typescript
-// Before (Direct Gemini)
+// Before (Direct Google Generative AI API)
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 // After (OpenRouter)
@@ -157,7 +157,7 @@ model: 'google/gemini-2.0-flash-exp:free' // Or paid variant
 
 ```bash
 # .env.local (remove old, add new)
-# VITE_GEMINI_API_KEY=xxx  # Deprecated
+# VITE_GEMINI_API_KEY=xxx  # Deprecated - was for Direct Google Generative AI API
 VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxxxx
 ```
 
@@ -207,7 +207,7 @@ VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxxxx
 
 | Approach | Verdict | Rationale |
 |----------|---------|-----------|
-| Direct Gemini API | Rejected | Severe rate limits, no fallback |
+| Direct Google Generative AI API | Rejected | Severe rate limits, no fallback |
 | Direct OpenAI API | Rejected | No Gemini access, different ecosystem |
 | Self-hosted proxy | Rejected | Infrastructure overhead for Phase 1 |
 | Multiple direct APIs | Rejected | Complex client code, no unified fallback |
@@ -239,7 +239,7 @@ VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxxxx
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2025-12-24 | Site Analysis feature accepted | Natural UX for field rangers, USFS-aligned terminology |
-| 2025-12-24 | OpenRouter migration accepted | Gemini rate limits insufficient; OpenRouter provides reliable access with fallback options |
+| 2025-12-24 | OpenRouter migration accepted | Google Generative AI API rate limits insufficient; OpenRouter provides reliable access with fallback options |
 | 2025-12-24 | localStorage persistence accepted | Immediate implementation; backend sync deferred to Phase 2 |
 
 ---

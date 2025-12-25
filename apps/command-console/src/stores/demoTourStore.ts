@@ -12,6 +12,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { MapLayerType, DataLayerType } from './mapStore';
+import { useFireContextStore } from './fireContextStore';
 
 // Tour step definition
 export interface TourStep {
@@ -40,8 +41,8 @@ export interface TourStep {
 }
 
 
-// The 7 tour steps as specified in the Manifesto
-const TOUR_STEPS: TourStep[] = [
+// The curated Cedar Creek tour steps
+const CEDAR_CREEK_STEPS: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to RANGER',
@@ -214,7 +215,7 @@ interface DemoTourState {
   progress: number; // 0-100
 
   // Actions
-  startTour: () => void;
+  startTour: (targetFireId?: string) => void;
   endTour: () => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -227,7 +228,7 @@ export const useDemoTourStore = create<DemoTourState>()(
     (set, get) => ({
       isActive: false,
       currentStepIndex: 0,
-      steps: TOUR_STEPS,
+      steps: CEDAR_CREEK_STEPS,
 
       // Computed getters (recalculated on access)
       get currentStep() {
@@ -252,7 +253,27 @@ export const useDemoTourStore = create<DemoTourState>()(
         return ((currentStepIndex + 1) / steps.length) * 100;
       },
 
-      startTour: () => {
+      startTour: (targetFireId?: string) => {
+        // If a specific fire is requested, ensure we're on it
+        if (targetFireId) {
+          const currentFireId = useFireContextStore.getState().activeFireId;
+
+          if (currentFireId !== targetFireId) {
+            useFireContextStore.getState().selectFire(targetFireId);
+          }
+
+          // In the future, we could switch 'steps' based on the fireId
+          // For now, we only have the Cedar Creek experience
+          if (targetFireId === 'cedar-creek-2022') {
+            set({ steps: CEDAR_CREEK_STEPS });
+          } else {
+            // Fallback or generic dynamic generation could go here
+            // For now, we'll just use Cedar Creek steps but this might be weird if looking at another fire
+            // NOTE: The implementation plan decided to force users to Cedar Creek for the best demo
+            // so this branch might technically be unreachable if we only call it with 'cedar-creek-2022'
+          }
+        }
+
         set({ isActive: true, currentStepIndex: 0 });
       },
 
@@ -310,4 +331,4 @@ export const useTourProgress = () => {
   };
 };
 
-export { TOUR_STEPS };
+export { CEDAR_CREEK_STEPS as TOUR_STEPS };

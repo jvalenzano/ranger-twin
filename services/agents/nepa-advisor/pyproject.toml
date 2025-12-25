@@ -10,7 +10,7 @@ dependencies = [
     "pydantic>=2.5.0",
     "google-adk>=0.1.0",
     "google-genai>=0.1.0",
-    "agent-common",
+    "ranger-agent-common",
 ]
 
 [project.optional-dependencies]

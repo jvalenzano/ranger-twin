@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests yet for command-console\" && exit 0"
+    "test": "echo \"No tests yet for command-console\" && exit 0",
+    "generate:types": "cd ../../packages/agent-common && python scripts/generate-types.py"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

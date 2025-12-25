@@ -13,13 +13,30 @@
     },
     "geometry": {
       "type": "Polygon",
-      "coordinates": [[
-        [-121.70, 42.10],
-        [-121.00, 42.10],
-        [-121.00, 42.80],
-        [-121.70, 42.80],
-        [-121.70, 42.10]
-      ]]
+      "coordinates": [
+        [
+          [
+            -121.70,
+            42.10
+          ],
+          [
+            -121.00,
+            42.10
+          ],
+          [
+            -121.00,
+            42.80
+          ],
+          [
+            -121.70,
+            42.80
+          ],
+          [
+            -121.70,
+            42.10
+          ]
+        ]
+      ]
     }
   },
   "burnSeverity": {
@@ -37,13 +54,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.45, 42.55],
-            [-121.35, 42.55],
-            [-121.35, 42.65],
-            [-121.45, 42.65],
-            [-121.45, 42.55]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.35,
+                42.55
+              ],
+              [
+                -121.35,
+                42.65
+              ],
+              [
+                -121.45,
+                42.65
+              ],
+              [
+                -121.45,
+                42.55
+              ]
+            ]
+          ]
         }
       },
       {
@@ -58,13 +92,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.55, 42.45],
-            [-121.45, 42.45],
-            [-121.45, 42.55],
-            [-121.55, 42.55],
-            [-121.55, 42.45]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.45,
+                42.45
+              ],
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.55,
+                42.45
+              ]
+            ]
+          ]
         }
       },
       {
@@ -79,13 +130,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.25, 42.35],
-            [-121.15, 42.35],
-            [-121.15, 42.45],
-            [-121.25, 42.45],
-            [-121.25, 42.35]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.25,
+                42.35
+              ],
+              [
+                -121.15,
+                42.35
+              ],
+              [
+                -121.15,
+                42.45
+              ],
+              [
+                -121.25,
+                42.45
+              ],
+              [
+                -121.25,
+                42.35
+              ]
+            ]
+          ]
         }
       },
       {
@@ -100,13 +168,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.65, 42.35],
-            [-121.55, 42.35],
-            [-121.55, 42.45],
-            [-121.65, 42.45],
-            [-121.65, 42.35]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.65,
+                42.35
+              ],
+              [
+                -121.55,
+                42.35
+              ],
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.65,
+                42.45
+              ],
+              [
+                -121.65,
+                42.35
+              ]
+            ]
+          ]
         }
       },
       {
@@ -121,13 +206,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.15, 42.55],
-            [-121.05, 42.55],
-            [-121.05, 42.65],
-            [-121.15, 42.65],
-            [-121.15, 42.55]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.15,
+                42.55
+              ],
+              [
+                -121.05,
+                42.55
+              ],
+              [
+                -121.05,
+                42.65
+              ],
+              [
+                -121.15,
+                42.65
+              ],
+              [
+                -121.15,
+                42.55
+              ]
+            ]
+          ]
         }
       },
       {
@@ -142,13 +244,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.35, 42.25],
-            [-121.25, 42.25],
-            [-121.25, 42.35],
-            [-121.35, 42.35],
-            [-121.35, 42.25]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.35,
+                42.25
+              ],
+              [
+                -121.25,
+                42.25
+              ],
+              [
+                -121.25,
+                42.35
+              ],
+              [
+                -121.35,
+                42.35
+              ],
+              [
+                -121.35,
+                42.25
+              ]
+            ]
+          ]
         }
       },
       {
@@ -163,13 +282,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.45, 42.35],
-            [-121.35, 42.35],
-            [-121.35, 42.45],
-            [-121.45, 42.45],
-            [-121.45, 42.35]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.45,
+                42.35
+              ],
+              [
+                -121.35,
+                42.35
+              ],
+              [
+                -121.35,
+                42.45
+              ],
+              [
+                -121.45,
+                42.45
+              ],
+              [
+                -121.45,
+                42.35
+              ]
+            ]
+          ]
         }
       },
       {
@@ -184,13 +320,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.55, 42.55],
-            [-121.45, 42.55],
-            [-121.45, 42.65],
-            [-121.55, 42.65],
-            [-121.55, 42.55]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.45,
+                42.65
+              ],
+              [
+                -121.55,
+                42.65
+              ],
+              [
+                -121.55,
+                42.55
+              ]
+            ]
+          ]
         }
       },
       {
@@ -205,13 +358,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.65, 42.45],
-            [-121.55, 42.45],
-            [-121.55, 42.55],
-            [-121.65, 42.55],
-            [-121.65, 42.45]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.65,
+                42.45
+              ],
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.65,
+                42.55
+              ],
+              [
+                -121.65,
+                42.45
+              ]
+            ]
+          ]
         }
       },
       {
@@ -226,13 +396,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.25, 42.45],
-            [-121.15, 42.45],
-            [-121.15, 42.55],
-            [-121.25, 42.55],
-            [-121.25, 42.45]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.25,
+                42.45
+              ],
+              [
+                -121.15,
+                42.45
+              ],
+              [
+                -121.15,
+                42.55
+              ],
+              [
+                -121.25,
+                42.55
+              ],
+              [
+                -121.25,
+                42.45
+              ]
+            ]
+          ]
         }
       }
     ]
@@ -247,13 +434,16 @@
           "trail_name": "Fremont National Recreation Trail",
           "point_id": "FRWN-101-DP01",
           "type": "BRIDGE_FAILURE",
-          "severity": "critical",
+          "severity": 5,
           "description": "Sprague River crossing - steel bridge deck warped",
           "estimated_cost": 185000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.38, 42.52]
+          "coordinates": [
+            -121.38,
+            42.52
+          ]
         }
       },
       {
@@ -263,13 +453,16 @@
           "trail_name": "Fremont National Recreation Trail",
           "point_id": "FRWN-101-DP02",
           "type": "HAZARD_TREES",
-          "severity": "HIGH",
+          "severity": 4,
           "description": "Dense snag field - 85+ trees within falling distance",
           "estimated_cost": 42000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.42, 42.48]
+          "coordinates": [
+            -121.42,
+            42.48
+          ]
         }
       },
       {
@@ -279,13 +472,16 @@
           "trail_name": "Fremont National Recreation Trail",
           "point_id": "FRWN-101-DP03",
           "type": "TREAD_EROSION",
-          "severity": "MODERATE",
+          "severity": 3,
           "description": "Switchback section - multiple debris flow channels",
           "estimated_cost": 28000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.35, 42.58]
+          "coordinates": [
+            -121.35,
+            42.58
+          ]
         }
       },
       {
@@ -295,13 +491,16 @@
           "trail_name": "Fremont National Recreation Trail",
           "point_id": "FRWN-101-DP04",
           "type": "BRIDGE_FAILURE",
-          "severity": "HIGH",
+          "severity": 4,
           "description": "Log stringer bridge - complete loss to fire",
           "estimated_cost": 65000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.28, 42.62]
+          "coordinates": [
+            -121.28,
+            42.62
+          ]
         }
       },
       {
@@ -311,13 +510,16 @@
           "trail_name": "Gearhart Mountain Trail",
           "point_id": "FRWN-205-DP01",
           "type": "HAZARD_TREES",
-          "severity": "critical",
+          "severity": 5,
           "description": "Entire corridor requires hazard tree assessment",
           "estimated_cost": 95000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.18, 42.38]
+          "coordinates": [
+            -121.18,
+            42.38
+          ]
         }
       },
       {
@@ -327,13 +529,16 @@
           "trail_name": "Gearhart Mountain Trail",
           "point_id": "FRWN-205-DP02",
           "type": "TREAD_EROSION",
-          "severity": "HIGH",
+          "severity": 4,
           "description": "Summit approach - severe gully formation",
           "estimated_cost": 52000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.22, 42.41]
+          "coordinates": [
+            -121.22,
+            42.41
+          ]
         }
       },
       {
@@ -343,13 +548,16 @@
           "trail_name": "Gearhart Mountain Trail",
           "point_id": "FRWN-205-DP03",
           "type": "SIGNAGE",
-          "severity": "MODERATE",
+          "severity": 3,
           "description": "All trailhead and junction signs burned - 8 locations",
           "estimated_cost": 12000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.15, 42.36]
+          "coordinates": [
+            -121.15,
+            42.36
+          ]
         }
       },
       {
@@ -359,13 +567,16 @@
           "trail_name": "Sycan River Trail",
           "point_id": "FRWN-312-DP01",
           "type": "BRIDGE_FAILURE",
-          "severity": "HIGH",
+          "severity": 4,
           "description": "Puncheon boardwalk - 200ft section burned",
           "estimated_cost": 78000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.52, 42.48]
+          "coordinates": [
+            -121.52,
+            42.48
+          ]
         }
       },
       {
@@ -375,13 +586,16 @@
           "trail_name": "Sycan River Trail",
           "point_id": "FRWN-312-DP02",
           "type": "HAZARD_TREES",
-          "severity": "MODERATE",
+          "severity": 3,
           "description": "Riparian corridor snags - 40+ trees",
           "estimated_cost": 24000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.48, 42.51]
+          "coordinates": [
+            -121.48,
+            42.51
+          ]
         }
       },
       {
@@ -391,13 +605,16 @@
           "trail_name": "Campbell Lake Loop",
           "point_id": "FRWN-418-DP01",
           "type": "FACILITY_DAMAGE",
-          "severity": "HIGH",
+          "severity": 4,
           "description": "Trailhead parking and restroom destroyed",
           "estimated_cost": 145000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.48, 42.58]
+          "coordinates": [
+            -121.48,
+            42.58
+          ]
         }
       },
       {
@@ -407,13 +624,16 @@
           "trail_name": "Campbell Lake Loop",
           "point_id": "FRWN-418-DP02",
           "type": "HAZARD_TREES",
-          "severity": "MODERATE",
+          "severity": 3,
           "description": "Lakeshore section hazard trees",
           "estimated_cost": 18000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.51, 42.61]
+          "coordinates": [
+            -121.51,
+            42.61
+          ]
         }
       },
       {
@@ -423,13 +643,16 @@
           "trail_name": "Campbell Lake Loop",
           "point_id": "FRWN-418-DP03",
           "type": "TREAD_EROSION",
-          "severity": "LOW",
+          "severity": 2,
           "description": "Minor washout at inlet crossing",
           "estimated_cost": 5000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.46, 42.59]
+          "coordinates": [
+            -121.46,
+            42.59
+          ]
         }
       },
       {
@@ -439,13 +662,16 @@
           "trail_name": "OC&E Woods Line State Trail",
           "point_id": "FRWN-520-DP01",
           "type": "BRIDGE_FAILURE",
-          "severity": "critical",
+          "severity": 5,
           "description": "Historic trestle - significant structural damage",
           "estimated_cost": 320000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.58, 42.42]
+          "coordinates": [
+            -121.58,
+            42.42
+          ]
         }
       },
       {
@@ -455,13 +681,16 @@
           "trail_name": "OC&E Woods Line State Trail",
           "point_id": "FRWN-520-DP02",
           "type": "HAZARD_TREES",
-          "severity": "MODERATE",
+          "severity": 3,
           "description": "Rail corridor snags - 65 trees along 3mi",
           "estimated_cost": 32000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.62, 42.38]
+          "coordinates": [
+            -121.62,
+            42.38
+          ]
         }
       },
       {
@@ -471,13 +700,16 @@
           "trail_name": "Klamath Tribes Heritage Trail",
           "point_id": "FRWN-615-DP01",
           "type": "CULTURAL_SITE",
-          "severity": "critical",
+          "severity": 5,
           "description": "Interpretive shelter and signage burned - tribal consultation required",
           "estimated_cost": 85000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.61, 42.48]
+          "coordinates": [
+            -121.61,
+            42.48
+          ]
         }
       },
       {
@@ -487,13 +719,16 @@
           "trail_name": "Klamath Tribes Heritage Trail",
           "point_id": "FRWN-615-DP02",
           "type": "HAZARD_TREES",
-          "severity": "LOW",
+          "severity": 2,
           "description": "Scattered snags near cultural features",
           "estimated_cost": 15000
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.58, 42.51]
+          "coordinates": [
+            -121.58,
+            42.51
+          ]
         }
       }
     ]
@@ -509,14 +744,17 @@
           "burn_severity": "HIGH",
           "total_mbf_per_acre": 14.1,
           "estimated_value_per_acre": 4800,
-          "salvage_priority": "HIGHEST",
+          "priority": "HIGHEST",
           "primary_species": "Ponderosa Pine",
           "access_road": "FR 3411",
           "notes": "Premium ponderosa; beetle activity beginning"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.41, 42.53]
+          "coordinates": [
+            -121.41,
+            42.53
+          ]
         }
       },
       {
@@ -527,14 +765,17 @@
           "burn_severity": "HIGH",
           "total_mbf_per_acre": 9.2,
           "estimated_value_per_acre": 3100,
-          "salvage_priority": "HIGH",
+          "priority": "HIGH",
           "primary_species": "Lodgepole Pine",
           "access_road": "FR 3372",
           "notes": "Road reconstruction needed; cable logging required"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.21, 42.39]
+          "coordinates": [
+            -121.21,
+            42.39
+          ]
         }
       },
       {
@@ -545,14 +786,17 @@
           "burn_severity": "MODERATE",
           "total_mbf_per_acre": 9.6,
           "estimated_value_per_acre": 3400,
-          "salvage_priority": "HIGH",
+          "priority": "HIGH",
           "primary_species": "Ponderosa Pine",
           "access_road": "FR 3239",
           "notes": "Mixed condition; selective harvest possible"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.49, 42.47]
+          "coordinates": [
+            -121.49,
+            42.47
+          ]
         }
       },
       {
@@ -563,14 +807,17 @@
           "burn_severity": "HIGH",
           "total_mbf_per_acre": 9.5,
           "estimated_value_per_acre": 3200,
-          "salvage_priority": "HIGH",
+          "priority": "HIGH",
           "primary_species": "White Fir",
           "access_road": "FR 3411-140",
           "notes": "Spotted owl habitat - survey required"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.42, 42.41]
+          "coordinates": [
+            -121.42,
+            42.41
+          ]
         }
       },
       {
@@ -581,14 +828,17 @@
           "burn_severity": "HIGH",
           "total_mbf_per_acre": 9.0,
           "estimated_value_per_acre": 2800,
-          "salvage_priority": "MEDIUM",
+          "priority": "MEDIUM",
           "primary_species": "Lodgepole Pine",
           "access_road": "FR 2918",
           "notes": "High extraction cost; scenic viewshed"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.11, 42.58]
+          "coordinates": [
+            -121.11,
+            42.58
+          ]
         }
       },
       {
@@ -599,14 +849,17 @@
           "burn_severity": "MODERATE",
           "total_mbf_per_acre": 9.5,
           "estimated_value_per_acre": 3500,
-          "salvage_priority": "HIGH",
+          "priority": "HIGH",
           "primary_species": "Ponderosa Pine",
           "access_road": "FR 3484",
           "notes": "Recreation corridor; maintain screening"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.51, 42.59]
+          "coordinates": [
+            -121.51,
+            42.59
+          ]
         }
       },
       {
@@ -617,14 +870,17 @@
           "burn_severity": "MODERATE",
           "total_mbf_per_acre": 11.4,
           "estimated_value_per_acre": 4200,
-          "salvage_priority": "HIGHEST",
+          "priority": "HIGHEST",
           "primary_species": "Ponderosa Pine",
           "access_road": "FR 3300",
           "notes": "Large-diameter ponderosa; volcanic soils"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.22, 42.48]
+          "coordinates": [
+            -121.22,
+            42.48
+          ]
         }
       },
       {
@@ -635,14 +891,17 @@
           "burn_severity": "LOW",
           "total_mbf_per_acre": 5.8,
           "estimated_value_per_acre": 2100,
-          "salvage_priority": "LOW",
+          "priority": "LOW",
           "primary_species": "Ponderosa Pine",
           "access_road": "FR 2128",
           "notes": "Mostly survived; fuels reduction priority; WUI zone"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [-121.62, 42.49]
+          "coordinates": [
+            -121.62,
+            42.49
+          ]
         }
       }
     ]
@@ -662,12 +921,30 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.45, 42.45],
-            [-121.42, 42.48],
-            [-121.38, 42.52],
-            [-121.35, 42.58],
-            [-121.28, 42.62],
-            [-121.20, 42.68]
+            [
+              -121.45,
+              42.45
+            ],
+            [
+              -121.42,
+              42.48
+            ],
+            [
+              -121.38,
+              42.52
+            ],
+            [
+              -121.35,
+              42.58
+            ],
+            [
+              -121.28,
+              42.62
+            ],
+            [
+              -121.20,
+              42.68
+            ]
           ]
         }
       },
@@ -683,11 +960,26 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.25, 42.32],
-            [-121.22, 42.35],
-            [-121.18, 42.38],
-            [-121.15, 42.41],
-            [-121.12, 42.44]
+            [
+              -121.25,
+              42.32
+            ],
+            [
+              -121.22,
+              42.35
+            ],
+            [
+              -121.18,
+              42.38
+            ],
+            [
+              -121.15,
+              42.41
+            ],
+            [
+              -121.12,
+              42.44
+            ]
           ]
         }
       },
@@ -703,10 +995,22 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.55, 42.45],
-            [-121.52, 42.48],
-            [-121.48, 42.51],
-            [-121.45, 42.54]
+            [
+              -121.55,
+              42.45
+            ],
+            [
+              -121.52,
+              42.48
+            ],
+            [
+              -121.48,
+              42.51
+            ],
+            [
+              -121.45,
+              42.54
+            ]
           ]
         }
       },
@@ -722,11 +1026,26 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.48, 42.58],
-            [-121.51, 42.61],
-            [-121.48, 42.63],
-            [-121.46, 42.59],
-            [-121.48, 42.58]
+            [
+              -121.48,
+              42.58
+            ],
+            [
+              -121.51,
+              42.61
+            ],
+            [
+              -121.48,
+              42.63
+            ],
+            [
+              -121.46,
+              42.59
+            ],
+            [
+              -121.48,
+              42.58
+            ]
           ]
         }
       },
@@ -742,10 +1061,22 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.68, 42.35],
-            [-121.62, 42.38],
-            [-121.58, 42.42],
-            [-121.52, 42.45]
+            [
+              -121.68,
+              42.35
+            ],
+            [
+              -121.62,
+              42.38
+            ],
+            [
+              -121.58,
+              42.42
+            ],
+            [
+              -121.52,
+              42.45
+            ]
           ]
         }
       },
@@ -761,10 +1092,22 @@
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-121.64, 42.46],
-            [-121.61, 42.48],
-            [-121.58, 42.51],
-            [-121.55, 42.53]
+            [
+              -121.64,
+              42.46
+            ],
+            [
+              -121.61,
+              42.48
+            ],
+            [
+              -121.58,
+              42.51
+            ],
+            [
+              -121.55,
+              42.53
+            ]
           ]
         }
       }

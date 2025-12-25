@@ -26,7 +26,7 @@ Vercel Edge Function (/api/query)
     ├── Inject fixture data as context
     │
     ▼
-Gemini API (gemini-3-flash)  # Updated per ADR-003
+Google Generative AI API (gemini-2.0-flash-exp)  # Updated per ADR-003 & ADR-004
     │
     ▼
 Structured AgentBriefingEvent
@@ -77,7 +77,7 @@ export async function generateContent(
   userQuery: string,
   context: string
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-3-flash' });  // Updated per ADR-003
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });  // Updated per ADR-003
 
   const prompt = `${systemPrompt}
 
@@ -416,7 +416,7 @@ export default ChatInput;
 Create `.env.local` in `apps/command-console/`:
 
 ```
-GEMINI_API_KEY=your_api_key_here
+GEMINI_API_KEY=your_api_key_here  # For Google Generative AI API
 ```
 
 Get your API key from [Google AI Studio](https://aistudio.google.com/).

@@ -177,7 +177,8 @@ def main():
     # Initialize
     data_dir = get_data_dir()
     store_name = "RANGER-NEPA-FSM-FSH-Knowledge-Base"
-    config_path = data_dir.parent / ".nepa_store_config.json"
+    # Store config in data/ directory (added to .gitignore)
+    config_path = data_dir / ".nepa_store_config.json"
 
     # Find documents
     print("Scanning for documents...")

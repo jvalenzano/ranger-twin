@@ -45,7 +45,8 @@ class ToolResult:
 
 def get_store_config() -> Optional[dict]:
     """Load File Search store configuration."""
-    config_path = Path(__file__).parent.parent / ".nepa_store_config.json"
+    # Config stored in data/ directory (see scripts/setup_file_search.py)
+    config_path = Path(__file__).parent.parent / "data" / ".nepa_store_config.json"
 
     if not config_path.exists():
         logger.warning(f"Store config not found: {config_path}")

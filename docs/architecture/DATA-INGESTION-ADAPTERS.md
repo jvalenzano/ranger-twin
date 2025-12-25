@@ -38,6 +38,47 @@ Data ingestion adapters serve as **translation layers** that normalize diverse e
 
 ---
 
+### Design Philosophy: "Nerve Center, Not Sensors"
+
+> RANGER's value comes from orchestrating intelligence, not from building sensors or replicating existing visualization tools.
+
+This foundational principle shapes every architectural decision:
+
+**What RANGER Does:**
+- Orchestrates multi-agent workflows for post-fire recovery decisions
+- Provides AI-powered contextual briefings with confidence scoring
+- Coordinates crew assignments and resource allocation
+- Exports to legacy USFS systems (TRACS, FSVeg)
+- Links out to authoritative external tools for specialized visualizations
+
+**What RANGER Does NOT Do:**
+- Build custom satellite imagery pipelines (use NASA FIRMS, Sentinel Hub)
+- Replicate complex fire mapping tools (link to NASA FIRMS instead)
+- Operate field sensors (consume from Survey123, Collector, IRWIN)
+- Store authoritative fire perimeter data (adapter from InciWeb)
+
+**Practical Application:**
+
+| Instead of Building... | RANGER Integrates... |
+|------------------------|---------------------|
+| Real-time fire hotspot visualization | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/usfs/map/) deep links |
+| Satellite imagery processing | Google Earth Engine, Sentinel Hub APIs |
+| Field data collection forms | Survey123, ArcGIS Collector webhooks |
+| Fire incident databases | InciWeb, IRWIN adapters |
+| Historical fire perimeters | NIFC, MTBS data services |
+
+**Why This Matters:**
+
+1. **Focus development effort** on unique value: agentic workflows, reasoning transparency, decision support
+2. **Leverage domain expertise** of specialized systems maintained by NASA, USFS, NOAA
+3. **Reduce maintenance burden** by not duplicating functionality
+4. **Ensure data authority** by linking to official sources rather than caching copies
+5. **Ship faster** by composing existing tools rather than building from scratch
+
+The adapter pattern (Section 3) implements this philosophy—each adapter acts as a translation layer, normalizing diverse external formats into RANGER's Common Data Schema for agent consumption, while deep links in the UI connect users to authoritative visualization tools.
+
+---
+
 ## 2. Architecture Diagram
 
 ```

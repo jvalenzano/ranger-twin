@@ -206,7 +206,8 @@ const Header: React.FC<HeaderProps> = ({
     if (isTourActive) {
       endTour();
     } else {
-      startTour();
+      // Force the Cedar Creek demo experience
+      startTour('cedar-creek-2022');
     }
   };
 
@@ -252,8 +253,8 @@ const Header: React.FC<HeaderProps> = ({
         <button
           onClick={handleDemoClick}
           className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all group ${isTourActive
-              ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
-              : 'bg-transparent border border-accent-cyan/40 text-accent-cyan hover:bg-accent-cyan/10 hover:border-accent-cyan/60'
+            ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
+            : 'bg-transparent border border-accent-cyan/40 text-accent-cyan hover:bg-accent-cyan/10 hover:border-accent-cyan/60'
             }`}
         >
           {isTourActive ? (
@@ -273,8 +274,8 @@ const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onChatToggle}
           className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold mono uppercase tracking-wider rounded transition-all ${isChatOpen
-              ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
-              : 'bg-transparent border border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:border-slate-500/50 hover:text-white'
+            ? 'bg-accent-cyan/20 border border-accent-cyan/50 text-accent-cyan'
+            : 'bg-transparent border border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:border-slate-500/50 hover:text-white'
             }`}
         >
           <MessageSquare size={10} />

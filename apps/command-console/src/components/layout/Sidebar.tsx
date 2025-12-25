@@ -21,12 +21,10 @@ import {
   Plus,
   Minus,
   Compass,
-  Ruler,
-  PenTool,
   Settings,
   Pin,
   Maximize,
-  Search,
+  Globe,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -36,7 +34,6 @@ import {
   type LifecyclePhase,
 } from '@/stores/lifecycleStore';
 import { useMapStore, useActiveLayer } from '@/stores/mapStore';
-import { useMeasureStore, useMeasureMode } from '@/stores/measureStore';
 import mockBriefingService, {
   type LifecyclePhase as MockPhase,
 } from '@/services/mockBriefingService';
@@ -46,6 +43,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent, type TooltipContent } from '@/config/tooltipContent';
 import { useToolbarStore, TOOLBAR_TOOLS, type ToolId } from '@/stores/toolbarStore';
 import { useVisualAuditStore } from '@/stores/visualAuditStore';
+import { useMissionStore } from '@/stores/missionStore';
 
 interface LifecycleStep {
   id: LifecyclePhase;
@@ -98,6 +96,58 @@ const LIFECYCLE_STEPS: LifecycleStep[] = [
 // Width constants
 const EXPANDED_WIDTH = 200;
 const COLLAPSED_WIDTH = 64;
+
+/**
+ * National View Button - Returns to Mission Control
+ */
+function NationalViewButton({ isExpanded }: { isExpanded: boolean }) {
+  const { returnToNational } = useMissionStore();
+
+  return (
+    <Tooltip
+      content={{
+        title: 'National View',
+        description: 'Return to Mission Control to see all fires',
+      }}
+      position="right"
+      className="block w-full"
+    >
+      <button
+        onClick={() => returnToNational()}
+        className={`
+          group relative w-full flex items-center rounded-r-lg transition-all duration-200
+          ${isExpanded ? 'py-3 px-3 gap-3' : 'py-2 px-2 gap-0.5 justify-center flex-col'}
+          hover:bg-cyan-500/10 border-l-3 border-l-transparent hover:border-l-cyan-500
+        `}
+        style={{ borderLeftWidth: '3px' }}
+        aria-label="Return to National View"
+      >
+        <div className="relative flex-shrink-0">
+          <Globe
+            size={26}
+            strokeWidth={1.5}
+            className="text-cyan-400 opacity-70 group-hover:opacity-100 transition-all"
+          />
+        </div>
+
+        {isExpanded ? (
+          <div className="flex-1 min-w-0 text-left">
+            <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+              National
+            </span>
+            <span className="block text-[10px] text-slate-500 truncate">
+              All fires
+            </span>
+          </div>
+        ) : (
+          <span className="text-[9px] text-slate-500 group-hover:text-slate-300 transition-colors mt-0.5">
+            National
+          </span>
+        )}
+      </button>
+    </Tooltip>
+  );
+}
 
 interface SidebarProps {
   onWidthChange?: (width: number) => void;
@@ -253,6 +303,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
 
       {/* Workflow steps */}
       <div className="flex-1 pt-4 pb-4 px-2 space-y-1 overflow-hidden">
+        {/* National View button - returns to Mission Control */}
+        <NationalViewButton isExpanded={isExpanded} />
+
+        {/* Divider */}
+        <div className="mx-1 my-2 border-t border-white/10" />
+
         {LIFECYCLE_STEPS.map((step) => {
           const Icon = step.icon;
           const phaseState = phases[step.id];
@@ -381,10 +437,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
   const zoomOut = useMapStore((state) => state.zoomOut);
   const resetBearing = useMapStore((state) => state.resetBearing);
 
-  const measureMode = useMeasureMode();
-  const setMeasureMode = useMeasureStore((state) => state.setMode);
-  const clearMeasure = useMeasureStore((state) => state.clear);
-
   const pinnedTools = useToolbarStore((state) => state.pinnedTools);
   const togglePin = useToolbarStore((state) => state.togglePin);
   const resetToDefaults = useToolbarStore((state) => state.resetToDefaults);
@@ -403,22 +455,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleDistanceClick = () => {
-    if (measureMode === 'distance') {
-      clearMeasure();
-    } else {
-      setMeasureMode('distance');
-    }
-  };
-
-  const handleAreaClick = () => {
-    if (measureMode === 'area') {
-      clearMeasure();
-    } else {
-      setMeasureMode('area');
-    }
-  };
 
   const handleAuditClick = () => {
     // Blur active element to dismiss any tooltips
@@ -441,8 +477,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     'zoom-in': zoomIn,
     'zoom-out': zoomOut,
     'reset-north': resetBearing,
-    'measure-distance': handleDistanceClick,
-    'measure-area': handleAreaClick,
     'visual-audit': handleAuditClick,
     'layer-switch': () => { }, // Placeholder for layer switching UI
   };
@@ -453,8 +487,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'layer-sat': return activeLayer === 'SAT';
       case 'layer-ter': return activeLayer === 'TER';
       case 'layer-ir': return activeLayer === 'IR';
-      case 'measure-distance': return measureMode === 'distance';
-      case 'measure-area': return measureMode === 'area';
       case 'visual-audit': return visualAuditStatus === 'selecting';
       default: return false;
     }
@@ -470,8 +502,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'zoom-in': return <Plus size={size} />;
       case 'zoom-out': return <Minus size={size} />;
       case 'reset-north': return <Compass size={size} />;
-      case 'measure-distance': return <Ruler size={size} />;
-      case 'measure-area': return <PenTool size={size} />;
       case 'visual-audit': return <Maximize size={size} />;
     }
   };
@@ -485,8 +515,6 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       'zoom-in': tooltipContent.mapControls.zoomIn,
       'zoom-out': tooltipContent.mapControls.zoomOut,
       'reset-north': tooltipContent.mapControls.resetNorth,
-      'measure-distance': tooltipContent.mapControls.measureDistance,
-      'measure-area': tooltipContent.mapControls.measureArea,
       'visual-audit': tooltipContent.mapControls.visualAudit,
     };
     return tooltipMap[toolId] || null;
