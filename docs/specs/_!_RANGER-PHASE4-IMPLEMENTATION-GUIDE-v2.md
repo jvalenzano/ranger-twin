@@ -22,6 +22,7 @@
 | ADK Chat Service | `fbef1b4` | ✅ NEW - Bridges chat UI to ADK |
 | Dual-mode chatStore | `fbef1b4` | ✅ NEW - ADK + Legacy modes |
 | ADK mode toggle UI | `b78a26b` | ✅ NEW - Visual mode indicator |
+| Connection status indicator | `01073b7` | ✅ NEW - Live status in UI |
 | Agent tests | 645 tests | ✅ ALL PASSING |
 
 ### Agent Hierarchy (Verified)
