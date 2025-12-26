@@ -1,1 +1,0 @@
-"""Burn Analyst agent tests."""

@@ -1,0 +1,55 @@
+{
+  "ESA Section 7 Informal": {
+    "consultation_type": "ESA Section 7 Informal Consultation",
+    "typical_duration_days": 45,
+    "range_days": {"min": 30, "max": 60},
+    "phases": [
+      {"phase": "Species assessment", "days": 15},
+      {"phase": "Informal consultation", "days": 30}
+    ],
+    "regulation": "50 CFR 402.13",
+    "triggers": ["May affect listed species (no adverse effect)"],
+    "agencies": ["USFWS", "NOAA Fisheries"]
+  },
+  "ESA Section 7 Formal": {
+    "consultation_type": "ESA Section 7 Formal Consultation",
+    "typical_duration_days": 195,
+    "range_days": {"min": 135, "max": 255},
+    "phases": [
+      {"phase": "Biological Assessment preparation", "days": 60},
+      {"phase": "Formal consultation", "days": 90},
+      {"phase": "Biological Opinion issuance", "days": 45}
+    ],
+    "regulation": "50 CFR 402.14",
+    "triggers": ["May adversely affect listed species or critical habitat"],
+    "agencies": ["USFWS", "NOAA Fisheries"],
+    "notes": "90-day consultation clock starts when USFWS/NOAA receives complete BA. Additional 60 days may be needed for complex BiOps."
+  },
+  "NHPA Section 106": {
+    "consultation_type": "NHPA Section 106 Consultation",
+    "typical_duration_days": 90,
+    "range_days": {"min": 30, "max": 180},
+    "phases": [
+      {"phase": "Cultural resources survey", "days": 30},
+      {"phase": "SHPO consultation", "days": 45},
+      {"phase": "MOA or PA development (if needed)", "days": 30}
+    ],
+    "regulation": "36 CFR Part 800",
+    "triggers": ["Federal undertaking affecting historic properties"],
+    "agencies": ["State Historic Preservation Office", "Tribal Historic Preservation Office"],
+    "notes": "Duration varies based on site complexity and tribal consultation requirements"
+  },
+  "Clean Water Act Section 404": {
+    "consultation_type": "Clean Water Act Section 404 Permit",
+    "typical_duration_days": 90,
+    "range_days": {"min": 60, "max": 120},
+    "phases": [
+      {"phase": "Wetland delineation", "days": 30},
+      {"phase": "Permit application", "days": 30},
+      {"phase": "Corps review", "days": 30}
+    ],
+    "regulation": "33 CFR Part 325",
+    "triggers": ["Discharge of dredged or fill material into waters of the US"],
+    "agencies": ["U.S. Army Corps of Engineers"]
+  }
+}

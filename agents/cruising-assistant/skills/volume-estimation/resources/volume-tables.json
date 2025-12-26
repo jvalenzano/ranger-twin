@@ -1,0 +1,132 @@
+{
+  "description": "PNW volume equation coefficients for commercial species",
+  "reference": "Brackett (1973), Curtis-Bruce-VanDyck (1981)",
+  "equations": {
+    "PSME": {
+      "species_name": "Douglas-fir",
+      "common_name": "Douglas-fir",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.21887,
+        "b1": 1.84631,
+        "b2": 1.00649
+      },
+      "form_class": 78,
+      "bark_ratio": 0.92,
+      "valid_range": {"min_dbh": 10, "max_dbh": 60, "min_height": 40, "max_height": 250},
+      "description": "Most valuable commercial species in PNW"
+    },
+    "TSHE": {
+      "species_name": "Western Hemlock",
+      "common_name": "Western hemlock",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.41449,
+        "b1": 1.91802,
+        "b2": 0.96065
+      },
+      "form_class": 75,
+      "bark_ratio": 0.90,
+      "valid_range": {"min_dbh": 10, "max_dbh": 50, "min_height": 40, "max_height": 200},
+      "description": "Common associate of Douglas-fir, moderate value"
+    },
+    "THPL": {
+      "species_name": "Western Redcedar",
+      "common_name": "Western redcedar",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.08471,
+        "b1": 1.76447,
+        "b2": 1.03220
+      },
+      "form_class": 80,
+      "bark_ratio": 0.88,
+      "valid_range": {"min_dbh": 12, "max_dbh": 80, "min_height": 50, "max_height": 200},
+      "description": "High value for quality logs, rot resistant"
+    },
+    "PIPO": {
+      "species_name": "Ponderosa Pine",
+      "common_name": "Ponderosa pine",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.29201,
+        "b1": 1.87709,
+        "b2": 0.98826
+      },
+      "form_class": 77,
+      "bark_ratio": 0.91,
+      "valid_range": {"min_dbh": 10, "max_dbh": 50, "min_height": 40, "max_height": 180},
+      "description": "Moderate value, fire resistant"
+    },
+    "PICO": {
+      "species_name": "Lodgepole Pine",
+      "common_name": "Lodgepole pine",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.51157,
+        "b1": 1.97421,
+        "b2": 0.93579
+      },
+      "form_class": 73,
+      "bark_ratio": 0.93,
+      "valid_range": {"min_dbh": 6, "max_dbh": 30, "min_height": 30, "max_height": 120},
+      "description": "Low commercial value, small diameter"
+    },
+    "ABGR": {
+      "species_name": "Grand Fir",
+      "common_name": "Grand fir",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.38164,
+        "b1": 1.89456,
+        "b2": 0.97213
+      },
+      "form_class": 76,
+      "bark_ratio": 0.89,
+      "valid_range": {"min_dbh": 10, "max_dbh": 50, "min_height": 40, "max_height": 200},
+      "description": "Moderate value, susceptible to defect"
+    },
+    "TSME": {
+      "species_name": "Mountain Hemlock",
+      "common_name": "Mountain hemlock",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.46321,
+        "b1": 1.93854,
+        "b2": 0.95132
+      },
+      "form_class": 74,
+      "bark_ratio": 0.90,
+      "valid_range": {"min_dbh": 8, "max_dbh": 40, "min_height": 30, "max_height": 150},
+      "description": "Subalpine species, moderate value"
+    },
+    "ABLA": {
+      "species_name": "Subalpine Fir",
+      "common_name": "Subalpine fir",
+      "equation_type": "Scribner",
+      "coefficients": {
+        "b0": -3.52198,
+        "b1": 1.98765,
+        "b2": 0.92841
+      },
+      "form_class": 72,
+      "bark_ratio": 0.88,
+      "valid_range": {"min_dbh": 6, "max_dbh": 35, "min_height": 25, "max_height": 120},
+      "description": "Low value, high elevation species"
+    }
+  },
+  "volume_formula": {
+    "description": "General PNW volume equation: V = exp(b0 + b1*ln(DBH) + b2*ln(Height))",
+    "units": {
+      "input_dbh": "inches",
+      "input_height": "feet",
+      "output_volume": "board feet (Scribner)"
+    },
+    "notes": [
+      "DBH is diameter at breast height (4.5 feet)",
+      "Height is total tree height",
+      "Volume is gross Scribner board feet to 6-inch top",
+      "Multiply by bark_ratio for inside-bark volume"
+    ]
+  }
+}

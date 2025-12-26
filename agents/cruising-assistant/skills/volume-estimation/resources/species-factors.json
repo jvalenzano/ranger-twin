@@ -1,0 +1,97 @@
+{
+  "fsveg_codes": {
+    "PSME": {
+      "scientific": "Pseudotsuga menziesii",
+      "common": "Douglas-fir",
+      "value_class": "premium",
+      "specific_gravity": 0.48,
+      "fire_resistance": "moderate"
+    },
+    "TSHE": {
+      "scientific": "Tsuga heterophylla",
+      "common": "Western hemlock",
+      "value_class": "commercial",
+      "specific_gravity": 0.42,
+      "fire_resistance": "low"
+    },
+    "THPL": {
+      "scientific": "Thuja plicata",
+      "common": "Western redcedar",
+      "value_class": "premium",
+      "specific_gravity": 0.32,
+      "fire_resistance": "moderate"
+    },
+    "PIPO": {
+      "scientific": "Pinus ponderosa",
+      "common": "Ponderosa pine",
+      "value_class": "commercial",
+      "specific_gravity": 0.40,
+      "fire_resistance": "high"
+    },
+    "PICO": {
+      "scientific": "Pinus contorta",
+      "common": "Lodgepole pine",
+      "value_class": "utility",
+      "specific_gravity": 0.38,
+      "fire_resistance": "low"
+    },
+    "ABGR": {
+      "scientific": "Abies grandis",
+      "common": "Grand fir",
+      "value_class": "commercial",
+      "specific_gravity": 0.37,
+      "fire_resistance": "low"
+    },
+    "TSME": {
+      "scientific": "Tsuga mertensiana",
+      "common": "Mountain hemlock",
+      "value_class": "commercial",
+      "specific_gravity": 0.44,
+      "fire_resistance": "low"
+    },
+    "ABLA": {
+      "scientific": "Abies lasiocarpa",
+      "common": "Subalpine fir",
+      "value_class": "utility",
+      "specific_gravity": 0.32,
+      "fire_resistance": "low"
+    }
+  },
+  "value_classes": {
+    "premium": {
+      "description": "Highest commercial value",
+      "species": ["PSME", "THPL"],
+      "market_factor": 1.0,
+      "typical_uses": ["Structural lumber", "plywood", "veneer"]
+    },
+    "commercial": {
+      "description": "Good commercial value",
+      "species": ["TSHE", "PIPO", "ABGR", "TSME"],
+      "market_factor": 0.75,
+      "typical_uses": ["Framing lumber", "dimension lumber", "pulp"]
+    },
+    "utility": {
+      "description": "Lower commercial value",
+      "species": ["PICO", "ABLA"],
+      "market_factor": 0.50,
+      "typical_uses": ["Posts", "poles", "firewood", "chips"]
+    }
+  },
+  "defect_susceptibility": {
+    "high": {
+      "species": ["ABGR", "TSHE", "ABLA"],
+      "typical_defect_pct": 30,
+      "common_defects": ["Heart rot", "butt rot", "blue stain"]
+    },
+    "moderate": {
+      "species": ["PSME", "THPL", "TSME"],
+      "typical_defect_pct": 20,
+      "common_defects": ["Sweep", "crook", "fire damage"]
+    },
+    "low": {
+      "species": ["PIPO", "PICO"],
+      "typical_defect_pct": 15,
+      "common_defects": ["Pitch", "blue stain"]
+    }
+  }
+}

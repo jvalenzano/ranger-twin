@@ -1,0 +1,70 @@
+{
+  "risk_components": {
+    "damage_severity": {
+      "weight": 0.40,
+      "description": "Weighted average of damage point severities"
+    },
+    "hazard_trees": {
+      "weight": 0.25,
+      "description": "Presence and density of hazard trees"
+    },
+    "infrastructure": {
+      "weight": 0.25,
+      "description": "Bridge and culvert failures"
+    },
+    "accessibility": {
+      "weight": 0.10,
+      "description": "Trail class and remoteness"
+    }
+  },
+  "closure_levels": {
+    "OPEN": {
+      "risk_range": [0, 25],
+      "description": "Safe for public use",
+      "signage_required": false
+    },
+    "OPEN_CAUTION": {
+      "risk_range": [25, 50],
+      "description": "Use with awareness of hazards",
+      "signage_required": true
+    },
+    "RESTRICTED": {
+      "risk_range": [50, 75],
+      "description": "Limited access only (permits/guides)",
+      "signage_required": true
+    },
+    "CLOSED": {
+      "risk_range": [75, 100],
+      "description": "Unsafe, no public access",
+      "signage_required": true
+    }
+  },
+  "seasonal_adjustments": {
+    "summer": 0,
+    "fall": 10,
+    "winter": 20,
+    "spring": 15
+  },
+  "reopening_estimates": {
+    "OPEN": {
+      "months_min": 0,
+      "months_max": 0,
+      "description": "Immediate"
+    },
+    "OPEN_CAUTION": {
+      "months_min": 1,
+      "months_max": 2,
+      "description": "1-2 months with warnings"
+    },
+    "RESTRICTED": {
+      "months_min": 3,
+      "months_max": 6,
+      "description": "3-6 months with treatments"
+    },
+    "CLOSED": {
+      "months_min": 6,
+      "months_max": 24,
+      "description": "6-12+ months with major work"
+    }
+  }
+}

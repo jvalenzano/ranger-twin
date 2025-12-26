@@ -1,0 +1,95 @@
+{
+  "description": "Log scaling rules and conversion factors",
+  "rules": {
+    "scribner": {
+      "name": "Scribner Decimal C",
+      "description": "Most widely used log rule in western US",
+      "origin": "J.M. Scribner, 1846",
+      "method": "Diagram rule - draws 1-inch boards on log end",
+      "conversion_factor": 1.0,
+      "advantages": [
+        "Industry standard in PNW",
+        "Conservative estimates",
+        "Well-established tables"
+      ],
+      "disadvantages": [
+        "Underestimates small logs",
+        "Not metric compatible"
+      ]
+    },
+    "doyle": {
+      "name": "Doyle Log Rule",
+      "description": "Older rule still used in some regions",
+      "origin": "Edward Doyle, 1825",
+      "method": "Formula: V = ((D-4)²/16) × L",
+      "conversion_factor": 0.79,
+      "advantages": [
+        "Simple formula",
+        "Easy mental calculation"
+      ],
+      "disadvantages": [
+        "Severely underestimates small logs",
+        "Not used for modern cruising",
+        "Gives sellers poor prices"
+      ]
+    },
+    "international": {
+      "name": "International 1/4-inch",
+      "description": "Based on actual mill recovery studies",
+      "origin": "Judson Clark, 1906",
+      "method": "Formula based on taper and sawkerf",
+      "conversion_factor": 1.18,
+      "advantages": [
+        "Most accurate log rule",
+        "Accounts for taper",
+        "Used for export logs"
+      ],
+      "disadvantages": [
+        "Complex calculation",
+        "Not standard in domestic market"
+      ]
+    }
+  },
+  "conversion_table": {
+    "description": "Approximate conversion factors between log rules",
+    "scribner_to_doyle": 0.79,
+    "scribner_to_international": 1.18,
+    "doyle_to_scribner": 1.27,
+    "doyle_to_international": 1.49,
+    "international_to_scribner": 0.85,
+    "international_to_doyle": 0.67
+  },
+  "units": {
+    "mbf": {
+      "name": "Thousand Board Feet",
+      "abbreviation": "MBF",
+      "description": "Standard unit for large volume sales",
+      "conversion": "1 MBF = 1000 board feet"
+    },
+    "bf": {
+      "name": "Board Feet",
+      "abbreviation": "BF",
+      "description": "Individual log or tree volume",
+      "conversion": "1 board foot = 12\" × 12\" × 1\" nominal"
+    },
+    "ccf": {
+      "name": "Hundred Cubic Feet",
+      "abbreviation": "CCF",
+      "description": "Volume for pulp or biomass",
+      "conversion": "1 CCF = 100 cubic feet"
+    }
+  },
+  "log_scaling_standards": {
+    "min_diameter": 6,
+    "min_length": 8,
+    "max_length": 40,
+    "scaling_increment": 2,
+    "top_diameter_minimum": 6,
+    "notes": [
+      "Logs scaled in 2-foot increments",
+      "Minimum 8-foot log length",
+      "Deductions for defects (rot, sweep, crook)",
+      "Scale diameter to nearest inch"
+    ]
+  }
+}

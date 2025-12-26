@@ -1,0 +1,150 @@
+{
+  "disciplines": {
+    "wildlife_biology": {
+      "discipline": "Wildlife Biology",
+      "triggers": ["listed_species", "critical_habitat"],
+      "action_types": ["timber_salvage", "reforestation", "road_construction"],
+      "reports": [
+        {
+          "report_type": "Biological Assessment",
+          "required_when": "Federally listed species may be affected",
+          "regulation": "ESA Section 7",
+          "typical_content": ["Species occurrence", "Habitat analysis", "Effects determination", "Mitigation measures"]
+        },
+        {
+          "report_type": "Wildlife Effects Analysis",
+          "required_when": "Action affects wildlife habitat",
+          "regulation": "NFMA",
+          "typical_content": ["Habitat assessment", "Population analysis", "Cumulative effects", "Mitigation"]
+        }
+      ]
+    },
+    "fisheries_biology": {
+      "discipline": "Fisheries Biology",
+      "triggers": ["listed_species_aquatic", "streams", "riparian_areas"],
+      "action_types": ["timber_salvage", "road_construction", "stream_crossings"],
+      "reports": [
+        {
+          "report_type": "Aquatic Effects Analysis",
+          "required_when": "Action affects streams or aquatic habitat",
+          "regulation": "Clean Water Act, ESA",
+          "typical_content": ["Stream survey", "Habitat assessment", "Water quality analysis", "Fish passage"]
+        }
+      ]
+    },
+    "silviculture": {
+      "discipline": "Silviculture",
+      "triggers": ["timber_activities"],
+      "action_types": ["timber_salvage", "reforestation", "hazard_tree"],
+      "reports": [
+        {
+          "report_type": "Timber Cruise and Silvics Report",
+          "required_when": "Timber harvest or silvicultural treatment proposed",
+          "regulation": "NFMA",
+          "typical_content": ["Stand examination", "Volume estimates", "Silvicultural prescription", "Regeneration plan"]
+        }
+      ]
+    },
+    "soils": {
+      "discipline": "Soils",
+      "triggers": ["ground_disturbance", "post_fire"],
+      "action_types": ["timber_salvage", "road_construction", "reforestation"],
+      "reports": [
+        {
+          "report_type": "Soil Erosion and Compaction Analysis",
+          "required_when": "Ground-disturbing activities proposed",
+          "regulation": "NFMA",
+          "typical_content": ["Soil survey", "Erosion potential", "Compaction risk", "BMPs"]
+        }
+      ]
+    },
+    "hydrology": {
+      "discipline": "Hydrology",
+      "triggers": ["watersheds", "ground_disturbance", "streams"],
+      "action_types": ["timber_salvage", "road_construction", "erosion_control"],
+      "reports": [
+        {
+          "report_type": "Watershed Effects Analysis",
+          "required_when": "Action may affect water resources",
+          "regulation": "Clean Water Act",
+          "typical_content": ["Watershed condition", "Hydrologic modeling", "Cumulative effects", "Water quality"]
+        }
+      ]
+    },
+    "archaeology": {
+      "discipline": "Archaeology",
+      "triggers": ["cultural_sites", "ground_disturbance"],
+      "action_types": ["timber_salvage", "trail_construction", "road_construction"],
+      "reports": [
+        {
+          "report_type": "Cultural Resources Survey",
+          "required_when": "Ground disturbance in areas with cultural potential",
+          "regulation": "NHPA Section 106",
+          "typical_content": ["Survey results", "Site evaluations", "NRHP eligibility", "Effect determinations"]
+        }
+      ]
+    },
+    "botany": {
+      "discipline": "Botany",
+      "triggers": ["listed_plants", "sensitive_species"],
+      "action_types": ["timber_salvage", "road_construction", "reforestation"],
+      "reports": [
+        {
+          "report_type": "Botanical Survey and Assessment",
+          "required_when": "Rare or sensitive plant species may be affected",
+          "regulation": "ESA, Forest Service Manual",
+          "typical_content": ["Species surveys", "Population assessments", "Habitat effects", "Mitigation"]
+        }
+      ]
+    },
+    "engineering": {
+      "discipline": "Engineering",
+      "triggers": ["infrastructure"],
+      "action_types": ["trail_repair", "road_repair", "bridge_construction"],
+      "reports": [
+        {
+          "report_type": "Trail Assessment",
+          "required_when": "Trail construction or major reconstruction",
+          "regulation": "Forest Service Trail Specifications",
+          "typical_content": ["Current condition", "Design specifications", "Drainage plan", "Cost estimate"]
+        },
+        {
+          "report_type": "Road Engineering Analysis",
+          "required_when": "Road construction or reconstruction",
+          "regulation": "Forest Service Road Standards",
+          "typical_content": ["Design criteria", "Drainage", "Surfacing", "Traffic safety"]
+        }
+      ]
+    },
+    "recreation": {
+      "discipline": "Recreation",
+      "triggers": ["wilderness", "recreation_areas", "trails"],
+      "action_types": ["trail_construction", "campground_development"],
+      "reports": [
+        {
+          "report_type": "Recreation Impact Analysis",
+          "required_when": "Action affects recreation resources",
+          "regulation": "NFMA",
+          "typical_content": ["Current use", "Effects on recreation", "Access impacts", "Mitigation"]
+        },
+        {
+          "report_type": "Wilderness Boundary Analysis",
+          "required_when": "Action near congressionally designated wilderness",
+          "regulation": "Wilderness Act",
+          "typical_content": ["Proximity analysis", "Wilderness character effects", "Alternatives", "Mitigation"]
+        }
+      ]
+    }
+  },
+  "action_type_mapping": {
+    "timber_salvage": ["silviculture", "wildlife_biology", "soils", "hydrology"],
+    "reforestation": ["silviculture", "wildlife_biology", "soils"],
+    "trail_repair": ["engineering"],
+    "trail_construction": ["engineering", "archaeology", "hydrology"],
+    "road_repair": ["engineering", "hydrology"],
+    "road_construction": ["engineering", "wildlife_biology", "archaeology", "hydrology", "soils"],
+    "erosion_control": ["soils", "hydrology"],
+    "hazard_tree": ["silviculture", "soils"],
+    "emergency_stabilization": ["soils", "hydrology"]
+  }
+}

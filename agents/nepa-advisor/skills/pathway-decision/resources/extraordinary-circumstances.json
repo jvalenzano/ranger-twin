@@ -1,0 +1,116 @@
+{
+  "description": "Extraordinary Circumstances screening criteria per FSH 1909.15 Chapter 30",
+  "circumstances": [
+    {
+      "id": "ec_01",
+      "name": "Federally Listed Species",
+      "description": "May adversely affect threatened, endangered, or proposed species or their critical habitat",
+      "triggers_ea": true,
+      "consultation_required": "ESA Section 7",
+      "screening_questions": [
+        "Are federally listed species present in the project area?",
+        "Does the project affect designated critical habitat?",
+        "Could the action adversely affect listed species?"
+      ]
+    },
+    {
+      "id": "ec_02",
+      "name": "Flood Plains, Wetlands, or Municipal Watersheds",
+      "description": "May have significant adverse effect on flood plains, wetlands, or municipal watersheds",
+      "triggers_ea": false,
+      "consultation_required": null,
+      "screening_questions": [
+        "Are flood plains or wetlands present?",
+        "Would the action significantly affect water quality?",
+        "Is the area a municipal watershed?"
+      ]
+    },
+    {
+      "id": "ec_03",
+      "name": "Congressionally Designated Areas",
+      "description": "May have significant adverse effect on congressionally designated areas (wilderness, wild and scenic rivers, national monuments)",
+      "triggers_ea": true,
+      "consultation_required": null,
+      "screening_questions": [
+        "Are wilderness areas within or adjacent to project area?",
+        "Would the action affect wilderness characteristics?",
+        "Are wild and scenic rivers present?"
+      ]
+    },
+    {
+      "id": "ec_04",
+      "name": "Inventoried Roadless Areas",
+      "description": "May have significant adverse effect on inventoried roadless areas",
+      "triggers_ea": true,
+      "consultation_required": null,
+      "screening_questions": [
+        "Is the project in an inventoried roadless area?",
+        "Would the action affect roadless characteristics?",
+        "Does the 2001 Roadless Rule apply?"
+      ]
+    },
+    {
+      "id": "ec_05",
+      "name": "Research Natural Areas",
+      "description": "May establish precedent for future action or represent decision in principle about future actions with significant environmental effects",
+      "triggers_ea": false,
+      "consultation_required": null,
+      "screening_questions": [
+        "Would this action set precedent for future decisions?",
+        "Are research natural areas affected?",
+        "Could this influence larger-scale future actions?"
+      ]
+    },
+    {
+      "id": "ec_06",
+      "name": "Native American Religious or Cultural Sites",
+      "description": "May adversely affect properties listed or eligible for listing on the National Register of Historic Places, or may cause loss or destruction of significant scientific, cultural, or historical resources",
+      "triggers_ea": false,
+      "consultation_required": "NHPA Section 106",
+      "screening_questions": [
+        "Are there known cultural or religious sites?",
+        "Is the area eligible for National Register listing?",
+        "Has tribal consultation occurred?"
+      ]
+    },
+    {
+      "id": "ec_07",
+      "name": "Highly Uncertain or Controversial Environmental Effects",
+      "description": "May have significant adverse effects on resources subject to management emphasis in Land Management Plans",
+      "triggers_ea": true,
+      "consultation_required": null,
+      "screening_questions": [
+        "Are environmental effects highly uncertain?",
+        "Is the action scientifically controversial?",
+        "Does it conflict with Land Management Plan direction?"
+      ]
+    },
+    {
+      "id": "ec_08",
+      "name": "Cumulative Effects",
+      "description": "May have significant adverse cumulative effects",
+      "triggers_ea": false,
+      "consultation_required": null,
+      "screening_questions": [
+        "Are there other ongoing or planned actions in the area?",
+        "Could cumulative effects be significant?",
+        "Would this incrementally contribute to larger impacts?"
+      ]
+    }
+  ],
+  "screening_guidance": {
+    "process": [
+      "Review all eight extraordinary circumstances",
+      "For each EC, evaluate whether it applies to the proposed action",
+      "If any EC with 'triggers_ea: true' is triggered, CE pathway is not available",
+      "If other ECs are triggered, document in Decision Memo but may still use CE",
+      "Consult with specialists (biologists, archaeologists, etc.) as needed"
+    ],
+    "documentation_requirements": [
+      "Document screening for all ECs in project file",
+      "Include specialist input in screening determination",
+      "Provide rationale for why ECs do or do not apply",
+      "If ECs triggered, explain why EA or EIS is necessary"
+    ]
+  }
+}

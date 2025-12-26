@@ -1,0 +1,54 @@
+{
+  "priority_factors": {
+    "usage": {
+      "weight": 0.35,
+      "description": "Visitor traffic and recreation value"
+    },
+    "access": {
+      "weight": 0.30,
+      "description": "Connectivity and wilderness gateway value"
+    },
+    "cost_effectiveness": {
+      "weight": 0.20,
+      "description": "Cost per mile and benefit-to-cost ratio"
+    },
+    "strategic_value": {
+      "weight": 0.15,
+      "description": "Economic, ecological, or cultural significance"
+    }
+  },
+  "usage_scoring": {
+    "priority_rank_weight": 0.50,
+    "trail_miles_weight": 0.30,
+    "trail_class_weight": 0.20
+  },
+  "access_scoring": {
+    "wilderness_gateway": 30,
+    "trail_system_connector": 25,
+    "unique_destination": 25,
+    "seasonal_access": 20
+  },
+  "quick_win_thresholds": {
+    "max_cost": 15000,
+    "min_usage_score": 60,
+    "max_crew_days": 10
+  },
+  "cost_effectiveness_bands": {
+    "excellent": {
+      "cost_per_mile_max": 5000,
+      "score": 100
+    },
+    "good": {
+      "cost_per_mile_max": 15000,
+      "score": 75
+    },
+    "fair": {
+      "cost_per_mile_max": 30000,
+      "score": 50
+    },
+    "poor": {
+      "cost_per_mile_max": 999999,
+      "score": 25
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "36_CFR_220.6_e_6": {
+    "citation": "36 CFR 220.6(e)(6)",
+    "name": "Timber Stand Improvement",
+    "description": "Timber stand and/or wildlife habitat improvement activities that do not include the use of herbicides or do not require more than 1 mile of low standard road construction",
+    "applicable_actions": ["timber_salvage", "hazard_tree"],
+    "acreage_limit": 4200,
+    "conditions": [
+      "No herbicide use OR less than 1 mile of low standard road construction",
+      "Must be consistent with agency and department direction for such activities in threatened and endangered species habitat"
+    ]
+  },
+  "36_CFR_220.6_e_13": {
+    "citation": "36 CFR 220.6(e)(13)",
+    "name": "Post-Fire Rehabilitation",
+    "description": "Post-fire rehabilitation activities, not to exceed 4,200 acres, designed to stabilize and prevent unacceptable degradation to natural and cultural resources, minimize threats to life or property, or repair/improve deteriorated rangeland ecosystems",
+    "applicable_actions": ["timber_salvage", "reforestation", "erosion_control", "hazard_tree"],
+    "acreage_limit": 4200,
+    "conditions": [
+      "Activities not to exceed 4,200 acres",
+      "Designed to stabilize and prevent unacceptable degradation",
+      "May include revegetation, emergency stabilization, or ecosystem repair"
+    ]
+  },
+  "36_CFR_220.6_e_14": {
+    "citation": "36 CFR 220.6(e)(14)",
+    "name": "Trail Maintenance and Reconstruction",
+    "description": "Repair and maintenance of existing roads and trails, including parking areas and campgrounds that do not significantly change design, size, use, or purpose from original construction",
+    "applicable_actions": ["trail_repair", "road_repair", "campground_repair"],
+    "acreage_limit": null,
+    "conditions": [
+      "Must be repair/maintenance of existing infrastructure",
+      "Cannot significantly change design, size, use, or purpose"
+    ]
+  },
+  "36_CFR_220.6_d_4": {
+    "citation": "36 CFR 220.6(d)(4)",
+    "name": "Emergency Fire Suppression Activities",
+    "description": "Fire suppression and post-fire emergency stabilization activities",
+    "applicable_actions": ["emergency_stabilization", "suppression_repair"],
+    "acreage_limit": null,
+    "conditions": [
+      "Must be emergency actions",
+      "Includes suppression and immediate stabilization",
+      "Subject to post-action review if significant effects occur"
+    ]
+  },
+  "36_CFR_220.6_e_1": {
+    "citation": "36 CFR 220.6(e)(1)",
+    "name": "Roads and Trails",
+    "description": "Construction and reconstruction of trails when no more than 1 mile of new trail is constructed per project",
+    "applicable_actions": ["trail_construction"],
+    "acreage_limit": null,
+    "conditions": [
+      "New trail construction limited to 1 mile per project",
+      "May include reconstruction of existing trails"
+    ]
+  }
+}
