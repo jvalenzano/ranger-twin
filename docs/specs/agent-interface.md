@@ -73,6 +73,40 @@ root_agent = Agent(
 - `description`: Human-readable description
 - `tools`: List of available tools/functions
 
+### Tool Parameter Type Constraints
+
+> **CRITICAL:** The Gemini API rejects complex type hints in tool function parameters.
+> This causes `400 INVALID_ARGUMENT` errors at runtime.
+
+**Forbidden parameter types:**
+- `list[dict]` - causes schema validation failure
+- `dict` - causes schema validation failure
+- `list[CustomClass]` - causes schema validation failure
+
+**Allowed parameter types:**
+- Primitives: `str`, `int`, `float`, `bool`
+- Optional primitives: `str | None`, `int | None`
+- Simple lists: `list[str]`, `list[int]`
+
+**Pattern for complex data - use JSON strings:**
+
+```python
+# ❌ WRONG - Will fail with 400 error
+def analyze_data(records: list[dict] | None = None) -> dict:
+    ...
+
+# ✓ CORRECT - Parse JSON string in function body
+def analyze_data(records_json: str = "[]") -> dict:
+    """
+    Args:
+        records_json: JSON string of records. Example:
+            '[{"id": 1, "name": "record1"}]'
+    """
+    import json
+    records = json.loads(records_json) if records_json else None
+    # ... rest of implementation
+```
+
 ### 2. Registration (Future)
 In production, agents register with the Central Runtime for discovery and load balancing.
 

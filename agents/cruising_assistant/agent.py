@@ -93,8 +93,8 @@ def recommend_methodology(
 
 def estimate_volume(
     fire_id: str,
-    plot_id: str | None = None,
-    trees: list[dict] | None = None,
+    plot_id: str = "",
+    trees_json: str = "[]",
     baf: int = 20,
     log_rule: str = "scribner",
     include_defect: bool = True
@@ -109,7 +109,8 @@ def estimate_volume(
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
         plot_id: Specific plot to analyze (optional)
-        trees: Tree measurement data (species, DBH, height, defect) (optional)
+        trees_json: JSON string of tree measurement data. Example:
+            '[{"species": "PSME", "dbh": 24.5, "height": 120, "defect_pct": 15}]'
         baf: Basal area factor for variable radius plots (default: 20)
         log_rule: Volume log rule: "scribner", "doyle", "international" (default: "scribner")
         include_defect: Whether to apply defect deductions (default: True)
@@ -125,10 +126,14 @@ def estimate_volume(
             - confidence: Calculation confidence (0-1)
             - recommendations: Volume utilization guidance
     """
+    import json
     from estimate_volume import execute
+
+    trees = json.loads(trees_json) if trees_json else None
+
     return execute({
         "fire_id": fire_id,
-        "plot_id": plot_id,
+        "plot_id": plot_id if plot_id else None,
         "trees": trees,
         "baf": baf,
         "log_rule": log_rule,
@@ -138,9 +143,9 @@ def estimate_volume(
 
 def assess_salvage(
     fire_id: str,
-    fire_date: str | None = None,
-    assessment_date: str | None = None,
-    plots: list[dict] | None = None,
+    fire_date: str = "",
+    assessment_date: str = "",
+    plots_json: str = "[]",
     include_recommendations: bool = True
 ) -> dict:
     """
@@ -154,7 +159,8 @@ def assess_salvage(
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
         fire_date: Fire containment date (YYYY-MM-DD) (optional)
         assessment_date: Current assessment date (default: today)
-        plots: Plot data with species, volume, quality, access (optional)
+        plots_json: JSON string of plot data. Example:
+            '[{"plot_id": "47-ALPHA", "species": "PSME", "volume_mbf": 12.5, "access": "moderate"}]'
         include_recommendations: Include detailed harvest recommendations (default: True)
 
     Returns:
@@ -168,11 +174,15 @@ def assess_salvage(
             - confidence: Assessment confidence (0-1)
             - recommendations: Operational harvest guidance
     """
+    import json
     from assess_salvage import execute
+
+    plots = json.loads(plots_json) if plots_json else None
+
     return execute({
         "fire_id": fire_id,
-        "fire_date": fire_date,
-        "assessment_date": assessment_date,
+        "fire_date": fire_date if fire_date else None,
+        "assessment_date": assessment_date if assessment_date else None,
         "plots": plots,
         "include_recommendations": include_recommendations,
     })

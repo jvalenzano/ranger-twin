@@ -137,6 +137,40 @@ packaged as portable Skills that enhance Agents running on Google ADK.
 
 This is enforced by Pydantic validation in the ADK App class.
 
+### ADK Tool Parameter Types
+
+**CRITICAL:** Gemini API rejects complex type hints in tool function parameters.
+
+**Forbidden types** (cause `400 INVALID_ARGUMENT` errors):
+- `list[dict]` - Use JSON string instead
+- `dict` as parameter type - Use JSON string instead
+- `list[CustomClass]` - Use JSON string instead
+
+**Allowed types:**
+- `str`, `int`, `float`, `bool` - Primitive types work
+- `str | None` - Optional primitives work
+- `list[str]`, `list[int]` - Simple lists work
+
+**Pattern for complex data:**
+```python
+# ❌ WRONG - Will fail at runtime
+def my_tool(items: list[dict] | None = None) -> dict:
+    ...
+
+# ✓ CORRECT - Use JSON string parameter
+def my_tool(items_json: str = "[]") -> dict:
+    """
+    Args:
+        items_json: JSON string of items. Example:
+            '[{"name": "item1", "value": 42}]'
+    """
+    import json
+    items = json.loads(items_json) if items_json else None
+    ...
+```
+
+This limitation is in the Gemini API's function calling schema validation.
+
 ### Agent Roster
 
 | Agent | Role | Skills |

@@ -173,6 +173,39 @@ Provide 2-3 examples for few-shot learning. Use realistic, domain-appropriate da
 - Include edge case tests where applicable
 - Test files should be discoverable by pytest
 
+### Script Tool Parameter Types
+
+When skills expose Python scripts as ADK tools, function parameters must use
+types compatible with the Gemini API's function calling schema.
+
+**Forbidden types** (cause `400 INVALID_ARGUMENT` runtime errors):
+- `list[dict]` - Complex nested types not supported
+- `dict` - Object types not supported as parameters
+- `list[CustomClass]` - Custom classes not supported
+
+**Allowed types:**
+- `str`, `int`, `float`, `bool` - Primitives
+- `str | None`, `int | None` - Optional primitives
+- `list[str]`, `list[int]` - Simple homogeneous lists
+
+**Pattern for complex inputs:**
+```python
+def execute(inputs: dict) -> dict:
+    """Internal execute - receives parsed data."""
+    items = inputs.get("items", [])  # Already parsed
+    ...
+
+# Wrapper exposed as tool (in agent.py)
+def skill_tool(items_json: str = "[]") -> dict:
+    """
+    Args:
+        items_json: JSON string. Example: '[{"id": 1}]'
+    """
+    import json
+    items = json.loads(items_json) if items_json else []
+    return execute({"items": items})
+```
+
 ---
 
 ## Skill Taxonomy
