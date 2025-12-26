@@ -88,7 +88,14 @@ Defined in `tailwind.config.js`:
 
 ## Environment Variables
 
+See `.env.example` for full configuration.
+
 ```bash
-VITE_API_URL=http://localhost:8000
-VITE_OPENROUTER_API_KEY=sk-or-v1-...
+# Required
+VITE_GEMINI_API_KEY=AIzaSy...       # Google Gemini API
+VITE_MAPTILER_API_KEY=lxf...        # MapTiler for maps
+
+# Optional
+VITE_RANGER_API_URL=http://localhost:8000
+VITE_USE_RANGER_API=true
 ```

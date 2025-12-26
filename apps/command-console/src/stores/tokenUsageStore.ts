@@ -7,8 +7,8 @@
  * - Monthly aggregates
  * - Cost estimates
  *
- * Architecture:
- * 1. aiBriefingService captures usage from OpenRouter responses
+ * Architecture (ADR-006: Google-Only):
+ * 1. aiBriefingService captures usage from Google Gemini responses
  * 2. This store aggregates and persists the data
  * 3. TokenUsagePanel displays in profile dropdown
  */
@@ -52,14 +52,14 @@ interface TokenUsageState {
 // ============================================
 
 /**
- * OpenRouter pricing (approximate, varies by model)
- * Free tier models cost $0
- * Fallback rate for unknown paid models
+ * Google Gemini pricing (approximate)
+ * Most Gemini models have generous free tiers
+ * Fallback rate for production usage
  */
 const COST_PER_1K_TOKENS: Record<string, number> = {
-    'google/gemini-2.0-flash-exp:free': 0,
-    'google/gemma-2-9b-it:free': 0,
-    'google/gemini-flash-1.5': 0.0001, // If used
+    'gemini-2.0-flash-exp': 0,        // Free tier
+    'gemini-1.5-flash': 0.0001,       // If used (paid tier)
+    'gemini-1.5-pro': 0.00125,        // If used (paid tier)
     default: 0.001,
 };
 

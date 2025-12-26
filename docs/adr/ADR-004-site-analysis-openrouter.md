@@ -1,9 +1,22 @@
 # ADR-004: Site Analysis Feature and OpenRouter Migration
 
-**Status:** Accepted
+**Status:** Superseded (see ADR-006)
 **Date:** 2025-12-24
+**Superseded:** 2025-12-26
 **Decision Makers:** TechTrend Federal - Digital Twin Team
 **Category:** Feature Architecture & API Infrastructure
+
+---
+
+> **⚠️ Superseded Notice**
+>
+> This ADR has been superseded by **ADR-006: Google-Only LLM Strategy**.
+>
+> **Reason:** OpenRouter was introduced to address Google API rate limits during development. However, since ADK agents require the Google Gemini API anyway (for the runtime), and Managed RAG/File Search is Google-only, maintaining a second LLM provider added complexity without clear Phase 1 value.
+>
+> **Current Strategy:** All LLM calls (agents, frontend, RAG) use Google Gemini API directly.
+>
+> The Site Analysis feature described in this ADR remains valid—only the OpenRouter integration has been removed.
 
 ---
 

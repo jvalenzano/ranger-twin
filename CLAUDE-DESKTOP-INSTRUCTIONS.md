@@ -18,12 +18,15 @@ RANGER is an **Agentic Operating System**. We do not build monolithic agents; we
 
 ---
 
-## 🧠 2. Hybrid LLM Strategy
+## 🧠 2. LLM Strategy (ADR-006: Google-Only)
 
-We maintain a high-reliability, performance-optimized model routing:
+All LLM calls use **Google Gemini API** directly:
 
-- **General Chat & Site Analysis**: Routed via **OpenRouter** to ensure high rate limits and provider redundancy. Primary target: `google/gemini-2.0-flash-exp:free` (or paid equivalent).
-- **RAG & Specialist Reasoning**: Routed natively via **Google Vertex AI (Gemini 2.0 Flash)** to leverage massive context windows and multimodal capabilities for regulatory (NEPA) and geospatial analysis.
+- **ADK Agents**: Coordinator, Burn Analyst, Trail Assessor, Cruising Assistant, NEPA Advisor
+- **Frontend Chat & Site Analysis**: Direct Gemini API calls
+- **Managed RAG / File Search**: Google's proprietary knowledge retrieval for NEPA documents
+
+This simplification (from a prior hybrid OpenRouter + Google strategy) reduces complexity while maintaining full functionality. See `docs/adr/ADR-006-google-only-llm-strategy.md` for rationale.
 
 ---
 

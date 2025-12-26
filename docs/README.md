@@ -97,8 +97,9 @@
 | [ADR-001](./adr/ADR-001-tech-stack.md) | Technology Stack Selection | Accepted |
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
 | [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) | Gemini 3 Flash + File Search | Accepted |
-| [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Accepted |
+| [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Superseded |
 | [ADR-005](./adr/ADR-005-skills-first-architecture.md) | Skills-First Multi-Agent Architecture | Accepted |
+| [ADR-006](./adr/ADR-006-google-only-llm-strategy.md) | Google-Only LLM Strategy | Accepted |
 
 ### Workshop (Production Vision)
 
