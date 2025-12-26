@@ -1,0 +1,20 @@
+{
+  "description": "Regex patterns for identifying FSM (Forest Service Manual) sections",
+  "patterns": {
+    "title": "^(TITLE)\\s+(\\d+)\\s*[-–—]?\\s*(.+)?",
+    "section": "^(\\d{4}(?:\\.\\d+)*)\\s*[-–—]?\\s*([A-Z][A-Za-z\\s,]+)",
+    "subsection": "^(\\d{4}(?:\\.\\d+)+)\\s*[-–—]?\\s*(.+)"
+  },
+  "common_fsm_documents": [
+    {
+      "id": "FSM 1950",
+      "title": "Environmental Policy and Procedures",
+      "sections": ["1950", "1951", "1952", "1953"]
+    },
+    {
+      "id": "FSM 2400",
+      "title": "Timber Management",
+      "sections": ["2400", "2410", "2420", "2430"]
+    }
+  ]
+}

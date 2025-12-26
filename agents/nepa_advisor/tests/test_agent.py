@@ -55,13 +55,20 @@ def test_agent_has_file_search_tool(agent_module):
 
 
 def test_agent_has_all_required_tools(agent_module):
-    """Agent should have all 4 required tools."""
+    """Agent should have all 5 required tools."""
     tool_names = [t.__name__ for t in agent_module.root_agent.tools]
     expected_tools = [
         "search_regulatory_documents",
+        "extract_pdf_content",
         "decide_pathway",
         "generate_documentation_checklist",
         "estimate_compliance_timeline",
     ]
     for tool in expected_tools:
         assert tool in tool_names, f"Missing tool: {tool}"
+
+
+def test_agent_has_pdf_extraction_tool(agent_module):
+    """Agent should have extract_pdf_content tool for PDF document parsing."""
+    tool_names = [t.__name__ for t in agent_module.root_agent.tools]
+    assert "extract_pdf_content" in tool_names

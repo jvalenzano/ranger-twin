@@ -44,6 +44,11 @@ TIMELINE_PATH = SKILLS_DIR / "compliance-timeline" / "scripts"
 if TIMELINE_PATH.exists():
     sys.path.insert(0, str(TIMELINE_PATH))
 
+# PDF Extraction skill
+PDF_EXTRACTION_PATH = SKILLS_DIR / "pdf-extraction" / "scripts"
+if PDF_EXTRACTION_PATH.exists():
+    sys.path.insert(0, str(PDF_EXTRACTION_PATH))
+
 
 def decide_pathway(fire_id: str, action_type: str, acres: float, project_context: str = "{}") -> dict:
     """
@@ -133,6 +138,56 @@ def estimate_compliance_timeline(fire_id: str, pathway: str, consultations: str 
     })
 
 
+def extract_pdf_content(
+    file_path: str,
+    extraction_mode: str = "full",
+    section_number: str = "",
+    start_page: int = 1,
+    end_page: int = 0,
+) -> dict:
+    """
+    Extract content from regulatory PDF documents (FSH, FSM, CFR).
+
+    Supports multiple extraction modes for different use cases:
+    - Full document extraction for overview
+    - Section-specific extraction for targeted queries
+    - Page range extraction for large documents
+    - Table extraction for structured data
+
+    Args:
+        file_path: Path to PDF file (can be filename in data/fsh or data/fsm)
+        extraction_mode: One of "full", "section", "pages", or "tables"
+        section_number: Section to extract (e.g., "10.3", "Chapter 30") for section mode
+        start_page: Starting page (1-indexed) for pages mode
+        end_page: Ending page (inclusive) for pages mode (0 = same as start)
+
+    Returns:
+        Dictionary containing:
+        - success: Whether extraction succeeded
+        - file_name: Name of processed file
+        - page_count: Total pages in document
+        - extracted_text: The extracted content (markdown formatted)
+        - tables: List of extracted tables (for tables mode)
+        - sections_found: Section headers discovered
+        - citations: Page/section references for traceability
+        - error: Error message if extraction failed
+    """
+    from extract_pdf import execute
+
+    inputs = {
+        "file_path": file_path,
+        "extraction_mode": extraction_mode,
+    }
+
+    if extraction_mode == "section" and section_number:
+        inputs["section_number"] = section_number
+    elif extraction_mode == "pages":
+        inputs["start_page"] = start_page
+        inputs["end_page"] = end_page if end_page > 0 else start_page
+
+    return execute(inputs)
+
+
 # Initialize NEPA Advisor Agent
 # Export as `root_agent` per ADK convention for `adk run` command
 root_agent = Agent(
@@ -176,6 +231,26 @@ Example queries:
 IMPORTANT: Always use this tool first when answering regulatory questions
 to ensure accuracy. Your other tools provide analysis, but this tool
 provides the authoritative regulatory text.
+
+### extract_pdf_content
+Use this tool to extract content from PDF documents not indexed in File Search.
+Useful for user-uploaded documents or specific page/section extraction.
+
+Use for:
+- Extracting specific sections from FSH/FSM PDFs
+- Reading user-provided regulatory documents
+- Extracting tables from PDF documents
+- Getting content from specific page ranges
+
+Extraction modes:
+- "full": Extract all text from the document
+- "section": Extract a specific section (e.g., "10.3", "Chapter 30")
+- "pages": Extract specific page range
+- "tables": Extract tables as markdown
+
+Example:
+- extract_pdf_content("FSH-1909.15-Ch30.pdf", "section", "31.2")
+- extract_pdf_content("uploaded_doc.pdf", "tables")
 
 ### decide_pathway
 Use this tool when users ask about:
@@ -250,6 +325,7 @@ When asked "What NEPA pathway for 3000-acre salvage with spotted owls?":
 """,
     tools=[
         search_regulatory_documents,  # File Search RAG - primary knowledge source
+        extract_pdf_content,  # PDF extraction for documents not in File Search
         decide_pathway,
         generate_documentation_checklist,
         estimate_compliance_timeline,
