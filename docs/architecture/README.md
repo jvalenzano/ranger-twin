@@ -9,12 +9,13 @@ This directory contains the comprehensive architecture specifications for the RA
 | Document | Purpose | Audience | Status |
 |----------|---------|----------|--------|
 | **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)** | **Primary Architecture Decision.** Multi-agent + Skills hybrid model | All team members | **NORTH STAR** |
-| **[AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md)** | Legacy microservice orchestration design (Superseded) | All team members | **[AMENDED]** |
-| **[GCP-DEPLOYMENT.md](GCP-DEPLOYMENT.md)** | Deploy 7 Cloud Run services (agents, gateway, UI) | DevOps, Developers | Phase 2 Planning |
-| **[DATA-INGESTION-ADAPTERS.md](DATA-INGESTION-ADAPTERS.md)** | Normalize external data (InciWeb, IRWIN, Survey123) via MCP | Backend Developers | **[AMENDED]** |
+| **[AGENT-FLOWS.md](AGENT-FLOWS.md)** | **[NEW]** Mermaid diagrams for ADK state and delegation sequences | All team members | Active |
+| **[PROTOCOL-AGENT-COMMUNICATION.md](../specs/PROTOCOL-AGENT-COMMUNICATION.md)** | AgentBriefingEvent schema and UI binding contracts | Frontend/Backend | Active |
+| **[PROOF-LAYER-DESIGN.md](../specs/PROOF-LAYER-DESIGN.md)** | Reasoning Chain and Citation UI specifications | Frontend Developers | Active |
+| **[UX-VISION.md](UX-VISION.md)** | Design vision, glassmorphism, and tactical futurism aesthetic | Designers, Frontend | Active |
+| **[DATA-INGESTION-ADAPTERS.md](DATA-INGESTION-ADAPTERS.md)** | Normalize external data via MCP Servers | Backend Developers | **[AMENDED]** |
 | **[FIXTURE-DATA-FORMATS.md](FIXTURE-DATA-FORMATS.md)** | Phase 1 fixture schemas and production mappings | All Developers | Active |
-| **[AGENT-MESSAGING-PROTOCOL.md](AGENT-MESSAGING-PROTOCOL.md)** | AgentBriefingEvent schema and UI binding contracts | Frontend/Backend | Active |
-| **[FIELD-AI-STRATEGY.md](FIELD-AI-STRATEGY.md)** | Field Companion PWA strategy (Phase 2+) | Product | Future Vision |
+| **[GCP-DEPLOYMENT.md](GCP-DEPLOYMENT.md)** | Cloud Run deployment strategy and GCP services | DevOps | Phase 2 Planning |
 
 ---
 
@@ -26,13 +27,13 @@ Aligned with **ADR-005** and the **IMPLEMENTATION-ROADMAP**, RANGER is built on 
 
 ### 1. **UI Layer** (Presentation)
 - **Command Console** (React, Vite) - Single-incident/portfolio triage console
-- **Field Companion PWA** (Phase 2) - Offline-first mobile field agent
-- See: [UX-VISION.md](UX-VISION.md), [BRIEFING-UX-SPEC.md](BRIEFING-UX-SPEC.md)
+- **Proof Layer** - Reasoning transparency and citation drill-down UI
+- See: [UX-VISION.md](UX-VISION.md), [BRIEFING-UX-SPEC.md](BRIEFING-UX-SPEC.md), [PROOF-LAYER-DESIGN.md](../specs/PROOF-LAYER-DESIGN.md)
 
 ### 2. **Agent Pipeline Layer** (Orchestration)
 - **Recovery Coordinator** (Google ADK) - Orchestrates specialist agents
 - **ADK Session State** - Global state managed by Google ADK (supersedes Redis)
-- See: [AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md), [AGENT-MESSAGING-PROTOCOL.md](AGENT-MESSAGING-PROTOCOL.md)
+- See: [AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md), [PROTOCOL-AGENT-COMMUNICATION.md](../specs/PROTOCOL-AGENT-COMMUNICATION.md)
 
 ### 3. **Skills Library Layer** (Domain Expertise)
 - **Specialist Agents** (Burn Analyst, Trail Assessor, Cruising Assistant, NEPA Advisor)

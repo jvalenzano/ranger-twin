@@ -255,35 +255,26 @@ RANGER aligns perfectly with the mandate. The question isn't "should we build th
 
 ### Architecture
 
+```mermaid
+graph TD
+    A[Federal Data: IRWIN/NIFC] --> B[MCP Connectivity Layer]
+    B --> C[Recovery Coordinator: ADK]
+    C --> D[Specialist Skills: Burn/Trail/NEPA]
+    D --> C
+    C --> E[Command Console UI]
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     RANGER COMMAND CONSOLE                          │
-│                   (React + MapLibre + Tailwind)                     │
-├─────────────────────────────────────────────────────────────────────┤
-│                   RECOVERY COORDINATOR (ADK)                        │
-│         Routes queries → Aggregates results → Generates briefings   │
-├────────────┬────────────┬────────────┬────────────┬─────────────────┤
-│    BURN    │   TRAIL    │  CRUISING  │    NEPA    │                 │
-│  ANALYST   │  ASSESSOR  │  ASSISTANT │   ADVISOR  │   Sub-agents    │
-│ (Skills)   │ (Skills)   │ (Skills)   │ (Skills)   │     (ADK)       │
-├────────────┴────────────┴────────────┴────────────┴─────────────────┤
-│                  TOOLS (Python functions / MCP)                      │
-│   query_burn_severity() │ query_trail_damage() │ search_regulations()│
-├─────────────────────────────────────────────────────────────────────┤
-│     Phase 1: Fixture data          │    Phase 2: Real APIs          │
-│     (Static GeoJSON)               │    (NIFC, FIRMS, MTBS)         │
-└─────────────────────────────────────────────────────────────────────┘
-```
+
+*For detailed state transitions and sequence diagrams, see **[AGENT-FLOWS.md](./architecture/AGENT-FLOWS.md)**.*
 
 ### Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Agent framework | Google ADK | FedRAMP authorized, simple orchestration |
-| Agent pattern | Skills-First | Domain expertise encapsulated in portable skills (ADR-005) |
-| Frontend | React + MapLibre | Open source, performant, well-supported |
-| Backend | FastAPI / MCP | Lifecycle APIs and data connectivity |
-| Database | PostGIS + pgvector | Spatial + vector search in one |
+| Agent framework | Google ADK | FedRAMP authorized, shared session state |
+| Data Connectivity | MCP Servers | Decentralized, standard protocol for federal APIs |
+| Agent pattern | Skills-First | Expertise encapsulated in portable skills (ADR-005) |
+| Frontend | React + Tailwind | Modern, responsive tactical UI |
+| Database | PostGIS + pgvector | Spatial index + high-dimensional RAG storage |
 | Cloud | GCP | FedRAMP High, Vertex AI integration |
 
 ### Cost Profile

@@ -15,7 +15,7 @@
 > **See:** [`DATA-SIMULATION-STRATEGY.md`](../DATA-SIMULATION-STRATEGY.md) for the authoritative Phase 1 scope.
 
 > [!IMPORTANT]
-> **Architecture Update:** While the **Common Data Schema (CDS)** defined here remains the standard for internal normalization, ingestion is now primarily handled through **[MCP Servers](../adr/ADR-005-skills-first-architecture.md)** and **Skills** rather than a central FastAPI `/ingest/` endpoint.
+> **Architecture Update:** All data ingestion is now handled via **[MCP Servers](../adr/ADR-005-skills-first-architecture.md)**. The legacy centralized `/ingest/` endpoint has been replaced by a decentralized, skill-initiated discovery pattern defined in the **[MCP Registry Standard](../specs/MCP-REGISTRY-STANDARD.md)**.
 
 ---
 
@@ -33,11 +33,11 @@ Data ingestion adapters serve as **translation layers** that normalize diverse e
 
 ### Key Principles
 
-1. **Separation of Concerns:** Adapters handle format translation; agents handle reasoning
-2. **Data Tier Awareness:** All ingested data is tagged with confidence and tier classification
-3. **Provenance Tracking:** Every data point retains source metadata for citation chains
-4. **Graceful Degradation:** Adapters fail safely and report data quality issues
-5. **Phase 1 Reality:** Initial implementation uses simulated data; adapters provide the interface for future real integration
+1. **Separation of Concerns:** MCP Servers handle format translation; ADK Agents handle reasoning.
+2. **Standardized Transport:** All connectivity uses the Model Context Protocol (stdio/SSE).
+3. **Lazy Ingestion:** Data is fetched only when a Skill invokes a Tool, reducing unnecessary polling.
+4. **Provenance Tracking:** Every data point retains source metadata for citation chains.
+5. **Phase 1 Strategy:** MCP Servers return data from `data/fixtures/` to enable deterministic testing.
 
 ---
 
@@ -84,53 +84,35 @@ The adapter pattern (Section 3) implements this philosophy—each adapter acts a
 
 ## 2. Architecture Diagram
 
-```
-┌───────────────────────────────────────────────────────────────────────┐
-│                        EXTERNAL DATA SOURCES                          │
-├─────────────┬─────────────┬─────────────┬─────────────┬──────────────┤
-│   InciWeb   │    IRWIN    │  Survey123  │  Collector  │  Sentinel-2  │
-│   (REST)    │   (REST)    │   (REST)    │  (FeatureS) │   (GEE/S3)   │
-└──────┬──────┴──────┬──────┴──────┬──────┴──────┬──────┴──────┬───────┘
-       │             │             │             │             │
-       ▼             ▼             ▼             ▼             ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                       ADAPTER LAYER (packages/adapters)             │
-├──────────────┬──────────────┬──────────────┬──────────────┬─────────┤
-│ InciWeb      │ IRWIN        │ Survey123    │ Collector    │Satellite│
-│ Adapter      │ Adapter      │ Adapter      │ Adapter      │Adapter  │
-│              │              │              │              │         │
-│ - Auth       │ - Auth       │ - OAuth      │ - Token      │- API Key│
-│ - Parse HTML │ - Parse JSON │ - Parse JSON │ - Parse GDB  │- Parse  │
-│ - Map fields │ - Map fields │ - Map fields │ - Map fields │  COG    │
-└──────┬───────┴──────┬───────┴──────┬───────┴──────┬───────┴────┬────┘
-       │              │              │              │            │
-       └──────────────┴──────────────┴──────────────┴────────────┘
-                                     │
-                                     ▼
-                    ┌────────────────────────────────┐
-                    │  COMMON DATA SCHEMA (CDS)     │
-                    │  - RangerSpatialFeature       │
-                    │  - RangerObservation          │
-                    │  - RangerMediaReference       │
-                    │  - RangerProvenanceMetadata   │
-                    └────────────┬───────────────────┘
-                                 │
-                                 ▼
-                    ┌────────────────────────────────┐
-                    │   AGENTIC SKILLS / MCP        │
-                    │   - Validation                │
-                    │   - Deduplication             │
-                    │   - ADK Session State         │
-                    └────────────┬───────────────────┘
-                                 │
-                                 ▼
-                    ┌────────────────────────────────┐
-                    │      AGENT CONSUMPTION        │
-                    │  - BurnAnalyst                │
-                    │  - TrailAssessor              │
-                    │  - CruisingAssistant          │
-                    │  - NEPAAdvisor                │
-                    └───────────────────────────────┘
+```mermaid
+graph TD
+    subgraph "External Federal Data"
+        IRWIN[IRWIN REST API]
+        NIFC[NIFC Feature Service]
+        GEE[Google Earth Engine]
+    end
+
+    subgraph "MCP Connectivity Layer"
+        M_IRWIN[MCP-IRWIN Wrapper]
+        M_NIFC[MCP-NIFC Wrapper]
+        M_GEE[MCP-GEE Server]
+    end
+
+    subgraph "Agent Pipeline (ADK)"
+        COORD[Recovery Coordinator]
+        S_STATE[(ADK Session State)]
+    end
+
+    IRWIN --> M_IRWIN
+    NIFC --> M_NIFC
+    GEE --> M_GEE
+
+    M_IRWIN -- "JSON/CDS" --> COORD
+    M_NIFC -- "JSON/CDS" --> COORD
+    M_GEE -- "JSON/CDS" --> COORD
+
+    COORD --> S_STATE
+    S_STATE --> UI[Command Console]
 ```
 
 ---
