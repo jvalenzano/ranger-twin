@@ -1,0 +1,76 @@
+{
+  "description": "Example triage input using RANGER fixture fires",
+  "input": {
+    "fires": [
+      {
+        "id": "cedar-creek-2022",
+        "name": "Cedar Creek Fire",
+        "severity": "high",
+        "acres": 127341,
+        "phase": "baer_implementation"
+      },
+      {
+        "id": "bootleg-2021",
+        "name": "Bootleg Fire",
+        "severity": "high",
+        "acres": 413765,
+        "phase": "in_restoration"
+      },
+      {
+        "id": "mckay-2024",
+        "name": "McKay Creek Fire",
+        "severity": "critical",
+        "acres": 25000,
+        "phase": "active"
+      }
+    ],
+    "top_n": 3
+  },
+  "expected_output": {
+    "ranked_fires": [
+      {
+        "id": "bootleg-2021",
+        "name": "Bootleg Fire",
+        "triage_score": 124.1,
+        "severity_weight": 3,
+        "acres_normalized": 41.38,
+        "phase_multiplier": 1.0,
+        "phase": "in_restoration",
+        "reasoning": "Bootleg Fire: 3 (high severity) x 41.38 (normalized acres) x 1.0 (in_restoration) = 124.1"
+      },
+      {
+        "id": "cedar-creek-2022",
+        "name": "Cedar Creek Fire",
+        "triage_score": 47.8,
+        "severity_weight": 3,
+        "acres_normalized": 12.73,
+        "phase_multiplier": 1.25,
+        "phase": "baer_implementation",
+        "reasoning": "Cedar Creek Fire: 3 (high severity) x 12.73 (normalized acres) x 1.25 (baer_implementation) = 47.8"
+      },
+      {
+        "id": "mckay-2024",
+        "name": "McKay Creek Fire",
+        "triage_score": 20.0,
+        "severity_weight": 4,
+        "acres_normalized": 2.5,
+        "phase_multiplier": 2.0,
+        "phase": "active",
+        "reasoning": "McKay Creek Fire: 4 (critical severity) x 2.5 (normalized acres) x 2.0 (active) = 20.0"
+      }
+    ],
+    "reasoning_chain": [
+      "Bootleg Fire: 3 (high severity) x 41.38 (normalized acres) x 1.0 (in_restoration) = 124.1",
+      "Cedar Creek Fire: 3 (high severity) x 12.73 (normalized acres) x 1.25 (baer_implementation) = 47.8",
+      "McKay Creek Fire: 4 (critical severity) x 2.5 (normalized acres) x 2.0 (active) = 20.0"
+    ],
+    "confidence": 0.92,
+    "summary": "3 fires analyzed. Bootleg Fire ranks highest with score 124.1."
+  },
+  "notes": [
+    "Bootleg ranks highest due to large size (413k acres = 41.38 normalized) despite being in restoration",
+    "McKay Creek has highest phase multiplier (active) but smaller footprint",
+    "BAER assessment phase fires should be flagged as time-critical regardless of absolute score",
+    "Note: Acres cap at 50 normalized (500k acres) per mission.ts formula"
+  ]
+}

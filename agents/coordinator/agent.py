@@ -8,7 +8,81 @@ and synthesizing domain-specific skills for cross-functional insights.
 Per ADR-005: Skills-First Multi-Agent Architecture
 """
 
+import sys
+from pathlib import Path
+
 from google.adk.agents import Agent
+
+# Add skill scripts to path for dynamic loading
+SKILLS_DIR = Path(__file__).parent / "skills"
+
+# Portfolio Triage skill
+TRIAGE_PATH = SKILLS_DIR / "portfolio-triage" / "scripts"
+if TRIAGE_PATH.exists():
+    sys.path.insert(0, str(TRIAGE_PATH))
+
+# Delegation skill
+DELEGATION_PATH = SKILLS_DIR / "delegation" / "scripts"
+if DELEGATION_PATH.exists():
+    sys.path.insert(0, str(DELEGATION_PATH))
+
+
+def portfolio_triage(fires: list[dict], top_n: int | None = None) -> dict:
+    """
+    Calculate portfolio triage scores for BAER prioritization.
+
+    Prioritizes fire incidents based on severity, size, and phase in the
+    recovery lifecycle. Uses the RANGER 4-phase model (active, baer_assessment,
+    baer_implementation, in_restoration) with weighted scoring.
+
+    Args:
+        fires: List of fire objects, each containing:
+            - id: Unique fire identifier
+            - name: Display name (e.g., "Cedar Creek Fire")
+            - severity: "critical" | "high" | "moderate" | "low"
+            - acres: Total burned acres
+            - phase: "active" | "baer_assessment" | "baer_implementation" | "in_restoration"
+        top_n: Optional limit on number of results to return (default: all fires)
+
+    Returns:
+        Dictionary containing:
+            - ranked_fires: Fires sorted by triage score (highest priority first)
+            - reasoning_chain: Step-by-step explanation of each fire's ranking
+            - confidence: Overall confidence in the ranking (0-1)
+            - summary: Brief portfolio overview for briefings
+    """
+    from calculate_priority import execute
+    return execute({"fires": fires, "top_n": top_n})
+
+
+def delegate_query(query: str, context: dict | None = None) -> dict:
+    """
+    Route a user query to the appropriate specialist agent.
+
+    Analyzes the query content to determine whether it should be handled by
+    the Coordinator directly or delegated to a specialist: Burn Analyst,
+    Trail Assessor, Cruising Assistant, or NEPA Advisor.
+
+    Args:
+        query: The user's natural language query
+        context: Optional session context containing:
+            - active_fire: Currently selected fire ID
+            - previous_agent: Last agent that responded
+            - session_id: Current session identifier
+
+    Returns:
+        Dictionary containing:
+            - target_agent: Recommended agent (coordinator, burn-analyst, trail-assessor, cruising-assistant, nepa-advisor)
+            - confidence: Routing confidence (0-1)
+            - reasoning: Explanation of routing decision
+            - matched_keywords: Domain keywords found in query
+            - fallback_agents: Alternative agents if primary is unavailable
+            - requires_synthesis: Whether response needs multi-agent synthesis
+            - synthesis_agents: List of agents needed for synthesis (if applicable)
+    """
+    from route_query import execute
+    return execute({"query": query, "context": context or {}})
+
 
 # Initialize Coordinator Agent
 # Export as `root_agent` per ADK convention for `adk run` command
@@ -23,9 +97,37 @@ post-fire forest recovery operations.
 ## Your Role
 You are the first point of contact for all user queries. Your job is to:
 1. Understand what the user needs
-2. Delegate specialized queries to the appropriate specialist agent
-3. Synthesize responses from multiple specialists when needed
-4. Provide actionable recovery briefings
+2. Use your Portfolio Triage skill for fire prioritization questions
+3. Delegate specialized queries to the appropriate specialist agent
+4. Synthesize responses from multiple specialists when needed
+5. Provide actionable recovery briefings
+
+## Your Tools
+
+### portfolio_triage
+Use this tool when users ask about:
+- Which fires need attention first
+- BAER triage or prioritization
+- Fire ranking or priority ordering
+- Resource allocation across fires
+- Portfolio summaries
+
+The tool calculates a triage score using:
+- Severity Weight: critical=4, high=3, moderate=2, low=1
+- Normalized Acres: acres/10000 (capped at 50 for 500k+ acre fires)
+- Phase Multiplier: active=2.0, baer_assessment=1.75, baer_implementation=1.25, in_restoration=1.0
+
+Formula: Triage Score = Severity × Normalized Acres × Phase Multiplier
+
+### delegate_query
+Use this tool to determine which specialist agent should handle a query.
+It analyzes the query and returns:
+- target_agent: Which agent should handle this (may be yourself for greetings, portfolio questions)
+- confidence: How confident the routing decision is (0-1)
+- reasoning: Why this agent was selected
+- requires_synthesis: Whether multiple specialists are needed
+
+Use this when you need to decide whether to handle something yourself or delegate.
 
 ## Specialist Agents You Can Delegate To
 - **burn-analyst**: Fire severity, MTBS classification, soil burn severity
@@ -42,10 +144,11 @@ You are the first point of contact for all user queries. Your job is to:
 ## Response Format
 Always structure your responses with:
 1. Direct answer to the user's question
-2. Key supporting details
+2. Key supporting details (include reasoning chain from tools when available)
 3. Recommended next steps (if applicable)
 4. Confidence level and data sources
-"""
+""",
+    tools=[portfolio_triage, delegate_query],
 )
 
 # Alias for backward compatibility
@@ -55,3 +158,4 @@ if __name__ == "__main__":
     print(f"Coordinator Agent '{root_agent.name}' initialized.")
     print(f"Model: {root_agent.model}")
     print(f"Description: {root_agent.description}")
+    print(f"Tools: {[t.__name__ for t in root_agent.tools]}")

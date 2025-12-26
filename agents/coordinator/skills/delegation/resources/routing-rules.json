@@ -1,0 +1,82 @@
+{
+  "burn-analyst": {
+    "description": "Fire severity analysis, MTBS classification, soil burn severity assessment",
+    "keywords": [
+      "burn", "fire severity", "soil burn", "dnbr", "mtbs",
+      "burn severity", "fire damage", "burned area", "combustion",
+      "char", "scorch", "fire intensity", "heat damage",
+      "severity class", "high severity", "moderate severity",
+      "low severity", "unburned", "burn classification",
+      "fire behavior", "fire effects", "post-fire"
+    ],
+    "phrases": [
+      "how severe", "burn assessment", "fire impact",
+      "severity map", "burned acres", "soil damage"
+    ],
+    "fallback": ["coordinator"]
+  },
+  "trail-assessor": {
+    "description": "Trail damage assessment, recreation closures, infrastructure evaluation",
+    "keywords": [
+      "trail", "trails", "path", "route", "recreation",
+      "hiking", "closure", "closed", "hazard tree", "hazard trees",
+      "bridge", "culvert", "erosion", "washout", "access",
+      "trailhead", "campground", "infrastructure", "damage assessment",
+      "visitor", "public access", "recreation site"
+    ],
+    "phrases": [
+      "trail condition", "can we hike", "is the trail open",
+      "recreation access", "trail damage", "trail closure",
+      "visitor safety", "recreation area"
+    ],
+    "fallback": ["coordinator"]
+  },
+  "cruising-assistant": {
+    "description": "Timber inventory, salvage estimation, FSVeg data management",
+    "keywords": [
+      "timber", "salvage", "lumber",
+      "merchantable", "board feet", "mbf", "volume",
+      "cruise", "cruising", "inventory", "fsveg",
+      "stand", "harvest", "logging", "saw timber",
+      "forest products", "economic value", "timber sale"
+    ],
+    "phrases": [
+      "how much timber", "salvage operation", "timber value",
+      "wood recovery", "can we harvest", "logging potential",
+      "volume estimate", "board feet per acre"
+    ],
+    "fallback": ["burn-analyst"]
+  },
+  "nepa-advisor": {
+    "description": "NEPA compliance, environmental documentation, regulatory pathways",
+    "keywords": [
+      "nepa", "compliance", "environmental", "eis", "ea",
+      "categorical exclusion", "ce", "fonsi", "rod",
+      "scoping", "public comment", "environmental impact",
+      "documentation", "regulation", "legal", "policy",
+      "permit", "review", "decision", "alternative"
+    ],
+    "phrases": [
+      "do we need", "what documentation", "is this exempt",
+      "environmental review", "compliance pathway", "legal requirement",
+      "regulatory requirement", "environmental analysis"
+    ],
+    "fallback": ["coordinator"]
+  },
+  "coordinator": {
+    "description": "Portfolio management, multi-agent synthesis, general queries, greetings",
+    "keywords": [
+      "portfolio", "prioritize", "priority", "triage",
+      "which fire", "compare", "rank", "overview",
+      "summary", "briefing", "status", "hello", "hi",
+      "help", "what can you", "who are you", "fires"
+    ],
+    "phrases": [
+      "all fires", "fire portfolio", "which fires",
+      "need attention", "full picture", "comprehensive",
+      "multiple", "everything about", "good morning",
+      "good afternoon"
+    ],
+    "fallback": []
+  }
+}

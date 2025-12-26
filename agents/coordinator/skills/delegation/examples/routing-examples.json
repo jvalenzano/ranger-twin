@@ -1,0 +1,94 @@
+{
+  "description": "Example query routing scenarios for the Delegation skill",
+  "examples": [
+    {
+      "name": "Burn Severity Query",
+      "input": {
+        "query": "What is the soil burn severity in the northwest sector of Cedar Creek?",
+        "context": {"active_fire": "cedar-creek-2022"}
+      },
+      "expected_output": {
+        "target_agent": "burn-analyst",
+        "confidence_min": 0.85,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "Trail Closure Query",
+      "input": {
+        "query": "Which trails are closed due to hazard trees?",
+        "context": {}
+      },
+      "expected_output": {
+        "target_agent": "trail-assessor",
+        "confidence_min": 0.80,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "NEPA Pathway Query",
+      "input": {
+        "query": "Do we need an EIS or can this qualify for a categorical exclusion?",
+        "context": {}
+      },
+      "expected_output": {
+        "target_agent": "nepa-advisor",
+        "confidence_min": 0.90,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "Timber Salvage Query",
+      "input": {
+        "query": "How much merchantable timber can we salvage from the high severity areas?",
+        "context": {}
+      },
+      "expected_output": {
+        "target_agent": "cruising-assistant",
+        "confidence_min": 0.80,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "Portfolio Triage Query",
+      "input": {
+        "query": "Which fires in our portfolio need the most attention?",
+        "context": {}
+      },
+      "expected_output": {
+        "target_agent": "coordinator",
+        "confidence_min": 0.85,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "Greeting Query",
+      "input": {
+        "query": "Hello, what can you help me with?",
+        "context": {}
+      },
+      "expected_output": {
+        "target_agent": "coordinator",
+        "confidence_min": 0.60,
+        "requires_synthesis": false
+      }
+    },
+    {
+      "name": "Multi-Specialist Query",
+      "input": {
+        "query": "Give me the full recovery picture including burn damage, trail closures, and salvage potential",
+        "context": {"active_fire": "cedar-creek-2022"}
+      },
+      "expected_output": {
+        "target_agent": "coordinator",
+        "requires_synthesis": true,
+        "synthesis_agents_include": ["burn-analyst", "trail-assessor", "cruising-assistant"]
+      }
+    }
+  ],
+  "notes": [
+    "Confidence thresholds are minimums - actual values may be higher",
+    "Multi-specialist queries should always route to coordinator for synthesis",
+    "Greetings and general questions stay with coordinator"
+  ]
+}

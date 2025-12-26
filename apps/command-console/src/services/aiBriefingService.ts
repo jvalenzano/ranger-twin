@@ -1,9 +1,10 @@
 /**
  * AI Briefing Service - Frontend client for RANGER agent queries
  *
- * Phase 1: Hybrid Integration
- * - NEPA/RAG Queries -> Direct Google Gemini API (Private Data Access)
- * - General Queries -> OpenRouter (with Fallback Chain for reliability)
+ * Phase 1: Skills-First Architecture (ADR-005)
+ * - Primary: RANGER API Gateway (/api/v1/chat) with ADK Coordinator
+ * - Fallback: OpenRouter (with Fallback Chain for reliability)
+ * - NEPA/RAG: Direct Google Gemini API (Private Data Access)
  *
  * Supports dynamic fire context - system prompts are generated based on
  * the active fire from fireContextStore.
@@ -64,9 +65,13 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
 };
 
 // --- CONFIGURATION ---
+const RANGER_API_URL = import.meta.env.VITE_RANGER_API_URL || 'http://localhost:8000';
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Google Direct
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+// Feature flag: Use RANGER API vs direct LLM calls
+const USE_RANGER_API = import.meta.env.VITE_USE_RANGER_API !== 'false';
 
 // OpenRouter Fallback Chain
 const OPENROUTER_MODELS = [
@@ -224,23 +229,24 @@ class AIBriefingService {
   }
 
   /**
-   * Query the RANGER agents via Hybrid Architecture
-   * 1. NEPA/Compliance -> Direct Google SDK (for RAG)
-   * 2. General -> OpenRouter (with Fallback Chain)
-   * 3. Fallback -> Simulation
+   * Query the RANGER agents via Skills-First Architecture
+   * 1. Primary: RANGER API Gateway (ADK Coordinator with Skills)
+   * 2. Fallback: NEPA/Compliance -> Direct Google SDK (for RAG)
+   * 3. Fallback: General -> OpenRouter (with Fallback Chain)
+   * 4. Fallback: Simulation
    */
   async query(
     queryText: string,
-    _sessionId: string = 'demo-session-123',
+    sessionId: string = 'demo-session-123',
     fireContext?: FireContext
   ): Promise<QueryResponse> {
     this.isLoading = true;
     const startTime = Date.now();
 
-    // Determine agent role
+    // Determine agent role (for fallback routing)
     const agentRole = this.detectAgentRole(queryText);
 
-    // Generate system prompt
+    // Generate system prompt (for fallback providers)
     const systemPrompt = fireContext
       ? generateSystemPrompt(fireContext)
       : DEFAULT_SYSTEM_PROMPT;
@@ -248,19 +254,30 @@ class AIBriefingService {
     try {
       // --- ROUTING LOGIC ---
 
-      // 1. NEPA/Compliance Check -> Route to Google Direct
+      // 1. Primary: RANGER API Gateway (Skills-First)
+      if (USE_RANGER_API) {
+        console.log('[AIBriefingService] Routing to RANGER API Gateway...');
+        try {
+          return await this.queryRangerAPI(queryText, sessionId, fireContext, startTime);
+        } catch (apiError) {
+          console.warn('[AIBriefingService] RANGER API failed, falling back to direct LLM:', apiError);
+          // Continue to fallback providers
+        }
+      }
+
+      // 2. NEPA/Compliance Check -> Route to Google Direct
       if (agentRole === 'nepa-advisor' && GEMINI_API_KEY && this.genAI) {
         console.log('[AIBriefingService] Routing to Google Direct (NEPA RAG Context)...');
         return await this.queryGoogleDirect(queryText, systemPrompt, agentRole, startTime);
       }
 
-      // 2. All other queries -> Route to OpenRouter
+      // 3. All other queries -> Route to OpenRouter
       if (OPENROUTER_API_KEY && !this.useSimulation) {
         console.log('[AIBriefingService] Routing to OpenRouter...');
         return await this.queryOpenRouterWithFallback(queryText, systemPrompt, agentRole, startTime);
       }
 
-      // 3. Fallback to Simulation
+      // 4. Fallback to Simulation
       console.log('[AIBriefingService] Using simulation (No API keys or forced simulation)');
       return this.getSimulatedResponse(queryText, agentRole, startTime);
 
@@ -270,6 +287,59 @@ class AIBriefingService {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  /**
+   * Query the RANGER API Gateway (Skills-First Architecture)
+   */
+  private async queryRangerAPI(
+    queryText: string,
+    sessionId: string,
+    fireContext: FireContext | undefined,
+    startTime: number
+  ): Promise<QueryResponse> {
+    const response = await fetch(`${RANGER_API_URL}/api/v1/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        query: queryText,
+        fire_context: fireContext ? {
+          name: fireContext.name,
+          acres: fireContext.acres,
+          phase: fireContext.status,
+          forest: fireContext.forest,
+          state: fireContext.state,
+        } : null,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`RANGER API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'RANGER API returned error');
+    }
+
+    // Map API response to QueryResponse format
+    return {
+      success: true,
+      response: {
+        agentRole: data.response.agentRole as AgentRole,
+        summary: data.response.summary,
+        reasoning: data.response.reasoning || [],
+        confidence: data.response.confidence,
+        citations: data.response.citations || [],
+        recommendations: data.response.recommendations,
+      },
+      processingTimeMs: data.processingTimeMs || (Date.now() - startTime),
+      provider: data.provider || 'RANGER API',
+    };
   }
 
   /**
