@@ -472,7 +472,8 @@ def execute(inputs: dict) -> dict[str, Any]:
     path = Path(file_path)
     if not path.is_absolute():
         # Try relative to agent data directory
-        agent_dir = Path(__file__).parent.parent.parent
+        # Path: scripts/ -> pdf-extraction/ -> skills/ -> nepa_advisor/
+        agent_dir = Path(__file__).parent.parent.parent.parent
         data_paths = [
             agent_dir / "data" / file_path,
             agent_dir / "data" / "fsh" / file_path,
