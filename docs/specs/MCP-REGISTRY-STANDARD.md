@@ -41,7 +41,40 @@ When a **Skill** is loaded into the ADK context, it performs a capability check:
 3.  **Binding:** If found (e.g., `mcp-arcgis`), the Coordinator establishes the transport link and passes the server handle to the Skill's Tool context.
 4.  **Fallback:** If no server provides the capability, the Skill remains in a `DEGRADED` state and notifies the user via an `AgentBriefingEvent`.
 
-## 4. Connection Lifecycle
+## 4. Tool Signature Standard
+
+Every MCP tool must expose a JSON Schema compliant signature. This is critical for the **Coordinator** to perform accurate tool-calling.
+
+### 4.1 Schema Template
+```json
+{
+  "tool_name": "string",
+  "description": "Clear USFS-aligned description of what this data provides",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "fire_id": { "type": "string", "description": "NIFC IRWIN ID" },
+      "buffer_meters": { "type": "integer", "default": 500 }
+    },
+    "required": ["fire_id"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "data": { "type": "array" },
+      "provenance": { "type": "string" }
+    }
+  }
+}
+```
+
+### 4.2 Error Handling Contract
+MCP Servers must not return 500 status codes for data issues. Instead, return a structured error body:
+- `error_code`: (e.g., `INCIDENT_NOT_FOUND`)
+- `suggestion`: (e.g., "Verify the Fire ID against the IRWIN registry")
+- `severity`: (WARNING/SEVERE)
+
+## 5. Connection Lifecycle
 
 | Phase | Description |
 |-------|-------------|

@@ -62,6 +62,7 @@
 | [specs/skill-format.md](./specs/skill-format.md) | Canonical format for Skills Library packages (instructions, tools, tests) |
 | [specs/SKILLS-LIBRARY-INDEX.md](./specs/SKILLS-LIBRARY-INDEX.md) | Index of domain expertise packages available to agents |
 | [specs/SKILL-VERIFICATION-STANDARD.md](./specs/SKILL-VERIFICATION-STANDARD.md) | "Definition of Done" and quality gates for agentic skills |
+| [specs/SKILL-RUNTIME-SPEC.md](./specs/SKILL-RUNTIME-SPEC.md) | **[NEW]** Test harness and mocking engine for skills |
 
 ### Testing & QA
 

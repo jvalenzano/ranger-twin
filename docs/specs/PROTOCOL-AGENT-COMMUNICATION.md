@@ -28,7 +28,8 @@ The following JSON schema defines the mandatory fields for any event destined fo
       "required": ["summary"],
       "properties": {
         "summary": { "type": "string", "description": "One-line summary for toast/header." },
-        "detail": { "type": "string", "description": "Main body text (Markdown supported)." }
+        "detail": { "type": "string", "description": "Main body text (Markdown supported)." },
+        "degradation_notice": { "type": "string", "description": "Explanation if data quality is degraded (Tier 2/3)." }
       }
     },
     "proof_layer": {
@@ -57,6 +58,17 @@ The following JSON schema defines the mandatory fields for any event destined fo
 }
 ```
 
+### 2.1 Confidence Tiers (Degraded Mode)
+
+The `proof_layer.confidence` score indicates the data quality tier:
+
+| Tier | Score Range | Description | Source Example |
+|------|-------------|-------------|----------------|
+| **1. Authoritative** | 0.90 - 1.00 | Direct, verified data from primary source | `mcp-gis::get_dnbr_raster` |
+| **2. Derived** | 0.70 - 0.89 | Proxy or aggregated data when primary fails | `mcp-nifc::get_incident_summary` |
+| **3. Historical** | 0.10 - 0.69 | Cached or stale data (>24h old) | `local_cache::last_known` |
+| **4. Failure** | 0.00 | Unable to answer | N/A |
+
 ## 3. Communication Lifecycle
 
 ```mermaid
@@ -78,17 +90,30 @@ sequenceDiagram
     C-->>UI: Optimized Briefing (w/ Proof Layer)
 ```
 
-## 4. State Transitions
+## 4. Streaming & Event Lifecycle
 
-| State | Agent Action | UI Behavior |
-|-------|--------------|-------------|
-| **PENDING** | Event queued | Skeleton loader in Insight Panel |
-| **PROCESSING** | Tool/Skill executing | Pulsing lifecycle rail segment |
-| **SUCCESS** | `INSIGHT` event emitted | Panel injection + Sound notification |
-| **FAILED** | `ERROR` / `status_code 500` | Redirect to diagnostic modal |
+To support the **Proof Layer's** real-time UI (pulsing nodes, progressive disclosure), RANGER implements an asynchronous streaming protocol over WebSockets.
 
-## 5. Correlation Propagation
-The `correlation_id` must persist throughout an entire multi-agent thread. This allows the UI to render the "Mirror of the Mind" — a unified view of how one insight (e.g., high burn severity) triggered subsequent actions (e.g., soil stability assessment).
+### 4.1 The Agent State Machine
+
+The UI tracks the lifecycle of an agent's reasoning via the `STATUS` event type.
+
+| State | Event Type | Purpose | UI Behavior |
+|-------|------------|---------|-------------|
+| **PENDING** | N/A | Request sent to ADK | Spinner in panel |
+| **THINKING** | `STATUS` | Agent is parsing intent | Pulsing "Thinking" chip |
+| **DELEGATING** | `STATUS` | Coordinator calling Specialist | Link animated between nodes |
+| **EXECUTING** | `STATUS` | Skill is running a tool | Pulsing Tool icon |
+| **SYNTHESIZING** | `STATUS` | Aggregating final response | Progress bar 90% |
+| **COMPLETE** | `INSIGHT` | Final data payload delivered | Pulse stop; Content render |
+| **ERROR** | `STATUS` | Recovery failure | Red highlight; Suggestion chip |
+
+### 4.2 Streaming Semantics
+
+1.  **Event Persistence**: All events within a session are appended to the **ADK Session State**.
+2.  **Atomic JSON Blobs**: Unlike LLM token streaming, `AgentBriefingEvent` objects are delivered as **complete JSON blocks** once an intermediate reasoning step is completed. 
+3.  **UI Debouncing**: The Command Console debounces `STATUS` updates (min 300ms) to prevent visual flickering during high-speed tool execution.
+4.  **Correlation Persistence**: The `correlation_id` must persist throughout an entire multi-agent thread.
 
 ---
 *Created: December 2025*
