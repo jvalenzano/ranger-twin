@@ -154,6 +154,136 @@ class TestMCPMockProvider:
 
         assert mock.registered_tools == {"server": ["tool1", "tool2"]}
 
+    def test_get_interactions_alias(self):
+        """get_interactions is alias for get_call_history."""
+        mock = MCPMockProvider()
+        mock.register("server", "tool", {"data": 1})
+        mock.call("server", "tool", {"param": "value"})
+
+        interactions = mock.get_interactions()
+        history = mock.get_call_history()
+        assert interactions == history
+
+    def test_register_handler_for_dynamic_lookup(self):
+        """Can register a handler function for dynamic responses."""
+        fire_data = {
+            "cedar-creek": {"name": "Cedar Creek", "acres": 127831},
+            "bootleg": {"name": "Bootleg", "acres": 413765}
+        }
+
+        mock = MCPMockProvider()
+        mock.register(
+            "mcp-nifc",
+            "get_incident",
+            handler=lambda fire_id, **kw: fire_data.get(fire_id)
+        )
+
+        result1 = mock.call("mcp-nifc", "get_incident", {"fire_id": "cedar-creek"})
+        result2 = mock.call("mcp-nifc", "get_incident", {"fire_id": "bootleg"})
+
+        assert result1["name"] == "Cedar Creek"
+        assert result2["acres"] == 413765
+
+    def test_handler_returns_none_for_unknown(self):
+        """Handler can return None for unknown keys."""
+        mock = MCPMockProvider()
+        mock.register(
+            "mcp-nifc",
+            "get_incident",
+            handler=lambda fire_id, **kw: {"fire_id": fire_id} if fire_id == "known" else None
+        )
+
+        result = mock.call("mcp-nifc", "get_incident", {"fire_id": "unknown"})
+        assert result is None
+
+
+class TestExplicitToolInjection:
+    """Test the Explicit Tool Injection pattern per SKILL-RUNTIME-SPEC."""
+
+    @pytest.mark.asyncio
+    async def test_get_tool_context_returns_callables(self):
+        """get_tool_context returns async callables for each registered tool."""
+        mock = MCPMockProvider()
+        mock.register("mcp-nifc", "get_incident", {"acres": 1200, "containment": 45})
+        mock.register("mcp-gis", "get_dnbr", {"values": [0.5, 0.7, 0.9]})
+
+        tools = mock.get_tool_context()
+
+        assert "get_incident" in tools
+        assert "get_dnbr" in tools
+        assert callable(tools["get_incident"])
+        assert callable(tools["get_dnbr"])
+
+    @pytest.mark.asyncio
+    async def test_tool_context_callable_returns_response(self):
+        """Tool context callables return the registered response."""
+        mock = MCPMockProvider()
+        mock.register("mcp-nifc", "get_incident", {"acres": 1200, "containment": 45})
+
+        tools = mock.get_tool_context()
+        result = await tools["get_incident"](fire_id="cedar-creek")
+
+        assert result["acres"] == 1200
+        assert result["containment"] == 45
+
+    @pytest.mark.asyncio
+    async def test_tool_context_records_call_history(self):
+        """Tool context calls are recorded in call history."""
+        mock = MCPMockProvider()
+        mock.register("mcp-nifc", "get_incident", {"acres": 1200})
+
+        tools = mock.get_tool_context()
+        await tools["get_incident"](fire_id="cedar-creek", year=2025)
+
+        history = mock.get_call_history()
+        assert len(history) == 1
+        assert history[0]["server"] == "mcp-nifc"
+        assert history[0]["tool"] == "get_incident"
+        assert history[0]["params"] == {"fire_id": "cedar-creek", "year": 2025}
+
+    @pytest.mark.asyncio
+    async def test_tool_context_multiple_servers(self):
+        """Tool context works with tools from multiple servers."""
+        mock = MCPMockProvider()
+        mock.register("mcp-nifc", "get_incident", {"source": "nifc"})
+        mock.register("mcp-fixtures", "get_incident", {"source": "fixtures"})
+
+        tools = mock.get_tool_context()
+
+        # Only one get_incident should exist (last one wins)
+        # This is expected behavior - tool names must be unique across servers
+        assert "get_incident" in tools
+
+    @pytest.mark.asyncio
+    async def test_skill_with_injected_tools(self):
+        """Simulate skill execution with injected tools."""
+        mock = MCPMockProvider()
+        mock.register("mcp-nifc", "get_incident_metadata", {
+            "acres": 1200,
+            "containment": 45,
+            "fire_id": "cedar-creek"
+        })
+
+        # Simulate a skill function that accepts tools dict
+        async def assess_severity(inputs: dict, tools: dict) -> dict:
+            metadata = await tools["get_incident_metadata"](fire_id=inputs["fire_id"])
+            severity = "high" if metadata["acres"] > 1000 else "low"
+            return {
+                "severity": severity,
+                "acres": metadata["acres"],
+                "confidence": 0.95
+            }
+
+        # Execute with injected tools
+        result = await assess_severity(
+            inputs={"fire_id": "cedar-creek"},
+            tools=mock.get_tool_context()
+        )
+
+        assert result["severity"] == "high"
+        assert result["confidence"] == 0.95
+        mock.assert_called("mcp-nifc", "get_incident_metadata")
+
 
 class TestSkillExecutionContext:
     """Test SkillExecutionContext functionality."""

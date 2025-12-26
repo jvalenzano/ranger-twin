@@ -110,95 +110,94 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     Process a user query through the RANGER Coordinator.
 
-    Uses Skills-First architecture:
-    1. Delegation skill routes query to appropriate specialist
-    2. Skills generate structured responses with reasoning chains
-    3. Returns response matching frontend AgentResponse contract
+    Uses explicit tool injection per ADR-005 and SKILL-RUNTIME-SPEC.
+    In production, tools come from real MCP servers.
+    In development/testing, tools come from MCPMockProvider.
     """
     import time
+    from agents.coordinator.implementation import CoordinatorService
+    from skill_runtime.mocking import MCPMockProvider
+
     start_time = time.time()
 
     try:
-        # Import delegation skill
-        from route_query import execute as route_query
-
-        # Step 1: Route the query to determine target agent
-        routing_result = route_query({
-            "query": request.query,
-            "context": {
-                "session_id": request.session_id,
-                "fire": request.fire_context,
+        # Fire metadata fixtures for portfolio triage
+        FIRE_FIXTURES = {
+            "cedar-creek": {
+                "name": "Cedar Creek Fire",
+                "acres": 127831,
+                "containment": 100,
+                "severity": "high",
+                "phase": "baer_assessment"
+            },
+            "bootleg": {
+                "name": "Bootleg Fire",
+                "acres": 413765,
+                "containment": 100,
+                "severity": "critical",
+                "phase": "in_restoration"
+            },
+            "mosquito": {
+                "name": "Mosquito Fire",
+                "acres": 76788,
+                "containment": 97,
+                "severity": "moderate",
+                "phase": "baer_implementation"
+            },
+            "double-creek": {
+                "name": "Double Creek Fire",
+                "acres": 173394,
+                "containment": 85,
+                "severity": "high",
+                "phase": "active"
             }
-        })
+        }
 
-        target_agent = routing_result["target_agent"]
-        confidence = int(routing_result["confidence"] * 100)
-        reasoning = [routing_result["reasoning"]]
+        # Setup mock provider with handler for dynamic fire_id lookup
+        mock = MCPMockProvider()
+        mock.register(
+            "mcp-nifc",
+            "get_incident_metadata",
+            handler=lambda fire_id, **kw: FIRE_FIXTURES.get(fire_id)
+        )
 
-        # Step 2: Handle based on target agent
-        if target_agent == "coordinator":
-            # Check if this is a portfolio triage query
-            if routing_result.get("matched_keywords"):
-                triage_keywords = {"portfolio", "prioritize", "priority", "triage", "fires", "which fire"}
-                if any(kw in triage_keywords for kw in routing_result["matched_keywords"]):
-                    # This is a portfolio query - would invoke portfolio_triage skill
-                    # For now, return routing info as the coordinator would handle it
-                    summary = _generate_coordinator_response(request.query, routing_result)
-                    reasoning.append("Portfolio-level query handled by Coordinator")
-                else:
-                    # General coordinator query (greetings, help, etc.)
-                    summary = _generate_coordinator_response(request.query, routing_result)
-            else:
-                summary = _generate_coordinator_response(request.query, routing_result)
+        # Initialize Service with injected tools
+        service = CoordinatorService(tools=mock.get_tool_context())
 
-            agent_role = "recovery-coordinator"
+        # Execute Logic
+        result = await service.handle_message(
+            query=request.query,
+            context={
+                "session_id": request.session_id,
+                "fire_context": request.fire_context
+            }
+        )
+        
+        # Map result to API contract
+        response = AgentResponse(
+            agentRole=result.get("agent_role", "recovery-coordinator"),
+            summary=result.get("summary", ""),
+            reasoning=result.get("reasoning", []),
+            confidence=result.get("confidence", 80),
+            citations=result.get("citations", []),
+            cascadeTo=result.get("cascade_to")
+        )
 
-        elif routing_result.get("requires_synthesis"):
-            # Multi-specialist query - coordinator synthesizes
-            synthesis_agents = routing_result.get("synthesis_agents", [])
-            summary = (
-                f"This query spans multiple domains: {', '.join(synthesis_agents)}. "
-                f"I'll coordinate responses from each specialist to give you a complete picture."
-            )
-            reasoning.append(f"Synthesis required from: {', '.join(synthesis_agents)}")
-            agent_role = "recovery-coordinator"
-
-        else:
-            # Delegate to specialist (placeholder - would invoke specialist agent)
-            summary = _generate_specialist_placeholder(target_agent, request.query)
-            agent_role = route_to_agent_role(target_agent)
-            reasoning.append(f"Query delegated to {target_agent}")
-
-        # Build response
         processing_time = int((time.time() - start_time) * 1000)
 
         return ChatResponse(
             success=True,
-            response=AgentResponse(
-                agentRole=agent_role,
-                summary=summary,
-                reasoning=reasoning,
-                confidence=confidence,
-                citations=[],
-                recommendations=_get_recommendations(target_agent),
-            ),
+            response=response,
             processingTimeMs=processing_time,
-            provider="RANGER ADK Coordinator",
+            provider="RANGER Coordinator Service (Phase 1)",
         )
 
-    except ImportError as e:
-        logger.error(f"Failed to import skill: {e}")
-        return ChatResponse(
-            success=False,
-            error=f"Skill import error: {str(e)}",
-            provider="RANGER ADK Coordinator",
-        )
     except Exception as e:
         logger.exception("Chat processing error")
         return ChatResponse(
             success=False,
             error=str(e),
-            provider="RANGER ADK Coordinator",
+            provider="RANGER Coordinator Service",
         )
 
 

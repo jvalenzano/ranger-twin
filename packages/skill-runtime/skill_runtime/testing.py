@@ -43,6 +43,7 @@ class MCPMockProvider:
         response: dict | list | None = None,
         fixture_path: str | Path | None = None,
         error: str | None = None,
+        handler: Any = None,
     ) -> "MCPMockProvider":
         """
         Register a mock response for a server/tool combination.
@@ -53,18 +54,22 @@ class MCPMockProvider:
             response: Direct response data to return
             fixture_path: Path to JSON fixture file (alternative to response)
             error: Error message to raise when called (for testing error handling)
+            handler: Callable that receives params and returns response.
+                     Use for dynamic lookups: handler=lambda **kw: data[kw['fire_id']]
 
         Returns:
             Self for method chaining
 
         Raises:
-            ValueError: If neither response nor fixture_path provided
+            ValueError: If no response source provided
         """
         if server not in self._mocks:
             self._mocks[server] = {}
 
         if error:
             self._mocks[server][tool] = {"error": error}
+        elif handler is not None:
+            self._mocks[server][tool] = {"handler": handler}
         elif fixture_path:
             path = Path(fixture_path)
             if not path.exists():
@@ -75,7 +80,7 @@ class MCPMockProvider:
         elif response is not None:
             self._mocks[server][tool] = {"response": response}
         else:
-            raise ValueError("Must provide response, fixture_path, or error")
+            raise ValueError("Must provide response, fixture_path, error, or handler")
 
         return self
 
@@ -109,10 +114,10 @@ class MCPMockProvider:
         Args:
             server: MCP server ID
             tool: Tool name
-            params: Tool parameters (recorded but not used for mock lookup)
+            params: Tool parameters (passed to handler if registered)
 
         Returns:
-            Registered mock response
+            Registered mock response or handler result
 
         Raises:
             KeyError: If no mock registered for server/tool
@@ -134,6 +139,10 @@ class MCPMockProvider:
 
         if "error" in mock_data:
             raise RuntimeError(mock_data["error"])
+
+        if "handler" in mock_data:
+            # Call handler with params for dynamic response
+            return mock_data["handler"](**(params or {}))
 
         return mock_data["response"]
 
@@ -196,6 +205,48 @@ class MCPMockProvider:
             server: list(tools.keys())
             for server, tools in self._mocks.items()
         }
+
+    def get_tool_context(self) -> dict[str, Any]:
+        """
+        Return a dict of tool functions for explicit injection.
+
+        Per ADR-005 and SKILL-RUNTIME-SPEC, skills receive tools via
+        explicit injection rather than global context. This method creates
+        async callables for each registered tool.
+
+        Returns:
+            Dict mapping tool_name -> async callable(**kwargs) -> response
+
+        Example:
+            mock = MCPMockProvider()
+            mock.register("mcp-nifc", "get_incident", {"acres": 1200})
+            tools = mock.get_tool_context()
+            result = await tools["get_incident"](fire_id="cedar-creek")
+        """
+        import asyncio
+
+        tools: dict[str, Any] = {}
+
+        for server, server_tools in self._mocks.items():
+            for tool_name in server_tools.keys():
+                # Create closure to capture server and tool_name
+                def create_mock_callable(srv: str, tl: str):
+                    async def mock_tool(**kwargs) -> Any:
+                        return self.call(srv, tl, kwargs)
+                    return mock_tool
+
+                tools[tool_name] = create_mock_callable(server, tool_name)
+
+        return tools
+
+    def get_interactions(self) -> list[dict]:
+        """
+        Alias for get_call_history() for compatibility with mocking.py.
+
+        Returns:
+            List of call records
+        """
+        return self.get_call_history()
 
 
 class SkillExecutionContext:
