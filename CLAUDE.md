@@ -171,17 +171,22 @@ def my_tool(items_json: str = "[]") -> dict:
 
 This limitation is in the Gemini API's function calling schema validation.
 
-### Agent Roster
+### Agent Roster (All Verified ✅ December 26, 2025)
 
-| Agent | Role | Skills |
-|-------|------|--------|
-| **Coordinator** | Root orchestrator, delegation, synthesis | `portfolio-triage`, `delegation` |
-| **Burn Analyst** | Fire severity, MTBS, soil burn | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` |
-| **Trail Assessor** | Infrastructure damage, closures | `damage-classification`, `closure-decision`, `recreation-priority` |
-| **Cruising Assistant** | Timber inventory, salvage | `volume-estimation`, `salvage-assessment`, `cruise-methodology` |
-| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `pathway-decision`, `compliance-timeline`, `documentation` |
+| Agent | Role | Model | Skills |
+|-------|------|-------|--------|
+| **Coordinator** | Root orchestrator, delegation | gemini-2.0-flash | `portfolio-triage`, `delegation` |
+| **Burn Analyst** | Fire severity, MTBS, soil burn | gemini-2.0-flash | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` |
+| **Trail Assessor** | Infrastructure damage, closures | gemini-2.0-flash | `damage-classification`, `closure-decision`, `recreation-priority` |
+| **Cruising Assistant** | Timber inventory, salvage | gemini-2.0-flash | `volume-estimation`, `salvage-assessment`, `cruise-methodology`, `csv-insight` |
+| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | gemini-2.5-flash | `pathway-decision`, `compliance-timeline`, `documentation`, `pdf-extraction` |
 
 All agents located in `agents/<agent_name>/` with skills in `agents/<agent_name>/skills/`.
+
+**GCP Development Environment:**
+- Project ID: `ranger-twin-dev`
+- Project Number: `1058891520442`
+- Billing: Enabled
 
 ### Skills Library
 

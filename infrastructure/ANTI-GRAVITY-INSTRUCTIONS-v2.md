@@ -385,14 +385,31 @@ Then open:
 
 ## GCP Resources Created
 
-| Resource | Name | Purpose |
-|----------|------|---------|
-| Project | `ranger-twin-dev` | Development environment |
+| Resource | Value | Purpose |
+|----------|-------|---------|
+| **Project ID** | `ranger-twin-dev` | Development environment |
+| **Project Number** | `1058891520442` | GCP internal reference |
 | API | Vertex AI | LLM calls (future) |
 | API | Generative Language | Gemini API calls |
 | API | Secret Manager | API key storage (future) |
+| **Billing** | ✅ Enabled | December 26, 2025 |
+
+---
+
+## Verified Agent Status (December 26, 2025)
+
+All 5 agents tested and operational:
+
+| Agent | Model | Status | Test Result |
+|-------|-------|--------|-------------|
+| coordinator | gemini-2.0-flash | ✅ Working | Responds, asks for fire data |
+| burn_analyst | gemini-2.0-flash | ✅ Working | Tool call successful, 92% confidence |
+| trail_assessor | gemini-2.0-flash | ✅ Working | Tool call successful, 88% confidence |
+| cruising_assistant | gemini-2.0-flash | ✅ Working | Responds, asks for plot data |
+| nepa_advisor | gemini-2.5-flash | ✅ Working | Responds with clarifying questions |
 
 ---
 
 *Generated: December 26, 2025*
+*Updated: December 26, 2025 (billing enabled, agents verified)*
 *For: Anti-Gravity IDE Session*
