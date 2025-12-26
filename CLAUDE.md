@@ -60,8 +60,8 @@ cd services/api-gateway && uvicorn app.main:app --reload --port 8000
 docker-compose up -d
 
 # Run tests
-pytest agents/ -v                       # Agent tests
-pytest skills/ -v                       # Skill tests
+pytest agents/ -v                       # Agent + skill tests (606 tests)
+pytest packages/ -v                     # Runtime package tests (43 tests)
 ```
 
 ## Project Structure
@@ -75,6 +75,9 @@ mcp/                   # NEW: Model Context Protocol servers
 packages/
   skill-runtime/       # Skill loading/execution utilities
   twin-core/           # Shared Python models
+  agent-common/        # Shared agent utilities
+  types/               # TypeScript type definitions
+  ui-components/       # Shared React components
 services/
   agents/              # LEGACY: FastAPI agent services (for reference)
 data/
@@ -126,24 +129,45 @@ packaged as portable Skills that enhance Agents running on Google ADK.
 
 ### Agent Roster
 
-| Agent | Role | Location |
-|-------|------|----------|
-| **Coordinator** | Root orchestrator, delegation, synthesis | `agents/coordinator/` |
-| **Burn Analyst** | Fire severity, MTBS, soil burn | `agents/burn-analyst/` |
-| **Trail Assessor** | Infrastructure damage, closures | `agents/trail-assessor/` |
-| **Cruising Assistant** | Timber inventory, salvage | `agents/cruising-assistant/` |
-| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `agents/nepa-advisor/` |
+| Agent | Role | Skills |
+|-------|------|--------|
+| **Coordinator** | Root orchestrator, delegation, synthesis | `portfolio-triage`, `delegation` |
+| **Burn Analyst** | Fire severity, MTBS, soil burn | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` |
+| **Trail Assessor** | Infrastructure damage, closures | `damage-classification`, `closure-decision`, `recreation-priority` |
+| **Cruising Assistant** | Timber inventory, salvage | `volume-estimation`, `salvage-assessment`, `cruise-methodology` |
+| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `pathway-decision`, `compliance-timeline`, `documentation` |
+
+All agents located in `agents/<agent-name>/` with skills in `agents/<agent-name>/skills/`.
 
 ### Skills Library
 
-```
-skills/
-├── foundation/            # Cross-agency (NEPA, geospatial)
-│   ├── greeting/          # Example skill
-│   └── _template/         # Skill template
-└── forest-service/        # Agency-specific (BAER, MTBS)
+**14 skills across 5 agents** (each skill has `skill.md`, `scripts/`, `resources/`, `tests/`):
 
-agents/[name]/skills/      # Agent-specific skills
+```
+agents/
+├── coordinator/skills/
+│   ├── portfolio-triage/      # Fire prioritization scoring
+│   └── delegation/            # Query routing to specialists
+├── burn-analyst/skills/
+│   ├── mtbs-classification/   # MTBS severity classification
+│   ├── soil-burn-severity/    # Soil burn analysis
+│   └── boundary-mapping/      # Fire perimeter mapping
+├── trail-assessor/skills/
+│   ├── damage-classification/ # USFS Type I-IV damage
+│   ├── closure-decision/      # Risk-based closure eval
+│   └── recreation-priority/   # Usage-weighted prioritization
+├── cruising-assistant/skills/
+│   ├── volume-estimation/     # MBF/CCF timber volume
+│   ├── salvage-assessment/    # Economic viability
+│   └── cruise-methodology/    # Sampling protocols
+└── nepa-advisor/skills/
+    ├── pathway-decision/      # CE/EA/EIS determination
+    ├── compliance-timeline/   # Milestone scheduling
+    └── documentation/         # Checklist generation
+
+skills/                        # Shared/foundation skills (future)
+├── foundation/
+└── forest-service/
 ```
 
 ### Agent Directory Structure

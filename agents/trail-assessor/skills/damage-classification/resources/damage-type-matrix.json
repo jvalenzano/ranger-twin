@@ -1,0 +1,58 @@
+{
+  "damage_types": {
+    "TYPE_I": {
+      "label": "Minor",
+      "severity_range": [1, 2],
+      "description": "Surface damage, passable with caution",
+      "typical_damages": ["SIGNAGE", "TREAD_EROSION"],
+      "work_types": ["REPAIR", "CLEARING"],
+      "cost_range": "< $10,000"
+    },
+    "TYPE_II": {
+      "label": "Moderate",
+      "severity_range": [3, 3],
+      "description": "Significant erosion or damage, partial blockage",
+      "typical_damages": ["HAZARD_TREES", "TREAD_EROSION", "DEBRIS_FLOW"],
+      "work_types": ["CLEARING", "REPAIR"],
+      "cost_range": "$10,000 - $35,000"
+    },
+    "TYPE_III": {
+      "label": "Major",
+      "severity_range": [4, 4],
+      "description": "Structural failure, impassable sections",
+      "typical_damages": ["DEBRIS_FLOW", "HAZARD_TREES"],
+      "work_types": ["CLEARING", "REROUTE", "RECONSTRUCTION"],
+      "cost_range": "$35,000 - $100,000"
+    },
+    "TYPE_IV": {
+      "label": "Severe",
+      "severity_range": [5, 5],
+      "description": "Complete destruction, requires reconstruction",
+      "typical_damages": ["BRIDGE_FAILURE", "DEBRIS_FLOW"],
+      "work_types": ["REPLACEMENT", "RECONSTRUCTION", "REROUTE"],
+      "cost_range": "> $100,000"
+    }
+  },
+  "infrastructure_types": {
+    "BRIDGE_FAILURE": {
+      "severity_threshold": 4,
+      "requires_engineering": true,
+      "critical_infrastructure": true
+    },
+    "CULVERT_DAMAGE": {
+      "severity_threshold": 3,
+      "requires_engineering": true,
+      "critical_infrastructure": true
+    },
+    "PUNCHEON_FAILURE": {
+      "severity_threshold": 4,
+      "requires_engineering": false,
+      "critical_infrastructure": true
+    }
+  },
+  "hazard_zone_criteria": {
+    "min_damage_count": 3,
+    "min_avg_severity": 4.0,
+    "proximity_threshold_miles": 2.0
+  }
+}

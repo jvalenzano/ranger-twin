@@ -1,0 +1,55 @@
+{
+  "CE": {
+    "pathway": "Categorical Exclusion",
+    "base_duration_days": 21,
+    "base_duration_months": 0.7,
+    "range_days": {"min": 14, "max": 28},
+    "comment_periods": [],
+    "milestones": [
+      {"name": "Project Initiation", "day_offset": 0, "duration": 0},
+      {"name": "EC Screening Complete", "day_offset": 3, "duration": 3},
+      {"name": "Specialist Input Received", "day_offset": 10, "duration": 7},
+      {"name": "Decision Memo Draft", "day_offset": 14, "duration": 4},
+      {"name": "Decision Memo Signed", "day_offset": 21, "duration": 7}
+    ]
+  },
+  "EA": {
+    "pathway": "Environmental Assessment",
+    "base_duration_days": 240,
+    "base_duration_months": 8,
+    "range_days": {"min": 180, "max": 365},
+    "comment_periods": [
+      {"period": "Public Scoping", "duration_days": 30, "required": true, "regulation": "40 CFR 1501.9"},
+      {"period": "EA Public Comment", "duration_days": 30, "required": true, "regulation": "FSH 1909.15"}
+    ],
+    "milestones": [
+      {"name": "Project Initiation", "day_offset": 0, "duration": 0},
+      {"name": "Public Scoping Notice", "day_offset": 7, "duration": 7},
+      {"name": "Scoping Period Ends", "day_offset": 37, "duration": 30},
+      {"name": "Draft EA Complete", "day_offset": 120, "duration": 83},
+      {"name": "EA Public Comment Period Ends", "day_offset": 157, "duration": 30},
+      {"name": "Final EA Complete", "day_offset": 210, "duration": 53},
+      {"name": "FONSI Signed", "day_offset": 240, "duration": 30}
+    ]
+  },
+  "EIS": {
+    "pathway": "Environmental Impact Statement",
+    "base_duration_days": 640,
+    "base_duration_months": 21,
+    "range_days": {"min": 540, "max": 730},
+    "comment_periods": [
+      {"period": "Scoping Period", "duration_days": 45, "required": true, "regulation": "40 CFR 1501.9"},
+      {"period": "Draft EIS Comment", "duration_days": 45, "required": true, "regulation": "40 CFR 1503"},
+      {"period": "Final EIS Wait Period", "duration_days": 30, "required": true, "regulation": "40 CFR 1506.10"}
+    ],
+    "milestones": [
+      {"name": "Notice of Intent Published", "day_offset": 0, "duration": 0},
+      {"name": "Scoping Period Ends", "day_offset": 45, "duration": 45},
+      {"name": "Draft EIS Complete", "day_offset": 300, "duration": 255},
+      {"name": "Draft EIS Comment Period Ends", "day_offset": 345, "duration": 45},
+      {"name": "Final EIS Published", "day_offset": 520, "duration": 175},
+      {"name": "Wait Period Ends", "day_offset": 550, "duration": 30},
+      {"name": "Record of Decision Signed", "day_offset": 640, "duration": 90}
+    ]
+  }
+}

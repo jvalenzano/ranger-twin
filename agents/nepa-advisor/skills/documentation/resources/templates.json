@@ -1,0 +1,76 @@
+{
+  "CE": {
+    "template_name": "Decision Memo for Categorical Exclusion",
+    "reference": "FSH 1909.15 Chapter 70, Exhibit 01",
+    "sections": [
+      "Background",
+      "Proposed Action",
+      "Categorical Exclusion Citation",
+      "Extraordinary Circumstances Screening",
+      "Finding",
+      "Decision",
+      "Implementation Date"
+    ],
+    "guidance_url": "https://www.fs.usda.gov/emc/nepa/includes/NEPA_Handbook_FSH_1909.15_2015.pdf"
+  },
+  "EA": {
+    "template_name": "Environmental Assessment",
+    "reference": "FSH 1909.15 Chapter 40",
+    "sections": [
+      "Purpose and Need",
+      "Proposed Action",
+      "Alternatives Considered (including No Action)",
+      "Environmental Effects",
+      "Agencies and Persons Consulted",
+      "References"
+    ],
+    "decision_template": {
+      "name": "Finding of No Significant Impact (FONSI)",
+      "reference": "FSH 1909.15 Chapter 40, Exhibit 02",
+      "sections": [
+        "Background",
+        "Decision",
+        "Rationale for Decision",
+        "Public Involvement",
+        "Finding of No Significant Impact",
+        "Implementation Date",
+        "Administrative Review Opportunities"
+      ]
+    },
+    "guidance_url": "https://www.fs.usda.gov/emc/nepa/includes/NEPA_Handbook_FSH_1909.15_2015.pdf"
+  },
+  "EIS": {
+    "template_name": "Environmental Impact Statement",
+    "reference": "40 CFR 1502, FSH 1909.15 Chapter 50",
+    "draft_sections": [
+      "Summary",
+      "Purpose and Need",
+      "Alternatives (including Proposed Action and No Action)",
+      "Affected Environment",
+      "Environmental Consequences",
+      "Consultation and Coordination",
+      "References",
+      "Appendices (Specialist Reports)"
+    ],
+    "final_sections": [
+      "All Draft EIS sections (updated)",
+      "Response to Comments",
+      "List of Agencies, Organizations, and Persons to Whom Copies Sent"
+    ],
+    "decision_template": {
+      "name": "Record of Decision (ROD)",
+      "reference": "40 CFR 1505.2, FSH 1909.15 Chapter 50",
+      "sections": [
+        "Background",
+        "Decision",
+        "Alternatives Considered",
+        "Rationale for Decision",
+        "Public Involvement",
+        "Findings Required by Other Laws",
+        "Implementation Date",
+        "Administrative Review Opportunities"
+      ]
+    },
+    "guidance_url": "https://www.fs.usda.gov/emc/nepa/index.shtml"
+  }
+}

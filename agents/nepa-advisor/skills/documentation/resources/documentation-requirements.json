@@ -1,0 +1,130 @@
+{
+  "CE": {
+    "pathway": "Categorical Exclusion",
+    "decision_document": "Decision Memo",
+    "required_documents": [
+      {
+        "document": "Decision Memo",
+        "description": "Documents CE application and extraordinary circumstances screening",
+        "required": true,
+        "reference": "FSH 1909.15-70"
+      },
+      {
+        "document": "Extraordinary Circumstances Screening",
+        "description": "Evaluation of all eight EC criteria per FSH 1909.15-30",
+        "required": true,
+        "reference": "FSH 1909.15-30"
+      },
+      {
+        "document": "Project File",
+        "description": "Administrative record with maps, specialist input, and supporting analysis",
+        "required": true,
+        "reference": "36 CFR 220.6"
+      },
+      {
+        "document": "Public Notice (if applicable)",
+        "description": "Scoping notice or project announcement as determined by local policy",
+        "required": false,
+        "reference": "Local unit policy"
+      }
+    ]
+  },
+  "EA": {
+    "pathway": "Environmental Assessment",
+    "decision_document": "Finding of No Significant Impact (FONSI)",
+    "required_documents": [
+      {
+        "document": "Environmental Assessment",
+        "description": "Analysis of proposed action and alternatives with environmental effects",
+        "required": true,
+        "reference": "40 CFR 1501.5"
+      },
+      {
+        "document": "Finding of No Significant Impact (FONSI)",
+        "description": "Decision document if EA determines no significant impact",
+        "required": true,
+        "reference": "40 CFR 1501.6"
+      },
+      {
+        "document": "Public Scoping Documentation",
+        "description": "Record of public involvement and comments received",
+        "required": true,
+        "reference": "FSH 1909.15-40"
+      },
+      {
+        "document": "Alternatives Analysis",
+        "description": "Comparison of action alternatives including no-action baseline",
+        "required": true,
+        "reference": "40 CFR 1502.14"
+      },
+      {
+        "document": "Specialist Reports",
+        "description": "Technical analyses from interdisciplinary team members",
+        "required": true,
+        "reference": "FSH 1909.15-40"
+      },
+      {
+        "document": "Response to Comments",
+        "description": "Responses to substantive public comments on EA",
+        "required": true,
+        "reference": "40 CFR 1503.4"
+      }
+    ],
+    "timeline_notes": "Minimum 30-day public comment period required"
+  },
+  "EIS": {
+    "pathway": "Environmental Impact Statement",
+    "decision_document": "Record of Decision (ROD)",
+    "required_documents": [
+      {
+        "document": "Notice of Intent (NOI)",
+        "description": "Federal Register notice announcing EIS preparation and scoping",
+        "required": true,
+        "reference": "40 CFR 1501.9"
+      },
+      {
+        "document": "Draft EIS",
+        "description": "Comprehensive analysis of environmental impacts and reasonable alternatives",
+        "required": true,
+        "reference": "40 CFR 1502"
+      },
+      {
+        "document": "Final EIS",
+        "description": "Revised EIS with responses to comments and any modifications",
+        "required": true,
+        "reference": "40 CFR 1503.4"
+      },
+      {
+        "document": "Record of Decision (ROD)",
+        "description": "Final decision document selecting alternative and mitigation measures",
+        "required": true,
+        "reference": "40 CFR 1505.2"
+      },
+      {
+        "document": "Scoping Report",
+        "description": "Summary of public scoping process and issues identified",
+        "required": true,
+        "reference": "40 CFR 1501.9"
+      },
+      {
+        "document": "Alternatives Analysis",
+        "description": "Detailed comparison of reasonable alternatives (minimum 3-5 alternatives)",
+        "required": true,
+        "reference": "40 CFR 1502.14"
+      },
+      {
+        "document": "Public Comment Summary",
+        "description": "Record of all comments received on Draft EIS with agency responses",
+        "required": true,
+        "reference": "40 CFR 1503"
+      },
+      {
+        "document": "Cumulative Effects Analysis",
+        "description": "Analysis of cumulative impacts when combined with other actions",
+        "required": true,
+        "reference": "40 CFR 1508.7"
+      }
+    ],
+    "timeline_notes": "Minimum 45-day comment period on Draft EIS, 30-day wait after Final EIS before ROD"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "description": "Salvage viability scoring criteria and weights",
+  "scoring_weights": {
+    "deterioration_stage": {
+      "weight_pct": 30,
+      "description": "Wood quality and time sensitivity"
+    },
+    "access_difficulty": {
+      "weight_pct": 25,
+      "description": "Harvest operability and cost"
+    },
+    "market_demand": {
+      "weight_pct": 25,
+      "description": "Species, grade, and market conditions"
+    },
+    "volume_value": {
+      "weight_pct": 20,
+      "description": "Total volume and economic scale"
+    }
+  },
+  "deterioration_scoring": {
+    "early": {
+      "score": 100,
+      "quality_retention": 95,
+      "description": "Premium quality retained, immediate harvest recommended"
+    },
+    "moderate": {
+      "score": 70,
+      "quality_retention": 75,
+      "description": "Some degradation, harvest within 6 months"
+    },
+    "advanced": {
+      "score": 40,
+      "quality_retention": 50,
+      "description": "Significant degradation, utility grade likely"
+    },
+    "severe": {
+      "score": 10,
+      "quality_retention": 20,
+      "description": "Minimal value, consider abandoning"
+    }
+  },
+  "access_scoring": {
+    "excellent": {
+      "score": 100,
+      "description": "Road access, flat terrain, existing landings, short haul (<5 miles)"
+    },
+    "good": {
+      "score": 80,
+      "description": "Road access, moderate terrain, cable yarding feasible, medium haul (5-15 miles)"
+    },
+    "moderate": {
+      "score": 55,
+      "description": "Limited road access, steep terrain, cable/helicopter mix, long haul (15-30 miles)"
+    },
+    "difficult": {
+      "score": 25,
+      "description": "No road access, very steep, helicopter only, remote (>30 miles)"
+    }
+  },
+  "volume_scoring": {
+    "very_high": {
+      "score": 100,
+      "min_mbf_per_acre": 40,
+      "description": "Exceptional volume justifies high operational costs"
+    },
+    "high": {
+      "score": 80,
+      "min_mbf_per_acre": 25,
+      "description": "Good volume for commercial operations"
+    },
+    "moderate": {
+      "score": 60,
+      "min_mbf_per_acre": 15,
+      "description": "Adequate volume for profitability"
+    },
+    "low": {
+      "score": 30,
+      "min_mbf_per_acre": 8,
+      "description": "Marginal volume, limited profitability"
+    },
+    "very_low": {
+      "score": 10,
+      "max_mbf_per_acre": 8,
+      "description": "Insufficient volume for commercial harvest"
+    }
+  },
+  "urgency_thresholds": {
+    "IMMEDIATE": {
+      "min_score": 85,
+      "max_months_remaining": 6,
+      "description": "Harvest within 3 months to preserve premium value",
+      "action": "Mobilize crews immediately, fast-track permits"
+    },
+    "HIGH": {
+      "min_score": 70,
+      "max_months_remaining": 12,
+      "description": "Harvest within 6-9 months before significant degradation",
+      "action": "Schedule for current season, prioritize in queue"
+    },
+    "MODERATE": {
+      "min_score": 50,
+      "max_months_remaining": 24,
+      "description": "Harvest within 12-18 months, quality declining",
+      "action": "Include in annual program, monitor deterioration"
+    },
+    "LOW": {
+      "min_score": 30,
+      "max_months_remaining": 36,
+      "description": "Low priority, minimal economic return expected",
+      "action": "Defer unless market improves, consider alternatives"
+    },
+    "NOT_VIABLE": {
+      "max_score": 30,
+      "description": "Salvage window expired or economics unfavorable",
+      "action": "Abandon commercial salvage, evaluate for biomass/habitat"
+    }
+  },
+  "quality_tier_windows": {
+    "premium": {
+      "description": "Grade 1S-2S sawlogs, export quality",
+      "max_months": {
+        "PSME": 18,
+        "THPL": 36,
+        "PIPO": 24,
+        "TSHE": 9,
+        "PICO": 9
+      }
+    },
+    "commercial": {
+      "description": "Grade 3S dimension lumber",
+      "max_months": {
+        "PSME": 30,
+        "THPL": 60,
+        "PIPO": 36,
+        "TSHE": 18,
+        "PICO": 12
+      }
+    },
+    "utility": {
+      "description": "Grade 4S posts, poles, chips",
+      "max_months": {
+        "PSME": 48,
+        "THPL": 96,
+        "PIPO": 48,
+        "TSHE": 24,
+        "PICO": 18
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "baf_selection": {
+    "description": "Basal Area Factor (BAF) selection guide based on average stand DBH",
+    "reference": "USFS Timber Cruising Handbook FSH 2409.12",
+    "guidelines": {
+      "baf_10": {
+        "value": 10,
+        "avg_dbh_range": [6, 14],
+        "tree_size": "Small timber",
+        "stand_examples": ["Lodgepole pine", "Young Douglas-fir", "Precommercial stands"],
+        "plot_count_factor": 1.4,
+        "description": "Low BAF samples more trees per plot, good for small diameter"
+      },
+      "baf_20": {
+        "value": 20,
+        "avg_dbh_range": [14, 24],
+        "tree_size": "Medium timber",
+        "stand_examples": ["Mixed conifer", "Second growth Douglas-fir", "Mature hemlock"],
+        "plot_count_factor": 1.0,
+        "description": "Standard BAF for most commercial timber cruising"
+      },
+      "baf_30": {
+        "value": 30,
+        "avg_dbh_range": [24, 32],
+        "tree_size": "Large timber",
+        "stand_examples": ["Old growth Douglas-fir", "Mature ponderosa pine", "Large diameter redcedar"],
+        "plot_count_factor": 0.8,
+        "description": "Higher BAF reduces borderline tree counts in large timber"
+      },
+      "baf_40": {
+        "value": 40,
+        "avg_dbh_range": [32, 100],
+        "tree_size": "Very large timber",
+        "stand_examples": ["Old growth western redcedar", "Ancient Douglas-fir", "Giant sequoia"],
+        "plot_count_factor": 0.7,
+        "description": "Highest BAF for very large scattered trees"
+      }
+    }
+  },
+  "prism_specifications": {
+    "baf_10": {
+      "prism_diopter": 2,
+      "wedge_thickness": "Thin",
+      "limiting_distance_20dbh": 11.5
+    },
+    "baf_20": {
+      "prism_diopter": 2.75,
+      "wedge_thickness": "Standard",
+      "limiting_distance_20dbh": 8.2
+    },
+    "baf_30": {
+      "prism_diopter": 3.5,
+      "wedge_thickness": "Medium",
+      "limiting_distance_20dbh": 6.7
+    },
+    "baf_40": {
+      "prism_diopter": 4,
+      "wedge_thickness": "Thick",
+      "limiting_distance_20dbh": 5.8
+    }
+  },
+  "stand_density_adjustment": {
+    "sparse": {
+      "description": "Trees widely scattered, <40% canopy closure",
+      "baf_multiplier": 0.5,
+      "recommendation": "Use lower BAF to capture more trees per plot"
+    },
+    "moderate": {
+      "description": "Typical forest, 40-70% canopy closure",
+      "baf_multiplier": 1.0,
+      "recommendation": "Use standard BAF for tree size"
+    },
+    "dense": {
+      "description": "Heavy stocking, >70% canopy closure",
+      "baf_multiplier": 1.0,
+      "recommendation": "Standard BAF appropriate, or increase for efficiency"
+    }
+  }
+}

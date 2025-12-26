@@ -78,7 +78,8 @@ exclude = [
 asyncio_mode = "auto"
 testpaths = ["agents", "services", "packages"]
 python_files = ["test_*.py", "*_test.py"]
-addopts = "-v --cov=agents --cov=services --cov=packages --cov-report=term-missing"
+pythonpath = ["."]
+addopts = "-v --import-mode=importlib"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

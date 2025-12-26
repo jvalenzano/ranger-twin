@@ -1,0 +1,125 @@
+{
+  "description": "Species-specific deterioration timelines after wildfire",
+  "reference": "Russell et al. (2008), PNW-GTR-850",
+  "blue_stain_onset": {
+    "PSME": {
+      "species_name": "Douglas-fir",
+      "months_to_onset": 12,
+      "resistance": "moderate",
+      "typical_severity": "moderate",
+      "notes": "Most fire-resistant commercial species. Can retain grade 18-24 months if mortality complete."
+    },
+    "TSHE": {
+      "species_name": "Western Hemlock",
+      "months_to_onset": 6,
+      "resistance": "low",
+      "typical_severity": "severe",
+      "notes": "Highly susceptible to blue stain. Rapid degradation after 6 months."
+    },
+    "THPL": {
+      "species_name": "Western Redcedar",
+      "months_to_onset": 24,
+      "resistance": "high",
+      "typical_severity": "low",
+      "notes": "Natural decay resistance. Can salvage 3-5 years post-fire."
+    },
+    "PIPO": {
+      "species_name": "Ponderosa Pine",
+      "months_to_onset": 18,
+      "resistance": "high",
+      "typical_severity": "moderate",
+      "notes": "Thick bark provides protection. Resin content deters beetles."
+    },
+    "PICO": {
+      "species_name": "Lodgepole Pine",
+      "months_to_onset": 6,
+      "resistance": "low",
+      "typical_severity": "severe",
+      "notes": "Thin bark, high moisture. Blue stain and beetle damage rapid."
+    },
+    "ABGR": {
+      "species_name": "Grand Fir",
+      "months_to_onset": 8,
+      "resistance": "low",
+      "typical_severity": "high",
+      "notes": "Pre-existing heart rot common. Salvage window 8-12 months."
+    },
+    "TSME": {
+      "species_name": "Mountain Hemlock",
+      "months_to_onset": 8,
+      "resistance": "low",
+      "typical_severity": "moderate",
+      "notes": "Similar to western hemlock but slightly more resistant."
+    },
+    "ABLA": {
+      "species_name": "Subalpine Fir",
+      "months_to_onset": 6,
+      "resistance": "low",
+      "typical_severity": "high",
+      "notes": "Low commercial value further reduced by rapid decay."
+    }
+  },
+  "deterioration_stages": {
+    "early": {
+      "months_range": [0, 0.5],
+      "multiplier": "based_on_species",
+      "quality_retention": 95,
+      "description": "Minimal degradation. Premium grades retained.",
+      "visual_indicators": ["Intact bark", "No blue stain", "Minimal checking"]
+    },
+    "moderate": {
+      "months_range": [0.5, 1.5],
+      "multiplier": "based_on_species",
+      "quality_retention": 75,
+      "description": "Blue stain beginning. One grade drop typical.",
+      "visual_indicators": ["Blue stain in sapwood", "Light checking", "Bark sloughing"]
+    },
+    "advanced": {
+      "months_range": [1.5, 2.5],
+      "multiplier": "based_on_species",
+      "quality_retention": 50,
+      "description": "Extensive blue stain. 2+ grade drop.",
+      "visual_indicators": ["Deep blue stain", "Heavy checking", "Bark beetle galleries"]
+    },
+    "severe": {
+      "months_range": [2.5, 999],
+      "multiplier": "based_on_species",
+      "quality_retention": 20,
+      "description": "Utility grade only. Structural integrity compromised.",
+      "visual_indicators": ["Complete blue stain", "Extensive checking", "Rot pockets"]
+    }
+  },
+  "mortality_factor": {
+    "description": "Mortality percentage affects deterioration rate",
+    "100_percent": {
+      "rate_multiplier": 1.0,
+      "notes": "Complete mortality accelerates decay - no live tissue resistance"
+    },
+    "75_to_100": {
+      "rate_multiplier": 0.9,
+      "notes": "High mortality, rapid decline expected"
+    },
+    "50_to_75": {
+      "rate_multiplier": 0.7,
+      "notes": "Mixed mortality, some trees may recover"
+    },
+    "below_50": {
+      "rate_multiplier": 0.5,
+      "notes": "Partial mortality, living trees resist beetles and decay"
+    }
+  },
+  "burn_severity_factor": {
+    "HIGH": {
+      "rate_multiplier": 1.2,
+      "notes": "Deep char, cambium kill, rapid checking and beetle attack"
+    },
+    "MODERATE": {
+      "rate_multiplier": 1.0,
+      "notes": "Standard deterioration timeline"
+    },
+    "LOW": {
+      "rate_multiplier": 0.8,
+      "notes": "Light surface char, slower degradation"
+    }
+  }
+}

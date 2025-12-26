@@ -1,1 +1,0 @@
-"""Boundary Mapping skill tests."""

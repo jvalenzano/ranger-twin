@@ -1,0 +1,118 @@
+{
+  "methods": {
+    "variable_radius": {
+      "name": "Variable Radius Plot",
+      "description": "Point sampling with prism or relaskop (angle gauge)",
+      "best_for": ["mixed_stand", "large_trees", "salvage", "commercial_volume"],
+      "terrain": ["flat", "moderate", "steep"],
+      "advantages": [
+        "Samples large trees proportionally",
+        "Fast and efficient for mixed stands",
+        "No plot boundary measurement needed",
+        "Industry standard for merchantable timber"
+      ],
+      "disadvantages": [
+        "Not ideal for small trees (<6 inches DBH)",
+        "Requires trained cruisers",
+        "Borderline trees slow cruise",
+        "Less accurate for dense young growth"
+      ]
+    },
+    "fixed_radius": {
+      "name": "Fixed Radius Plot",
+      "description": "Circular plots with fixed area",
+      "best_for": ["uniform_stand", "small_trees", "stocking", "research"],
+      "terrain": ["flat", "moderate"],
+      "advantages": [
+        "Simple and intuitive",
+        "Accurate for small trees and regeneration",
+        "Easy to train field crews",
+        "Good for stocking surveys"
+      ],
+      "disadvantages": [
+        "Must measure plot boundary",
+        "Less efficient for large scattered trees",
+        "Terrain can complicate boundary",
+        "Fixed area doesn't weight by size"
+      ]
+    },
+    "strip": {
+      "name": "Strip Cruise",
+      "description": "Continuous strips through stand",
+      "best_for": ["linear_features", "road_corridors", "boundaries"],
+      "terrain": ["flat", "moderate"],
+      "advantages": [
+        "Good for long narrow areas",
+        "100% sample of strip area",
+        "Simple field execution",
+        "Works well along roads/trails"
+      ],
+      "disadvantages": [
+        "Not representative if stand varies",
+        "Time intensive",
+        "Difficult on steep terrain",
+        "Edge effects can bias results"
+      ]
+    },
+    "line": {
+      "name": "Line Plot Cruise",
+      "description": "Plots at intervals along transect lines",
+      "best_for": ["accessibility_constraints", "remote_areas"],
+      "terrain": ["moderate", "steep", "very_steep"],
+      "advantages": [
+        "Works in difficult terrain",
+        "Efficient travel between plots",
+        "Good for remote areas",
+        "Can follow existing trails"
+      ],
+      "disadvantages": [
+        "May miss stand variation",
+        "Less statistically rigorous",
+        "Clustering along lines",
+        "Requires careful line placement"
+      ]
+    }
+  },
+  "selection_matrix": {
+    "salvage_steep_large": {
+      "stand_type": "mixed_conifer",
+      "terrain": "steep",
+      "avg_dbh": ">20",
+      "objective": "salvage",
+      "recommended": "variable_radius",
+      "reason": "Variable radius efficient for large scattered trees on steep terrain"
+    },
+    "salvage_moderate_large": {
+      "stand_type": "mixed_conifer",
+      "terrain": "moderate",
+      "avg_dbh": ">20",
+      "objective": "salvage",
+      "recommended": "variable_radius",
+      "reason": "Standard variable radius cruise for merchantable timber"
+    },
+    "stocking_flat_small": {
+      "stand_type": "uniform",
+      "terrain": "flat",
+      "avg_dbh": "<16",
+      "objective": "stocking",
+      "recommended": "fixed_radius",
+      "reason": "Fixed radius captures small tree density accurately"
+    },
+    "research_any_any": {
+      "stand_type": "any",
+      "terrain": "any",
+      "avg_dbh": "any",
+      "objective": "research",
+      "recommended": "fixed_radius",
+      "reason": "Fixed plots provide reproducible sampling units"
+    }
+  },
+  "plot_sizes": {
+    "fixed_radius": {
+      "1_20_acre": {"radius_ft": 24, "area_sqft": 1815, "best_for": "trees 5-12 inches DBH"},
+      "1_10_acre": {"radius_ft": 37.2, "area_sqft": 4356, "best_for": "trees 10-20 inches DBH"},
+      "1_5_acre": {"radius_ft": 52.7, "area_sqft": 8712, "best_for": "trees >20 inches DBH"},
+      "1_acre": {"radius_ft": 117.75, "area_sqft": 43560, "best_for": "research plots"}
+    }
+  }
+}

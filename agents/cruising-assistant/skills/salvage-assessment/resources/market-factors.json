@@ -1,0 +1,106 @@
+{
+  "description": "PNW timber market prices and demand factors",
+  "reference": "Oregon Dept of Forestry Timber Price Reports 2023",
+  "price_per_mbf_2023": {
+    "PSME": {
+      "grade_1S": {"price": 850, "demand": "high", "notes": "Premium sawlogs, export grade"},
+      "grade_2S": {"price": 620, "demand": "high", "notes": "Standard framing lumber"},
+      "grade_3S": {"price": 380, "demand": "moderate", "notes": "Dimension lumber, some defect"},
+      "grade_4S": {"price": 180, "demand": "low", "notes": "Utility, posts, pallets"}
+    },
+    "TSHE": {
+      "grade_2S": {"price": 420, "demand": "moderate", "notes": "Good structural lumber"},
+      "grade_3S": {"price": 280, "demand": "moderate", "notes": "Standard hemlock grade"},
+      "grade_4S": {"price": 140, "demand": "low", "notes": "Pulp or chips"}
+    },
+    "THPL": {
+      "grade_1S": {"price": 780, "demand": "high", "notes": "Premium cedar, siding/decking"},
+      "grade_2S": {"price": 580, "demand": "high", "notes": "Quality cedar products"},
+      "grade_3S": {"price": 340, "demand": "moderate", "notes": "Standard cedar"},
+      "grade_4S": {"price": 160, "demand": "low", "notes": "Shakes, shingles"}
+    },
+    "PIPO": {
+      "grade_2S": {"price": 520, "demand": "moderate", "notes": "Ponderosa appearance grade"},
+      "grade_3S": {"price": 320, "demand": "moderate", "notes": "Common pine"},
+      "grade_4S": {"price": 150, "demand": "low", "notes": "Utility pine"}
+    },
+    "PICO": {
+      "grade_3S": {"price": 240, "demand": "low", "notes": "Small diameter, limited markets"},
+      "grade_4S": {"price": 110, "demand": "low", "notes": "Posts, poles, firewood"}
+    },
+    "ABGR": {
+      "grade_2S": {"price": 380, "demand": "moderate", "notes": "True fir framing"},
+      "grade_3S": {"price": 260, "demand": "low", "notes": "Standard fir"},
+      "grade_4S": {"price": 120, "demand": "low", "notes": "Pulp grade"}
+    }
+  },
+  "grade_downgrade_impact": {
+    "1S_to_2S": {"value_loss_pct": 27, "typical_cause": "Minor blue stain or checking"},
+    "2S_to_3S": {"value_loss_pct": 39, "typical_cause": "Moderate blue stain, some checking"},
+    "3S_to_4S": {"value_loss_pct": 53, "typical_cause": "Heavy blue stain, extensive checking"},
+    "any_to_4S": {"value_loss_pct": 70, "typical_cause": "Severe degradation, utility only"}
+  },
+  "market_demand_factors": {
+    "high": {
+      "score_multiplier": 1.0,
+      "description": "Strong demand, multiple buyers, premium prices",
+      "species": ["PSME-1S", "PSME-2S", "THPL-1S", "THPL-2S"]
+    },
+    "moderate": {
+      "score_multiplier": 0.75,
+      "description": "Steady demand, standard markets",
+      "species": ["PSME-3S", "TSHE-2S", "TSHE-3S", "PIPO-2S", "PIPO-3S"]
+    },
+    "low": {
+      "score_multiplier": 0.50,
+      "description": "Limited markets, price sensitive",
+      "species": ["PICO", "ABGR", "ABLA", "all-4S-grades"]
+    }
+  },
+  "salvage_premium": {
+    "description": "Salvage timber typically sells at discount to green timber",
+    "early_salvage": {
+      "discount_pct": 10,
+      "notes": "Minimal quality loss, near green prices"
+    },
+    "moderate_deterioration": {
+      "discount_pct": 25,
+      "notes": "Blue stain present, grade drop expected"
+    },
+    "advanced_deterioration": {
+      "discount_pct": 50,
+      "notes": "Extensive degradation, utility markets only"
+    }
+  },
+  "operational_costs": {
+    "access_good": {
+      "cost_per_mbf": 120,
+      "description": "Road access, ground-based harvest, short haul"
+    },
+    "access_moderate": {
+      "cost_per_mbf": 180,
+      "description": "Cable yarding, road construction, medium haul"
+    },
+    "access_difficult": {
+      "cost_per_mbf": 280,
+      "description": "Helicopter, major road work, long haul, steep terrain"
+    }
+  },
+  "profitability_thresholds": {
+    "high_return": {
+      "min_profit_per_mbf": 300,
+      "roi_pct": 40,
+      "description": "Excellent project economics"
+    },
+    "moderate_return": {
+      "min_profit_per_mbf": 150,
+      "roi_pct": 20,
+      "description": "Acceptable project economics"
+    },
+    "marginal": {
+      "min_profit_per_mbf": 50,
+      "roi_pct": 8,
+      "description": "Breakeven or minimal return"
+    }
+  }
+}
