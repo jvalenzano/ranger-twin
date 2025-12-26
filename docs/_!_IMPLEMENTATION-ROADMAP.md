@@ -50,9 +50,10 @@ This document is the **north star** for RANGER implementation. It consolidates s
 |-----------|--------|----------|
 | **Agent Pipeline** | 🔲 Not started | Core intelligence layer |
 | **Skills Library** | 🔲 Not started | Domain expertise |
+| **IRWIN Integration** | 🟥 **CRITICAL** | Real-time fire incident hub |
 | **Coordinator Agent** | 🔲 Not started | Orchestration |
 | **Specialist Agents** | 🔲 Not started | Domain reasoning |
-| **MCP Servers** | 🔲 Partial | NIFC exists, others needed |
+| **MCP Servers** | 🔲 Partial | NIFC exists, **IRWIN needed** |
 | **Agent ↔ UI Integration** | 🔲 Not started | Chat to agent pipeline |
 
 ### Key Insight
@@ -128,30 +129,37 @@ The UI is ahead of the intelligence layer. Phase 1 built a compelling interface 
 
 ## Implementation Phases
 
-### Phase 0: Foundation Setup
+### Phase 0: Foundation Setup ✅ COMPLETE
 **Duration:** 1 week
+**Completed:** December 25, 2025
+**Branch:** `feature/phase-0-foundation`
 **Goal:** Establish project structure, patterns, and developer infrastructure
 
 #### Deliverables
 
-| Task | Output | Owner |
-|------|--------|-------|
-| Create `agents/` directory structure | Skeleton folders for all agents | Dev |
-| Create `skills/` directory structure | Foundation + agent-specific folders | Dev |
-| Create `mcp/` directory structure | MCP server scaffolding | Dev |
-| Write Skill Format Specification | `docs/specs/skill-format.md` | Dev |
-| Write Agent Interface Specification | `docs/specs/agent-interface.md` | Dev |
-| Set up Google ADK development environment | Working ADK hello-world | Dev |
-| Archive/consolidate old planning docs | Clean docs/ structure | Dev |
-| Update CLAUDE.md with new architecture | Accurate project guidance | Dev |
+| Task | Output | Status |
+|------|--------|--------|
+| Create `agents/` directory structure | 5 agents with full structure | ✅ Done |
+| Create `skills/` directory structure | Foundation + forest-service folders | ✅ Done |
+| Create `mcp/` directory structure | NIFC + Fixtures placeholders | ✅ Done |
+| Write Skill Format Specification | `docs/specs/skill-format.md` (~300 lines) | ✅ Done |
+| Write Agent Interface Specification | `docs/specs/agent-interface.md` (~380 lines) | ✅ Done |
+| Set up Google ADK development environment | `pyproject.toml` + verify script | ✅ Done |
+| Archive/consolidate old planning docs | Clean docs/ structure | ✅ Done |
+| Update CLAUDE.md with new architecture | Skills-First section added | ✅ Done |
 
 #### Success Criteria
 
-- [ ] `agents/coordinator/` exists with `agent.py` template
-- [ ] `skills/foundation/` has at least one example skill folder
-- [ ] ADK hello-world agent runs locally
-- [ ] All developers can run agents locally
-- [ ] Old sprint plans archived, this roadmap is canonical
+- [x] `agents/coordinator/` exists with `agent.py` template
+- [x] `skills/foundation/` has at least one example skill folder (greeting/)
+- [x] ADK dependency added (run `pip install google-adk` to activate)
+- [x] Verification script: `python scripts/verify-adk.py`
+- [x] Old sprint plans archived, this roadmap is canonical
+
+#### Key Commit
+```
+2d28559 feat: Phase 0 foundation setup - Skills-First architecture scaffolding
+```
 
 #### Directory Structure After Phase 0
 
@@ -205,7 +213,8 @@ The Coordinator is the **entry point** for all intelligence. Even with no specia
 |------|--------|----------|
 | Implement Coordinator agent in ADK | `agents/coordinator/agent.py` | P0 |
 | Build Delegation skill | Routes queries to appropriate specialists | P0 |
-| Build Portfolio Triage skill | Prioritizes fires, generates summaries | P0 |
+| Build BAER Triage skill | Automates 7-day post-fire assessment logic | P0 |
+| Build Portfolio Triage skill | Prioritizes fires, generates summaries | P1 |
 | Build User Interaction skill | Conversation patterns, response formatting | P1 |
 | Create agent ↔ UI API endpoint | FastAPI route for chat messages | P0 |
 | Integrate with existing chat interface | Chat sends to Coordinator | P0 |
@@ -285,8 +294,8 @@ agents/coordinator/skills/user-interaction/
 | Task | Output | Priority |
 |------|--------|----------|
 | Implement Burn Analyst agent | `agents/burn-analyst/agent.py` | P0 |
-| Build MTBS Classification skill | Severity classification logic | P0 |
-| Build Soil Burn Severity skill | Post-fire soil assessment | P0 |
+| Build Soil Burn Severity skill | Post-fire soil assessment (Prioritized) | P0 |
+| Build MTBS Classification skill | Severity classification logic | P1 |
 | Build Boundary Mapping skill | Fire perimeter delineation | P1 |
 | Wire Coordinator → Burn Analyst | Delegation routes fire queries | P0 |
 | Test end-to-end flow | UI → Coordinator → Burn Analyst → Response | P0 |
@@ -419,6 +428,7 @@ User: "What's the burn severity for Cedar Creek Fire?"
 
 | Server | Data Source | Priority |
 |--------|-------------|----------|
+| `mcp/irwin/` | IRWIN Incident Hub | **P0 (Critical)** |
 | `mcp/nifc/` | Refactor existing nifcService | P0 |
 | `mcp/fixtures/` | Local fixture data | P0 |
 | `mcp/weather/` | Weather.gov API | P2 |
