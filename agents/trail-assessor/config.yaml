@@ -1,0 +1,24 @@
+# Trail Assessor Agent Configuration
+# Per ADR-005: Skills-First Multi-Agent Architecture
+
+agent:
+  name: trail-assessor
+  model: gemini-2.0-flash
+  version: 0.1.0
+  description: "Trail and recreation infrastructure specialist."
+  role: specialist
+
+runtime:
+  type: google-adk
+  environment: local
+
+skills:
+  enabled: true
+  paths:
+    - ./skills
+    - ../../skills/foundation
+    - ../../skills/forest-service
+
+logging:
+  level: INFO
+  format: structured

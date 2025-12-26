@@ -1,0 +1,1 @@
+"""Cruising Assistant agent tests."""

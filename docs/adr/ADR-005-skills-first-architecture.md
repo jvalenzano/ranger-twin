@@ -64,7 +64,7 @@ We adopt a **Skills-First** architecture where domain expertise is packaged as p
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        RANGER STACK                              │
+│                        RANGER STACK                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  UI (Nerve Center)     → React Command Console                  │
 │  Agent Pipeline        → Google ADK + Gemini Runtime            │

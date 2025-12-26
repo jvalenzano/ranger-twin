@@ -1,0 +1,31 @@
+# Coordinator Agent Configuration
+# Per ADR-005: Skills-First Multi-Agent Architecture
+
+agent:
+  name: coordinator
+  model: gemini-2.0-flash
+  version: 0.1.0
+  description: "Root orchestrator for RANGER Skills-First architecture."
+  role: orchestrator
+
+runtime:
+  type: google-adk
+  environment: local
+
+skills:
+  enabled: true
+  paths:
+    - ./skills                    # Agent-specific skills
+    - ../../skills/foundation     # Shared foundation skills
+
+delegation:
+  enabled: true
+  specialists:
+    - burn-analyst
+    - trail-assessor
+    - cruising-assistant
+    - nepa-advisor
+
+logging:
+  level: INFO
+  format: structured

@@ -19,30 +19,21 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 
 **Phase 1 reality:** Only `fixtures/` contains active data. Other directories are placeholders.
 
-## Architecture
+**Skills-First Architecture (Primary):**
+- **Orchestration:** Google ADK + Gemini Runtime.
+- **Skills Library:** Domain expertise packaged in `skills/`.
+- **Agents:** Specialized agents in `agents/` using shared skills.
+- **Data:** MCP servers in `mcp/` (NIFC, Fixtures, etc.).
 
-**Hybrid Architecture (Frontend-Led Demo):**
-- **Orchestration:** `src/services/aiBriefingService.ts` handles logic in the browser.
-- **Routing:**
-    - **General Queries**: OpenRouter (`google/gemini-2.0-flash-exp:free` -> `google/gemma-2-9b-it:free`)
-    - **NEPA RAG**: Direct Google API (`gemini-2.0-flash-exp`) for private RAG context.
-
-**Backend Microservices (Reference Implementation):**
-```
-Recovery Coordinator (Root Orchestrator, port 8005)
-├── BurnAnalyst (port 8001)
-├── TrailAssessor (port 8002)
-├── CruisingAssistant (port 8003)
-└── NEPAAdvisor (port 8004)
-```
+**Legacy/Reference Architecture:**
+- **Frontend-Led Demo:** `src/services/aiBriefingService.ts` handles log in the browser.
+- **Microservices:** Old FastAPI agent services in `services/agents/` (REFERENCE ONLY).
 
 **Key Contracts:**
+- `docs/specs/skill-format.md` - Skill structure and metadata
+- `docs/specs/agent-interface.md` - Agent communication protocol
 - `docs/architecture/AGENT-MESSAGING-PROTOCOL.md` - AgentBriefingEvent JSON schema
-- `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec (4 event types)
-
-**Data & Integration Docs:**
-- `docs/architecture/FIXTURE-DATA-FORMATS.md` - Phase 1 fixture schemas
-- `docs/research/APIs_AND_DATASETS.md` - API strategy for Phase 2
+- `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec
 
 ## Commands
 
@@ -56,11 +47,21 @@ cd apps/command-console && npm run typecheck
 # Linting
 cd apps/command-console && npm run lint
 
-# Backend development
+# Agent development (Google ADK)
+pip install google-adk
+export GOOGLE_API_KEY=your_key_here
+cd agents && adk run coordinator       # CLI mode
+cd agents && adk web --port 8000       # Web UI mode
+
+# Backend development (legacy)
 cd services/api-gateway && uvicorn app.main:app --reload --port 8000
 
 # Full stack (Docker)
 docker-compose up -d
+
+# Run tests
+pytest agents/ -v                       # Agent tests
+pytest skills/ -v                       # Skill tests
 ```
 
 ## Project Structure
@@ -68,19 +69,19 @@ docker-compose up -d
 ```
 apps/
   command-console/     # React + Vite + Tailwind (desktop UI)
-    scripts/           # Verification utilities (e.g., verify-openrouter.js)
-  field-companion/     # React PWA (mobile - Planned)
-services/
-  api-gateway/         # FastAPI router
-  agents/              # 5 FastAPI agent services
+agents/                # NEW: Skills-First agents (ADK)
+skills/                # NEW: Domain expertise library
+mcp/                   # NEW: Model Context Protocol servers
 packages/
+  skill-runtime/       # Skill loading/execution utilities
   twin-core/           # Shared Python models
+services/
+  agents/              # LEGACY: FastAPI agent services (for reference)
 data/
   fixtures/            # Phase 1: Cedar Creek simulation data (ACTIVE)
 docs/
+  specs/               # NEW: Technical specifications
   architecture/        # System design specs
-  features/            # Feature specifications & checklists
-  research/            # API inventory
 ```
 
 ## State Management
@@ -117,3 +118,49 @@ Fire lifecycle follows a **4-phase model** aligned with practitioner terminology
 - `PHASE_MULTIPLIERS` - Triage score weights
 - `calculateTriageScore()` - Severity × Size × Phase
 - `getDeltaDirection()` - 24h escalation tracking
+
+## Skills-First Agent Architecture (ADR-005)
+
+RANGER uses a Skills-First Multi-Agent Architecture where domain expertise is
+packaged as portable Skills that enhance Agents running on Google ADK.
+
+### Agent Roster
+
+| Agent | Role | Location |
+|-------|------|----------|
+| **Coordinator** | Root orchestrator, delegation, synthesis | `agents/coordinator/` |
+| **Burn Analyst** | Fire severity, MTBS, soil burn | `agents/burn-analyst/` |
+| **Trail Assessor** | Infrastructure damage, closures | `agents/trail-assessor/` |
+| **Cruising Assistant** | Timber inventory, salvage | `agents/cruising-assistant/` |
+| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `agents/nepa-advisor/` |
+
+### Skills Library
+
+```
+skills/
+├── foundation/            # Cross-agency (NEPA, geospatial)
+│   ├── greeting/          # Example skill
+│   └── _template/         # Skill template
+└── forest-service/        # Agency-specific (BAER, MTBS)
+
+agents/[name]/skills/      # Agent-specific skills
+```
+
+### Agent Directory Structure
+
+Each agent follows this pattern:
+```
+agent-name/
+├── agent.py          # ADK Agent definition (exports root_agent)
+├── config.yaml       # Runtime configuration
+├── __init__.py       # Package marker
+├── .env.example      # Environment template
+├── skills/           # Agent-specific skills
+└── tests/            # pytest test suite
+```
+
+### Key Specifications
+
+- `docs/specs/skill-format.md` - How to author skills
+- `docs/specs/agent-interface.md` - Agent contracts and lifecycle
+- `docs/adr/ADR-005-skills-first-architecture.md` - Full architecture decision
