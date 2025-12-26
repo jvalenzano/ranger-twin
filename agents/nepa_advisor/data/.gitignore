@@ -1,0 +1,2 @@
+# Ignore File Search store configuration (contains API-specific IDs)
+.file_search_store.json

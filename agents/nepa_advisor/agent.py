@@ -5,12 +5,26 @@ Specialist agent for NEPA compliance, pathway decisions,
 and environmental documentation guidance.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
+
+Features:
+    - File Search RAG: Queries FSH/FSM regulatory documents
+    - Pathway Decision: CE/EA/EIS determination
+    - Documentation Checklist: Required documents and templates
+    - Timeline Estimation: Compliance schedule calculation
 """
 
 import sys
 from pathlib import Path
 
 from google.adk.agents import Agent
+
+# Add agent directory to path for local imports
+AGENT_DIR = Path(__file__).parent
+if str(AGENT_DIR) not in sys.path:
+    sys.path.insert(0, str(AGENT_DIR))
+
+# Import File Search tool
+from file_search import search_regulatory_documents
 
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -31,7 +45,7 @@ if TIMELINE_PATH.exists():
     sys.path.insert(0, str(TIMELINE_PATH))
 
 
-def decide_pathway(fire_id: str, action_type: str, acres: float, project_context: dict | None = None) -> dict:
+def decide_pathway(fire_id: str, action_type: str, acres: float, project_context: str = "{}") -> dict:
     """
     Determine appropriate NEPA pathway (CE/EA/EIS) for a proposed action.
 
@@ -43,33 +57,25 @@ def decide_pathway(fire_id: str, action_type: str, acres: float, project_context
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
         action_type: Type of action (timber_salvage, trail_repair, reforestation, etc.)
         acres: Project acreage
-        project_context: Optional context with:
-            - listed_species: List of federally listed species
-            - designated_areas: List of congressionally designated areas
-            - roadless_areas: Boolean for inventoried roadless areas
-            - cultural_sites: List of cultural/religious sites
+        project_context: JSON string with optional context. Example:
+            '{"listed_species": ["spotted owl"], "roadless_areas": true}'
 
     Returns:
-        Dictionary containing:
-            - fire_id: The fire identifier
-            - pathway: Recommended NEPA pathway (CE, EA, or EIS)
-            - ce_category: Applicable CE citation (if CE pathway)
-            - extraordinary_circumstances: List of triggered ECs
-            - acreage_compliance: Acreage vs. CE limits
-            - reasoning_chain: Step-by-step pathway decision logic
-            - confidence: Decision confidence (0-1)
-            - recommendations: Next steps for compliance
+        Dictionary containing pathway recommendation, CE category, extraordinary
+        circumstances, and compliance guidance.
     """
+    import json
     from decide_pathway import execute
+    ctx = json.loads(project_context) if project_context else {}
     return execute({
         "fire_id": fire_id,
         "action_type": action_type,
         "acres": acres,
-        "project_context": project_context or {},
+        "project_context": ctx,
     })
 
 
-def generate_documentation_checklist(fire_id: str, pathway: str, action_type: str, project_context: dict | None = None) -> dict:
+def generate_documentation_checklist(fire_id: str, pathway: str, action_type: str, project_context: str = "{}") -> dict:
     """
     Generate documentation checklist for a NEPA pathway.
 
@@ -81,34 +87,25 @@ def generate_documentation_checklist(fire_id: str, pathway: str, action_type: st
         fire_id: Unique fire identifier
         pathway: NEPA pathway (CE, EA, or EIS)
         action_type: Type of action (timber_salvage, trail_repair, etc.)
-        project_context: Optional context with:
-            - listed_species: List of federally listed species (triggers BA)
-            - cultural_sites: List of cultural sites (triggers archaeology)
-            - designated_areas: List of wilderness/designated areas (triggers special analysis)
+        project_context: JSON string with optional context. Example:
+            '{"listed_species": ["spotted owl"], "cultural_sites": ["historic cabin"]}'
 
     Returns:
-        Dictionary containing:
-            - fire_id: The fire identifier
-            - pathway: NEPA pathway
-            - template_name: Recommended template
-            - template_reference: FSH or CFR reference
-            - documentation_checklist: Required documents with descriptions
-            - specialist_reports: Required specialist studies
-            - consultation_requirements: Agency consultations needed
-            - reasoning_chain: Step-by-step checklist development
-            - confidence: Checklist completeness confidence (0-1)
-            - recommendations: Documentation workflow suggestions
+        Dictionary containing documentation checklist, specialist reports,
+        consultation requirements, and workflow recommendations.
     """
+    import json
     from generate_checklist import execute
+    ctx = json.loads(project_context) if project_context else {}
     return execute({
         "fire_id": fire_id,
         "pathway": pathway,
         "action_type": action_type,
-        "project_context": project_context or {},
+        "project_context": ctx,
     })
 
 
-def estimate_compliance_timeline(fire_id: str, pathway: str, consultations: list | None = None, start_date: str | None = None) -> dict:
+def estimate_compliance_timeline(fire_id: str, pathway: str, consultations: str = "[]", start_date: str = "") -> dict:
     """
     Estimate compliance timeline for a NEPA pathway.
 
@@ -118,31 +115,21 @@ def estimate_compliance_timeline(fire_id: str, pathway: str, consultations: list
     Args:
         fire_id: Unique fire identifier
         pathway: NEPA pathway (CE, EA, or EIS)
-        consultations: Optional list of consultation requirements:
-            - type: Consultation type (e.g., "ESA Section 7 Formal")
-            - agency: Consulting agency (e.g., "USFWS", "NOAA")
-        start_date: Optional ISO date string (defaults to today)
+        consultations: JSON array of consultation requirements. Example:
+            '[{"type": "ESA Section 7 Formal", "agency": "USFWS"}]'
+        start_date: ISO date string (e.g., "2024-01-15"), defaults to today if empty
 
     Returns:
-        Dictionary containing:
-            - fire_id: The fire identifier
-            - pathway: NEPA pathway
-            - total_duration_days: Total estimated days
-            - total_duration_months: Total estimated months
-            - comment_periods: Required comment periods with durations
-            - consultation_timelines: Consultation estimates
-            - milestones: Key milestone dates and descriptions
-            - critical_path: Critical path items that drive schedule
-            - reasoning_chain: Step-by-step timeline calculation
-            - confidence: Timeline accuracy confidence (0-1)
-            - recommendations: Timeline management suggestions
+        Dictionary containing timeline estimate, milestones, and recommendations.
     """
+    import json
     from estimate_timeline import execute
+    consult_list = json.loads(consultations) if consultations else []
     return execute({
         "fire_id": fire_id,
         "pathway": pathway,
-        "consultations": consultations or [],
-        "start_date": start_date,
+        "consultations": consult_list,
+        "start_date": start_date or None,
     })
 
 
@@ -150,7 +137,7 @@ def estimate_compliance_timeline(fire_id: str, pathway: str, consultations: list
 # Export as `root_agent` per ADK convention for `adk run` command
 root_agent = Agent(
     name="nepa_advisor",
-    model="gemini-2.0-flash",
+    model="gemini-2.5-flash",  # Required for File Search support
     description="NEPA compliance and environmental documentation specialist for RANGER.",
     instruction="""
 You are the RANGER NEPA Advisor, a specialist in National Environmental
@@ -169,6 +156,26 @@ delegates a query to you, analyze it using your tools and domain knowledge.
 - ESA and NHPA consultation coordination
 
 ## Your Tools
+
+### search_regulatory_documents (PRIMARY - USE FIRST)
+Use this tool to search the FSH/FSM regulatory document knowledge base.
+This is your PRIMARY source of truth for regulatory guidance.
+
+Use for:
+- Finding specific regulatory citations (36 CFR, 40 CFR, FSH, FSM)
+- Verifying requirements and procedures
+- Looking up definitions and thresholds
+- Answering detailed procedural questions
+- Confirming extraordinary circumstances criteria
+
+Example queries:
+- "What are the acreage limits for timber salvage categorical exclusions?"
+- "Define extraordinary circumstances under 36 CFR 220.6"
+- "What consultation requirements apply to ESA Section 7?"
+
+IMPORTANT: Always use this tool first when answering regulatory questions
+to ensure accuracy. Your other tools provide analysis, but this tool
+provides the authoritative regulatory text.
 
 ### decide_pathway
 Use this tool when users ask about:
@@ -234,13 +241,19 @@ When presenting NEPA guidance:
 
 ## Example Response Structure
 When asked "What NEPA pathway for 3000-acre salvage with spotted owls?":
-1. Use decide_pathway tool with species context
-2. Present pathway recommendation (likely EA due to EC)
-3. Use generate_documentation_checklist for EA requirements
-4. Use estimate_compliance_timeline with ESA consultation
-5. Synthesize findings into actionable compliance plan
+1. Use search_regulatory_documents to find CE limits and EC criteria
+2. Use decide_pathway tool with species context
+3. Present pathway recommendation (likely EA due to EC)
+4. Use generate_documentation_checklist for EA requirements
+5. Use estimate_compliance_timeline with ESA consultation
+6. Synthesize findings with regulatory citations into actionable compliance plan
 """,
-    tools=[decide_pathway, generate_documentation_checklist, estimate_compliance_timeline],
+    tools=[
+        search_regulatory_documents,  # File Search RAG - primary knowledge source
+        decide_pathway,
+        generate_documentation_checklist,
+        estimate_compliance_timeline,
+    ],
 )
 
 # Alias for backward compatibility

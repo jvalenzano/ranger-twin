@@ -12,6 +12,7 @@ keywords = ["digital-twin", "forestry", "ai", "geospatial", "usfs"]
 
 dependencies = [
     "google-adk>=1.0.0",
+    "google-genai>=1.0.0",  # For File Search RAG
     "pydantic>=2.0.0",
 ]
 
