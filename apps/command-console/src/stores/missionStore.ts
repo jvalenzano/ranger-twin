@@ -1,5 +1,5 @@
 /**
- * Mission Store - Zustand state management for National Mission Control
+ * Mission Store - Zustand state management for National Command view
  *
  * Manages:
  * - View mode (NATIONAL vs TACTICAL)
@@ -21,6 +21,7 @@ import type {
   TransitionState,
   FirePhase,
   USFSRegion,
+  SortOption,
 } from '@/types/mission';
 
 import {
@@ -44,9 +45,6 @@ interface MissionState {
   // Watchlist (persisted)
   watchlist: string[];
 
-  // Timeline
-  seasonPosition: number; // 0-100, maps to fire season
-
   // National camera (separate from tactical mapStore)
   nationalCamera: NationalCamera;
 
@@ -64,6 +62,7 @@ interface MissionState {
   togglePhaseFilter: (phase: FirePhase) => void;
   toggleRegionFilter: (region: USFSRegion) => void;
   setSearchQuery: (query: string) => void;
+  setSortBy: (sortBy: SortOption) => void;
   resetFilters: () => void;
 
   // Actions - Watchlist
@@ -72,9 +71,6 @@ interface MissionState {
   toggleWatchlist: (fireId: string) => void;
   isWatched: (fireId: string) => boolean;
   clearWatchlist: () => void;
-
-  // Actions - Timeline
-  setSeasonPosition: (position: number) => void;
 
   // Actions - Camera
   setNationalCamera: (camera: Partial<NationalCamera>) => void;
@@ -97,7 +93,6 @@ export const useMissionStore = create<MissionState>()(
         hoveredFireId: null,
         filters: { ...DEFAULT_MISSION_FILTERS },
         watchlist: [],
-        seasonPosition: 100, // Default to "today" (end of timeline)
         nationalCamera: { ...DEFAULT_NATIONAL_CAMERA },
 
         // View actions
@@ -151,6 +146,11 @@ export const useMissionStore = create<MissionState>()(
             filters: { ...state.filters, searchQuery: query },
           })),
 
+        setSortBy: (sortBy) =>
+          set((state) => ({
+            filters: { ...state.filters, sortBy },
+          })),
+
         resetFilters: () =>
           set({
             filters: { ...DEFAULT_MISSION_FILTERS },
@@ -181,10 +181,6 @@ export const useMissionStore = create<MissionState>()(
         isWatched: (fireId) => get().watchlist.includes(fireId),
 
         clearWatchlist: () => set({ watchlist: [] }),
-
-        // Timeline actions
-        setSeasonPosition: (position) =>
-          set({ seasonPosition: Math.max(0, Math.min(100, position)) }),
 
         // Camera actions
         setNationalCamera: (camera) =>
@@ -218,11 +214,45 @@ export const useMissionStore = create<MissionState>()(
       }),
       {
         name: 'ranger-mission',
+        version: 2, // Increment for 4-phase migration
         // Only persist watchlist and filters
         partialize: (state) => ({
           watchlist: state.watchlist,
           filters: state.filters,
         }),
+        // Migrate from v1 (3-phase) to v2 (4-phase)
+        migrate: (persisted, version) => {
+          const state = persisted as {
+            watchlist?: string[];
+            filters?: MissionFilters & { phases?: string[] };
+          };
+
+          if (version === 0 || version === 1) {
+            // Migrate old phase values to new 4-phase model
+            if (state.filters?.phases) {
+              const oldPhases = state.filters.phases as string[];
+              const newPhases: FirePhase[] = [];
+
+              for (const phase of oldPhases) {
+                if (phase === 'active') {
+                  newPhases.push('active');
+                } else if (phase === 'in_baer') {
+                  // Split old 'in_baer' into both BAER phases
+                  newPhases.push('baer_assessment');
+                  newPhases.push('baer_implementation');
+                } else if (phase === 'in_recovery') {
+                  // Rename to 'in_restoration'
+                  newPhases.push('in_restoration');
+                }
+              }
+
+              // Deduplicate and ensure valid phases
+              state.filters.phases = [...new Set(newPhases)] as FirePhase[];
+            }
+          }
+
+          return state;
+        },
         // Merge persisted state on hydration
         merge: (persisted, current) => {
           const persistedState = persisted as {
@@ -230,10 +260,15 @@ export const useMissionStore = create<MissionState>()(
             filters?: MissionFilters;
           };
 
+          // Merge persisted filters with defaults to handle new fields
+          const mergedFilters = persistedState.filters
+            ? { ...DEFAULT_MISSION_FILTERS, ...persistedState.filters }
+            : DEFAULT_MISSION_FILTERS;
+
           return {
             ...current,
             watchlist: persistedState.watchlist || [],
-            filters: persistedState.filters || DEFAULT_MISSION_FILTERS,
+            filters: mergedFilters,
           };
         },
       }
@@ -269,8 +304,8 @@ export const useWatchlist = () =>
 export const useWatchlistCount = () =>
   useMissionStore((state) => state.watchlist.length);
 
-export const useSeasonPosition = () =>
-  useMissionStore((state) => state.seasonPosition);
+export const useSortBy = () =>
+  useMissionStore((state) => state.filters.sortBy);
 
 export const useNationalCamera = () =>
   useMissionStore((state) => state.nationalCamera);

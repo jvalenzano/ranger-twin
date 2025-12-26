@@ -552,3 +552,65 @@ The RANGER Demo is ready for deployment:
 - `scripts/verify-openrouter.js` - Created verification utility.
 
 **Commit:** `pending` - feat: Implement Hybrid OpenRouter architecture with reliability fallbacks
+
+### 2025-12-25 - Domain-Informed Mission Control Redesign
+
+**Context:** Based on expert feedback from fire recovery practitioners (BAER specialists, forest silviculturists, reforestation leads), implemented comprehensive domain-aligned improvements to the Mission Control UX.
+
+**Completed:**
+
+1. **Expanded Phase Model (3 → 4 Phases):**
+   - Split "In BAER" into "BAER Assessment" (7-day window) + "BAER Implementation"
+   - Renamed "In Recovery" to "In Restoration" (practitioner terminology)
+   - New phases: `'active' | 'baer_assessment' | 'baer_implementation' | 'in_restoration'`
+   - Color progression: Red (#ef4444) → Amber (#f59e0b) → Yellow (#eab308) → Green (#10b981)
+   - Added abbreviations for collapsed sidebar: ACT, ASM, IMP, RST
+
+2. **Triage Explainability Enhancements:**
+   - Added `percentileRank` field to NationalFire ("Top X%" in portfolio)
+   - Added `previousTriageScore` for 24h delta tracking
+   - New helpers: `getDeltaDirection()`, `getTriageDelta()`, `PHASE_MULTIPLIERS`
+   - Updated phase multipliers: active=2.0, baer_assessment=1.75, baer_implementation=1.25, in_restoration=1.0
+
+3. **UI Component Updates:**
+   - **TriageTooltip:** Added percentile badge, delta indicators with context messages
+   - **IncidentCard:** Delta arrows (↑/↓) before score, mini stacked breakdown bar
+   - **TopEscalations.tsx (NEW):** Collapsible widget showing fires with rising priority
+   - **CommandSidebar:** 4-phase filter buttons using abbreviations
+   - **NationalMap:** 4-phase colors in markers and legend
+
+4. **Store Migration:**
+   - Version 2 migration in `missionStore.ts` for backward compatibility
+   - Maps old phases: `in_baer` → `baer_assessment` + `baer_implementation`
+   - Maps old phases: `in_recovery` → `in_restoration`
+
+5. **Mock Data Updates:**
+   - Updated phase distribution: 25% active, 25% assessment, 20% implementation, 30% restoration
+   - Added delta generation: ~15% escalated, ~15% de-escalated, ~70% stable
+   - Percentile ranking based on sorted triage position
+
+**Files Created:**
+- `src/components/mission/TopEscalations.tsx` - Escalations widget
+
+**Files Modified:**
+- `src/types/mission.ts` - 4-phase types, delta helpers, PHASE_MULTIPLIERS
+- `src/stores/missionStore.ts` - Version 2 migration
+- `src/services/providers/fireDataProvider.ts` - 4-phase statistics
+- `src/services/mockNationalService.ts` - Phase distribution, delta generation
+- `src/services/providers/mockFireProvider.ts` - Demo fires phases
+- `src/services/nifcService.ts` - 4-phase containment logic
+- `src/services/providers/nifcFireProvider.ts` - Demo fires phases
+- `src/components/mission/TriageTooltip.tsx` - Percentile, delta display
+- `src/components/mission/IncidentCard.tsx` - Delta indicator, mini breakdown
+- `src/components/mission/IncidentRail.tsx` - TopEscalations integration
+- `src/components/mission/CommandSidebar.tsx` - 4-phase filters
+- `src/components/mission/NationalMap.tsx` - 4-phase colors, legend
+- `src/components/mission/index.ts` - Export TopEscalations
+
+**Expert Feedback Addressed:**
+- "BAER Assessment has a 7-day window - treat it as time-critical"
+- "We need to know what's escalating - what's sideways?"
+- "Unexplained triage scores undermine trust"
+- "Recovery vs Restoration - Restoration is the industry term"
+
+**Commit:** `pending` - feat: Domain-informed 4-phase model with triage explainability

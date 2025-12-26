@@ -22,46 +22,12 @@ import {
 import { useDemoTourStore, useTourActive } from '@/stores/demoTourStore';
 import { useLifecycleStore, type LifecyclePhase } from '@/stores/lifecycleStore';
 import { useActiveLayer, type MapLayerType } from '@/stores/mapStore';
-import { usePreferencesStore } from '@/stores/preferencesStore';
+import { usePreferencesStore, useUxTooltipsEnabled, useDxTooltipsEnabled, useTimeZone } from '@/stores/preferencesStore';
 import { useActiveFire } from '@/stores/fireContextStore';
 import { FireSelector } from '@/components/fire';
-
-// Timezone options relevant for USFS operations
-const TIMEZONE_OPTIONS = [
-  { id: 'UTC', label: 'UTC', offset: 0 },
-  { id: 'America/Los_Angeles', label: 'Pacific', offset: -8 },
-  { id: 'America/Denver', label: 'Mountain', offset: -7 },
-  { id: 'America/Chicago', label: 'Central', offset: -6 },
-  { id: 'America/New_York', label: 'Eastern', offset: -5 },
-  { id: 'America/Anchorage', label: 'Alaska', offset: -9 },
-  { id: 'Pacific/Honolulu', label: 'Hawaii', offset: -10 },
-];
-
-// Format timestamp for a specific timezone
-const formatTimestamp = (timezoneId: string) => {
-  const now = new Date();
-  try {
-    return now.toLocaleTimeString('en-US', {
-      timeZone: timezoneId,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-  } catch {
-    // Fallback to UTC if timezone is invalid
-    return now.toISOString().slice(11, 19);
-  }
-};
-
-// Get timezone abbreviation
-const getTimezoneAbbr = (timezoneId: string) => {
-  const option = TIMEZONE_OPTIONS.find((tz) => tz.id === timezoneId);
-  if (option) {
-    return option.id === 'UTC' ? 'UTC' : option.label.slice(0, 3).toUpperCase();
-  }
-  return 'UTC';
-};
+import { CompactTokenUsage } from '@/components/common/CompactTokenUsage';
+import { LocationSelector } from '@/components/common/LocationSelector';
+import { TIMEZONE_OPTIONS, formatTimestamp, getTimezoneAbbr } from '@/utils/time';
 
 // Map phase IDs to user-friendly labels (consistent naming)
 const PHASE_LABELS: Record<LifecyclePhase, string> = {
@@ -156,8 +122,10 @@ const Header: React.FC<HeaderProps> = ({
   const isTourActive = useTourActive();
   const activePhase = useLifecycleStore((state) => state.activePhase);
   const activeLayer = useActiveLayer();
-  const tooltipsEnabled = usePreferencesStore((state) => state.tooltipsEnabled);
-  const toggleTooltips = usePreferencesStore((state) => state.toggleTooltips);
+  const uxTooltipsEnabled = useUxTooltipsEnabled();
+  const dxTooltipsEnabled = useDxTooltipsEnabled();
+  const { toggleUxTooltips, toggleDxTooltips, setTimeZone } = usePreferencesStore();
+  const timeZone = useTimeZone();
   const activeFire = useActiveFire();
 
   // Shorten forest name for breadcrumb display
@@ -165,24 +133,20 @@ const Header: React.FC<HeaderProps> = ({
     .replace(' National Forest', ' NF')
     .replace('National Forest', 'NF');
 
-  // Default to Pacific time (Willamette NF is in Oregon)
-  const [selectedTimezone, setSelectedTimezone] = useState('America/Los_Angeles');
-  const [timestamp, setTimestamp] = useState(formatTimestamp(selectedTimezone));
+  const [timestamp, setTimestamp] = useState(formatTimestamp(timeZone));
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [timezoneOpen, setTimezoneOpen] = useState(false);
 
   const alertsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const timezoneRef = useRef<HTMLDivElement>(null);
 
   // Update timestamp every second
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimestamp(formatTimestamp(selectedTimezone));
+      setTimestamp(formatTimestamp(timeZone));
     }, 1000);
     return () => clearInterval(interval);
-  }, [selectedTimezone]);
+  }, [timeZone]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -192,9 +156,6 @@ const Header: React.FC<HeaderProps> = ({
       }
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setProfileOpen(false);
-      }
-      if (timezoneRef.current && !timezoneRef.current.contains(event.target as Node)) {
-        setTimezoneOpen(false);
       }
     };
 
@@ -283,57 +244,14 @@ const Header: React.FC<HeaderProps> = ({
         </button>
 
         {/* Timezone & Timestamp */}
-        <div ref={timezoneRef} className="relative flex items-center gap-2">
-          {/* Timezone Selector */}
-          <button
-            onClick={() => {
-              setTimezoneOpen(!timezoneOpen);
-              setAlertsOpen(false);
-              setProfileOpen(false);
-            }}
-            className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold mono uppercase tracking-wider text-slate-300 hover:text-white hover:bg-slate-700/50 rounded transition-all"
-          >
-            <Clock size={12} className="text-slate-400" />
-            <span className="hidden sm:inline">{getTimezoneAbbr(selectedTimezone)}</span>
-            <ChevronDown size={10} className={`transition-transform ${timezoneOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {/* Timestamp Display */}
-          <span className="text-slate-200 text-[10px] font-bold mono tracking-wider">
+        <div className="relative flex items-center gap-2 px-2 py-1 rounded border border-transparent hover:border-white/10 transition-colors">
+          <Clock size={12} className="text-slate-400" />
+          <span className="text-[10px] mono uppercase tracking-wider text-slate-300">
+            {getTimezoneAbbr(timeZone)}
+          </span>
+          <span className="text-slate-200 text-[10px] font-bold mono tracking-wider pl-1 border-l border-white/10 ml-1">
             {timestamp}
           </span>
-
-          {/* Timezone Dropdown */}
-          {timezoneOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-slate-800/80 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl overflow-hidden z-50">
-              <div className="px-3 py-2 border-b border-slate-700/50">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Select Timezone
-                </span>
-              </div>
-              <div className="py-1">
-                {TIMEZONE_OPTIONS.map((tz) => (
-                  <button
-                    key={tz.id}
-                    onClick={() => {
-                      setSelectedTimezone(tz.id);
-                      setTimezoneOpen(false);
-                    }}
-                    className={`w-full px-3 py-2 flex items-center justify-between text-[11px] hover:bg-slate-700/50 transition-colors ${selectedTimezone === tz.id ? 'text-accent-cyan' : 'text-slate-300'
-                      }`}
-                  >
-                    <span className="font-medium">{tz.label}</span>
-                    <span className="text-slate-500 mono text-[10px]">
-                      {tz.offset >= 0 ? '+' : ''}{tz.offset}:00
-                    </span>
-                    {selectedTimezone === tz.id && (
-                      <Check size={12} className="text-accent-cyan ml-2" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Alerts Dropdown */}
@@ -355,7 +273,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Alerts Dropdown Panel */}
           {alertsOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-slate-800/80 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl overflow-hidden z-50">
+            <div className="absolute right-0 top-full mt-2 w-80 bg-[#0a0f1a]/90 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
               <div className="px-4 py-3 border-b border-slate-700/50">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-200">
@@ -427,7 +345,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Profile Dropdown Panel */}
           {profileOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-slate-800/80 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl overflow-hidden z-50">
+            <div className="absolute right-0 top-full mt-2 w-64 bg-[#0a0f1a]/90 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
               {/* User Info */}
               <div className="px-4 py-4 border-b border-slate-700/50">
                 <div className="flex items-center gap-3">
@@ -445,11 +363,9 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center gap-2">
-                  <Shield size={12} className="text-emerald-400" />
-                  <span className="text-[10px] text-slate-400">
-                    {MOCK_USER.district}
-                  </span>
+                {/* Location Selector */}
+                <div className="mt-3">
+                  <LocationSelector />
                 </div>
               </div>
 
@@ -467,26 +383,54 @@ const Header: React.FC<HeaderProps> = ({
                   <Settings size={14} />
                   Preferences
                 </button>
-                {/* Tooltip Toggle */}
+
+                <div className="border-t border-slate-700/50 my-1"></div>
+                {/* UX Tooltips Toggle */}
                 <button
-                  onClick={toggleTooltips}
+                  onClick={toggleUxTooltips}
                   className="w-full px-4 py-2 flex items-center justify-between text-[11px] text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <MessageCircle size={14} />
-                    Tooltips
+                    <MessageCircle size={14} className={uxTooltipsEnabled ? 'text-cyan-400' : 'text-slate-500'} />
+                    UX Tooltips
                   </div>
                   <div
-                    className={`relative w-8 h-4 rounded-full transition-colors ${tooltipsEnabled ? 'bg-accent-cyan' : 'bg-slate-600'
-                      }`}
+                    className={`relative w-8 h-4 rounded-full transition-colors ${uxTooltipsEnabled ? 'bg-accent-cyan' : 'bg-slate-600'}`}
                   >
                     <div
-                      className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${tooltipsEnabled ? 'translate-x-4' : 'translate-x-0.5'
-                        }`}
+                      className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${uxTooltipsEnabled ? 'translate-x-4' : 'translate-x-0.5'}`}
                     />
                   </div>
                 </button>
+
+                {/* DX Tooltips Toggle */}
+                <button
+                  onClick={toggleDxTooltips}
+                  className="w-full px-4 py-2 flex items-center justify-between text-[11px] text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Zap size={14} className={dxTooltipsEnabled ? 'text-purple-400' : 'text-slate-500'} />
+                    DX Tooltips
+                  </div>
+                  <div
+                    className={`relative w-8 h-4 rounded-full transition-colors ${dxTooltipsEnabled ? 'bg-purple-500' : 'bg-slate-600'}`}
+                  >
+                    <div
+                      className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${dxTooltipsEnabled ? 'translate-x-4' : 'translate-x-0.5'}`}
+                    />
+                  </div>
+                </button>
+
+                {/* DX Hint text */}
+                {dxTooltipsEnabled && (
+                  <div className="px-4 py-2 text-[10px] text-purple-400/70 bg-purple-500/5 border-t border-purple-500/10">
+                    Look for <span className="inline-block w-2 h-2 rounded-full bg-purple-500 mx-0.5" /> indicators on UI elements
+                  </div>
+                )}
               </div>
+
+              {/* Compact Token Usage */}
+              <CompactTokenUsage />
 
               {/* Sign Out */}
               <div className="border-t border-slate-700/50 py-2">

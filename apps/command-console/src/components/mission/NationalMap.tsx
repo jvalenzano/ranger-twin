@@ -7,7 +7,7 @@
  * Features:
  * - Constrained to continental US bounds
  * - Fire markers as circle layers (WebGL rendered)
- * - NASA FIRMS satellite hotspot overlay (real-time fire detections)
+ * - "New in 24h" visual indicator for recently discovered fires
  * - Click to select fire → opens FireInfoPopup
  * - Hover to highlight → shows FireTooltip after 300ms delay
  * - Pulsing animation on selected marker
@@ -18,7 +18,6 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Satellite } from 'lucide-react';
 
 import {
   useMissionStore,
@@ -30,10 +29,9 @@ import {
   useNationalCamera,
 } from '@/stores/missionStore';
 import { nationalFireService } from '@/services/nationalFireService';
-import { SEVERITY_DISPLAY, type NationalFire } from '@/types/mission';
+import { PHASE_COLORS, PHASE_DISPLAY, type NationalFire } from '@/types/mission';
 import { FireInfoPopup } from './FireInfoPopup';
 import { getFireTooltipHTML } from './FireTooltip';
-import firmsService from '@/services/firmsService';
 
 // MapTiler API key from environment
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY || 'get_your_own_key';
@@ -44,24 +42,23 @@ const US_CENTER: [number, number] = [-98.5795, 39.8283];
 // Tooltip delay in milliseconds
 const TOOLTIP_DELAY = 300;
 
-// Layer IDs - Managed fires (from mockNationalService)
+// Layer IDs - Managed fires
 const FIRES_SOURCE = 'fires-source';
 const FIRES_LAYER = 'fires-layer';
 const FIRES_SELECTED_LAYER = 'fires-selected-layer';
 const FIRES_HOVER_LAYER = 'fires-hover-layer';
+const FIRES_NEW_GLOW_LAYER = 'fires-new-glow-layer';
+const FIRES_LABELS_LAYER = 'fires-labels-layer';
 
-// Layer IDs - NASA FIRMS satellite hotspots
-const FIRMS_SOURCE = 'firms-source';
-const FIRMS_LAYER = 'firms-layer';
-const FIRMS_GLOW_LAYER = 'firms-glow-layer';
-
-// Severity colors for MapLibre expressions
-const SEVERITY_COLORS: Record<string, string> = {
-  critical: '#ef4444',
-  high: '#f97316',
-  moderate: '#eab308',
-  low: '#22c55e',
-};
+/**
+ * Check if a fire started within the last 24 hours
+ */
+function isNewFire(startDate: string): boolean {
+  const fireStart = new Date(startDate);
+  const now = new Date();
+  const hoursDiff = (now.getTime() - fireStart.getTime()) / (1000 * 60 * 60);
+  return hoursDiff <= 24;
+}
 
 /**
  * Convert fires to GeoJSON FeatureCollection
@@ -86,6 +83,7 @@ function firesToGeoJSON(fires: NationalFire[]): GeoJSON.FeatureCollection {
         containment: fire.containment,
         triageScore: fire.triageScore,
         hasFixtures: fire.hasFixtures,
+        isNew: isNewFire(fire.startDate),
         // Pre-compute size based on acres (log scale)
         markerSize: Math.max(8, Math.min(24, Math.log10(fire.acres) * 5)),
       },
@@ -112,18 +110,16 @@ export function NationalMap() {
 
   const [fires, setFires] = useState<NationalFire[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
-
-  // FIRMS state
-  const [showFirms, setShowFirms] = useState(true);
-  const [firmsCount, setFirmsCount] = useState(0);
-  const [firmsLoading, setFirmsLoading] = useState(false);
-  const [firmsLastUpdate, setFirmsLastUpdate] = useState<Date | null>(null);
+  const [newFireCount, setNewFireCount] = useState(0);
 
   // Initialize fires
   useEffect(() => {
     async function loadFires() {
       await nationalFireService.initialize();
-      setFires(nationalFireService.getAllFires());
+      const allFires = nationalFireService.getAllFires();
+      setFires(allFires);
+      // Count new fires
+      setNewFireCount(allFires.filter(f => isNewFire(f.startDate)).length);
     }
     loadFires();
   }, []);
@@ -227,60 +223,6 @@ export function NationalMap() {
     }, TOOLTIP_DELAY);
   }, [closeTooltip]);
 
-  // Show tooltip for FIRMS hotspot
-  const showFirmsTooltip = useCallback((properties: Record<string, unknown>, coordinates: [number, number]) => {
-    if (!map.current) return;
-    if (popupRef.current) return;
-
-    closeTooltip();
-
-    tooltipTimeoutRef.current = window.setTimeout(() => {
-      if (!map.current) return;
-
-      const frp = properties.frp as number;
-      const confidence = properties.confidence as string;
-      const datetime = properties.acq_datetime as string;
-      const satellite = properties.satellite as string;
-
-      const confidenceLabel = confidence === 'h' ? 'High' : confidence === 'n' ? 'Nominal' : 'Low';
-      const confidenceColor = confidence === 'h' ? '#22c55e' : confidence === 'n' ? '#eab308' : '#ef4444';
-
-      const html = `
-        <div style="padding: 8px; min-width: 160px;">
-          <div style="font-weight: 600; color: #f97316; font-size: 12px; margin-bottom: 4px;">
-            NASA FIRMS Detection
-          </div>
-          <div style="font-size: 10px; color: #94a3b8; margin-bottom: 8px;">
-            ${satellite} • ${datetime}
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px;">
-            <div>
-              <div style="color: #64748b;">Fire Power</div>
-              <div style="color: white; font-weight: 500;">${frp.toFixed(1)} MW</div>
-            </div>
-            <div>
-              <div style="color: #64748b;">Confidence</div>
-              <div style="color: ${confidenceColor}; font-weight: 500;">${confidenceLabel}</div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const tooltip = new maplibregl.Popup({
-        className: 'fire-tooltip',
-        closeButton: false,
-        closeOnClick: false,
-        anchor: 'bottom',
-        offset: 10,
-      })
-        .setLngLat(coordinates)
-        .setHTML(html)
-        .addTo(map.current);
-
-      tooltipRef.current = tooltip;
-    }, TOOLTIP_DELAY);
-  }, [closeTooltip]);
-
   // Filter fires based on current state
   const getFilteredFires = useCallback((): NationalFire[] => {
     let result = nationalFireService.getFilteredFires(filters);
@@ -291,28 +233,6 @@ export function NationalMap() {
 
     return result;
   }, [filters, stackView, watchlist]);
-
-  // Load FIRMS data
-  const loadFirmsData = useCallback(async () => {
-    if (!map.current || !isMapReady) return;
-
-    setFirmsLoading(true);
-
-    try {
-      const geojson = await firmsService.getFireHotspotsGeoJSON();
-      setFirmsCount(geojson.features.length);
-      setFirmsLastUpdate(new Date());
-
-      const source = map.current.getSource(FIRMS_SOURCE) as maplibregl.GeoJSONSource;
-      if (source) {
-        source.setData(geojson);
-      }
-    } catch (error) {
-      console.error('[NationalMap] Error loading FIRMS data:', error);
-    } finally {
-      setFirmsLoading(false);
-    }
-  }, [isMapReady]);
 
   // Initialize map
   useEffect(() => {
@@ -330,76 +250,43 @@ export function NationalMap() {
         [-135, 20], // Southwest
         [-55, 55],  // Northeast (with padding)
       ],
+      // Move attribution to bottom-right (away from legend)
+      attributionControl: false,
     });
+
+    // Add compact attribution to top-left
+    map.current.addControl(
+      new maplibregl.AttributionControl({ compact: true }),
+      'top-left'
+    );
 
     map.current.on('load', () => {
       if (!map.current) return;
 
       // =========================================================================
-      // NASA FIRMS Hotspots Layer (rendered first, underneath managed fires)
-      // =========================================================================
-      map.current.addSource(FIRMS_SOURCE, {
-        type: 'geojson',
-        data: { type: 'FeatureCollection', features: [] },
-      });
-
-      // Glow effect layer (larger, more transparent)
-      map.current.addLayer({
-        id: FIRMS_GLOW_LAYER,
-        type: 'circle',
-        source: FIRMS_SOURCE,
-        paint: {
-          'circle-radius': [
-            'interpolate',
-            ['linear'],
-            ['get', 'frp'],
-            0, 6,
-            10, 10,
-            50, 16,
-          ] as maplibregl.ExpressionSpecification,
-          'circle-color': '#ff6b35',
-          'circle-opacity': 0.3,
-          'circle-blur': 1,
-        },
-      });
-
-      // Core hotspot dots
-      map.current.addLayer({
-        id: FIRMS_LAYER,
-        type: 'circle',
-        source: FIRMS_SOURCE,
-        paint: {
-          'circle-radius': [
-            'interpolate',
-            ['linear'],
-            ['get', 'frp'],
-            0, 3,
-            10, 5,
-            50, 8,
-          ] as maplibregl.ExpressionSpecification,
-          'circle-color': [
-            'match',
-            ['get', 'confidence'],
-            'h', '#ff4500',  // High confidence - bright orange-red
-            'n', '#ff8c00',  // Nominal - orange
-            '#ffaa00',       // Low - yellow-orange
-          ] as maplibregl.ExpressionSpecification,
-          'circle-opacity': 0.9,
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-opacity': 0.5,
-        },
-      });
-
-      // =========================================================================
-      // Managed Fires Layers (from mockNationalService - rendered on top)
+      // Managed Fires Layers
       // =========================================================================
       map.current.addSource(FIRES_SOURCE, {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
       });
 
-      // Base fire circles layer
+      // Glow layer for NEW fires (pulsing cyan ring)
+      map.current.addLayer({
+        id: FIRES_NEW_GLOW_LAYER,
+        type: 'circle',
+        source: FIRES_SOURCE,
+        paint: {
+          'circle-radius': ['*', ['get', 'markerSize'], 1.8] as maplibregl.ExpressionSpecification,
+          'circle-color': 'transparent',
+          'circle-stroke-width': 3,
+          'circle-stroke-color': '#22d3ee',
+          'circle-stroke-opacity': 0.6,
+        },
+        filter: ['==', ['get', 'isNew'], true] as maplibregl.ExpressionSpecification,
+      });
+
+      // Base fire circles layer - colored by PHASE to match sidebar filter
       map.current.addLayer({
         id: FIRES_LAYER,
         type: 'circle',
@@ -408,11 +295,11 @@ export function NationalMap() {
           'circle-radius': ['get', 'markerSize'] as maplibregl.ExpressionSpecification,
           'circle-color': [
             'match',
-            ['get', 'severity'],
-            'critical', SEVERITY_COLORS.critical,
-            'high', SEVERITY_COLORS.high,
-            'moderate', SEVERITY_COLORS.moderate,
-            'low', SEVERITY_COLORS.low,
+            ['get', 'phase'],
+            'active', PHASE_COLORS.active,
+            'baer_assessment', PHASE_COLORS.baer_assessment,
+            'baer_implementation', PHASE_COLORS.baer_implementation,
+            'in_restoration', PHASE_COLORS.in_restoration,
             '#888888', // default
           ] as maplibregl.ExpressionSpecification,
           'circle-opacity': 0.9,
@@ -452,6 +339,28 @@ export function NationalMap() {
         filter: ['==', ['get', 'id'], ''] as maplibregl.ExpressionSpecification,
       });
 
+      // Fire name labels - visible when zoomed in (>= zoom 5)
+      map.current.addLayer({
+        id: FIRES_LABELS_LAYER,
+        type: 'symbol',
+        source: FIRES_SOURCE,
+        minzoom: 5,
+        layout: {
+          'text-field': ['get', 'name'] as maplibregl.ExpressionSpecification,
+          'text-size': 11,
+          'text-offset': [0, 1.8] as unknown as maplibregl.ExpressionSpecification,
+          'text-anchor': 'top',
+          'text-max-width': 10,
+          'text-allow-overlap': false,
+        },
+        paint: {
+          'text-color': '#ffffff',
+          'text-halo-color': '#000000',
+          'text-halo-width': 1.5,
+          'text-opacity': 0.9,
+        },
+      });
+
       setIsMapReady(true);
     });
 
@@ -474,7 +383,9 @@ export function NationalMap() {
       const fireId = feature.properties?.id as string | undefined;
 
       if (fireId) {
-        const fire = fires.find((f) => f.id === fireId);
+        // Look up fire from service directly (not from stale closure)
+        const allFires = nationalFireService.getAllFires();
+        const fire = allFires.find((f) => f.id === fireId);
         if (fire) {
           selectFire(fireId);
           openPopup(fire);
@@ -488,10 +399,14 @@ export function NationalMap() {
       if (!feature) return;
 
       const fireId = feature.properties?.id as string | undefined;
-      const hasFixtures = feature.properties?.hasFixtures as boolean | undefined;
 
-      if (fireId && hasFixtures) {
-        enterTacticalView(fireId);
+      if (fireId) {
+        // Look up fire from service directly (not from stale closure)
+        const allFires = nationalFireService.getAllFires();
+        const fire = allFires.find((f) => f.id === fireId);
+        if (fire?.hasFixtures && fire?.fixtureFireId) {
+          enterTacticalView(fire.fixtureFireId);
+        }
       }
 
       e.preventDefault();
@@ -510,7 +425,9 @@ export function NationalMap() {
 
       if (fireId) {
         hoverFire(fireId);
-        const fire = fires.find((f) => f.id === fireId);
+        // Look up fire from service directly (not from stale closure)
+        const allFires = nationalFireService.getAllFires();
+        const fire = allFires.find((f) => f.id === fireId);
         if (fire && feature.geometry.type === 'Point') {
           showTooltip(fire, feature.geometry.coordinates as [number, number]);
         }
@@ -521,28 +438,6 @@ export function NationalMap() {
       if (!map.current) return;
       map.current.getCanvas().style.cursor = '';
       hoverFire(null);
-      closeTooltip();
-    });
-
-    // Hover effects for FIRMS hotspots
-    map.current.on('mouseenter', FIRMS_LAYER, (e) => {
-      if (!map.current) return;
-      const feature = e.features?.[0];
-      if (!feature) return;
-
-      map.current.getCanvas().style.cursor = 'pointer';
-
-      if (feature.geometry.type === 'Point') {
-        showFirmsTooltip(
-          feature.properties as Record<string, unknown>,
-          feature.geometry.coordinates as [number, number]
-        );
-      }
-    });
-
-    map.current.on('mouseleave', FIRMS_LAYER, () => {
-      if (!map.current) return;
-      map.current.getCanvas().style.cursor = '';
       closeTooltip();
     });
 
@@ -570,22 +465,6 @@ export function NationalMap() {
     };
   }, []);
 
-  // Load FIRMS data when map is ready
-  useEffect(() => {
-    if (isMapReady && firmsService.isConfigured()) {
-      loadFirmsData();
-    }
-  }, [isMapReady, loadFirmsData]);
-
-  // Toggle FIRMS layer visibility
-  useEffect(() => {
-    if (!map.current || !isMapReady) return;
-
-    const visibility = showFirms ? 'visible' : 'none';
-    map.current.setLayoutProperty(FIRMS_LAYER, 'visibility', visibility);
-    map.current.setLayoutProperty(FIRMS_GLOW_LAYER, 'visibility', visibility);
-  }, [showFirms, isMapReady]);
-
   // Update GeoJSON source when fires or filters change
   useEffect(() => {
     if (!isMapReady || !map.current) return;
@@ -598,6 +477,9 @@ export function NationalMap() {
     if (source) {
       source.setData(geojson);
     }
+
+    // Update new fire count based on filtered fires
+    setNewFireCount(filteredFires.filter(f => isNewFire(f.startDate)).length);
   }, [fires, filters, stackView, watchlist, isMapReady, getFilteredFires]);
 
   // Update hover layer filter
@@ -655,23 +537,6 @@ export function NationalMap() {
 
       {/* Map controls overlay */}
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-        {/* FIRMS toggle */}
-        <button
-          onClick={() => setShowFirms(!showFirms)}
-          className={`px-3 py-1.5 rounded backdrop-blur-sm text-xs transition-colors border flex items-center gap-2 ${
-            showFirms
-              ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 hover:bg-orange-500/30'
-              : 'bg-slate-800/80 text-slate-400 border-white/10 hover:text-white hover:bg-slate-700/80'
-          }`}
-          title={showFirms ? 'Hide satellite hotspots' : 'Show satellite hotspots'}
-        >
-          <Satellite size={14} />
-          <span>FIRMS {firmsCount > 0 ? `(${firmsCount})` : ''}</span>
-          {firmsLoading && (
-            <span className="animate-pulse">...</span>
-          )}
-        </button>
-
         {/* Reset view */}
         <button
           onClick={() => {
@@ -687,62 +552,33 @@ export function NationalMap() {
         >
           Reset View
         </button>
-
-        {/* Refresh FIRMS */}
-        {firmsService.isConfigured() && (
-          <button
-            onClick={() => {
-              firmsService.clearCache();
-              loadFirmsData();
-            }}
-            disabled={firmsLoading}
-            className="px-3 py-1.5 rounded bg-slate-800/80 backdrop-blur-sm text-xs text-slate-300 hover:text-white hover:bg-slate-700/80 transition-colors border border-white/10 disabled:opacity-50"
-            title={firmsLastUpdate ? `Last updated: ${firmsLastUpdate.toLocaleTimeString()}` : 'Refresh hotspots'}
-          >
-            {firmsLoading ? 'Loading...' : 'Refresh Hotspots'}
-          </button>
-        )}
       </div>
 
-      {/* Legend */}
-      <div className="absolute top-4 left-4 p-3 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10">
-        <h4 className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Managed Fires</h4>
-        <div className="space-y-1 mb-3">
-          {(['critical', 'high', 'moderate', 'low'] as const).map((severity) => (
-            <div key={severity} className="flex items-center gap-2 text-[11px]">
+      {/* Legend - Bottom Left */}
+      <div className="absolute bottom-4 left-4 p-3 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10">
+        <h4 className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Fire Phase</h4>
+        <div className="space-y-1">
+          {(['active', 'baer_assessment', 'baer_implementation', 'in_restoration'] as const).map((phase) => (
+            <div key={phase} className="flex items-center gap-2 text-[11px]">
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: SEVERITY_DISPLAY[severity].color }}
+                style={{ backgroundColor: PHASE_COLORS[phase] }}
               />
-              <span className="text-slate-400">{SEVERITY_DISPLAY[severity].label}</span>
+              <span className="text-slate-400">{PHASE_DISPLAY[phase].label}</span>
             </div>
           ))}
         </div>
 
-        {/* FIRMS Legend */}
-        {showFirms && firmsCount > 0 && (
+        {/* New fires indicator */}
+        {newFireCount > 0 && (
           <>
             <div className="border-t border-white/10 my-2" />
-            <h4 className="text-[10px] text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
-              <Satellite size={10} />
-              NASA FIRMS
-            </h4>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-[11px]">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ff4500' }} />
-                <span className="text-slate-400">High Confidence</span>
+            <div className="flex items-center gap-2 text-[11px]">
+              <div className="w-3 h-3 rounded-full border-2 border-cyan-400 bg-transparent" />
+              <div>
+                <span className="text-cyan-400 font-medium">New (24h)</span>
+                <span className="text-slate-500 ml-1">• {newFireCount}</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px]">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ff8c00' }} />
-                <span className="text-slate-400">Nominal</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px]">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ffaa00' }} />
-                <span className="text-slate-400">Low Confidence</span>
-              </div>
-            </div>
-            <div className="text-[9px] text-slate-500 mt-2">
-              {firmsCount} detections (24h)
             </div>
           </>
         )}

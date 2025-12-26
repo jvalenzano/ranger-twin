@@ -14,6 +14,7 @@ import type {
   FirePhase,
   USFSRegion,
   MissionFilters,
+  SortOption,
 } from '@/types/mission';
 
 // =============================================================================
@@ -140,8 +141,9 @@ export interface FireDataProvider {
 export function calculateStatistics(fires: NationalFire[]): FireStatistics {
   const byPhase: Record<FirePhase, number> = {
     active: 0,
-    in_baer: 0,
-    in_recovery: 0,
+    baer_assessment: 0,
+    baer_implementation: 0,
+    in_restoration: 0,
   };
 
   const byRegion: Record<USFSRegion, number> = {
@@ -173,15 +175,42 @@ export function calculateStatistics(fires: NationalFire[]): FireStatistics {
 }
 
 /**
- * Apply filters to a list of fires
+ * Sort fires by the specified sort option
+ */
+export function sortFires(fires: NationalFire[], sortBy: SortOption): NationalFire[] {
+  const sorted = [...fires];
+
+  switch (sortBy) {
+    case 'priority':
+      // Higher triage score = higher priority (descending)
+      return sorted.sort((a, b) => b.triageScore - a.triageScore);
+    case 'newest':
+      // Most recent start date first (descending)
+      return sorted.sort((a, b) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      );
+    case 'largest':
+      // Largest acres first (descending)
+      return sorted.sort((a, b) => b.acres - a.acres);
+    case 'name':
+      // Alphabetical by name (ascending)
+      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return sorted;
+  }
+}
+
+/**
+ * Apply filters and sorting to a list of fires
  */
 export function applyFilters(
   fires: NationalFire[],
   filters: MissionFilters
 ): NationalFire[] {
-  return fires.filter((fire) => {
-    // Phase filter (if phases array is not empty or not all phases)
-    if (filters.phases.length > 0 && filters.phases.length < 3) {
+  // First filter
+  const filtered = fires.filter((fire) => {
+    // Phase filter (if phases array is not empty or not all 4 phases)
+    if (filters.phases.length > 0 && filters.phases.length < 4) {
       if (!filters.phases.includes(fire.phase)) {
         return false;
       }
@@ -206,4 +235,7 @@ export function applyFilters(
 
     return true;
   });
+
+  // Then sort
+  return sortFires(filtered, filters.sortBy);
 }

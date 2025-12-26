@@ -6,7 +6,7 @@
  * - Satellite preview thumbnail (MapTiler Static API)
  * - Key stats: Acres, Containment %, Severity, Phase
  * - Triage score indicator
- * - Quick actions: Star/Unstar, Enter Tactical View
+ * - Quick actions: Star/Unstar, Enter Tactical
  */
 
 import { useState, useEffect } from 'react';
@@ -123,9 +123,8 @@ function SatellitePreview({ fire }: { fire: NationalFire }) {
       <img
         src={imageUrl}
         alt={`Satellite view of ${fire.name}`}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${
-          loading ? 'opacity-0' : 'opacity-100'
-        }`}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'
+          }`}
         onLoad={() => setLoading(false)}
         onError={() => {
           setLoading(false);
@@ -184,28 +183,31 @@ export function FireInfoPopup({ fire, onClose }: FireInfoPopupProps) {
       {/* Header */}
       <div className="flex items-start justify-between p-3 border-b border-white/10">
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-white text-sm truncate pr-2">
-            {fire.name}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-bold text-white text-sm truncate">
+              {fire.name}
+            </h3>
+
+            {/* Star button */}
+            <button
+              onClick={handleToggleWatch}
+              className={`
+                p-1 rounded-full transition-all shrink-0
+                ${isWatched
+                  ? 'text-amber-400 bg-amber-400/20 hover:bg-amber-400/30'
+                  : 'text-slate-500 hover:text-amber-400 hover:bg-white/5'
+                }
+              `}
+              title={isWatched ? 'Remove from watchlist' : 'Add to watchlist'}
+            >
+              <Star size={14} fill={isWatched ? 'currentColor' : 'none'} />
+            </button>
+          </div>
+
           <p className="text-[11px] text-slate-400 mt-0.5">
             {fire.state} &bull; Region {fire.region} &bull; {PHASE_DISPLAY[fire.phase].label}
           </p>
         </div>
-
-        {/* Star button */}
-        <button
-          onClick={handleToggleWatch}
-          className={`
-            p-1.5 rounded-full transition-all
-            ${isWatched
-              ? 'text-amber-400 bg-amber-400/20 hover:bg-amber-400/30'
-              : 'text-slate-500 hover:text-amber-400 hover:bg-white/5'
-            }
-          `}
-          title={isWatched ? 'Remove from watchlist' : 'Add to watchlist'}
-        >
-          <Star size={16} fill={isWatched ? 'currentColor' : 'none'} />
-        </button>
       </div>
 
       {/* Satellite Preview */}
@@ -285,7 +287,7 @@ export function FireInfoPopup({ fire, onClose }: FireInfoPopupProps) {
         >
           {canEnterTactical ? (
             <>
-              Enter Simulation
+              Enter Tactical
               <ArrowRight size={16} />
             </>
           ) : (
@@ -383,14 +385,16 @@ export function createPopupHTML(fire: NationalFire, isWatched: boolean): string 
     <div class="fire-info-popup-content">
       <div class="popup-header">
         <div>
-          <h3>${fire.name}</h3>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h3>${fire.name}</h3>
+            <button class="star-btn ${isWatched ? 'watched' : ''}" data-fire-id="${fire.id}" title="${isWatched ? 'Remove from watchlist' : 'Add to watchlist'}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="${isWatched ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </button>
+          </div>
           <p>${fire.state} &bull; Region ${fire.region} &bull; ${PHASE_DISPLAY[fire.phase].label}</p>
         </div>
-        <button class="star-btn ${isWatched ? 'watched' : ''}" data-fire-id="${fire.id}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="${isWatched ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </button>
       </div>
       <div class="popup-image">
         ${imageUrl ? `<img src="${imageUrl}" alt="${fire.name}" />` : '<div class="no-image">Preview unavailable</div>'}
@@ -415,7 +419,7 @@ export function createPopupHTML(fire: NationalFire, isWatched: boolean): string 
       </div>
       <div class="popup-actions">
         <button class="enter-btn ${fire.hasFixtures ? '' : 'disabled'}" data-fire-id="${fire.id}" ${!fire.hasFixtures ? 'disabled' : ''}>
-          ${fire.hasFixtures ? 'Enter Simulation →' : 'No fixture data'}
+          ${fire.hasFixtures ? 'Enter Tactical →' : 'No fixture data'}
         </button>
         <div class="external-links">
           <a href="${getNasaFirmsUrl(fire)}" target="_blank" rel="noopener noreferrer" class="ext-link firms">FIRMS ↗</a>

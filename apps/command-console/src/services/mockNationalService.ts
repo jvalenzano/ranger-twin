@@ -2,7 +2,7 @@
  * Mock National Service
  *
  * For Phase 1, this service generates mock fire data for the National
- * Mission Control dashboard. Simulates 30+ fires across USFS regions.
+ * Command dashboard. Simulates 30+ fires across USFS regions.
  *
  * In Phase 2+, this will be replaced by real API calls to IRWIN/NIFC.
  */
@@ -146,10 +146,13 @@ function generateMockFires(): NationalFire[] {
       const name = generateFireName(random);
       const coordinates = generateCoordinates(state, random);
 
-      // Random phase distribution: 30% active, 40% in_baer, 30% in_recovery
+      // Phase distribution: 25% active, 25% assessment, 20% implementation, 30% restoration
       const phaseRoll = random();
       const phase: FirePhase =
-        phaseRoll < 0.3 ? 'active' : phaseRoll < 0.7 ? 'in_baer' : 'in_recovery';
+        phaseRoll < 0.25 ? 'active'
+        : phaseRoll < 0.50 ? 'baer_assessment'
+        : phaseRoll < 0.70 ? 'baer_implementation'
+        : 'in_restoration';
 
       // Random severity: 10% critical, 25% high, 40% moderate, 25% low
       const severityRoll = random();
@@ -162,10 +165,12 @@ function generateMockFires(): NationalFire[] {
       const acresBase = Math.pow(10, 3 + random() * 2.7); // 1,000 to ~500,000
       const acres = Math.round(acresBase);
 
-      // Containment: correlates with phase
+      // Containment: correlates with phase (higher in later phases)
       const baseContainment =
         phase === 'active' ? random() * 40 :
-        phase === 'in_baer' ? 40 + random() * 40 : 80 + random() * 20;
+        phase === 'baer_assessment' ? 40 + random() * 30 :
+        phase === 'baer_implementation' ? 70 + random() * 20 :
+        90 + random() * 10;
       const containment = Math.round(baseContainment);
 
       const startDate = generateStartDate(random);
@@ -198,7 +203,7 @@ function generateMockFires(): NationalFire[] {
     name: 'Cedar Creek Fire',
     region: 6,
     state: 'OR',
-    phase: 'in_recovery',
+    phase: 'in_restoration',
     severity: 'high',
     acres: 127000,
     containment: 100,
@@ -207,7 +212,7 @@ function generateMockFires(): NationalFire[] {
       [-122.35, 43.55],
       [-121.95, 43.85],
     ],
-    triageScore: calculateTriageScore('high', 127000, 'in_recovery'),
+    triageScore: calculateTriageScore('high', 127000, 'in_restoration'),
     startDate: '2022-08-01',
     lastUpdated: new Date().toISOString(),
     hasFixtures: true,
@@ -219,7 +224,7 @@ function generateMockFires(): NationalFire[] {
     name: 'Bootleg Fire',
     region: 6,
     state: 'OR',
-    phase: 'in_recovery',
+    phase: 'in_restoration',
     severity: 'critical',
     acres: 413765,
     containment: 100,
@@ -228,7 +233,7 @@ function generateMockFires(): NationalFire[] {
       [-121.7, 42.1],
       [-121.0, 42.8],
     ],
-    triageScore: calculateTriageScore('critical', 413765, 'in_recovery'),
+    triageScore: calculateTriageScore('critical', 413765, 'in_restoration'),
     startDate: '2021-07-06',
     lastUpdated: new Date().toISOString(),
     hasFixtures: true,
@@ -237,6 +242,28 @@ function generateMockFires(): NationalFire[] {
 
   // Sort by triage score descending
   fires.sort((a, b) => b.triageScore - a.triageScore);
+
+  // Generate delta tracking data (previousTriageScore, percentileRank)
+  const random2 = seededRandom(123); // Different seed for delta data
+  const totalFires = fires.length;
+
+  fires.forEach((fire, index) => {
+    // Percentile rank: higher rank = higher priority (based on sorted position)
+    fire.percentileRank = Math.round(((totalFires - index) / totalFires) * 100);
+
+    // ~30% of fires show meaningful delta
+    const deltaRoll = random2();
+    if (deltaRoll < 0.15) {
+      // Escalated (15%): previous score was lower
+      fire.previousTriageScore = Math.round(fire.triageScore * (0.7 + random2() * 0.2) * 10) / 10;
+    } else if (deltaRoll < 0.30) {
+      // De-escalated (15%): previous score was higher
+      fire.previousTriageScore = Math.round(fire.triageScore * (1.1 + random2() * 0.3) * 10) / 10;
+    } else {
+      // Stable (70%): previous score within noise threshold
+      fire.previousTriageScore = Math.round(fire.triageScore * (0.95 + random2() * 0.1) * 10) / 10;
+    }
+  });
 
   return fires;
 }
@@ -339,8 +366,9 @@ class MockNationalService {
   } {
     const byPhase: Record<FirePhase, number> = {
       active: 0,
-      in_baer: 0,
-      in_recovery: 0,
+      baer_assessment: 0,
+      baer_implementation: 0,
+      in_restoration: 0,
     };
 
     const byRegion: Record<USFSRegion, number> = {

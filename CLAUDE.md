@@ -92,9 +92,28 @@ Frontend uses Zustand stores in `apps/command-console/src/stores/`:
 - `lifecycleStore` - Workflow steps
 - `analysisHistoryStore` - Site Analysis reports & persistence
 - `preferencesStore` - User settings (tooltips, etc.)
+- `missionStore` - National fire portfolio, filters, selected fire (v2 with phase migration)
 
 ## Code Style
 
 - **Design aesthetic:** "Tactical Futurism" - dark mode, glassmorphism, high contrast
 - **Component Style:** Functional React components with hooks. Lucid React icons.
 - **Agent responses:** Must include confidence scores, citations, and reasoning chains (proof layer)
+
+## Domain Model: Fire Phases
+
+Fire lifecycle follows a **4-phase model** aligned with practitioner terminology:
+
+| Phase | Abbrev | Color | Multiplier | Description |
+|-------|--------|-------|------------|-------------|
+| `active` | ACT | Red (#ef4444) | 2.0 | Fire burning - highest priority |
+| `baer_assessment` | ASM | Amber (#f59e0b) | 1.75 | 7-day BAER window - time-critical |
+| `baer_implementation` | IMP | Yellow (#eab308) | 1.25 | BAER treatments underway |
+| `in_restoration` | RST | Green (#10b981) | 1.0 | Long-term recovery baseline |
+
+**Key types in `src/types/mission.ts`:**
+- `FirePhase` - Union of 4 phase literals
+- `PHASE_DISPLAY` - Labels, abbreviations, colors
+- `PHASE_MULTIPLIERS` - Triage score weights
+- `calculateTriageScore()` - Severity × Size × Phase
+- `getDeltaDirection()` - 24h escalation tracking

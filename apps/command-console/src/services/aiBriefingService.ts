@@ -19,6 +19,7 @@ import type {
 
 import type { FireContext } from '@/types/fire';
 import { DEFAULT_FIRE } from '@/types/fire';
+import { useTokenUsageStore } from '@/stores/tokenUsageStore';
 
 // Agent role type matching the backend
 export type AgentRole =
@@ -360,6 +361,20 @@ class AIBriefingService {
 
         const data = await response.json();
         const answer = data.choices?.[0]?.message?.content || 'No response generated';
+
+        // Capture token usage from OpenRouter response
+        if (data.usage) {
+          const { recordUsage } = useTokenUsageStore.getState();
+          recordUsage({
+            model: model,
+            inputTokens: data.usage.prompt_tokens || 0,
+            outputTokens: data.usage.completion_tokens || 0,
+            totalTokens: data.usage.total_tokens || 0,
+            timestamp: new Date().toISOString(),
+            provider: 'OpenRouter',
+            query: queryText.substring(0, 50),
+          });
+        }
 
         return {
           success: true,

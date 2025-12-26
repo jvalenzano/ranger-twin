@@ -2,18 +2,23 @@
 
 > **"Recovery at the speed of insight."**
 
-## Quick Navigation
-
-### Core Documents
+## Start Here
 
 | Document | Description |
 |----------|-------------|
-| [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) | **Start here.** Authoritative scope document defining Phase 1 boundaries and simulation contract |
-| [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Master vision document with agents and architecture |
-| [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: unified console vs. separate apps |
-| [SPRINT-FOCUS.md](./SPRINT-FOCUS.md) | Development priorities for Phase 1 (P0-P3) |
-| [../README.md](../README.md) | Repository overview and quick start |
-| [../CLAUDE.md](../CLAUDE.md) | AI development guidance for Claude Code |
+| [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | **Start here.** Single rallying document for the product team — vision, architecture, current focus, operational reality |
+| [GLOSSARY.md](./GLOSSARY.md) | 100+ acronyms and domain terms (BAER, NEPA, FSM/FSH, etc.) |
+
+## Quick Navigation
+
+### Strategic Documents
+
+| Document | Description |
+|----------|-------------|
+| [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | Comprehensive product overview — what, why, how, and current priorities |
+| [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Original vision document with agent specifications and UX concepts |
+| [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: "one console, multiple views" insight |
+| [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | Phase 1→2 transition plan for external data sources (NIFC, FIRMS, MTBS) |
 
 ### Brand & Messaging
 
@@ -27,31 +32,47 @@
 
 | Document | Description |
 |----------|-------------|
+| [architecture/AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) | Google ADK agent system design, Recovery Coordinator pattern |
 | [architecture/GCP-ARCHITECTURE.md](./architecture/GCP-ARCHITECTURE.md) | GCP infrastructure patterns, serverless design, cost estimates |
 | [architecture/OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md) | Complete inventory of open source tools with GitHub links |
 | [architecture/UX-VISION.md](./architecture/UX-VISION.md) | "Tactical Futurism" design philosophy, mockups, prototyping guide |
 | [architecture/AGENT-MESSAGING-PROTOCOL.md](./architecture/AGENT-MESSAGING-PROTOCOL.md) | AgentBriefingEvent schema and messaging patterns |
 | [architecture/BRIEFING-UX-SPEC.md](./architecture/BRIEFING-UX-SPEC.md) | UI rendering spec for AgentBriefingEvents and reasoning transparency |
 | [architecture/LEGACY-INTEGRATION-SCHEMAS.md](./architecture/LEGACY-INTEGRATION-SCHEMAS.md) | TRACS, FSVeg export schemas for USFS legacy system integration |
-| [architecture/FIXTURE-DATA-FORMATS.md](./architecture/FIXTURE-DATA-FORMATS.md) | **Phase 1 fixture schemas** (burn severity, trails, timber, briefings) |
+| [architecture/FIXTURE-DATA-FORMATS.md](./architecture/FIXTURE-DATA-FORMATS.md) | Phase 1 fixture schemas (burn severity, trails, timber, briefings) |
 | [architecture/DATA-INGESTION-ADAPTERS.md](./architecture/DATA-INGESTION-ADAPTERS.md) | External data source adapter pattern and specifications |
 
 ### Agent Specifications ("The Crew")
 
 | Agent | Role Title | Document | Purpose |
 |-------|------------|----------|---------|
-| **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product for Phase 1** |
+| **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product** |
 | Burn Analyst | The Burn Analyst | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
 | Trail Assessor | The Trail Assessor | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
 | Cruising Assistant | The Cruising Assistant | [agents/CRUISING-ASSISTANT-SPEC.md](./agents/CRUISING-ASSISTANT-SPEC.md) | Multimodal timber inventory |
 | NEPA Advisor | The NEPA Advisor | [agents/NEPA-ADVISOR-SPEC.md](./agents/NEPA-ADVISOR-SPEC.md) | NEPA regulatory guidance |
 
-### Assets & Design
+### Testing & QA
 
 | Document | Description |
 |----------|-------------|
-| [assets/USER-JOURNEYS-AND-PERSONAS.md](./assets/USER-JOURNEYS-AND-PERSONAS.md) | User personas and journey maps for RANGER Command Console |
-| [assets/SYSTEM-ARCHITECTURE-WIREFRAME.md](./assets/SYSTEM-ARCHITECTURE-WIREFRAME.md) | ASCII wireframes for system architecture |
+| [QA-VALIDATION-MANUAL.md](./QA-VALIDATION-MANUAL.md) | Comprehensive manual testing procedures for all features |
+| [VALIDATION-TEST-PLAN.md](./VALIDATION-TEST-PLAN.md) | Playwright browser automation test plan |
+| [WORKFLOW-TEST-PLAN.md](./WORKFLOW-TEST-PLAN.md) | Manual UI testing checklist for 4 recovery workflows |
+
+### Research & Integration
+
+| Document | Description |
+|----------|-------------|
+| [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | Phase 1→2 transition plan for external data sources |
+| [research/PUBLIC-API-INVENTORY.md](./research/PUBLIC-API-INVENTORY.md) | NIFC, NASA FIRMS, MTBS, InciWeb, IRWIN API research |
+| [research/USFS-INTERVIEW-MATERIALS.md](./research/USFS-INTERVIEW-MATERIALS.md) | Stakeholder interview templates and guides |
+
+### Features
+
+| Document | Description |
+|----------|-------------|
+| [features/_MISSION-CONTROL.md](./features/_MISSION-CONTROL.md) | Mission Control portfolio view implementation plan |
 
 ### Architecture Decision Records
 
@@ -59,10 +80,12 @@
 |-----|-------|--------|
 | [ADR-001](./adr/ADR-001-tech-stack.md) | Technology Stack Selection | Accepted |
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
+| [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) | Gemini 3 Flash + File Search | Accepted |
+| [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Accepted |
 
 ### Workshop (Production Vision)
 
-Expert panel workshop outputs describing the full production vision. See [workshop/](./workshop/) for details.
+Expert panel workshop outputs describing the full production vision.
 
 | Document | Description |
 |----------|-------------|
@@ -70,40 +93,50 @@ Expert panel workshop outputs describing the full production vision. See [worksh
 | [workshop/ranger_workshop.md](./workshop/ranger_workshop.md) | Full 4-phase expert discourse |
 | [workshop/ranger_roadmap.md](./workshop/ranger_roadmap.md) | 26-week implementation blueprint ($704K) |
 | [workshop/ranger_executive.md](./workshop/ranger_executive.md) | Executive summary and funding request |
-| [workshop/WORKSHOP-DEMO-ALIGNMENT.md](./workshop/WORKSHOP-DEMO-ALIGNMENT.md) | **How workshop vision maps to our demo** |
-
-### Research & Integration
-
-| Document | Description |
-|----------|-------------|
-| [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | **Phase 1 → Phase 2 transition plan** for external data sources |
-| [research/PUBLIC-API-INVENTORY.md](./research/PUBLIC-API-INVENTORY.md) | NIFC, NASA FIRMS, MTBS, InciWeb, IRWIN API research |
-| [research/USFS-INTERVIEW-MATERIALS.md](./research/USFS-INTERVIEW-MATERIALS.md) | Stakeholder interview templates and guides |
-
-### Audit
-
-| Document | Description |
-|----------|-------------|
-| [audit/DOCUMENTATION-CLEANUP.md](./audit/DOCUMENTATION-CLEANUP.md) | Documentation cleanup prompts and checklist |
+| [workshop/WORKSHOP-DEMO-ALIGNMENT.md](./workshop/WORKSHOP-DEMO-ALIGNMENT.md) | How workshop vision maps to our demo |
 
 ### Archive
 
-Archived documents from the initial exploration phase are available in [archive/](./archive/). These contain ideation artifacts and research that have been superseded by current documents.
+Historical documents from Phase 1 (demo development) are preserved in [archive/phase1/](./archive/phase1/):
+
+| Document | Description |
+|----------|-------------|
+| [archive/phase1/RANGER-DEMO-MANIFESTO.md](./archive/phase1/RANGER-DEMO-MANIFESTO.md) | 8-milestone demo plan (all complete) |
+| [archive/phase1/DATA-SIMULATION-STRATEGY.md](./archive/phase1/DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation boundaries and fixture contract |
+| [archive/phase1/SPRINT-FOCUS.md](./archive/phase1/SPRINT-FOCUS.md) | Phase 1 development priorities |
+
+Additional archived materials from initial exploration are in [archive/](./archive/).
+
+---
 
 ## Document Conventions
 
 ### Status Labels
 
-- **Draft** - Work in progress
-- **Review** - Ready for team review
-- **Accepted** - Approved and final
-- **Superseded** - Replaced by newer document
+- **Current** — Active, maintained document
+- **Transitional** — Valid but being superseded
+- **Archived** — Historical reference only
 
 ### File Naming
 
-- `UPPERCASE-WORDS.md` - Primary documents
-- `lowercase-words.md` - Supporting documents
-- `ADR-NNN-title.md` - Architecture Decision Records
+- `UPPERCASE-WORDS.md` — Primary documents
+- `lowercase-words.md` — Supporting documents
+- `ADR-NNN-title.md` — Architecture Decision Records
+- `_FEATURE-NAME.md` — Feature specifications (underscore prefix)
+
+---
+
+## Current Focus
+
+As of December 2025, the team is focused on:
+
+1. **Mission Control UX** — Portfolio triage interface for 30-50 fire incidents
+2. **API Integration** — Transitioning from fixtures to live NIFC/FIRMS data
+3. **Trust Repair** — Filter feedback, triage explainability, visual consistency
+
+See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for current priorities and the "8-minute reality" that drives our UX decisions.
+
+---
 
 ## Contributing
 
@@ -111,3 +144,7 @@ Archived documents from the initial exploration phase are available in [archive/
 2. Add to this index
 3. Use consistent formatting (see existing docs)
 4. Include status and date in header
+
+---
+
+*Last updated: December 24, 2025*

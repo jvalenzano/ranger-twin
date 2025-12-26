@@ -1,14 +1,24 @@
 /**
- * Mission Control Types
+ * Command View Types
  *
- * Types for the National Mission Control dashboard - portfolio view
+ * Types for the National Command dashboard - portfolio view
  * of multiple fires across USFS regions.
  */
 
 /**
  * Fire phase in the recovery lifecycle
+ * 4-phase model based on practitioner feedback:
+ * - active: Fire is burning
+ * - baer_assessment: 7-day BAER team assessment window
+ * - baer_implementation: BAER treatments being implemented
+ * - in_restoration: Long-term restoration/rehabilitation
  */
-export type FirePhase = 'active' | 'in_baer' | 'in_recovery';
+export type FirePhase = 'active' | 'baer_assessment' | 'baer_implementation' | 'in_restoration';
+
+/**
+ * Delta direction for triage score changes (24h comparison)
+ */
+export type DeltaDirection = 'up' | 'down' | 'stable';
 
 /**
  * Fire severity classification
@@ -29,6 +39,21 @@ export type ViewMode = 'NATIONAL' | 'TACTICAL';
  * Mission Stack navigation view
  */
 export type MissionStackView = 'national' | 'watchlist' | 'incident';
+
+/**
+ * Sort options for incident list
+ */
+export type SortOption = 'priority' | 'newest' | 'largest' | 'name';
+
+/**
+ * Sort display metadata
+ */
+export const SORT_DISPLAY: Record<SortOption, { label: string; icon: string }> = {
+  priority: { label: 'Priority', icon: 'TrendingUp' },
+  newest: { label: 'Newest', icon: 'Clock' },
+  largest: { label: 'Largest', icon: 'Maximize' },
+  name: { label: 'Name A-Z', icon: 'ArrowDownAZ' },
+};
 
 /**
  * National fire data for portfolio view
@@ -73,11 +98,17 @@ export interface NationalFire {
   /** Last data update (ISO string) */
   lastUpdated: string;
 
-  /** Whether full fixture data is available for tactical view */
+  /** Whether full fixture data is available for Tactical view */
   hasFixtures: boolean;
 
   /** Matching fire_id in fireContextStore (for fires with fixtures) */
   fixtureFireId?: string;
+
+  /** Previous triage score (24h ago) for delta tracking */
+  previousTriageScore?: number;
+
+  /** Percentile rank in current portfolio (0-100, higher = more priority) */
+  percentileRank?: number;
 }
 
 /**
@@ -92,6 +123,9 @@ export interface MissionFilters {
 
   /** Search query for fire name */
   searchQuery: string;
+
+  /** Sort order for results */
+  sortBy: SortOption;
 }
 
 /**
@@ -114,9 +148,10 @@ export type TransitionState = 'idle' | 'swooping_in' | 'swooping_out';
  * Default filter state (show all)
  */
 export const DEFAULT_MISSION_FILTERS: MissionFilters = {
-  phases: ['active', 'in_baer', 'in_recovery'],
+  phases: ['active', 'baer_assessment', 'baer_implementation', 'in_restoration'],
   regions: [1, 2, 3, 4, 5, 6],
   searchQuery: '',
+  sortBy: 'priority',
 };
 
 /**
@@ -129,26 +164,48 @@ export const DEFAULT_NATIONAL_CAMERA: NationalCamera = {
 
 /**
  * Phase display metadata
+ * Includes abbreviations for compact UI (e.g., sidebar collapsed mode)
  */
 export const PHASE_DISPLAY: Record<
   FirePhase,
-  { label: string; color: string; bgColor: string }
+  { label: string; abbrev: string; color: string; bgColor: string }
 > = {
   active: {
     label: 'Active',
+    abbrev: 'ACT',
     color: '#ef4444',
     bgColor: 'rgba(239, 68, 68, 0.2)',
   },
-  in_baer: {
-    label: 'In BAER',
+  baer_assessment: {
+    label: 'BAER Assessment',
+    abbrev: 'ASM',
     color: '#f59e0b',
     bgColor: 'rgba(245, 158, 11, 0.2)',
   },
-  in_recovery: {
-    label: 'In Recovery',
+  baer_implementation: {
+    label: 'BAER Implementation',
+    abbrev: 'IMP',
+    color: '#eab308',
+    bgColor: 'rgba(234, 179, 8, 0.2)',
+  },
+  in_restoration: {
+    label: 'In Restoration',
+    abbrev: 'RST',
     color: '#10b981',
     bgColor: 'rgba(16, 185, 129, 0.2)',
   },
+};
+
+/**
+ * Phase colors for map dots and card indicators
+ * Single source of truth - use these to ensure dot/card colors match
+ * Progression: Red → Amber → Yellow → Green (urgency decreasing)
+ */
+export const PHASE_COLORS: Record<FirePhase, string> = {
+  active: '#ef4444',            // Red - fire is burning
+  baer_assessment: '#f59e0b',   // Amber - 7-day assessment window
+  baer_implementation: '#eab308', // Yellow - treatments underway
+  in_restoration: '#10b981',    // Green - long-term restoration
 };
 
 /**
@@ -180,6 +237,21 @@ export const REGION_DISPLAY: Record<
 };
 
 /**
+ * Phase multipliers for triage score calculation
+ * Based on time-criticality:
+ * - active: Fire burning, highest urgency
+ * - baer_assessment: 7-day window, very time-critical
+ * - baer_implementation: Work underway, moderate urgency
+ * - in_restoration: Long-term, baseline priority
+ */
+export const PHASE_MULTIPLIERS: Record<FirePhase, number> = {
+  active: 2.0,
+  baer_assessment: 1.75,
+  baer_implementation: 1.25,
+  in_restoration: 1.0,
+};
+
+/**
  * Calculate triage score for a fire
  *
  * Formula: severityWeight × (acres/10000) × phaseMultiplier
@@ -192,8 +264,27 @@ export function calculateTriageScore(
 ): number {
   const severityWeight = SEVERITY_DISPLAY[severity].weight;
   const acresNormalized = Math.min(acres / 10000, 50); // Cap at 500k acres
-  const phaseMultiplier =
-    phase === 'active' ? 2.0 : phase === 'in_baer' ? 1.5 : 1.0;
+  const phaseMultiplier = PHASE_MULTIPLIERS[phase];
 
   return Math.round(severityWeight * acresNormalized * phaseMultiplier * 10) / 10;
+}
+
+/**
+ * Get delta direction from current vs previous triage score
+ * Threshold of 0.5 to avoid noise from minor fluctuations
+ */
+export function getDeltaDirection(current: number, previous?: number): DeltaDirection {
+  if (previous === undefined) return 'stable';
+  const delta = current - previous;
+  if (delta > 0.5) return 'up';
+  if (delta < -0.5) return 'down';
+  return 'stable';
+}
+
+/**
+ * Calculate the delta value between current and previous score
+ */
+export function getTriageDelta(current: number, previous?: number): number {
+  if (previous === undefined) return 0;
+  return Math.round((current - previous) * 10) / 10;
 }

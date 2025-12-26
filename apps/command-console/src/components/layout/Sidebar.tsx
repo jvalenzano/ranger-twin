@@ -98,7 +98,7 @@ const EXPANDED_WIDTH = 200;
 const COLLAPSED_WIDTH = 64;
 
 /**
- * National View Button - Returns to Mission Control
+ * National View Button - Returns to Command view
  */
 function NationalViewButton({ isExpanded }: { isExpanded: boolean }) {
   const { returnToNational } = useMissionStore();
@@ -107,7 +107,7 @@ function NationalViewButton({ isExpanded }: { isExpanded: boolean }) {
     <Tooltip
       content={{
         title: 'National View',
-        description: 'Return to Mission Control to see all fires',
+        description: 'Return to Command to see all fires',
       }}
       position="right"
       className="block w-full"
@@ -289,11 +289,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
           </div>
           {isExpanded && (
             <>
-              <span
-                className="text-[20px] font-semibold tracking-[0.2em] text-white/90 group-hover:text-white transition-colors"
-              >
-                RANGER
-              </span>
+              <div className="flex flex-col">
+                <span
+                  className="text-[20px] font-semibold tracking-[0.2em] text-white/90 group-hover:text-white transition-colors"
+                >
+                  RANGER
+                </span>
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 -mt-1">
+                  Tactical View
+                </span>
+              </div>
               {/* Chevron indicator */}
               <ChevronLeft size={16} className="text-slate-500 group-hover:text-slate-300 transition-colors ml-1" />
             </>
@@ -303,7 +308,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onWidthChange }) => {
 
       {/* Workflow steps */}
       <div className="flex-1 pt-4 pb-4 px-2 space-y-1 overflow-hidden">
-        {/* National View button - returns to Mission Control */}
+        {/* National View button - returns to Command */}
         <NationalViewButton isExpanded={isExpanded} />
 
         {/* Divider */}

@@ -1,5 +1,5 @@
 /**
- * MissionStack - Left navigation rail for Mission Control
+ * MissionStack - Left navigation rail for Command view
  *
  * Views:
  * - National View: Show all fires

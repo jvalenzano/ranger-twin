@@ -289,14 +289,16 @@ export function transformToNationalFire(feature: NIFCFeature): NationalFire {
     ? new Date(attributes.poly_DateCurrent).toISOString()
     : new Date().toISOString();
 
-  // Derive phase from containment
+  // Derive phase from containment (4-phase model)
   const containment = attributes.attr_PercentContained ?? 0;
   const phase =
     containment >= 100
-      ? 'in_recovery'
-      : containment >= 50
-        ? 'in_baer'
-        : 'active';
+      ? 'in_restoration'
+      : containment >= 75
+        ? 'baer_implementation'
+        : containment >= 50
+          ? 'baer_assessment'
+          : 'active';
 
   // Derive severity from acres (simple heuristic)
   const acres = attributes.poly_GISAcres ?? 0;
@@ -321,9 +323,15 @@ export function transformToNationalFire(feature: NIFCFeature): NationalFire {
   const state = attributes.POOState ?? 'CA';
   const region = regionMap[state] ?? 5;
 
-  // Calculate triage score
+  // Calculate triage score with 4-phase multipliers
   const severityWeight = { critical: 4, high: 3, moderate: 2, low: 1 }[severity];
-  const phaseMultiplier = phase === 'active' ? 2.0 : phase === 'in_baer' ? 1.5 : 1.0;
+  const phaseMultipliers: Record<string, number> = {
+    active: 2.0,
+    baer_assessment: 1.75,
+    baer_implementation: 1.25,
+    in_restoration: 1.0,
+  };
+  const phaseMultiplier = phaseMultipliers[phase] ?? 1.0;
   const triageScore =
     Math.round(severityWeight * Math.min(acres / 10000, 50) * phaseMultiplier * 10) / 10;
 
