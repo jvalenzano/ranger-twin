@@ -6,12 +6,21 @@
  * - Loading state
  * - Error handling
  * - Export/clear functionality
+ * - ADK streaming mode (Phase 4)
+ *
+ * Phase 4: ADK Integration
+ * When VITE_USE_ADK=true, uses ADK orchestrator for multi-agent responses.
+ * Otherwise falls back to aiBriefingService (mock/direct Gemini).
  */
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import aiBriefingService, { type AgentRole } from '@/services/aiBriefingService';
+import { adkChatService } from '@/services/adkChatService';
 import { useFireContextStore } from '@/stores/fireContextStore';
+
+// Feature flag for ADK mode
+const USE_ADK = import.meta.env.VITE_USE_ADK === 'true';
 
 // localStorage configuration
 const STORAGE_KEY = 'ranger-chat-history';
@@ -38,13 +47,17 @@ interface ChatState {
   messages: ChatMessage[];
   isLoading: boolean;
   error: string | null;
+  useADK: boolean;
 
   // Actions
   sendMessage: (query: string) => Promise<void>;
+  sendMessageADK: (query: string) => Promise<void>;
+  sendMessageLegacy: (query: string) => Promise<void>;
   clearMessages: () => void;
   clearError: () => void;
   exportConversation: () => string;
   loadPersistedMessages: () => void;
+  toggleADKMode: () => void;
 }
 
 // Generate unique message ID
@@ -104,8 +117,108 @@ export const useChatStore = create<ChatState>()(
       messages: initialMessages,
       isLoading: false,
       error: null,
+      useADK: USE_ADK,
 
+      // Main send function - routes to ADK or legacy based on mode
       sendMessage: async (query: string) => {
+        const { useADK } = get();
+        if (useADK) {
+          return get().sendMessageADK(query);
+        }
+        return get().sendMessageLegacy(query);
+      },
+
+      // ADK streaming mode (Phase 4)
+      sendMessageADK: async (query: string) => {
+        const userMessage: ChatMessage = {
+          id: generateId(),
+          role: 'user',
+          content: query,
+          timestamp: new Date().toISOString(),
+        };
+
+        // Add user message and set loading
+        set((state) => {
+          const newMessages = [...state.messages, userMessage];
+          saveToStorage(newMessages);
+          return {
+            messages: newMessages,
+            isLoading: true,
+            error: null,
+          };
+        });
+
+        try {
+          // Get the active fire context
+          const activeFire = useFireContextStore.getState().activeFire;
+          const fireId = activeFire?.fire_id || 'cedar-creek';
+
+          // Stream query to ADK orchestrator
+          await adkChatService.streamQuery(query, fireId, {
+            onEvent: (response) => {
+              // Add assistant message for each meaningful event
+              const assistantMessage: ChatMessage = {
+                id: generateId(),
+                role: 'assistant',
+                content: response.summary,
+                timestamp: new Date().toISOString(),
+                agentRole: response.agentRole,
+                confidence: response.confidence,
+                reasoning: response.reasoning,
+              };
+
+              set((state) => {
+                const newMessages = [...state.messages, assistantMessage];
+                saveToStorage(newMessages);
+                return { messages: newMessages };
+              });
+            },
+            onError: (errorMsg) => {
+              const errorMessage: ChatMessage = {
+                id: generateId(),
+                role: 'assistant',
+                content: `ADK Error: ${errorMsg}`,
+                timestamp: new Date().toISOString(),
+                isError: true,
+              };
+
+              set((state) => {
+                const newMessages = [...state.messages, errorMessage];
+                saveToStorage(newMessages);
+                return {
+                  messages: newMessages,
+                  isLoading: false,
+                  error: errorMsg,
+                };
+              });
+            },
+            onComplete: () => {
+              set({ isLoading: false });
+            },
+          });
+        } catch (error) {
+          const errorMessage: ChatMessage = {
+            id: generateId(),
+            role: 'assistant',
+            content: 'ADK connection error. Please check that the orchestrator is running.',
+            timestamp: new Date().toISOString(),
+            isError: true,
+          };
+
+          set((state) => {
+            const newMessages = [...state.messages, errorMessage];
+            saveToStorage(newMessages);
+            return {
+              messages: newMessages,
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'ADK connection error',
+            };
+          });
+        }
+      },
+
+      // Legacy mode (Phase 1-3 behavior)
+      sendMessageLegacy: async (query: string) => {
         const userMessage: ChatMessage = {
           id: generateId(),
           role: 'user',
@@ -193,6 +306,10 @@ export const useChatStore = create<ChatState>()(
 
       clearMessages: () => {
         clearStorage();
+        // Also reset ADK session when clearing
+        if (get().useADK) {
+          adkChatService.newSession();
+        }
         set({ messages: [], error: null });
       },
 
@@ -201,10 +318,12 @@ export const useChatStore = create<ChatState>()(
       },
 
       exportConversation: () => {
-        const { messages } = get();
+        const { messages, useADK } = get();
         const exportData = {
           exportedAt: new Date().toISOString(),
           messageCount: messages.length,
+          mode: useADK ? 'ADK' : 'Legacy',
+          sessionId: useADK ? adkChatService.getSessionId() : 'legacy-session',
           messages: messages.map((msg) => ({
             role: msg.role,
             content: msg.content,
@@ -220,6 +339,14 @@ export const useChatStore = create<ChatState>()(
         const messages = loadFromStorage();
         set({ messages });
       },
+
+      toggleADKMode: () => {
+        set((state) => {
+          const newMode = !state.useADK;
+          console.log(`Chat mode: ${newMode ? 'ADK' : 'Legacy'}`);
+          return { useADK: newMode };
+        });
+      },
     }),
     { name: 'chat-store' }
   )
@@ -229,3 +356,4 @@ export const useChatStore = create<ChatState>()(
 export const useChatMessages = () => useChatStore((state) => state.messages);
 export const useChatLoading = () => useChatStore((state) => state.isLoading);
 export const useChatError = () => useChatStore((state) => state.error);
+export const useChatADKMode = () => useChatStore((state) => state.useADK);

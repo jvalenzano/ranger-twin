@@ -1,10 +1,54 @@
 # RANGER Phase 4: ADK Integration Implementation Guide
 
-**Version:** 2.0  
-**Date:** December 26, 2025  
-**Status:** Approved for Implementation  
-**Research Basis:** 44 Q4 2025 sources (official Google docs, GitHub discussions, production deployments)  
+**Version:** 2.1
+**Date:** December 26, 2025
+**Status:** IMPLEMENTATION IN PROGRESS
+**Research Basis:** 44 Q4 2025 sources (official Google docs, GitHub discussions, production deployments)
 **Confidence Level:** HIGH (85%)
+
+---
+
+## Implementation Progress
+
+### ✅ Completed (December 26, 2025)
+
+| Component | Commit | Status |
+|-----------|--------|--------|
+| Multi-agent wiring (coordinator + 4 specialists) | `3e349ad` | ✅ VERIFIED |
+| ADK Event Transformer | Existing | ✅ Implemented |
+| useADKStream React Hook | Existing | ✅ Implemented |
+| SSE Client Parser | Existing | ✅ Implemented |
+| MCP Fixtures Server | `services/mcp-fixtures/` | ✅ 4 tools working |
+
+### Agent Hierarchy (Verified)
+
+```
+coordinator (gemini-2.0-flash)
+├── Tools: portfolio_triage, delegate_query
+├── burn_analyst (gemini-2.0-flash)
+│   └── Tools: assess_severity, classify_mtbs, validate_boundary
+├── trail_assessor (gemini-2.0-flash)
+│   └── Tools: classify_damage, evaluate_closure, prioritize_trails
+├── cruising_assistant (gemini-2.0-flash)
+│   └── Tools: recommend_methodology, estimate_volume, assess_salvage, analyze_csv_data
+└── nepa_advisor (gemini-2.5-flash)
+    └── Tools: search_regulatory_documents, extract_pdf_content, decide_pathway,
+               generate_documentation_checklist, estimate_compliance_timeline
+```
+
+**Total:** 5 agents, 16 tools, hierarchical orchestration ready.
+
+### 🔄 In Progress
+
+- React Command Console integration
+- main.py FastAPI + ADK orchestrator
+- End-to-end testing
+
+### ⏳ Pending
+
+- Cloud Run deployment
+- Firestore session integration
+- Production hardening
 
 ---
 
@@ -1192,24 +1236,27 @@ export const AgentBriefing: React.FC<Props> = ({ events, isLoading }) => {
 
 ### 3-Week Sprint (Compressed)
 
-#### Week 1: Foundation (Days 1-5)
+#### Week 1: Foundation (Days 1-5) — IN PROGRESS
 
 **Backend:**
-- [ ] Implement ADKEventTransformer (TypeScript)
-- [ ] Test SSE parsing with slow tool (replicate AlfaBlok example)
-- [ ] Prepare MCP service skeletons
+- [x] Implement ADKEventTransformer (TypeScript) ✅
+- [x] Test SSE parsing with slow tool (replicate AlfaBlok example) ✅
+- [x] Prepare MCP service skeletons ✅
+- [x] Wire coordinator with all 4 specialist sub_agents ✅ (commit: `3e349ad`)
 
 **Infrastructure:**
+- [x] MCP Fixtures Server created and tested ✅
 - [ ] Deploy MCP services to Cloud Run
 - [ ] Set up Firestore session backend
-- [ ] Test Coordinator → BurnAnalyst → MCP flow locally
+- [x] Test Coordinator → Specialists multi-agent flow locally ✅
 
 #### Week 2: Container Packaging (Days 6-10)
 
 **Backend:**
-- [ ] Create `main.py` (FastAPI + ADK)
+- [ ] Create `main.py` (FastAPI + ADK) — IN PROGRESS
 - [ ] Implement error handling in React
 - [ ] Create Dockerfile + requirements.txt
+- [ ] Wire React chat input to ADK endpoint
 
 **Testing:**
 - [ ] Full scenario test with Cedar Creek data

@@ -8,7 +8,7 @@
  * Based on: Implementation Guide Section 8 (Proof Layer Implementation)
  */
 
-import type { ADKEvent, ADKEventPart } from '@/lib/adkClient';
+import type { ADKEvent } from '@/lib/adkClient';
 import type {
   AgentBriefingEvent,
   EventType,
@@ -29,12 +29,14 @@ interface AgentMetadata {
   dataSource: string;
 }
 
+const DEFAULT_METADATA: AgentMetadata = {
+  skillId: 'orchestration',
+  expectedTools: ['portfolio_triage', 'delegate_query'],
+  dataSource: 'RANGER',
+};
+
 const AGENT_METADATA: Record<string, AgentMetadata> = {
-  coordinator: {
-    skillId: 'orchestration',
-    expectedTools: ['portfolio_triage', 'delegate_query'],
-    dataSource: 'RANGER',
-  },
+  coordinator: DEFAULT_METADATA,
   recovery_coordinator: {
     skillId: 'orchestration',
     expectedTools: ['portfolio_triage', 'delegate_query'],
@@ -160,7 +162,7 @@ function extractConfidence(event: ADKEvent): number {
 
   // Look for confidence mentions in text
   const match = text.match(/(\d{1,3})%?\s*confiden/i);
-  if (match) {
+  if (match && match[1]) {
     const value = parseInt(match[1], 10);
     return value > 1 ? value / 100 : value;
   }
@@ -312,7 +314,7 @@ function extractSummary(event: ADKEvent): string {
   }
 
   // Return first sentence or truncated text
-  const firstSentence = text.split(/[.!?]/)[0];
+  const firstSentence = text.split(/[.!?]/)[0] || '';
   if (firstSentence.length > 10 && firstSentence.length < 200) {
     return firstSentence;
   }
@@ -339,7 +341,7 @@ export class ADKEventTransformer {
    */
   transformEvent(adkEvent: ADKEvent): AgentBriefingEvent {
     const sourceAgent = normalizeAgentName(adkEvent.author);
-    const metadata = AGENT_METADATA[sourceAgent] || AGENT_METADATA.coordinator;
+    const metadata = AGENT_METADATA[sourceAgent] || DEFAULT_METADATA;
     const eventType = inferEventType(adkEvent);
     const severity = inferSeverity(adkEvent);
 
@@ -385,7 +387,7 @@ export class ADKEventTransformer {
       .sort((a, b) => (a.id || '').localeCompare(b.id || ''));
 
     const idx = events.findIndex((e) => e.id === event.id);
-    return idx > 0 ? events[idx - 1].id : null;
+    return idx > 0 ? events[idx - 1]?.id || null : null;
   }
 
   /**
