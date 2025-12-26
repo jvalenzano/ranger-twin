@@ -1,6 +1,32 @@
-google-adk>=0.1.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
+# RANGER ADK Orchestrator Dependencies
+# For Cloud Run deployment
+
+# Core ADK
+google-adk>=1.0.0
+
+# GenAI for File Search RAG (NEPA advisor)
+google-genai>=1.0.0
+
+# Firestore for session management
+google-cloud-firestore>=2.16.0
+
+# Logging and tracing
+google-cloud-logging>=3.10.0
+
+# Web server
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
+
+# Configuration
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# PDF extraction (NEPA skill)
+pymupdf>=1.24.0
+pdfplumber>=0.10.0
+
+# MCP client (for agent tools)
+mcp>=1.25.0
+
+# Testing (dev only)
 pytest>=7.0.0

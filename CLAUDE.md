@@ -240,3 +240,44 @@ agent_name/              # MUST use underscores, not hyphens
 - `docs/specs/skill-format.md` - How to author skills
 - `docs/specs/agent-interface.md` - Agent contracts and lifecycle
 - `docs/adr/ADR-005-skills-first-architecture.md` - Full architecture decision
+
+## Phase 4: ADK Integration (In Progress)
+
+Phase 4 connects ADK agents to the React Command Console via SSE streaming.
+
+### New Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| MCP Fixtures Server | `services/mcp-fixtures/` | Serve Cedar Creek data via MCP |
+| ADK Orchestrator | `main.py` | FastAPI + ADK SSE endpoints |
+| SSE Client | `apps/command-console/src/lib/adkClient.ts` | Parse ADK SSE events |
+| Event Transformer | `apps/command-console/src/services/adkEventTransformer.ts` | Convert ADK → AgentBriefingEvent |
+| useADKStream Hook | `apps/command-console/src/hooks/useADKStream.ts` | React hook for streaming |
+
+### Phase 4 Commands
+
+```bash
+# Start ADK orchestrator locally
+source .venv/bin/activate
+python main.py
+
+# Start MCP fixtures server
+cd services/mcp-fixtures && uvicorn server:app --port 8080
+
+# Test multi-agent wiring
+cd agents && python -c "from validation_spike.agent import root_agent; print(root_agent.sub_agents)"
+
+# Deploy to Cloud Run
+gcloud run deploy ranger-coordinator --source . --project ranger-twin-dev --region us-central1
+```
+
+### Environment Variables
+
+- `GOOGLE_API_KEY` - Required for ADK/Gemini
+- `SESSION_SERVICE_URI` - Firestore session backend (production)
+- `MCP_FIXTURES_URL` - MCP server URL (production)
+
+### Implementation Guide
+
+See `docs/specs/_!_RANGER-PHASE4-IMPLEMENTATION-GUIDE-v2.md` for complete specifications.
