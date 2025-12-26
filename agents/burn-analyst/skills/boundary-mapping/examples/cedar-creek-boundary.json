@@ -1,0 +1,88 @@
+{
+  "description": "Example boundary validation output for Cedar Creek Fire",
+  "input": {
+    "fire_id": "cedar-creek-2022"
+  },
+  "output": {
+    "fire_id": "cedar-creek-2022",
+    "fire_name": "Cedar Creek Fire",
+    "total_perimeter_km": 245.6,
+    "reported_acres": 127341,
+    "calculated_acres": 126850,
+    "acreage_discrepancy_pct": 0.4,
+    "sector_boundaries": [
+      {
+        "id": "CORE-1",
+        "name": "Central Fire Origin",
+        "perimeter_km": 42.3,
+        "calculated_acres": 27100,
+        "reported_acres": 27001,
+        "is_valid": true
+      },
+      {
+        "id": "SW-1",
+        "name": "Hills Creek Drainage",
+        "perimeter_km": 38.7,
+        "calculated_acres": 21600,
+        "reported_acres": 21500,
+        "is_valid": true
+      },
+      {
+        "id": "NW-1",
+        "name": "Waldo Lake North",
+        "perimeter_km": 35.2,
+        "calculated_acres": 18400,
+        "reported_acres": 18340,
+        "is_valid": true
+      },
+      {
+        "id": "SE-1",
+        "name": "Odell Lake Corridor",
+        "perimeter_km": 32.1,
+        "calculated_acres": 15700,
+        "reported_acres": 15600,
+        "is_valid": true
+      },
+      {
+        "id": "NW-2",
+        "name": "Waldo Lake South",
+        "perimeter_km": 30.5,
+        "calculated_acres": 14300,
+        "reported_acres": 14200,
+        "is_valid": true
+      },
+      {
+        "id": "NE-1",
+        "name": "Charlton Lake Area",
+        "perimeter_km": 28.4,
+        "calculated_acres": 12600,
+        "reported_acres": 12500,
+        "is_valid": true
+      },
+      {
+        "id": "NE-2",
+        "name": "Bobby Lake Basin",
+        "perimeter_km": 25.6,
+        "calculated_acres": 9850,
+        "reported_acres": 9800,
+        "is_valid": true
+      },
+      {
+        "id": "SW-2",
+        "name": "Timpanogas Lake Area",
+        "perimeter_km": 23.8,
+        "calculated_acres": 8450,
+        "reported_acres": 8400,
+        "is_valid": true
+      }
+    ],
+    "geometry_issues": [],
+    "validation_status": "VALID",
+    "reasoning_chain": [
+      "Loaded 8 sector geometries for Cedar Creek Fire",
+      "All 8 polygons pass closure validation",
+      "Total calculated area: 126,850 acres",
+      "Discrepancy from reported (127,341 ac): 0.4% - within tolerance"
+    ]
+  }
+}
