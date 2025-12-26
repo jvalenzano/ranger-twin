@@ -1,47 +1,18 @@
 # RecoveryCoordinator Agent
 
-> Multi-agent orchestration for integrated recovery planning
+> See [Full Specification](../../../docs/agents/RECOVERY-COORDINATOR-SPEC.md) for capabilities and architecture.
 
-## Overview
+## Quick Start
 
-RecoveryCoordinator synthesizes outputs from all specialist agents (BurnAnalyst, TrailAssessor, CruisingAssistant, NepaAdvisor) to create unified recovery plans. It handles cross-domain reasoning, resource allocation, and timeline optimization.
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-## Capabilities
+# Run the service (requires other agents running)
+python -m recovery_coordinator.main
 
-- Aggregate insights from all specialist agents
-- Generate integrated recovery plans
-- Optimize resource allocation across activities
-- Identify dependencies and sequencing
-- Produce executive summaries for stakeholders
-
-## Tech Stack
-
-- **Orchestration**: Custom agent framework (or LangGraph)
-- **LLM**: Google Gemini 2.0 Flash
-- **API**: FastAPI
-
-## Structure
-
-```
-recovery_coordinator/
-├── main.py                  # FastAPI service
-├── agent.py                 # RecoveryCoordinator agent class
-├── prompts/
-│   ├── system.md            # System prompt
-│   └── plan_templates/      # Recovery plan templates
-├── tools/
-│   ├── aggregator.py        # Multi-agent output aggregation
-│   ├── planner.py           # Recovery plan generation
-│   ├── scheduler.py         # Activity sequencing
-│   └── budget.py            # Budget estimation
-├── models/
-│   ├── plan.py              # Recovery plan models
-│   └── phase.py             # Phase/activity models
-└── clients/
-    ├── burn_analyst.py      # BurnAnalyst client
-    ├── trail_assessor.py    # TrailAssessor client
-    ├── cruising_assistant.py      # CruisingAssistant client
-    └── nepa_advisor.py            # NepaAdvisor client
+# Run tests
+pytest tests/
 ```
 
 ## API
@@ -74,69 +45,6 @@ POST /plan
 
 GET /status/{fire_id}
   returns: Current status from all agents
-```
-
-## System Prompt
-
-```
-You are RecoveryCoordinator, the orchestration agent for Project RANGER.
-You synthesize outputs from specialist agents to create unified recovery plans.
-
-Specialist agents you coordinate:
-- BurnAnalyst: Burn severity assessment
-- TrailAssessor: Trail damage and repair priorities
-- CruisingAssistant: Timber inventory and salvage planning
-- NepaAdvisor: NEPA and regulatory guidance
-
-When creating plans:
-- Consider dependencies between activities
-- Optimize for stated priorities (safety, value, speed)
-- Include realistic budget estimates
-- Flag risks and contingencies
-- Provide executive summaries for non-technical stakeholders
-```
-
-## Orchestration Pattern
-
-```
-User Query
-    │
-    ▼
-┌─────────────────┐
-│ RecoveryCoord.  │
-│  (Orchestrator) │
-└────────┬────────┘
-         │
-    ┌────┴────┬────────┬────────┐
-    ▼         ▼        ▼        ▼
-┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐
-│ Burn  │ │ Trail │ │Timber │ │Compli.│
-│Analyst│ │Assess.│ │ Cruiser│ │Advisor│
-└───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘
-    │         │        │        │
-    └────┬────┴────────┴────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Synthesis &   │
-│ Plan Generation │
-└─────────────────┘
-         │
-         ▼
-    Unified Plan
-```
-
-## Development
-
-```bash
-# Install
-pip install -r requirements.txt
-
-# Run (requires other agents running)
-python -m recovery_coordinator.main
-
-# Test
-pytest tests/
 ```
 
 ## Environment Variables

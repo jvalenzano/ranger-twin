@@ -8,7 +8,8 @@
 
 ---
 
-**Note:** This document describes FUTURE production architecture. Phase 1 runs locally with Docker and simulated data. See `docs/DATA-SIMULATION-STRATEGY.md` for current scope.
+> [!NOTE]
+> **Component Status:** This document is categorized as **Infrastructure Reference**. For current deployment automation and specific service configurations, please refer to **[GCP-DEPLOYMENT.md](GCP-DEPLOYMENT.md)**.
 
 ---
 
@@ -92,15 +93,15 @@ This document provides specific Google Cloud Platform (GCP) architecture recomme
 **Pricing (2025):**
 - Custom-trained models: ~$0.22/hour per node
 - Spot VMs: 60-91% discount for interruptible workloads
-- Gemini 2.5 Flash: $0.30 input / $2.50 output per 1M tokens
-- Gemini 2.5 Pro: $1.25 input / $10 output per 1M tokens
+- Gemini 3 Flash: $0.50 input / $3.00 output per 1M tokens (released Dec 17, 2025)
+- Gemini 3 Pro: $1.25 input / $10 output per 1M tokens
 - **Batch mode:** 50% discount for non-urgent processing (24hr turnaround)
 - **Context caching:** Up to 90% savings for repeated document processing
 
 **Cost Optimization for Fire Recovery:**
 - Use Spot VMs for model training (fire severity classification, species ID)
 - Deploy batch prediction for processing large imagery archives
-- Use Gemini Flash (not Pro) for NEPA document processing to save 75% on costs
+- Use Gemini 3 Flash (not Pro) for NEPA document processing to save 75% on costs
 - Implement context caching for recurring document analysis
 - Right-size machine types based on model requirements
 
@@ -767,7 +768,7 @@ constraints/gcp.resourceLocations:
 | **Raster Storage** | Cloud Storage Standard (10TB) | us-east4, lifecycle policies | $200 |
 | **Vector Analytics** | BigQuery | 1TB queries/month, 500GB storage | $16.25 (queries) + $10 (storage) |
 | **ML Inference** | Cloud Run (custom containers) | 4 vCPU, 8GB RAM, 1000 requests/day | $20-40 |
-| **Document AI** | Gemini 2.5 Flash (Batch) | 100 documents/month, 25K tokens each | $0.50 |
+| **Document AI** | Gemini 3 Flash (Batch) | 100 documents/month, 25K tokens each | $0.50 |
 | **Orchestration** | Cloud Workflows | 10,000 steps/month | Free tier |
 | **CDN** | Cloud CDN | 1TB egress/month | $80 |
 | **Monitoring** | Cloud Logging/Monitoring | Standard tier | $50 |
@@ -798,7 +799,7 @@ constraints/gcp.resourceLocations:
 - [ ] Use BigQuery partitioning/clustering to reduce query costs
 
 **AI/ML:**
-- [ ] Use Gemini 2.5 Flash instead of Pro for routine tasks
+- [ ] Use Gemini 3 Flash instead of Pro for routine tasks
 - [ ] Enable batch mode for non-urgent document processing (50% discount)
 - [ ] Implement context caching for repeated NEPA document sections
 - [ ] Use Vertex AI Batch Prediction for large-scale inference
@@ -835,7 +836,7 @@ constraints/gcp.resourceLocations:
 - GeoServer on Cloud Run (scale to zero)
 - BigQuery (pay-as-you-go)
 - Sentinel-2/Landsat processing pipeline (Cloud Workflows + Cloud Run Jobs)
-- Gemini Flash for NEPA document analysis
+- Gemini 3 Flash for NEPA document analysis
 
 **Estimated Cost:** $300-500/month
 
@@ -930,7 +931,7 @@ constraints/gcp.resourceLocations:
 - **Processing:** Cloud Run Jobs (GDAL) + Cloud Workflows (orchestration)
 - **Storage:** Cloud Storage (COG rasters) + Cloud SQL PostGIS (vectors) + BigQuery (analytics)
 - **Serving:** GeoServer (Cloud Run) + Cloud CDN + Looker Studio
-- **AI/ML:** Gemini 2.5 Flash (documents) + Custom models (Cloud Run)
+- **AI/ML:** Gemini 3 Flash (documents) + Custom models (Cloud Run)
 
 **Estimated Total Cost:**
 - **Active Season (May-Oct):** $800-1200/month

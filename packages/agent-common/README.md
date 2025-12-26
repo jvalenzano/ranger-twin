@@ -97,7 +97,7 @@ Wrapper around Vertex AI Gemini API:
 from agent_common.clients import GeminiClient
 
 client = GeminiClient(
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003
     temperature=0.3,
     max_tokens=2048
 )

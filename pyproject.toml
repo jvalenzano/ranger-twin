@@ -10,6 +10,11 @@ authors = [
 ]
 keywords = ["digital-twin", "forestry", "ai", "geospatial", "usfs"]
 
+dependencies = [
+    "google-adk>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4.0",
@@ -71,9 +76,9 @@ exclude = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["services", "packages"]
+testpaths = ["agents", "services", "packages"]
 python_files = ["test_*.py", "*_test.py"]
-addopts = "-v --cov=services --cov=packages --cov-report=term-missing"
+addopts = "-v --cov=agents --cov=services --cov=packages --cov-report=term-missing"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

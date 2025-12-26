@@ -1,0 +1,18 @@
+{
+  "critical": {
+    "weight": 4,
+    "description": "Extreme severity - immediate threat to life, property, or watersheds"
+  },
+  "high": {
+    "weight": 3,
+    "description": "High severity - significant ecosystem and infrastructure impact"
+  },
+  "moderate": {
+    "weight": 2,
+    "description": "Moderate severity - manageable impact with standard response"
+  },
+  "low": {
+    "weight": 1,
+    "description": "Low severity - minimal intervention needed"
+  }
+}

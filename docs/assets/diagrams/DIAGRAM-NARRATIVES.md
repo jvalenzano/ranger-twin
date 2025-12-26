@@ -4,6 +4,66 @@ Companion narratives for architectural diagrams. Use these as speaker notes, wri
 
 ---
 
+## 0. Cedar Creek Fire 2022: The Context
+
+**File:** `Cedar Creek Fire 2022.png`
+
+**One-Sentence Summary:** A tactical briefing infographic establishing the scale, timeline, and complexity of the Cedar Creek Fire—the real-world scenario that demonstrates why RANGER's multi-domain coordination is essential.
+
+### The Story This Diagram Tells
+
+This is the opening slide—the "why we're here" moment. Before diving into architecture diagrams and technical flows, stakeholders need to understand the problem RANGER solves. This isn't an abstract use case; it's a real 127,311-acre wildfire that overwhelmed traditional response systems.
+
+The **aerial perspective** immediately establishes scale. Waldo Lake's pristine blue oval serves as a geographic anchor, with mosaic burn patterns (green, amber, red patches) spreading westward toward Oakridge. The pyrocumulonimbus cloud tower rising from the burn zone isn't just dramatic—it's a visual reminder of the fire's intensity and the dangerous conditions that made traditional firefighting impossible.
+
+The **header stats** hit hard: **127,311 ACRES • $58M • 2,000+ EVACUATED**. These aren't just numbers—they represent communities displaced, ecosystems damaged, and a recovery operation that will span years.
+
+The **Oregon locator map** (top right) provides geographic context for non-local audiences, showing Portland and Eugene with the fire location glowing amber in the Cascade Range.
+
+The **timeline strip** (bottom center) tells the explosive growth story that defines this fire:
+- **AUG 1**: ¼ acre (lightning strike)
+- **SEPT 8**: EAST WINDS (weather event)
+- **SEPT 11**: 86,000 acres (**4 DAYS** of explosive growth)
+- **NOV 22**: CONTAINED (nearly 4 months total)
+
+This timeline answers the critical question: "Why couldn't they just put it out?" The answer: extreme terrain, dangerous winds, and a fire that grew faster than any response could contain.
+
+The **four assessment domain icons** (bottom, above timeline) introduce RANGER's value proposition:
+- 🔥 **BURN SEVERITY** — Understanding damage patterns
+- 🥾 **TRAIL DAMAGE** — Assessing infrastructure loss
+- 🌲 **TIMBER** — Evaluating salvage economics
+- 📋 **NEPA** — Navigating regulatory compliance
+
+These aren't separate projects—they're interconnected domains that must be coordinated for effective recovery.
+
+The **tactical annotations** add critical context:
+- **"Level 3 Evacuation - Sept 9"** near Oakridge shows the human impact
+- **"Rappellers refused - terrain too hazardous"** near the fire origin explains why even elite firefighters couldn't safely access the area
+
+The **USDA Forest Service shield** (bottom left) and **RANGER AGENTIC OS badge** (bottom right) establish institutional credibility and brand identity.
+
+### Key Talking Points
+
+- **Real-world complexity**: This isn't a hypothetical—it's a documented disaster
+- **Scale demands coordination**: 127,000 acres across 4 assessment domains
+- **Traditional response failed**: Even elite crews couldn't safely access the terrain
+- **Multi-month operation**: 8 incident management teams rotated through
+- **Recovery is the challenge**: The fire is contained, but the work is just beginning
+- **Why RANGER matters**: "This fire was so complex that recovery requires coordinating 4 different specialist assessments across 127,000 acres of mosaic burn. That's why you need RANGER."
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| Executive briefings | Establishing the problem scale before showing the solution |
+| Investor presentations | Demonstrating market need with real-world evidence |
+| USFS stakeholders | Grounding the demo in a fire they know intimately |
+| Grant applications | Showing the complexity that justifies AI coordination |
+| Demo introductions | Setting context before diving into technical capabilities |
+| Media/press | Providing visual context for the RANGER story |
+
+---
+
 ## 1. How the Pieces Fit Together
 
 **File:** `How the pieces fit together.png`
@@ -383,9 +443,65 @@ This diagram resolves the primary confusion about "where the AI lives" in a loca
 
 ---
 
+---
+
+## 8. Local Developer Stack
+
+**File:** `Local Developer Stack.png`
+
+**One-Sentence Summary:** A comprehensive developer reference showing all services, ports, fixture data, and production system mappings for the complete RANGER local development environment.
+
+### The Story This Diagram Tells
+
+This is the "what's running where" diagram—the first thing a new developer needs to understand before they can be productive. It answers the questions that arise when you're staring at five terminal windows wondering which service is on which port.
+
+The diagram is organized into **three horizontal tiers** that mirror the actual architecture:
+
+**USER INTERFACE LAYER (Top)**: The Command Console at `localhost:3000` is where users interact with RANGER. The browser shows the four workflow phases (Impact, Damage, Timber, Compliance), the 3D map with burn severity polygons, and the chat panel. Tech stack callouts (React + Vite + Tailwind + Zustand) help developers understand what they're working with.
+
+**ORCHESTRATION LAYER (Middle)**: Two hexagons dominate this tier—the API Gateway at `localhost:8000` (FastAPI) and the Recovery Coordinator at `localhost:8005` (ADK Orchestrator). The Gateway routes queries and streams AgentBriefingEvents. The Coordinator parses intent, routes to specialists, and synthesizes cross-agent results.
+
+**SPECIALIST AGENTS LAYER (Bottom)**: Four agent boxes show the domain specialists, each with their port, icon, folder path, and key tools:
+- 🔥 Burn Analyst (`:8001`) - query_burn_severity(), calculate_severity_stats()
+- 🥾 Trail Assessor (`:8002`) - query_trail_damage(), generate_work_order()
+- 🌲 Cruising Assistant (`:8003`) - query_timber_plots(), calculate_board_feet()
+- 📋 NEPA Advisor (`:8004`) - search_regulations(), identify_nepa_pathway()
+
+**FIXTURE DATA LAYER (Left Sidebar)**: This is crucial for domain understanding. The `data/fixtures/cedar-creek/` folder contains the four fixture files with JSON samples showing actual data structures:
+- `burn-severity.json` - 8 sectors with severity classes and dNBR values
+- `trail-damage.json` - 16 damage points across 5 trails
+- `timber-plots.json` - 6 cruise plots with tree-level data
+- `briefing-events.json` - Pre-composed agent cascade
+
+**PRODUCTION SYSTEM MAPPING (Bottom or Right)**: This connects fixtures to the real-world systems they simulate:
+- burn-severity.json → **MTBS**, **RAVG**, **Sentinel-2**, **Landsat**
+- trail-damage.json → **TRACS**, **Survey123**, **ArcGIS Field Maps**
+- timber-plots.json → **FSVeg**, **FACTS**, **Common Stand Exam**
+
+The **numbered flow arrows** (①-⑥) trace a complete request lifecycle, showing exactly how a user question becomes an AI-powered briefing.
+
+### Key Talking Points
+
+- **Port reference**: 3000 (UI), 8000 (Gateway), 8001-8004 (Specialists), 8005 (Coordinator)
+- **Fixture data is real schemas**: JSON structures match federal data standards
+- **Production system mapping**: Developers understand what real systems they're simulating
+- **Single external dependency**: Only Gemini API leaves localhost
+- **Phase-agnostic interfaces**: Same tool signatures for fixtures and real APIs
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| New developers | First diagram during onboarding—answers "what's running where?" |
+| Demo presenters | Explaining the technical architecture before showing the UI |
+| Technical reviewers | Understanding the complete system topology |
+| Yourself (debugging) | Quick reference for which port to check when something breaks |
+
+---
+
 ## Visual Design Notes
 
-All six diagrams share a consistent aesthetic:
+All diagrams share a consistent aesthetic:
 
 - **Chalk-on-slate style:** Dark background (#0F172A-ish) with hand-drawn white lines
 - **Color coding:** Matches RANGER's severity palette (green=safe, orange=warning, red=critical)
@@ -400,6 +516,51 @@ This "tactical whiteboard" aesthetic reinforces RANGER's identity as an operatio
 ## Generation Prompts
 
 The prompts used to generate each diagram are preserved here for reproducibility and future iterations.
+
+### Prompt 0: Cedar Creek Fire 2022
+
+```
+Tactical briefing infographic, dark slate chalkboard style, dramatic aerial
+perspective of Oregon's Cascade Range wildfire scene.
+
+Central composition: Bird's-eye view of Waldo Lake (distinctive pristine blue
+oval) with mosaic burn severity patterns (patches of green, amber, red showing
+varied damage) spreading westward toward Oakridge. Massive pyrocumulonimbus
+cloud tower rising. Retardant planes and helicopter with water bucket.
+Topographic contour lines visible.
+
+Top header: "CEDAR CREEK FIRE • WILLAMETTE NATIONAL FOREST • 2022"
+
+Key stats (top left): "127,311 ACRES • $58M • 2,000+ EVACUATED"
+
+Oregon locator map (top right corner): State silhouette with Portland, Eugene
+marked, fire location glowing amber.
+
+CRITICAL ADDITION - Timeline strip (bottom center):
+"AUG 1: ¼ acre → SEPT 8: EAST WINDS → SEPT 11: 86,000 acres (4 DAYS) → NOV 22:
+CONTAINED"
+
+CRITICAL ADDITION - Four assessment domain icons (bottom, above timeline):
+🔥 BURN SEVERITY | 🥾 TRAIL DAMAGE | 🌲 TIMBER | 📋 NEPA
+
+Bottom corners: USDA Forest Service shield (left), RANGER AGENTIC OS badge
+(right)
+
+Small annotation near Oakridge: "Level 3 Evacuation - Sept 9"
+Small annotation near fire origin: "Rappellers refused - terrain too hazardous"
+
+Style: Dark tactical military briefing aesthetic, chalk and graphite textures,
+burnt orange and amber fire tones, cool blue lake contrast, cream annotations.
+Emergency operations center mood. Illustrated tactical map, not photorealistic.
+
+--ar 16:9
+
+---
+This version tells the story: "This fire was so complex and dangerous that even 
+elite firefighters couldn't safely access it, 8 teams rotated through, and the 
+recovery requires coordinating 4 different specialist assessments across 127,000
+acres of mosaic burn. That's why you need RANGER."
+```
 
 ### Prompt 1: AgentBriefingEvent Rendering Pipeline
 
@@ -780,6 +941,200 @@ When creating additional diagrams in this series, maintain:
 
 ```text
 A highly detailed, wide-format technical chalkboard diagram drawn on a deep textured slate wall. The diagram is titled "AGENTIC AI ARCHITECTURE: BODY vs BRAIN" in bold architectural lettering.
+```
+
+### Prompt 8: RANGER Local Development Stack
+
+```text
+Create a technical whiteboard diagram titled "RANGER Local Development Stack: The Complete Picture"
+
+Style: Clean engineering whiteboard aesthetic. Dark slate blue background (#0F172A). White chalk lines and handwritten-style labels. Use accent colors sparingly: emerald green (#10B981) for active/running, amber (#F59E0B) for data flow arrows, cyan (#06B6D4) for external services. Hand-drawn boxes with slight imperfection. Terminal/console aesthetic for port labels. Da Vinci engineering sketch feel.
+
+Layout (three horizontal tiers with data callout):
+
+=== TOP TIER - "User Interface Layer" ===
+
+LEFT: Browser window mockup labeled "Command Console"
+- URL bar showing: "localhost:5173" (Vite dev server)
+- Inside browser: simplified UI showing sidebar with 4 phases (Impact, Damage, Timber, Compliance), map area with colored polygons, chat panel
+- Port badge: glowing "5173" in green
+- Tech stack note: "React + Vite + Tailwind + Zustand"
+- Folder path: "apps/command-console/"
+- Small note: "(Production build: :3000)"
+
+RIGHT (smaller): Mobile device outline labeled "Field Companion"
+- Note: "(PWA - Phase 2 • scaffold exists)"
+- Grayed out slightly to show it's future
+
+Arrow down from Command Console labeled "REST / WebSocket → AgentBriefingEvents"
+
+=== MIDDLE TIER - "Orchestration Layer" ===
+
+CENTER-LEFT: Large hexagon labeled "API Gateway"
+- Port badge: "8000"
+- Inside hexagon: "FastAPI Router"
+- Folder path: "services/api-gateway/"
+- Sub-notes: "• Routes queries", "• Streams events", "• CORS handling"
+
+Arrow from API Gateway splitting into 5 paths going down
+
+CENTER-RIGHT: Large hexagon labeled "Recovery Coordinator"
+- Port badge: "8005"
+- Brain/conductor icon
+- "ADK Orchestrator"
+- Folder path: "services/agents/recovery-coordinator/"
+- Sub-notes: "• Intent parsing", "• Agent routing", "• Cross-agent synthesis"
+
+Bidirectional arrows between API Gateway and Recovery Coordinator
+
+=== BOTTOM TIER - "Specialist Agents Layer" ===
+
+Four agent boxes arranged horizontally, each with consistent structure:
+
+BOX 1 - "Burn Analyst" 🔥
+- Port badge: "8001"
+- Color tint: orange/red
+- Folder: "services/agents/burn-analyst/"
+- Tools listed:
+  • query_burn_severity()
+  • calculate_severity_stats()
+- Data badge: "8 sectors, dNBR values"
+
+BOX 2 - "Trail Assessor" 🥾
+- Port badge: "8002"
+- Color tint: blue
+- Folder: "services/agents/trail-assessor/"
+- Tools listed:
+  • query_trail_damage()
+  • generate_work_order()
+- Data badge: "5 trails, 16 damage points"
+
+BOX 3 - "Cruising Assistant" 🌲
+- Port badge: "8003"
+- Color tint: green
+- Folder: "services/agents/cruising-assistant/"
+- Tools listed:
+  • query_timber_plots()
+  • calculate_board_feet()
+- Data badge: "6 plots, 32 trees"
+
+BOX 4 - "NEPA Advisor" 📋
+- Port badge: "8004"
+- Color tint: purple
+- Folder: "services/agents/nepa-advisor/"
+- Tools listed:
+  • search_regulations()
+  • identify_nepa_pathway()
+- Data badge: "File Search RAG (production-ready)"
+
+=== LEFT SIDEBAR - "Fixture Data Layer (Cedar Creek Fire)" ===
+
+Large folder icon: "data/fixtures/cedar-creek/"
+
+Four file cards stacked vertically with sample data snippets:
+
+FILE 1: "burn-severity.json"
+- Icon: fire severity map
+- Sample: { "sector": "SW-1", "severity": "HIGH", "acres": 21500, "dnbr_mean": 0.76 }
+- Note: "8 burn sectors with GeoJSON polygons"
+
+FILE 2: "trail-damage.json"
+- Icon: trail marker
+- Sample: { "damage_id": "WL-001", "type": "BRIDGE_FAILURE", "estimated_cost": 85000 }
+- Note: "16 damage points across 5 trails"
+
+FILE 3: "timber-plots.json"
+- Icon: tree/sawlog
+- Sample: { "plot_id": "52-FOXTROT", "species": "PSME", "dbh": 36.8, "salvage_value": 1045 }
+- Note: "6 cruise plots, FSVeg format"
+
+FILE 4: "briefing-events.json"
+- Icon: message/event
+- Sample: { "source_agent": "burn_analyst", "confidence": 0.92, "severity": "critical" }
+- Note: "Pre-composed agent cascade"
+
+Arrows from fixture files pointing to corresponding agent boxes
+Label: "Phase 1: Static JSON Fixtures"
+
+=== RIGHT SIDEBAR - "External Services" ===
+
+Cloud icon labeled "Gemini API"
+- "Vertex AI"
+- "gemini-3-flash" (78% SWE-bench • 3x faster)
+- Dashed line connecting to all agent boxes
+- Label on line: "LLM Reasoning (only external call)"
+
+Small badge: "FedRAMP High"
+
+=== BOTTOM SECTION - "Production System Mapping" ===
+
+Title: "Phase 1 Fixtures → Phase 2 Production Systems"
+
+Four-row mapping with visual connectors:
+
+┌─────────────────────────┬──────────────────────────────────────────────┐
+│ FIXTURE FILE            │ PRODUCTION SYSTEM IT REPLICATES              │
+├─────────────────────────┼──────────────────────────────────────────────┤
+│ burn-severity.json      │ MTBS, RAVG, Sentinel-2, Landsat              │
+├─────────────────────────┼──────────────────────────────────────────────┤
+│ trail-damage.json       │ TRACS, Survey123, ArcGIS Field Maps          │
+├─────────────────────────┼──────────────────────────────────────────────┤
+│ timber-plots.json       │ FSVeg, FACTS, Common Stand Exam              │
+├─────────────────────────┼──────────────────────────────────────────────┤
+│ nepa-advisor (no file)  │ File Search Tool → Indexed FSM/FSH PDFs      │
+└─────────────────────────┴──────────────────────────────────────────────┘
+
+Annotation: "Fixture schemas align with federal data standards. Export to TRACS CSV and FSVeg XML already works."
+
+=== BOTTOM BANNER - "Developer Quick Reference" ===
+
+Terminal-style box with commands:
+
+┌──────────────────────────────────────────────────────────────┐
+│ # Start everything with Docker                                │
+│ docker-compose up -d                                          │
+│                                                               │
+│ # Or run individually:                                        │
+│ cd apps/command-console && pnpm dev          → localhost:5173 │
+│ cd services/api-gateway && uvicorn app.main:app --reload      │
+│                                              → localhost:8000 │
+│ cd services/agents/burn-analyst && python -m burn_analyst.main│
+│                                              → localhost:8001 │
+└──────────────────────────────────────────────────────────────┘
+
+=== FLOW ARROWS (numbered request lifecycle) ===
+
+Show the complete request flow with numbered steps in amber/yellow:
+
+① User asks: "What's the burn severity?" (Chat input at :5173)
+② POST /api/query hits API Gateway (:8000)
+③ Gateway forwards to Recovery Coordinator (:8005)
+④ Coordinator routes to Burn Analyst (:8001)
+⑤ Agent loads burn-severity.json + calls Gemini 3.0 Flash for reasoning
+⑥ AgentBriefingEvent with confidence scores streams back to UI
+
+=== CORNER ANNOTATIONS (handwritten chalk style) ===
+
+Top-left: "Cedar Creek Fire: 127,341 acres • Willamette NF • 2022"
+Top-right: "All AI reasoning is REAL • Only data is simulated"
+Bottom-left: "Same tool interfaces for Phase 1 (fixtures) and Phase 2 (APIs)"
+Bottom-right: "Pure Google ADK • FedRAMP compliant path"
+
+=== KEY INSIGHT CALLOUT BOX ===
+
+Positioned prominently, chalk-outlined box:
+"🎯 THE ARCHITECTURE PRINCIPLE:
+Agents call tools → Tools return ToolResult
+Phase 1: Tools load JSON fixtures
+Phase 2: Tools call real APIs
+Agent code NEVER changes"
+
+The diagram should answer: "What's running where, what data feeds it, and how do requests flow through the system?"
+
+--ar 16:9
+```
+
+### Original Prompt 7: Agentic AI Architecture (continued)
 
 The drawing is a software schematic divided into two clear zones:
 

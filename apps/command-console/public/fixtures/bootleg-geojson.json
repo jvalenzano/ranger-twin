@@ -1,0 +1,1116 @@
+{
+  "fire_id": "bootleg-2021",
+  "firePerimeter": {
+    "type": "Feature",
+    "properties": {
+      "fire_id": "bootleg-2021",
+      "fire_name": "Bootleg Fire",
+      "year": 2021,
+      "acres": 413765,
+      "forest": "Fremont-Winema National Forest",
+      "state": "OR",
+      "status": "contained"
+    },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -121.70,
+            42.10
+          ],
+          [
+            -121.00,
+            42.10
+          ],
+          [
+            -121.00,
+            42.80
+          ],
+          [
+            -121.70,
+            42.80
+          ],
+          [
+            -121.70,
+            42.10
+          ]
+        ]
+      ]
+    }
+  },
+  "burnSeverity": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-001",
+          "name": "Sprague River North",
+          "severity": "HIGH",
+          "dnbr_mean": 0.72,
+          "acres": 52400,
+          "priority_notes": "Severe stand replacement; critical watershed for Sprague River"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.35,
+                42.55
+              ],
+              [
+                -121.35,
+                42.65
+              ],
+              [
+                -121.45,
+                42.65
+              ],
+              [
+                -121.45,
+                42.55
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-002",
+          "name": "Sycan Marsh Buffer",
+          "severity": "MODERATE",
+          "dnbr_mean": 0.41,
+          "acres": 38200,
+          "priority_notes": "Partial canopy survival; important wildlife corridor"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.45,
+                42.45
+              ],
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.55,
+                42.45
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-003",
+          "name": "Gearhart Mountain West",
+          "severity": "HIGH",
+          "dnbr_mean": 0.68,
+          "acres": 61500,
+          "priority_notes": "High-value ponderosa pine salvage opportunity"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.25,
+                42.35
+              ],
+              [
+                -121.15,
+                42.35
+              ],
+              [
+                -121.15,
+                42.45
+              ],
+              [
+                -121.25,
+                42.45
+              ],
+              [
+                -121.25,
+                42.35
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-004",
+          "name": "Klamath Marsh Fringe",
+          "severity": "LOW",
+          "dnbr_mean": 0.18,
+          "acres": 28900,
+          "priority_notes": "Surface burn only; wetland buffer intact"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.65,
+                42.35
+              ],
+              [
+                -121.55,
+                42.35
+              ],
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.65,
+                42.45
+              ],
+              [
+                -121.65,
+                42.35
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-005",
+          "name": "Summer Lake Basin",
+          "severity": "HIGH",
+          "dnbr_mean": 0.75,
+          "acres": 48700,
+          "priority_notes": "Complete stand mortality; priority reforestation zone"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.15,
+                42.55
+              ],
+              [
+                -121.05,
+                42.55
+              ],
+              [
+                -121.05,
+                42.65
+              ],
+              [
+                -121.15,
+                42.65
+              ],
+              [
+                -121.15,
+                42.55
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-006",
+          "name": "Fremont Ridge",
+          "severity": "MODERATE",
+          "dnbr_mean": 0.45,
+          "acres": 42100,
+          "priority_notes": "Mixed mortality; scenic corridor protection needed"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.35,
+                42.25
+              ],
+              [
+                -121.25,
+                42.25
+              ],
+              [
+                -121.25,
+                42.35
+              ],
+              [
+                -121.35,
+                42.35
+              ],
+              [
+                -121.35,
+                42.25
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-007",
+          "name": "Bly Mountain",
+          "severity": "HIGH",
+          "dnbr_mean": 0.71,
+          "acres": 55800,
+          "priority_notes": "Critical owl habitat burned; consult wildlife"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.45,
+                42.35
+              ],
+              [
+                -121.35,
+                42.35
+              ],
+              [
+                -121.35,
+                42.45
+              ],
+              [
+                -121.45,
+                42.45
+              ],
+              [
+                -121.45,
+                42.35
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-008",
+          "name": "Campbell Lake Area",
+          "severity": "MODERATE",
+          "dnbr_mean": 0.38,
+          "acres": 31400,
+          "priority_notes": "Campground access roads damaged"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.45,
+                42.55
+              ],
+              [
+                -121.45,
+                42.65
+              ],
+              [
+                -121.55,
+                42.65
+              ],
+              [
+                -121.55,
+                42.55
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-009",
+          "name": "Chiloquin Ridge",
+          "severity": "LOW",
+          "dnbr_mean": 0.22,
+          "acres": 26800,
+          "priority_notes": "Tribal cultural site buffer; coordinate with Klamath Tribes"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.65,
+                42.45
+              ],
+              [
+                -121.55,
+                42.45
+              ],
+              [
+                -121.55,
+                42.55
+              ],
+              [
+                -121.65,
+                42.55
+              ],
+              [
+                -121.65,
+                42.45
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "sector_id": "BOOT-010",
+          "name": "Yamsay Mountain Flank",
+          "severity": "MODERATE",
+          "dnbr_mean": 0.52,
+          "acres": 27965,
+          "priority_notes": "Volcanic soil erosion risk; research opportunity"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -121.25,
+                42.45
+              ],
+              [
+                -121.15,
+                42.45
+              ],
+              [
+                -121.15,
+                42.55
+              ],
+              [
+                -121.25,
+                42.55
+              ],
+              [
+                -121.25,
+                42.45
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "trailDamage": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-101",
+          "trail_name": "Fremont National Recreation Trail",
+          "point_id": "FRWN-101-DP01",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Sprague River crossing - steel bridge deck warped",
+          "estimated_cost": 185000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.38,
+            42.52
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-101",
+          "trail_name": "Fremont National Recreation Trail",
+          "point_id": "FRWN-101-DP02",
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Dense snag field - 85+ trees within falling distance",
+          "estimated_cost": 42000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.42,
+            42.48
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-101",
+          "trail_name": "Fremont National Recreation Trail",
+          "point_id": "FRWN-101-DP03",
+          "type": "TREAD_EROSION",
+          "severity": 3,
+          "description": "Switchback section - multiple debris flow channels",
+          "estimated_cost": 28000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.35,
+            42.58
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-101",
+          "trail_name": "Fremont National Recreation Trail",
+          "point_id": "FRWN-101-DP04",
+          "type": "BRIDGE_FAILURE",
+          "severity": 4,
+          "description": "Log stringer bridge - complete loss to fire",
+          "estimated_cost": 65000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.28,
+            42.62
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-205",
+          "trail_name": "Gearhart Mountain Trail",
+          "point_id": "FRWN-205-DP01",
+          "type": "HAZARD_TREES",
+          "severity": 5,
+          "description": "Entire corridor requires hazard tree assessment",
+          "estimated_cost": 95000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.18,
+            42.38
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-205",
+          "trail_name": "Gearhart Mountain Trail",
+          "point_id": "FRWN-205-DP02",
+          "type": "TREAD_EROSION",
+          "severity": 4,
+          "description": "Summit approach - severe gully formation",
+          "estimated_cost": 52000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.22,
+            42.41
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-205",
+          "trail_name": "Gearhart Mountain Trail",
+          "point_id": "FRWN-205-DP03",
+          "type": "SIGNAGE",
+          "severity": 3,
+          "description": "All trailhead and junction signs burned - 8 locations",
+          "estimated_cost": 12000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.15,
+            42.36
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-312",
+          "trail_name": "Sycan River Trail",
+          "point_id": "FRWN-312-DP01",
+          "type": "BRIDGE_FAILURE",
+          "severity": 4,
+          "description": "Puncheon boardwalk - 200ft section burned",
+          "estimated_cost": 78000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.52,
+            42.48
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-312",
+          "trail_name": "Sycan River Trail",
+          "point_id": "FRWN-312-DP02",
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Riparian corridor snags - 40+ trees",
+          "estimated_cost": 24000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.48,
+            42.51
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-418",
+          "trail_name": "Campbell Lake Loop",
+          "point_id": "FRWN-418-DP01",
+          "type": "FACILITY_DAMAGE",
+          "severity": 4,
+          "description": "Trailhead parking and restroom destroyed",
+          "estimated_cost": 145000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.48,
+            42.58
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-418",
+          "trail_name": "Campbell Lake Loop",
+          "point_id": "FRWN-418-DP02",
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Lakeshore section hazard trees",
+          "estimated_cost": 18000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.51,
+            42.61
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-418",
+          "trail_name": "Campbell Lake Loop",
+          "point_id": "FRWN-418-DP03",
+          "type": "TREAD_EROSION",
+          "severity": 2,
+          "description": "Minor washout at inlet crossing",
+          "estimated_cost": 5000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.46,
+            42.59
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-520",
+          "trail_name": "OC&E Woods Line State Trail",
+          "point_id": "FRWN-520-DP01",
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Historic trestle - significant structural damage",
+          "estimated_cost": 320000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.58,
+            42.42
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-520",
+          "trail_name": "OC&E Woods Line State Trail",
+          "point_id": "FRWN-520-DP02",
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Rail corridor snags - 65 trees along 3mi",
+          "estimated_cost": 32000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.62,
+            42.38
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-615",
+          "trail_name": "Klamath Tribes Heritage Trail",
+          "point_id": "FRWN-615-DP01",
+          "type": "CULTURAL_SITE",
+          "severity": 5,
+          "description": "Interpretive shelter and signage burned - tribal consultation required",
+          "estimated_cost": 85000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.61,
+            42.48
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-615",
+          "trail_name": "Klamath Tribes Heritage Trail",
+          "point_id": "FRWN-615-DP02",
+          "type": "HAZARD_TREES",
+          "severity": 2,
+          "description": "Scattered snags near cultural features",
+          "estimated_cost": 15000
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.58,
+            42.51
+          ]
+        }
+      }
+    ]
+  },
+  "timberPlots": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-47-ALPHA",
+          "name": "Sprague River Unit A",
+          "burn_severity": "HIGH",
+          "total_mbf_per_acre": 14.1,
+          "estimated_value_per_acre": 4800,
+          "priority": "HIGHEST",
+          "primary_species": "Ponderosa Pine",
+          "access_road": "FR 3411",
+          "notes": "Premium ponderosa; beetle activity beginning"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.41,
+            42.53
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-52-BRAVO",
+          "name": "Gearhart West Unit",
+          "burn_severity": "HIGH",
+          "total_mbf_per_acre": 9.2,
+          "estimated_value_per_acre": 3100,
+          "priority": "HIGH",
+          "primary_species": "Lodgepole Pine",
+          "access_road": "FR 3372",
+          "notes": "Road reconstruction needed; cable logging required"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.21,
+            42.39
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-38-CHARLIE",
+          "name": "Sycan Plateau",
+          "burn_severity": "MODERATE",
+          "total_mbf_per_acre": 9.6,
+          "estimated_value_per_acre": 3400,
+          "priority": "HIGH",
+          "primary_species": "Ponderosa Pine",
+          "access_road": "FR 3239",
+          "notes": "Mixed condition; selective harvest possible"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.49,
+            42.47
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-61-DELTA",
+          "name": "Bly Mountain North",
+          "burn_severity": "HIGH",
+          "total_mbf_per_acre": 9.5,
+          "estimated_value_per_acre": 3200,
+          "priority": "HIGH",
+          "primary_species": "White Fir",
+          "access_road": "FR 3411-140",
+          "notes": "Spotted owl habitat - survey required"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.42,
+            42.41
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-29-ECHO",
+          "name": "Summer Lake Rim",
+          "burn_severity": "HIGH",
+          "total_mbf_per_acre": 9.0,
+          "estimated_value_per_acre": 2800,
+          "priority": "MEDIUM",
+          "primary_species": "Lodgepole Pine",
+          "access_road": "FR 2918",
+          "notes": "High extraction cost; scenic viewshed"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.11,
+            42.58
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-44-FOXTROT",
+          "name": "Campbell Creek",
+          "burn_severity": "MODERATE",
+          "total_mbf_per_acre": 9.5,
+          "estimated_value_per_acre": 3500,
+          "priority": "HIGH",
+          "primary_species": "Ponderosa Pine",
+          "access_road": "FR 3484",
+          "notes": "Recreation corridor; maintain screening"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.51,
+            42.59
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-17-GOLF",
+          "name": "Yamsay Flats",
+          "burn_severity": "MODERATE",
+          "total_mbf_per_acre": 11.4,
+          "estimated_value_per_acre": 4200,
+          "priority": "HIGHEST",
+          "primary_species": "Ponderosa Pine",
+          "access_road": "FR 3300",
+          "notes": "Large-diameter ponderosa; volcanic soils"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.22,
+            42.48
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "plot_id": "BOOT-55-HOTEL",
+          "name": "Chiloquin Buffer",
+          "burn_severity": "LOW",
+          "total_mbf_per_acre": 5.8,
+          "estimated_value_per_acre": 2100,
+          "priority": "LOW",
+          "primary_species": "Ponderosa Pine",
+          "access_road": "FR 2128",
+          "notes": "Mostly survived; fuels reduction priority; WUI zone"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.62,
+            42.49
+          ]
+        }
+      }
+    ]
+  },
+  "trails": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-101",
+          "name": "Fremont National Recreation Trail",
+          "total_miles": 130.2,
+          "miles_in_fire": 42.5,
+          "status": "closed"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.45,
+              42.45
+            ],
+            [
+              -121.42,
+              42.48
+            ],
+            [
+              -121.38,
+              42.52
+            ],
+            [
+              -121.35,
+              42.58
+            ],
+            [
+              -121.28,
+              42.62
+            ],
+            [
+              -121.20,
+              42.68
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-205",
+          "name": "Gearhart Mountain Trail",
+          "total_miles": 12.8,
+          "miles_in_fire": 12.8,
+          "status": "closed"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.25,
+              42.32
+            ],
+            [
+              -121.22,
+              42.35
+            ],
+            [
+              -121.18,
+              42.38
+            ],
+            [
+              -121.15,
+              42.41
+            ],
+            [
+              -121.12,
+              42.44
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-312",
+          "name": "Sycan River Trail",
+          "total_miles": 8.4,
+          "miles_in_fire": 6.2,
+          "status": "closed"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.55,
+              42.45
+            ],
+            [
+              -121.52,
+              42.48
+            ],
+            [
+              -121.48,
+              42.51
+            ],
+            [
+              -121.45,
+              42.54
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-418",
+          "name": "Campbell Lake Loop",
+          "total_miles": 4.2,
+          "miles_in_fire": 4.2,
+          "status": "closed"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.48,
+              42.58
+            ],
+            [
+              -121.51,
+              42.61
+            ],
+            [
+              -121.48,
+              42.63
+            ],
+            [
+              -121.46,
+              42.59
+            ],
+            [
+              -121.48,
+              42.58
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-520",
+          "name": "OC&E Woods Line State Trail",
+          "total_miles": 100.0,
+          "miles_in_fire": 18.6,
+          "status": "restricted"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.68,
+              42.35
+            ],
+            [
+              -121.62,
+              42.38
+            ],
+            [
+              -121.58,
+              42.42
+            ],
+            [
+              -121.52,
+              42.45
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "trail_id": "FRWN-615",
+          "name": "Klamath Tribes Heritage Trail",
+          "total_miles": 6.8,
+          "miles_in_fire": 3.4,
+          "status": "closed"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -121.64,
+              42.46
+            ],
+            [
+              -121.61,
+              42.48
+            ],
+            [
+              -121.58,
+              42.51
+            ],
+            [
+              -121.55,
+              42.53
+            ]
+          ]
+        }
+      }
+    ]
+  }
+}

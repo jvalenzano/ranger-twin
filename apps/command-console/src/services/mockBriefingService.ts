@@ -62,15 +62,28 @@ class MockBriefingService {
   private firedEventIds: Set<string> = new Set();
   private fixtureData: FixtureData | null = null;
   private loadPromise: Promise<void> | null = null;
+  private currentFireId: string | null = null;
 
   /**
-   * Load fixture data from the public directory
+   * Load fixture data for a specific fire from the public directory
+   * @param fireId - Fire identifier (e.g., 'cedar-creek', 'bootleg')
+   *                 Maps to /fixtures/{fireId}-briefing-events.json
    */
-  async loadFixtures(): Promise<void> {
-    if (this.fixtureData) return;
+  async loadFixtures(fireId: string = 'cedar-creek'): Promise<void> {
+    // If already loaded for this fire, return
+    if (this.fixtureData && this.currentFireId === fireId) return;
+
+    // If loading a different fire, clear the promise
+    if (this.currentFireId !== fireId) {
+      this.loadPromise = null;
+    }
+
     if (this.loadPromise) return this.loadPromise;
 
-    this.loadPromise = fetch('/fixtures/briefing-events.json')
+    const fixtureUrl = `/fixtures/${fireId}-briefing-events.json`;
+    console.log(`[MockBriefingService] Loading fixtures from: ${fixtureUrl}`);
+
+    this.loadPromise = fetch(fixtureUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Failed to load fixtures: ${response.status}`);
@@ -79,14 +92,41 @@ class MockBriefingService {
       })
       .then((data: FixtureData) => {
         this.fixtureData = data;
-        console.log('[MockBriefingService] Loaded fixtures:', data.events.length, 'events');
+        this.currentFireId = fireId;
+        console.log(`[MockBriefingService] Loaded ${fireId} fixtures:`, data.events.length, 'events');
       })
       .catch((error) => {
-        console.error('[MockBriefingService] Failed to load fixtures:', error);
+        console.error(`[MockBriefingService] Failed to load ${fireId} fixtures:`, error);
         throw error;
       });
 
     return this.loadPromise;
+  }
+
+  /**
+   * Switch to a different fire's fixtures
+   * Clears current data and loads new fire's fixtures
+   */
+  async switchFire(fireId: string): Promise<void> {
+    // Extract fixture path from fire_id (e.g., 'cedar-creek-2022' -> 'cedar-creek')
+    const fixtureId = fireId.replace(/-\d{4}$/, '');
+
+    // Clear current state
+    this.fixtureData = null;
+    this.loadPromise = null;
+    this.firedEventIds.clear();
+    this.currentFireId = null;
+
+    // Load new fixtures
+    await this.loadFixtures(fixtureId);
+    console.log(`[MockBriefingService] Switched to fire: ${fireId}`);
+  }
+
+  /**
+   * Get current fire ID
+   */
+  getCurrentFireId(): string | null {
+    return this.currentFireId;
   }
 
   /**

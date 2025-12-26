@@ -16,8 +16,19 @@
 | **Field capture apps** | Future Vision | Mobile video, voice transcription described below are not built in Phase 1 |
 | **Computer vision processing** | Future Vision | Trail damage detection, species ID from bark texture are simulated |
 | **Real-time satellite pulls** | Future Vision | Burn severity data uses static GeoJSON derived from MTBS |
+| **Naming Conventions** | **Approved** | Context-dependent naming: Sidebar (Phase), Panel (Role), Tour (Friendly) |
 
-**What Phase 1 Proves:** The personas below interact with the same UI, ask the same questions, and receive the same agent-generated insights—but the underlying data comes from static fixtures, not live sensors. This validates that the "Nervous System" UX and cross-agent coordination create value independent of the data source.
+## Naming Conventions (Context-Dependent)
+
+To optimize for both professional depth and onboarding approachability, RANGER uses a three-tier naming system:
+
+| Context | Style | Example |
+|---------|-------|---------|
+| **Sidebar Rail** | Phase Name | IMPACT, DAMAGE, TIMBER, COMPLIANCE |
+| **Insight Panel** | Role Title | IMPACT ANALYST, DAMAGE ASSESSOR |
+| **Tour Cards** | Friendly Name | Burn Analyst, Trail Assessor |
+
+This ensures that while the system feels like a "Nervous System" of professional intelligence, the initial learning curve is softened by humanized terminology.
 
 ---
 

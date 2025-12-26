@@ -11,6 +11,7 @@
 
 import React, { useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Eye, Sparkles } from 'lucide-react';
+import { useLifecycleStore } from '@/stores/lifecycleStore';
 import {
   useDemoTourStore,
   useTourActive,
@@ -18,7 +19,7 @@ import {
   useTourProgress,
   type TourStep,
 } from '@/stores/demoTourStore';
-import { useMapStore, type DataLayerType } from '@/stores/mapStore';
+import { useMapStore } from '@/stores/mapStore';
 
 // Agent badge colors
 const AGENT_COLORS: Record<string, string> = {
@@ -31,10 +32,10 @@ const AGENT_COLORS: Record<string, string> = {
 
 const AGENT_LABELS: Record<string, string> = {
   coordinator: 'Recovery Coordinator',
-  'burn-analyst': 'Burn Analyst',
-  'trail-assessor': 'Trail Assessor',
-  'cruising-assistant': 'Cruising Assistant',
-  'nepa-advisor': 'NEPA Advisor',
+  'burn-analyst': 'IMPACT ANALYST',
+  'trail-assessor': 'DAMAGE ASSESSOR',
+  'cruising-assistant': 'TIMBER ANALYST',
+  'nepa-advisor': 'COMPLIANCE ADVISOR',
 };
 
 // Progress dots component
@@ -49,13 +50,12 @@ const ProgressDots: React.FC<{ current: number; total: number; onGoTo: (index: n
         <button
           key={index}
           onClick={() => onGoTo(index)}
-          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-            index === current - 1
-              ? 'bg-accent-cyan w-4'
-              : index < current - 1
+          className={`w-2 h-2 rounded-full transition-all duration-300 ${index === current - 1
+            ? 'bg-accent-cyan w-4'
+            : index < current - 1
               ? 'bg-accent-cyan/50'
               : 'bg-slate-600'
-          }`}
+            }`}
           aria-label={`Go to step ${index + 1}`}
         />
       ))}
@@ -163,11 +163,10 @@ const TourCard: React.FC<{ step: TourStep }> = ({ step }) => {
             <button
               onClick={prevStep}
               disabled={isFirstStep}
-              className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded transition-all ${
-                isFirstStep
-                  ? 'text-slate-600 cursor-not-allowed'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
-              }`}
+              className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded transition-all ${isFirstStep
+                ? 'text-slate-600 cursor-not-allowed'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
             >
               <ChevronLeft size={14} />
               Back
@@ -189,7 +188,8 @@ const TourCard: React.FC<{ step: TourStep }> = ({ step }) => {
 
 // Map/Layer sync effect component
 const TourMapSync: React.FC<{ step: TourStep }> = ({ step }) => {
-  const { flyTo, setActiveLayer, highlightDataLayer } = useMapStore();
+  const { flyTo, setActiveLayer, setVisibleLayers } = useMapStore();
+  const { setActivePhase } = useLifecycleStore();
 
   useEffect(() => {
     // Fly to the step's camera position
@@ -198,8 +198,15 @@ const TourMapSync: React.FC<{ step: TourStep }> = ({ step }) => {
     // Set the base layer
     setActiveLayer(step.baseLayer);
 
-    // Note: We're setting the camera but we need to also handle bearing/pitch
-    // The mapStore's flyTo doesn't support bearing/pitch yet, so we'll set it via setCamera
+    // Sync sidebar lifecycle phase
+    if (step.lifecyclePhase) {
+      setActivePhase(step.lifecyclePhase);
+    }
+
+    // Set visible data layers
+    setVisibleLayers(step.visibleLayers);
+
+    // Handle bearing/pitch
     const setCamera = useMapStore.getState().setCamera;
     setCamera({
       center: step.camera.center,
@@ -208,19 +215,13 @@ const TourMapSync: React.FC<{ step: TourStep }> = ({ step }) => {
       pitch: step.camera.pitch ?? 45,
     });
 
-    // Highlight the relevant layers
-    const allLayers: DataLayerType[] = ['firePerimeter', 'burnSeverity', 'trailDamage', 'timberPlots'];
-
-    // For now, we'll just use the visibility state to show/hide
-    // The mapStore already handles visibility, so we just need to update it
-    // But we want tour to control visibility, so we'll use a different approach
-    // We'll highlight the visible layers to draw attention
-
-    allLayers.forEach((layer) => {
-      const isVisible = step.visibleLayers.includes(layer);
-      highlightDataLayer(layer, isVisible);
-    });
-  }, [step, flyTo, setActiveLayer, highlightDataLayer]);
+    // Auto-expand legend if step references data layers
+    const setLegendExpanded = useMapStore.getState().setLegendExpanded;
+    const hasDataLayers = step.visibleLayers.length > 0;
+    if (hasDataLayers) {
+      setLegendExpanded(true);
+    }
+  }, [step, flyTo, setActiveLayer, setVisibleLayers, setActivePhase]);
 
   return null;
 };

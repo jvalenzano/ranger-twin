@@ -1,6 +1,9 @@
 # RANGER: Project Brief
-
-**Version:** 2.0
+ 
+ > [!IMPORTANT]
+ > **Architectural Source of Truth:** This document has been aligned with [ADR-005: Skills-First Architecture](file:///Users/jvalenzano/Projects/ranger-twin/docs/adr/ADR-005-skills-first-architecture.md). RANGER has moved from a FastAPI-centric microservice model to a **Skills-First paradigm** powered by the **Google ADK** and **Gemini 2.0 Flash**.
+ 
+ **Version:** 2.0
 **Date:** December 20, 2025
 **Team:** TechTrend Federal - Digital Twin Initiative
 
@@ -10,9 +13,9 @@
 
 ### Vision Statement
 
-> **RANGER is an Agentic OS for Natural Resource Recovery, built on open-source infrastructure and Google ADK orchestration. It transforms siloed data into coordinated intelligence, enabling "Forest Floor to Washington" oversight.**
-
-We are not building a dashboard with AI features; we are building a **Coordinated AI Crew** that uses a shared digital twin as its sensory layer. The agents are the decision-support system; the UI is their console.
+> **RANGER is an Agentic OS for Natural Resource Recovery, built on open-source infrastructure and Google ADK orchestration. It transforms siloed data into coordinated intelligence using portable domain Skills, enabling "Forest Floor to Washington" oversight.**
+ 
+ We are not building a dashboard with AI features; we are building a **Coordinated AI Crew** that uses a shared digital twin as its sensory layer. The agents, enhanced by specialist **Skills**, are the decision-support system; the UI is their console.
 
 ### Phase 1 Scope
 
@@ -37,19 +40,19 @@ The Cedar Creek Fire (Willamette National Forest, 2022) serves as our "frozen-in
 
 | Gap | Current State | RANGER Solution |
 |-----|---------------|-----------------|
-| **Burn Assessment** | RAVG (GIS expertise required) | Burn Analyst with natural language queries |
-| **Trail Assessment** | TRACS (paper-based, 1999) | Trail Assessor with video-to-damage-inventory |
-| **Timber Cruising** | FScruiser (manual data entry) | Cruising Assistant with voice + video → FSVeg |
-| **NEPA Compliance** | Manual EA drafting (6-18 months) | NEPA Advisor with FSM/FSH RAG |
-| **Integration** | Siloed workflows | Recovery Coordinator orchestrating all outputs |
+| **Burn Assessment** | RAVG (GIS expertise required) | Burn Analyst with Soil Burn Severity Skills |
+| **Trail Assessment** | TRACS (paper-based, 1999) | Trail Assessor with Damage Classification Skills |
+| **Timber Cruising** | FScruiser (manual data entry) | Cruising Assistant with Volume Estimation Skills |
+| **NEPA Compliance** | Manual EA drafting (6-18 months) | NEPA Advisor with FSM/FSH Compliance Skills |
+| **Integration** | Siloed workflows | Recovery Coordinator orchestrating Skills-First agents |
 
 ### Key Differentiators
 
-1. **Zero Licensing Costs** - 100% open source application stack
-2. **AI-First Investment** - 80% of budget on agent capabilities, 20% on UI shell
-3. **Agent-Native Architecture** - Users interact with specialized AI agents, not just dashboards
-4. **Federal-Ready** - FedRAMP-compatible GCP architecture from day one
-5. **Compelling Demo** - "Tactical Futurism" UI that commands attention
+1. **Zero Licensing Costs** - 100% open source application stack.
+2. **AI-First Investment** - 80% of budget on agent Skills and orchestration, 20% on UI shell.
+3. **Skills-First Architecture** - Expertise is packaged in portable, versioned `skill.md` files.
+4. **Federal-Ready** - FedRAMP-compatible GCP architecture from day one.
+5. **Compelling Demo** - "Tactical Futurism" UI that commands attention.
 
 ---
 
@@ -347,8 +350,9 @@ RANGER is built entirely on **open source tools** and **FedRAMP-compatible cloud
 
 **Core Technologies:**
 - **Frontend:** React 18, TypeScript, MapLibre GL JS, deck.gl, Tailwind CSS
-- **Backend:** FastAPI, PostgreSQL with PostGIS, Redis, Celery
-- **AI/ML:** Google Gemini 2.0 Flash, LangChain for RAG, Google ADK for orchestration
+- **Backend:** FastAPI, PostgreSQL with PostGIS, Redis (Shared Session State)
+- **AI/ML:** Google Gemini 2.0 Flash, Google ADK for orchestration, **Skills Library**
+- **Connectivity:** **Model Context Protocol (MCP)** for IRWIN, NIFC, and USFS data
 - **Cloud:** GCP services (Cloud Run, Cloud SQL, Vertex AI, Cloud Storage) — all FedRAMP High
 - **Data Sources:** Public datasets from USGS, USFS, Copernicus (Sentinel-2), and OpenStreetMap
 

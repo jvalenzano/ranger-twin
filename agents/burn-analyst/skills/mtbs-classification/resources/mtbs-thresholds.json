@@ -1,0 +1,57 @@
+{
+  "mtbs_classes": {
+    "class_1": {
+      "class": 1,
+      "label": "Unburned/Unchanged",
+      "dnbr_min": null,
+      "dnbr_max": 0.1,
+      "description": "Areas with no detectable fire impact from satellite imagery",
+      "mapping_color": "#006400"
+    },
+    "class_2": {
+      "class": 2,
+      "label": "Low Severity",
+      "dnbr_min": 0.1,
+      "dnbr_max": 0.27,
+      "description": "Areas with minor vegetation changes, ground char limited to surface litter",
+      "mapping_color": "#90EE90"
+    },
+    "class_3": {
+      "class": 3,
+      "label": "Moderate Severity",
+      "dnbr_min": 0.27,
+      "dnbr_max": 0.66,
+      "description": "Areas with significant vegetation damage, shrub layer consumed, partial canopy loss",
+      "mapping_color": "#FFA500"
+    },
+    "class_4": {
+      "class": 4,
+      "label": "High Severity",
+      "dnbr_min": 0.66,
+      "dnbr_max": null,
+      "description": "Areas with complete vegetation consumption, deep ground char, stand replacement",
+      "mapping_color": "#8B0000"
+    }
+  },
+  "methodology": {
+    "name": "MTBS Burned Area Classification",
+    "source": "Monitoring Trends in Burn Severity (MTBS)",
+    "reference": "Key & Benson (2006) Landscape Assessment",
+    "sensor": "Landsat TM/ETM+/OLI",
+    "index": "dNBR (differenced Normalized Burn Ratio)",
+    "formula": "dNBR = NBR_pre - NBR_post",
+    "nbr_formula": "NBR = (NIR - SWIR) / (NIR + SWIR)"
+  },
+  "validation_guidelines": {
+    "minimum_mapping_unit": "30 meters (1 Landsat pixel)",
+    "temporal_window": "Within 1 year post-fire for best accuracy",
+    "field_validation": "Recommended for threshold calibration",
+    "regional_adjustment": "Thresholds may need regional calibration"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-25",
+    "maintainer": "RANGER Project",
+    "notes": "Standard MTBS thresholds for Pacific Northwest forests"
+  }
+}

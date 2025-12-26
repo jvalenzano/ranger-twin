@@ -1,0 +1,67 @@
+{
+  "validation_thresholds": {
+    "acreage_tolerance_pct": 5.0,
+    "minimum_polygon_points": 3,
+    "coordinate_precision": 6,
+    "closure_tolerance": 1e-10
+  },
+  "coordinate_ranges": {
+    "longitude": {
+      "min": -180,
+      "max": 180
+    },
+    "latitude": {
+      "min": -90,
+      "max": 90
+    }
+  },
+  "oregon_bounds": {
+    "longitude": {
+      "min": -124.6,
+      "max": -116.5
+    },
+    "latitude": {
+      "min": 41.99,
+      "max": 46.3
+    },
+    "description": "Bounding box for Oregon state"
+  },
+  "geometry_issues": {
+    "MISSING_GEOMETRY": {
+      "severity": "WARNING",
+      "description": "Sector has no associated polygon geometry"
+    },
+    "INSUFFICIENT_POINTS": {
+      "severity": "ERROR",
+      "description": "Polygon must have at least 3 vertices"
+    },
+    "NOT_CLOSED": {
+      "severity": "ERROR",
+      "description": "Polygon first and last points must match"
+    },
+    "INVALID_COORDINATES": {
+      "severity": "ERROR",
+      "description": "Coordinates outside valid WGS84 range"
+    },
+    "SELF_INTERSECTION": {
+      "severity": "WARNING",
+      "description": "Polygon edges cross each other"
+    }
+  },
+  "unit_conversions": {
+    "sq_meters_to_acres": 0.000247105,
+    "acres_to_hectares": 0.404686,
+    "km_to_miles": 0.621371
+  },
+  "area_calculation": {
+    "method": "Shoelace formula with latitude correction",
+    "datum": "WGS84",
+    "earth_radius_km": 6371,
+    "meters_per_degree_lat": 111320
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "source": "NIFC Perimeter Data Standards",
+    "last_updated": "2025-12-25"
+  }
+}

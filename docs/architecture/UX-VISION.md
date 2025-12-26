@@ -1,5 +1,8 @@
 # RANGER Command Console: UI/UX Vision
 
+> [!IMPORTANT]
+> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. The UX focuses on **Agentic Synthesis** and **Skill Progressive Disclosure** within a unified command surface.
+
 This document defines the design vision for the RANGER Command Console — a "Command & Control" interface for the US Forest Service that transitions from macro-level situational awareness to high-fidelity 3D "Digital Twin" visualization of specific forest fire sites.
 
 > **Note:** The mockups referenced in this document represent the target user experience for the Command Console. They illustrate the intended design direction and component structure, not a strict implementation timeline.

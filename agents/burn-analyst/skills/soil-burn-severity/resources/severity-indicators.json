@@ -1,0 +1,122 @@
+{
+  "dnbr_thresholds": {
+    "unburned": {
+      "min": null,
+      "max": 0.1,
+      "class": 1,
+      "label": "UNBURNED",
+      "description": "No fire impact detected"
+    },
+    "low": {
+      "min": 0.1,
+      "max": 0.27,
+      "class": 2,
+      "label": "LOW",
+      "description": "Light ground char, surface litter consumed, some foliage scorched"
+    },
+    "moderate": {
+      "min": 0.27,
+      "max": 0.66,
+      "class": 3,
+      "label": "MODERATE",
+      "description": "Ground char, shrubs consumed, mixed mortality in canopy"
+    },
+    "high": {
+      "min": 0.66,
+      "max": null,
+      "class": 4,
+      "label": "HIGH",
+      "description": "Deep char, complete canopy mortality, white ash present"
+    }
+  },
+  "field_indicators": {
+    "unburned": [
+      "No evidence of fire",
+      "Litter layer intact",
+      "Ground cover undamaged"
+    ],
+    "low": [
+      "Light charring on surface litter",
+      "Duff layer partially consumed",
+      "Fine roots intact",
+      "Some green foliage remains",
+      "Surface organic matter scorched but present"
+    ],
+    "moderate": [
+      "Litter and duff consumed",
+      "Fine roots consumed in upper 1 inch",
+      "Gray ash present",
+      "Shrubs consumed or heavily damaged",
+      "Partial tree mortality",
+      "Ground cover eliminated"
+    ],
+    "high": [
+      "All organic material consumed",
+      "Fine roots consumed to 2+ inches",
+      "White ash present",
+      "Complete tree mortality",
+      "Soil structure damaged",
+      "Hydrophobic layer likely",
+      "Mineral soil exposed"
+    ]
+  },
+  "erosion_risk_matrix": {
+    "high_severity_steep_slope": {
+      "severity": ["HIGH"],
+      "slope_threshold": 30,
+      "risk_level": "CRITICAL",
+      "description": "High severity burn on slopes >30% creates critical erosion risk"
+    },
+    "high_severity_moderate_slope": {
+      "severity": ["HIGH"],
+      "slope_threshold": 15,
+      "risk_level": "HIGH",
+      "description": "High severity burn on slopes 15-30% creates high erosion risk"
+    },
+    "moderate_severity_steep_slope": {
+      "severity": ["MODERATE"],
+      "slope_threshold": 30,
+      "risk_level": "HIGH",
+      "description": "Moderate severity on steep slopes creates high erosion risk"
+    },
+    "low_severity": {
+      "severity": ["LOW", "UNBURNED"],
+      "slope_threshold": null,
+      "risk_level": "LOW",
+      "description": "Low severity or unburned areas have low erosion risk"
+    }
+  },
+  "baer_priority_factors": [
+    {
+      "factor": "watershed_proximity",
+      "weight": 1.5,
+      "description": "Areas draining to critical watersheds get priority boost"
+    },
+    {
+      "factor": "infrastructure_threat",
+      "weight": 1.3,
+      "description": "Areas threatening roads, structures, or utilities"
+    },
+    {
+      "factor": "recreation_impact",
+      "weight": 1.1,
+      "description": "High-use recreation areas"
+    },
+    {
+      "factor": "timber_value",
+      "weight": 1.2,
+      "description": "Commercial timber salvage potential"
+    },
+    {
+      "factor": "ecological_sensitivity",
+      "weight": 1.4,
+      "description": "Old-growth, seed sources, or sensitive habitats"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "source": "Key & Benson (2006) Landscape Assessment",
+    "last_updated": "2025-12-25",
+    "notes": "Thresholds calibrated for Pacific Northwest conifer forests"
+  }
+}

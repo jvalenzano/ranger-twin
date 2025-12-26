@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 burn_analyst = Agent(
     name="burn_analyst",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in burn severity analysis and satellite imagery interpretation.",
     instruction="""
     You are the RANGER Burn Analyst. You process satellite imagery (Sentinel-2, Landsat) 
@@ -36,7 +36,7 @@ burn_analyst = Agent(
 
 trail_assessor = Agent(
     name="trail_assessor",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in trail damage assessment and repair prioritization.",
     instruction="""
     You are the RANGER Trail Assessor. You process field damage reports (images, video, GPS)
@@ -46,7 +46,7 @@ trail_assessor = Agent(
 
 cruising_assistant = Agent(
     name="cruising_assistant",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in timber inventory and salvage sale preparation.",
     instruction="""
     You are the RANGER Cruising Assistant. You process timber cruise data to estimate 
@@ -56,7 +56,7 @@ cruising_assistant = Agent(
 
 nepa_advisor = Agent(
     name="nepa_advisor",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in NEPA compliance and Forest Service regulations.",
     instruction="""
     You are the RANGER NEPA Advisor. You provide guidance on environmental 
@@ -67,7 +67,7 @@ nepa_advisor = Agent(
 # Root Recovery Coordinator
 recovery_coordinator = Agent(
     name="recovery_coordinator",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Root orchestrator for RANGER. Synthesizes lifecycle insights.",
     instruction="""
     You are the RANGER Recovery Coordinator. Your job is to:

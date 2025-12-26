@@ -24,3 +24,6 @@ export type MapLayerType = 'SAT' | 'TER' | 'IR';
 
 // Connection status for WebSocket
 export type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting';
+
+// Re-export mission types
+export * from './mission';

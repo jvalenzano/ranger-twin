@@ -1,44 +1,21 @@
 # TrailAssessor Agent
 
-> AI-powered trail damage detection and repair prioritization
+> See [Full Specification](../../../docs/agents/TRAIL-ASSESSOR-SPEC.md) for capabilities and architecture.
 
-## Overview
+## Quick Start
 
-TrailAssessor analyzes video footage and GPS data to identify trail damage caused by wildfire, erosion, and related events. It uses computer vision (YOLOv8/SAM2) for damage detection and Gemini for classification and prioritization.
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-## Capabilities
+# Download YOLOv8 weights
+python scripts/download_weights.py
 
-- Identify damage types (washout, debris flow, bridge failure, tread erosion)
-- Classify severity (Minor, Moderate, Severe, Critical)
-- Estimate repair costs based on damage type and extent
-- Prioritize repairs based on visitor safety, ecological impact, and cost
-- Generate repair work orders with specifications
+# Run the service
+python -m trail_assessor.main
 
-## Tech Stack
-
-- **Vision**: YOLOv8 (Ultralytics), SAM2 (Segment Anything)
-- **Geospatial**: GeoPandas, Shapely
-- **LLM**: Google Gemini 2.0 Flash
-- **API**: FastAPI
-
-## Structure
-
-```
-trail_assessor/
-├── main.py                  # FastAPI service
-├── agent.py                 # TrailAssessor agent class
-├── prompts/
-│   └── system.md            # System prompt
-├── tools/
-│   ├── detection.py         # YOLOv8 damage detection
-│   ├── segmentation.py      # SAM2 segmentation
-│   ├── georef.py            # GPS correlation
-│   └── prioritization.py    # Repair prioritization
-├── models/
-│   ├── damage.py            # Damage data models
-│   └── repair.py            # Repair estimate models
-└── weights/
-    └── trail_damage_v1.pt   # Fine-tuned YOLOv8 weights
+# Run tests
+pytest tests/
 ```
 
 ## API
@@ -65,37 +42,6 @@ GET /damage/{trail_id}
 
 GET /priorities
   returns: Ordered list of repair priorities
-```
-
-## System Prompt
-
-```
-You are TrailAssessor, a specialized AI agent for trail damage identification
-and repair prioritization. You analyze video footage and GPS data to identify
-trail damage caused by wildfire, erosion, and related events.
-
-When responding:
-- Reference specific trail names and mile markers
-- Provide GPS coordinates for damage points
-- Include cost estimates with confidence ranges
-- Consider TRACS methodology standards
-- Suggest repair sequencing based on dependencies
-```
-
-## Development
-
-```bash
-# Install
-pip install -r requirements.txt
-
-# Download YOLOv8 weights
-python scripts/download_weights.py
-
-# Run
-python -m trail_assessor.main
-
-# Test
-pytest tests/
 ```
 
 ## Environment Variables

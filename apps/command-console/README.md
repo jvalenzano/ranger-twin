@@ -90,4 +90,5 @@ Defined in `tailwind.config.js`:
 
 ```bash
 VITE_API_URL=http://localhost:8000
+VITE_OPENROUTER_API_KEY=sk-or-v1-...
 ```

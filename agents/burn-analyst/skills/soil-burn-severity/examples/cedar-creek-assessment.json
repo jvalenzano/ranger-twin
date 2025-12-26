@@ -1,0 +1,73 @@
+{
+  "description": "Example severity assessment output for Cedar Creek Fire",
+  "input": {
+    "fire_id": "cedar-creek-2022"
+  },
+  "output": {
+    "fire_id": "cedar-creek-2022",
+    "fire_name": "Cedar Creek Fire",
+    "total_acres": 127341,
+    "severity_breakdown": {
+      "high": {
+        "acres": 81041,
+        "percentage": 63.6,
+        "sector_count": 4
+      },
+      "moderate": {
+        "acres": 37900,
+        "percentage": 29.8,
+        "sector_count": 3
+      },
+      "low": {
+        "acres": 8400,
+        "percentage": 6.6,
+        "sector_count": 1
+      }
+    },
+    "priority_sectors": [
+      {
+        "id": "CORE-1",
+        "name": "Central Fire Origin",
+        "severity": "HIGH",
+        "dnbr_mean": 0.81,
+        "acres": 27001,
+        "concern": "Fire origin area. Complete stand replacement. Seed source planning critical."
+      },
+      {
+        "id": "SW-1",
+        "name": "Hills Creek Drainage",
+        "severity": "HIGH",
+        "dnbr_mean": 0.76,
+        "acres": 21500,
+        "concern": "Highest priority salvage. Commercial timber value. Critical road access needed."
+      },
+      {
+        "id": "NW-1",
+        "name": "Waldo Lake North",
+        "severity": "HIGH",
+        "dnbr_mean": 0.72,
+        "acres": 18340,
+        "concern": "Critical watershed protection area. High erosion risk due to steep slopes and complete canopy loss."
+      }
+    ],
+    "reasoning_chain": [
+      "Loaded 8 sectors for Cedar Creek Fire (127,341 total acres)",
+      "CORE-1 (Central Fire Origin): dNBR 0.81 >= 0.66 -> HIGH severity",
+      "SW-1 (Hills Creek Drainage): dNBR 0.76 >= 0.66 -> HIGH severity. Slope 45° + HIGH severity -> CRITICAL erosion risk",
+      "NW-1 (Waldo Lake North): dNBR 0.72 >= 0.66 -> HIGH severity. Slope 38° + HIGH severity -> CRITICAL erosion risk",
+      "NW-2 (Waldo Lake South): dNBR 0.68 >= 0.66 -> HIGH severity. Slope 42° + HIGH severity -> CRITICAL erosion risk",
+      "SE-1 (Odell Lake Corridor): dNBR 0.48 in [0.27, 0.66) -> MODERATE severity",
+      "NE-1 (Charlton Lake Area): dNBR 0.45 in [0.27, 0.66) -> MODERATE severity",
+      "NE-2 (Bobby Lake Basin): dNBR 0.42 in [0.27, 0.66) -> MODERATE severity",
+      "SW-2 (Timpanogas Lake Area): dNBR 0.22 in [0.1, 0.27) -> LOW severity",
+      "High severity dominates (63.6%) - significant BAER resources needed"
+    ],
+    "confidence": 0.92,
+    "data_sources": ["MTBS", "Imagery date: 2022-09-15"],
+    "recommendations": [
+      "Deploy BAER team to CORE-1 (Central Fire Origin) - Fire origin area. Complete stand replacement. Seed source planning critical.",
+      "Deploy BAER team to SW-1 (Hills Creek Drainage) - Highest priority salvage. Commercial timber value. Critical road access needed.",
+      "Deploy BAER team to NW-1 (Waldo Lake North) - Critical watershed protection area. High erosion risk due to steep slopes and complete canopy loss."
+    ]
+  }
+}

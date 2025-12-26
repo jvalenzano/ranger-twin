@@ -4,7 +4,11 @@ This folder is reserved for GeoJSON and vector data files for future phases.
 
 ## Current Status: Empty (Phase 1)
 
-Phase 1 uses simulated data loaded directly into the frontend from `apps/command-console/public/fixtures/`.
+Phase 1 uses simulated data loaded directly from `data/fixtures/cedar-creek/`.
+
+**Why this is empty:** Phase 1 focuses on proving multi-agent orchestration. Real GeoJSON layers from USFS production systems will be integrated in Phase 2+ via data adapters.
+
+**See:** [`data/fixtures/cedar-creek/README.md`](../fixtures/cedar-creek/README.md) for active simulation data used in Phase 1.
 
 ## Future Use (Phase 2+)
 

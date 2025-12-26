@@ -1,4 +1,8 @@
 # RANGER Agent Messaging Protocol
+6: 
+7: > [!IMPORTANT]
+8: > **Standard:** This document is amended to align with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. Inter-agent messaging is now orchestrated within the Google ADK's `Coordinator/Dispatcher` pattern.
+9: 
 
 This document defines the standard for inter-agent communication and the "Agentic Interface" contract, enabling "Agentic Synthesis" across the RANGER crew.
 
@@ -116,8 +120,8 @@ The UI surfaces this as: "This recommendation is based on high-confidence burn d
 
 1.  **Specialist Analysis:** The `Burn Analyst` identifies a high-severity burn intersecting a recreation trail.
 2.  **Event Generation:** The Analyst emits an `AgentBriefingEvent` with `type: action_required` and `ui_binding: { target: rail_pulse, geo_reference: ... }`.
-3.  **Coordination:** The `RecoveryCoordinator` receives the event via the `api-gateway`.
-    - It updates the **Shared Session State** (Redis).
+3.  **Coordination:** The `RecoveryCoordinator` receives the event via the ADK session stream.
+    - It updates the **Shared Session State** (managed by Google ADK).
     - It suggests a `suggested_action` for the `Trail Assessor` to prioritize that specific trail segment.
 4.  **UI Rendering:** The Command Console observes the event:
     - The "Damage" rail item pulses yellow.

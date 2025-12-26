@@ -12,6 +12,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { MapLayerType, DataLayerType } from './mapStore';
+import { useFireContextStore } from './fireContextStore';
 
 // Tour step definition
 export interface TourStep {
@@ -31,24 +32,27 @@ export interface TourStep {
   visibleLayers: DataLayerType[];
   // Base layer
   baseLayer: MapLayerType;
+  // Which lifecycle phase this step relates to (IMPACT, DAMAGE, TIMBER, COMPLIANCE)
+  lifecyclePhase?: 'IMPACT' | 'DAMAGE' | 'TIMBER' | 'COMPLIANCE';
   // Which agent this step relates to (for UI highlighting)
   agent?: 'coordinator' | 'burn-analyst' | 'trail-assessor' | 'cruising-assistant' | 'nepa-advisor';
   // Position of the annotation card
   cardPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
 }
 
-// The 7 tour steps as specified in the Manifesto
-const TOUR_STEPS: TourStep[] = [
+
+// The curated Cedar Creek tour steps
+const CEDAR_CREEK_STEPS: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to RANGER',
     subtitle: 'The Nerve Center for Forest Recovery',
     description:
-      'RANGER orchestrates AI agents to transform siloed data into coordinated intelligence. This is the Cedar Creek Fire (2022) in Oregon\'s Willamette National Forest—127,000 acres of complex recovery decisions.',
+      'Watch how a single burn finding cascades through trail assessment, timber analysis, and compliance review — automatically. This is the Cedar Creek Fire (2022) in Oregon\'s Willamette National Forest—127,000 acres of complex recovery decisions.',
     lookFor: [
       'The fire perimeter (dashed white line)',
       'Burn severity zones (red = high, yellow = moderate, green = low)',
-      '3D terrain showing the mountainous landscape',
+      'The lifecycle rail on the left showing four recovery phases',
     ],
     camera: {
       center: [-122.1, 43.7],
@@ -58,14 +62,15 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'IMPACT',
     cardPosition: 'top-right',
   },
   {
     id: 'burn-analysis',
-    title: 'Burn Analyst',
+    title: 'Impact Analyst',
     subtitle: 'Impact Assessment Intelligence',
     description:
-      'The Burn Analyst processes satellite imagery and dNBR data to classify burn severity. Sarah Chen (GIS Specialist) needs this before any recovery planning can begin.',
+      'The Impact Analyst processes satellite imagery to classify burn severity. Sarah Chen (Fire Management Officer) needs this before any recovery planning can begin.',
     lookFor: [
       'High severity zones concentrated in the northwest sector',
       'Moderate severity creating a buffer around the core',
@@ -79,15 +84,16 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'IMPACT',
     agent: 'burn-analyst',
     cardPosition: 'top-right',
   },
   {
     id: 'trail-assessment',
-    title: 'Trail Assessor',
+    title: 'Damage Assessor',
     subtitle: 'Infrastructure Damage Analysis',
     description:
-      'The Trail Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (District Ranger) uses this to prioritize crew deployments.',
+      'The Damage Assessor evaluates damage to trails and recreational infrastructure. Marcus Rodriguez (Recreation Technician) uses this to prioritize crew deployments.',
     lookFor: [
       'Trail damage points sized by severity',
       'Bridge failures (red) requiring immediate attention',
@@ -101,15 +107,16 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'trailDamage'],
     baseLayer: 'TER',
+    lifecyclePhase: 'DAMAGE',
     agent: 'trail-assessor',
     cardPosition: 'top-right',
   },
   {
     id: 'timber-salvage',
-    title: 'Cruising Assistant',
+    title: 'Timber Analyst',
     subtitle: 'Salvage Operations Planning',
     description:
-      'The Cruising Assistant analyzes timber stands for salvage potential. Priority plots are identified based on species composition, burn severity, and market conditions.',
+      'The Timber Analyst analyzes timber stands for salvage potential. Elena Vasquez (Timber Cruiser) identifies priority plots based on species composition, burn severity, and market conditions.',
     lookFor: [
       'Timber plot markers colored by priority',
       'High-value plots in the eastern corridor',
@@ -123,15 +130,16 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'timberPlots'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'TIMBER',
     agent: 'cruising-assistant',
     cardPosition: 'top-right',
   },
   {
     id: 'nepa-compliance',
-    title: 'NEPA Advisor',
+    title: 'Compliance Advisor',
     subtitle: 'Regulatory Navigation',
     description:
-      'The NEPA Advisor helps Elena Vasquez (Environmental Planner) navigate categorical exclusions and streamlined pathways. Real citations from current regulations.',
+      'The Compliance Advisor helps Dr. James Park (Environmental Coordinator) navigate categorical exclusions and streamlined pathways. Includes real-time citations from federal regulations.',
     lookFor: [
       'How burn severity informs NEPA pathways',
       'Overlap between timber plots and sensitive areas',
@@ -145,6 +153,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'trailDamage', 'timberPlots'],
     baseLayer: 'SAT',
+    lifecyclePhase: 'COMPLIANCE',
     agent: 'nepa-advisor',
     cardPosition: 'top-right',
   },
@@ -153,7 +162,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'The Recovery Cascade',
     subtitle: 'Connected Intelligence',
     description:
-      'This is RANGER\'s secret: agents don\'t work in isolation. The Burn Analyst\'s severity map informs the Trail Assessor\'s priorities. The Cruising Assistant considers NEPA constraints. Every insight feeds forward.',
+      'This is RANGER\'s secret: agents don\'t work in isolation. The Impact Analyst\'s severity map informs the Damage Assessor\'s priorities. The Timber Analyst considers compliance constraints. Every insight feeds forward.',
     lookFor: [
       'All layers visible simultaneously',
       'How high-severity zones correlate with trail damage',
@@ -178,8 +187,7 @@ const TOUR_STEPS: TourStep[] = [
       'What once took weeks of manual coordination now happens in minutes. RANGER doesn\'t replace foresters—it amplifies them. Sarah, Marcus, Elena, and Dr. Park each get exactly what they need, when they need it.',
     lookFor: [
       'The complete picture of Cedar Creek recovery',
-      'Try clicking any layer element for details',
-      'Use the lifecycle phases on the left to explore',
+      'Four workflows, one coordinated plan',
     ],
     camera: {
       center: [-122.1, 43.7],
@@ -189,7 +197,7 @@ const TOUR_STEPS: TourStep[] = [
     },
     visibleLayers: ['firePerimeter', 'burnSeverity', 'trailDamage', 'timberPlots'],
     baseLayer: 'SAT',
-    cardPosition: 'center',
+    cardPosition: 'top-right',
   },
 ];
 
@@ -207,7 +215,7 @@ interface DemoTourState {
   progress: number; // 0-100
 
   // Actions
-  startTour: () => void;
+  startTour: (targetFireId?: string) => void;
   endTour: () => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -220,7 +228,7 @@ export const useDemoTourStore = create<DemoTourState>()(
     (set, get) => ({
       isActive: false,
       currentStepIndex: 0,
-      steps: TOUR_STEPS,
+      steps: CEDAR_CREEK_STEPS,
 
       // Computed getters (recalculated on access)
       get currentStep() {
@@ -245,7 +253,27 @@ export const useDemoTourStore = create<DemoTourState>()(
         return ((currentStepIndex + 1) / steps.length) * 100;
       },
 
-      startTour: () => {
+      startTour: (targetFireId?: string) => {
+        // If a specific fire is requested, ensure we're on it
+        if (targetFireId) {
+          const currentFireId = useFireContextStore.getState().activeFireId;
+
+          if (currentFireId !== targetFireId) {
+            useFireContextStore.getState().selectFire(targetFireId);
+          }
+
+          // In the future, we could switch 'steps' based on the fireId
+          // For now, we only have the Cedar Creek experience
+          if (targetFireId === 'cedar-creek-2022') {
+            set({ steps: CEDAR_CREEK_STEPS });
+          } else {
+            // Fallback or generic dynamic generation could go here
+            // For now, we'll just use Cedar Creek steps but this might be weird if looking at another fire
+            // NOTE: The implementation plan decided to force users to Cedar Creek for the best demo
+            // so this branch might technically be unreachable if we only call it with 'cedar-creek-2022'
+          }
+        }
+
         set({ isActive: true, currentStepIndex: 0 });
       },
 
@@ -303,4 +331,4 @@ export const useTourProgress = () => {
   };
 };
 
-export { TOUR_STEPS };
+export { CEDAR_CREEK_STEPS as TOUR_STEPS };

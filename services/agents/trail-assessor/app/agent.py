@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Core agent logic
 trail_assessor_agent = Agent(
     name="trail_assessor",
-    model="gemini-2.0-flash",
+    model="gemini-3-flash",  # Updated per ADR-003 (2025-12-22)
     description="Specialist in trail damage assessment and repair prioritization.",
     instruction="""
     You are the RANGER Trail Assessor. You process field damage reports (images, video, GPS)

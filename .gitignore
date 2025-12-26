@@ -181,3 +181,6 @@ dist
 # OS
 .DS_Store
 Thumbs.db
+
+# RANGER - Runtime generated configs
+**/.nepa_store_config.json

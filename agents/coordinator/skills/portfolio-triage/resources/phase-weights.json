@@ -1,0 +1,18 @@
+{
+  "active": {
+    "multiplier": 2.0,
+    "description": "Fire actively burning - highest urgency for resource deployment"
+  },
+  "baer_assessment": {
+    "multiplier": 1.75,
+    "description": "7-day BAER assessment window - time-critical for team deployment"
+  },
+  "baer_implementation": {
+    "multiplier": 1.25,
+    "description": "BAER treatments underway - moderate urgency for continued work"
+  },
+  "in_restoration": {
+    "multiplier": 1.0,
+    "description": "Long-term restoration phase - baseline priority level"
+  }
+}

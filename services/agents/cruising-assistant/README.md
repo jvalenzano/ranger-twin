@@ -1,5 +1,8 @@
 # Cruising Assistant Agent
 
+> 🚧 **Status: Scaffold Only** - This agent has a FastAPI skeleton but implementation is pending.
+> See the planned capabilities below.
+
 > Multimodal timber inventory with voice transcription and species ID
 
 ## Overview

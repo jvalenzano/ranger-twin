@@ -1,0 +1,71 @@
+{
+  "coordinator": {
+    "name": "Recovery Coordinator",
+    "role": "Root orchestrator for RANGER platform",
+    "capabilities": [
+      "Portfolio-level fire prioritization (Portfolio Triage skill)",
+      "Multi-agent query synthesis",
+      "Session management and context tracking",
+      "General platform inquiries",
+      "Delegation to specialist agents"
+    ],
+    "skills": ["portfolio-triage", "delegation", "user-interaction"],
+    "availability": "always"
+  },
+  "burn-analyst": {
+    "name": "Burn Analyst",
+    "role": "Fire severity and burn impact specialist",
+    "capabilities": [
+      "MTBS severity classification",
+      "Soil burn severity assessment",
+      "dNBR interpretation and mapping",
+      "Burn perimeter analysis",
+      "Fire effects documentation"
+    ],
+    "data_sources": ["MTBS", "Sentinel-2", "Landsat", "BAER imagery"],
+    "skills": ["mtbs-classification", "soil-burn-severity"],
+    "availability": "phase-2"
+  },
+  "trail-assessor": {
+    "name": "Trail Assessor",
+    "role": "Recreation infrastructure and trail damage specialist",
+    "capabilities": [
+      "Trail damage classification",
+      "Hazard tree identification",
+      "Recreation closure recommendations",
+      "Infrastructure repair prioritization",
+      "TRACS work order generation"
+    ],
+    "data_sources": ["TRACS", "Survey123", "Field reports"],
+    "skills": ["damage-classification", "closure-recommendation"],
+    "availability": "phase-2"
+  },
+  "cruising-assistant": {
+    "name": "Cruising Assistant",
+    "role": "Timber inventory and salvage estimation specialist",
+    "capabilities": [
+      "Timber volume estimation",
+      "Salvage viability assessment",
+      "FSVeg data management",
+      "Economic valuation",
+      "Harvest planning support"
+    ],
+    "data_sources": ["FSVeg", "FIA", "Timber cruise plots"],
+    "skills": ["volume-estimation", "salvage-assessment"],
+    "availability": "phase-2"
+  },
+  "nepa-advisor": {
+    "name": "NEPA Advisor",
+    "role": "Environmental compliance and regulatory specialist",
+    "capabilities": [
+      "NEPA pathway determination (CE/EA/EIS)",
+      "Documentation requirements",
+      "Scoping and public comment guidance",
+      "Regulatory compliance checking",
+      "Decision document preparation"
+    ],
+    "data_sources": ["FSM", "FSH", "NEPA regulations"],
+    "skills": ["pathway-decision", "documentation-checklist"],
+    "availability": "phase-2"
+  }
+}

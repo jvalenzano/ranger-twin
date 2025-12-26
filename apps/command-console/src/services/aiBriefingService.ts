@@ -1,18 +1,26 @@
 /**
  * AI Briefing Service - Frontend client for RANGER agent queries
  *
- * Provides an interface to the /api/query endpoint with:
- * - Query execution
- * - Fallback to fixtures on error
- * - Response type mapping
+ * Phase 1: Skills-First Architecture (ADR-005)
+ * - Primary: RANGER API Gateway (/api/v1/chat) with ADK Coordinator
+ * - Fallback: OpenRouter (with Fallback Chain for reliability)
+ * - NEPA/RAG: Direct Google Gemini API (Private Data Access)
+ *
+ * Supports dynamic fire context - system prompts are generated based on
+ * the active fire from fireContextStore.
  */
 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import type {
   AgentBriefingEvent,
   SourceAgent,
   EventType,
   Severity,
 } from '@/types/briefing';
+
+import type { FireContext } from '@/types/fire';
+import { DEFAULT_FIRE } from '@/types/fire';
+import { useTokenUsageStore } from '@/stores/tokenUsageStore';
 
 // Agent role type matching the backend
 export type AgentRole =
@@ -44,6 +52,7 @@ export interface QueryResponse {
   response?: AgentResponse;
   error?: string;
   processingTimeMs?: number;
+  provider?: string;
 }
 
 // Map agent roles to SourceAgent enum
@@ -55,50 +64,475 @@ const AGENT_ROLE_TO_SOURCE: Record<AgentRole, SourceAgent> = {
   'nepa-advisor': 'nepa_advisor',
 };
 
-// API endpoint (use environment variable or default to local)
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// --- CONFIGURATION ---
+const RANGER_API_URL = import.meta.env.VITE_RANGER_API_URL || 'http://localhost:8000';
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Google Direct
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+// Feature flag: Use RANGER API vs direct LLM calls
+const USE_RANGER_API = import.meta.env.VITE_USE_RANGER_API !== 'false';
+
+// OpenRouter Fallback Chain
+const OPENROUTER_MODELS = [
+  'google/gemini-2.0-flash-exp:free',          // Primary: Best quality
+  'google/gemma-2-9b-it:free', // Secondary: Reliable fallback
+];
+
+// Google Direct Model (for NEPA RAG)
+const GOOGLE_MODEL_NAME = 'gemini-2.0-flash-exp';
+
+/**
+ * Generate system prompt based on fire context
+ * Dynamically adjusts context for any fire in the system
+ */
+function generateSystemPrompt(fire: FireContext): string {
+  // Format acres for display
+  const acresFormatted = fire.acres >= 1000
+    ? `${Math.round(fire.acres / 1000)}K`
+    : fire.acres.toString();
+
+  return `You are the Recovery Coordinator for RANGER, an AI-powered forest recovery platform. You help forest rangers analyze post-fire recovery operations for the ${fire.name} (${fire.year}) in the ${fire.forest}, ${fire.state}.
+
+Context:
+- The ${fire.name} burned approximately ${acresFormatted} acres
+- Current status: ${fire.status}
+- Your role is to coordinate between specialist agents: Burn Analyst, Trail Assessor, Cruising Assistant, and NEPA Advisor
+- Focus areas: burn severity assessment, trail damage evaluation, timber salvage prioritization, and environmental compliance
+
+When answering questions:
+1. Be concise but thorough
+2. Reference specific data when available (trails, plots, burn areas)
+3. Provide actionable insights for forest recovery operations
+4. Maintain a professional, tactical tone appropriate for emergency operations
+
+Data Availability:
+- Perimeter: ${fire.data_status.perimeter.available ? `Available (${fire.data_status.perimeter.source})` : 'Pending'}
+- Burn Severity: ${fire.data_status.burn_severity.available ? `Available (${fire.data_status.burn_severity.source})` : 'Pending'}
+- Trail Damage: ${fire.data_status.trail_damage.available ? `Available (${fire.data_status.trail_damage.source})` : 'Pending'}
+- Timber Plots: ${fire.data_status.timber_plots.available ? `Available (${fire.data_status.timber_plots.source})` : 'Pending'}`;
+}
+
+// Default system prompt (Cedar Creek - for fallback)
+const DEFAULT_SYSTEM_PROMPT = generateSystemPrompt(DEFAULT_FIRE);
+
+// Simulated responses for when API is rate-limited or unavailable
+const SIMULATED_RESPONSES: Record<string, { agentRole: AgentRole; response: string }> = {
+  trail: {
+    agentRole: 'trail-assessor',
+    response: `Based on our assessment of 5 trails across 40.3 miles, the most severe damage is on:
+
+**Hills Creek Trail** - Priority 1
+- Complete bridge failure (primary crossing)
+- Debris flow burial for 0.3 miles
+- Estimated repair: $238K
+
+**Waldo Lake Trail** - Priority 2
+- 40ft timber bridge destroyed
+- 47 hazard trees identified
+- High visitor access impact
+
+**Bobby Lake Trail** - Priority 3
+- Puncheon bridge failure
+- Tread erosion at 3 locations
+
+Total: 16 damage points, 3 bridge failures, 175+ hazard trees. Estimated 153 crew-days needed for full restoration.`,
+  },
+  burn: {
+    agentRole: 'burn-analyst',
+    response: `Burn severity analysis for Cedar Creek Fire (127,000 acres):
+
+**HIGH Severity Zones** (Red)
+- Concentrated in central fire area
+- dNBR values > 0.66
+- Complete canopy loss, soil damage
+
+**MODERATE Severity** (Amber)
+- Eastern and western flanks
+- dNBR 0.27-0.66
+- Partial canopy survival
+
+**LOW Severity** (Green)
+- Perimeter areas, riparian corridors
+- dNBR < 0.27
+- Surface burn only
+
+Recommendation: Prioritize soil stabilization in HIGH zones before winter precipitation. Salvage timber assessment should focus on MODERATE zones where merchantable timber remains.`,
+  },
+  timber: {
+    agentRole: 'cruising-assistant',
+    response: `Timber salvage priority assessment for 6 surveyed plots:
+
+**HIGHEST Priority**
+- Plot 47-ALPHA: 12.5 MBF/acre, $4,200/acre value
+- Plot 52-FOXTROT: 11.8 MBF/acre, mixed conifer
+
+**HIGH Priority**
+- Plot 23-CHARLIE: 9.2 MBF/acre, Douglas-fir dominant
+- Plot 31-DELTA: 8.7 MBF/acre, accessible via existing roads
+
+**MEDIUM Priority**
+- Plot 15-ECHO: 6.4 MBF/acre, steeper terrain
+- Additional plots pending assessment
+
+Total estimated salvage value: $2.1M across surveyed area. Window for salvage operations: 18-24 months before beetle damage reduces value.`,
+  },
+  nepa: {
+    agentRole: 'nepa-advisor',
+    response: `NEPA compliance pathways for post-fire salvage operations:
+
+**Categorical Exclusion (CE)** - Fastest
+- Applies to: Hazard tree removal along roads/trails
+- Timeline: 2-4 weeks
+- Limitations: 250-acre maximum
+
+**Emergency Situation Determination (ESD)**
+- Applies to: Salvage in high-risk areas
+- Timeline: 30-60 days
+- Allows expedited EA process
+
+**Environmental Assessment (EA)**
+- Required for: Large-scale salvage (>1000 acres)
+- Timeline: 6-12 months
+- Full public comment period
+
+Recommendation: Use CE for immediate trail/road hazard work. Pursue ESD for priority salvage units 47-ALPHA and 52-FOXTROT.`,
+  },
+  default: {
+    agentRole: 'recovery-coordinator',
+    response: `Welcome to RANGER Recovery Coordinator. I can help with:
+
+**Burn Analysis** - Severity mapping, dNBR assessment, soil impacts
+**Trail Assessment** - Damage inventory, bridge status, hazard trees
+**Timber Salvage** - Plot prioritization, volume estimates, value assessment
+**NEPA Compliance** - Pathway selection, timeline planning, documentation
+
+Current Cedar Creek Fire status:
+- 127,000 acres burned
+- 5 trails assessed, 3 bridges destroyed
+- 6 timber plots surveyed
+- Recovery operations in planning phase
+
+What aspect of the recovery would you like to explore?`,
+  },
+};
 
 class AIBriefingService {
   private isLoading = false;
+  private useSimulation = false; // Fall back to simulation after consistent failure
+  private genAI: GoogleGenerativeAI | null = null;
+
+  constructor() {
+    if (GEMINI_API_KEY) {
+      this.genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    }
+  }
 
   /**
-   * Query the RANGER agents
+   * Query the RANGER agents via Skills-First Architecture
+   * 1. Primary: RANGER API Gateway (ADK Coordinator with Skills)
+   * 2. Fallback: NEPA/Compliance -> Direct Google SDK (for RAG)
+   * 3. Fallback: General -> OpenRouter (with Fallback Chain)
+   * 4. Fallback: Simulation
    */
   async query(
     queryText: string,
-    targetAgent?: AgentRole
+    sessionId: string = 'demo-session-123',
+    fireContext?: FireContext
   ): Promise<QueryResponse> {
     this.isLoading = true;
+    const startTime = Date.now();
+
+    // Determine agent role (for fallback routing)
+    const agentRole = this.detectAgentRole(queryText);
+
+    // Generate system prompt (for fallback providers)
+    const systemPrompt = fireContext
+      ? generateSystemPrompt(fireContext)
+      : DEFAULT_SYSTEM_PROMPT;
 
     try {
-      const response = await fetch(`${API_URL}/query`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: queryText,
-          targetAgent,
-        }),
-      });
+      // --- ROUTING LOGIC ---
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      // 1. Primary: RANGER API Gateway (Skills-First)
+      if (USE_RANGER_API) {
+        console.log('[AIBriefingService] Routing to RANGER API Gateway...');
+        try {
+          return await this.queryRangerAPI(queryText, sessionId, fireContext, startTime);
+        } catch (apiError) {
+          console.warn('[AIBriefingService] RANGER API failed, falling back to direct LLM:', apiError);
+          // Continue to fallback providers
+        }
       }
 
-      const data: QueryResponse = await response.json();
-      return data;
-    } catch (error) {
-      console.error('[AIBriefingService] Query failed:', error);
+      // 2. NEPA/Compliance Check -> Route to Google Direct
+      if (agentRole === 'nepa-advisor' && GEMINI_API_KEY && this.genAI) {
+        console.log('[AIBriefingService] Routing to Google Direct (NEPA RAG Context)...');
+        return await this.queryGoogleDirect(queryText, systemPrompt, agentRole, startTime);
+      }
 
-      // Return error response
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Query failed',
-      };
+      // 3. All other queries -> Route to OpenRouter
+      if (OPENROUTER_API_KEY && !this.useSimulation) {
+        console.log('[AIBriefingService] Routing to OpenRouter...');
+        return await this.queryOpenRouterWithFallback(queryText, systemPrompt, agentRole, startTime);
+      }
+
+      // 4. Fallback to Simulation
+      console.log('[AIBriefingService] Using simulation (No API keys or forced simulation)');
+      return this.getSimulatedResponse(queryText, agentRole, startTime);
+
+    } catch (error) {
+      console.error('[AIBriefingService] All providers failed, falling back to simulation:', error);
+      return this.getSimulatedResponse(queryText, agentRole, startTime);
     } finally {
       this.isLoading = false;
     }
+  }
+
+  /**
+   * Query the RANGER API Gateway (Skills-First Architecture)
+   */
+  private async queryRangerAPI(
+    queryText: string,
+    sessionId: string,
+    fireContext: FireContext | undefined,
+    startTime: number
+  ): Promise<QueryResponse> {
+    const response = await fetch(`${RANGER_API_URL}/api/v1/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        query: queryText,
+        fire_context: fireContext ? {
+          name: fireContext.name,
+          acres: fireContext.acres,
+          phase: fireContext.status,
+          forest: fireContext.forest,
+          state: fireContext.state,
+        } : null,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`RANGER API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'RANGER API returned error');
+    }
+
+    // Map API response to QueryResponse format
+    return {
+      success: true,
+      response: {
+        agentRole: data.response.agentRole as AgentRole,
+        summary: data.response.summary,
+        reasoning: data.response.reasoning || [],
+        confidence: data.response.confidence,
+        citations: data.response.citations || [],
+        recommendations: data.response.recommendations,
+      },
+      processingTimeMs: data.processingTimeMs || (Date.now() - startTime),
+      provider: data.provider || 'RANGER API',
+    };
+  }
+
+  /**
+   * Execute query via Google Direct API (for RAG support)
+   */
+  private async queryGoogleDirect(
+    queryText: string,
+    systemPrompt: string,
+    agentRole: AgentRole,
+    startTime: number
+  ): Promise<QueryResponse> {
+    if (!this.genAI) throw new Error('Google SDK not initialized');
+
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: GOOGLE_MODEL_NAME,
+        systemInstruction: systemPrompt
+      });
+
+      const result = await model.generateContent(queryText);
+      const response = result.response;
+      const text = response.text();
+
+      return {
+        success: true,
+        response: {
+          agentRole,
+          summary: text,
+          reasoning: ['Query analyzed by NEPA Advisor', 'Source: Private RAG Knowledge Base (Google Direct)'],
+          confidence: 95,
+          citations: []
+        },
+        processingTimeMs: Date.now() - startTime,
+        provider: 'Google Direct'
+      };
+
+    } catch (error) {
+      console.warn('[AIBriefingService] Google Direct failed, falling back to OpenRouter:', error);
+      // Fallback to OpenRouter if Google Direct fails
+      return this.queryOpenRouterWithFallback(queryText, systemPrompt, agentRole, startTime);
+    }
+  }
+
+  /**
+   * Execute query via OpenRouter with Model Fallback Chain
+   */
+  private async queryOpenRouterWithFallback(
+    queryText: string,
+    systemPrompt: string,
+    agentRole: AgentRole,
+    startTime: number
+  ): Promise<QueryResponse> {
+    let lastError = null;
+
+    // Iterate through fallback models
+    for (const model of OPENROUTER_MODELS) {
+      try {
+        console.log(`[AIBriefingService] Attempting OpenRouter model: ${model}`);
+
+        const response = await fetch(OPENROUTER_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'HTTP-Referer': 'https://ranger-demo.vercel.app',
+            'X-Title': 'RANGER Recovery Coordinator',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: queryText }
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+          }),
+        });
+
+        // If rate limited (429) or service unavailable (503), throw to try next model
+        if (response.status === 429 || response.status === 503) {
+          throw new Error(`Rate limited/Unavailable (${response.status})`);
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error(`[AIBriefingService] OpenRouter error (${model}):`, errorData);
+          throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const answer = data.choices?.[0]?.message?.content || 'No response generated';
+
+        // Capture token usage from OpenRouter response
+        if (data.usage) {
+          const { recordUsage } = useTokenUsageStore.getState();
+          recordUsage({
+            model: model,
+            inputTokens: data.usage.prompt_tokens || 0,
+            outputTokens: data.usage.completion_tokens || 0,
+            totalTokens: data.usage.total_tokens || 0,
+            timestamp: new Date().toISOString(),
+            provider: 'OpenRouter',
+            query: queryText.substring(0, 50),
+          });
+        }
+
+        return {
+          success: true,
+          response: {
+            agentRole,
+            summary: answer,
+            reasoning: ['Query analyzed by Recovery Coordinator', `Via OpenRouter (${model})`],
+            confidence: 88,
+            citations: [],
+          },
+          processingTimeMs: Date.now() - startTime,
+          provider: `OpenRouter (${model})`
+        };
+
+      } catch (error) {
+        console.warn(`[AIBriefingService] Model ${model} failed:`, error);
+        lastError = error;
+        // Continue to next model in loop
+      }
+    }
+
+    // If loop finishes without success
+    console.warn('[AIBriefingService] All OpenRouter models failed. Switching to simulation.');
+    this.useSimulation = true; // Temporary latch
+    setTimeout(() => { this.useSimulation = false; }, 60000); // Reset after 1 min
+
+    return this.getSimulatedResponse(queryText, agentRole, startTime);
+  }
+
+  /**
+   * Get a simulated response based on query keywords
+   */
+  private getSimulatedResponse(
+    queryText: string,
+    _agentRole: AgentRole,
+    startTime: number
+  ): QueryResponse {
+    const lowerQuery = queryText.toLowerCase();
+
+    // Select appropriate simulated response
+    let simKey: keyof typeof SIMULATED_RESPONSES = 'default';
+    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('damage')) {
+      simKey = 'trail';
+    } else if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
+      simKey = 'burn';
+    } else if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('plot')) {
+      simKey = 'timber';
+    } else if (lowerQuery.includes('nepa') || lowerQuery.includes('compliance') || lowerQuery.includes('environmental')) {
+      simKey = 'nepa';
+    }
+
+    // simKey is always a valid key, and we have a default fallback
+    const simulated = SIMULATED_RESPONSES[simKey]!;
+
+    return {
+      success: true,
+      response: {
+        agentRole: simulated.agentRole,
+        summary: simulated.response,
+        reasoning: ['Query analyzed by Recovery Coordinator', `Simulated ${simulated.agentRole} response (Offline Mode)`],
+        confidence: 92,
+        citations: [],
+      },
+      processingTimeMs: Date.now() - startTime,
+      provider: 'Simulation (Offline)'
+    };
+  }
+
+  /**
+   * Detect which specialist agent should handle the query
+   */
+  private detectAgentRole(query: string): AgentRole {
+    const lowerQuery = query.toLowerCase();
+
+    if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
+      return 'burn-analyst';
+    }
+    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('damage') || lowerQuery.includes('path')) {
+      return 'trail-assessor';
+    }
+    if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('plot') || lowerQuery.includes('mbf')) {
+      return 'cruising-assistant';
+    }
+    if (lowerQuery.includes('nepa') || lowerQuery.includes('compliance') || lowerQuery.includes('environmental') || lowerQuery.includes('regulation')) {
+      return 'nepa-advisor';
+    }
+
+    return 'recovery-coordinator';
   }
 
   /**

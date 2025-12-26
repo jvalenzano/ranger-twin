@@ -1,0 +1,388 @@
+{
+  "metadata": {
+    "fire_id": "bootleg-2021",
+    "generated_at": "2022-04-16T10:00:00Z",
+    "source": "SIMULATION",
+    "schema_version": "1.1.0",
+    "description": "Pre-composed AgentBriefingEvent payloads for Bootleg Fire demo"
+  },
+  "events": [
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_burn_001",
+      "parent_event_id": null,
+      "correlation_id": "session_bootleg_001",
+      "timestamp": "2022-04-16T08:30:00Z",
+      "type": "insight",
+      "source_agent": "burn_analyst",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[-121.7, 42.8], [-121.0, 42.8], [-121.0, 42.1], [-121.7, 42.1], [-121.7, 42.8]]]
+          },
+          "properties": {
+            "label": "Bootleg Fire Perimeter",
+            "sector": "BOOT-001"
+          }
+        }
+      },
+      "content": {
+        "summary": "Bootleg Fire: Catastrophic burn patterns across 413,765 acres (53% high severity) - largest US fire of 2021.",
+        "detail": "Analysis of MTBS satellite imagery reveals 53% of the 413,765-acre fire experienced high-severity burn. Ten sectors identified across Fremont-Winema NF. Sprague River North (BOOT-001) and Summer Lake Basin (BOOT-005) show complete stand replacement with critical watershed and reforestation concerns. High severity: 218,400 acres. Moderate: 139,665 acres. Low: 55,700 acres. Tribal coordination required for Chiloquin Ridge and Heritage Trail areas.",
+        "suggested_actions": [
+          {
+            "action_id": "act_001",
+            "label": "Trigger Trail Assessment",
+            "target_agent": "trail_assessor",
+            "description": "Initiate damage inventory for Fremont NRT and critical trail infrastructure",
+            "rationale": "Trail network includes historic OC&E trestle and tribal cultural sites requiring special assessment"
+          },
+          {
+            "action_id": "act_002",
+            "label": "View Severity Map",
+            "target_agent": "recovery_coordinator",
+            "description": "Display burn severity overlay on 3D terrain",
+            "rationale": "Visual context for severity distribution across fire perimeter"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.91,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "MTBS burn severity classification", "confidence": 0.94, "tier": 1},
+            {"source": "Landsat 8 OLI post-fire imagery", "confidence": 0.93, "tier": 1},
+            {"source": "dNBR threshold analysis", "confidence": 0.88, "tier": 1}
+          ],
+          "analysis_confidence": 0.91,
+          "recommendation_confidence": 0.89
+        },
+        "citations": [
+          {
+            "source_type": "MTBS",
+            "id": "cite_001",
+            "uri": "https://mtbs.gov/viewer/bootleg-2021",
+            "excerpt": "Bootleg Fire burn severity mosaic, accessed 2022-04-15"
+          },
+          {
+            "source_type": "BAER",
+            "id": "cite_002",
+            "uri": "internal://reports/frwn-baer-2021.pdf",
+            "excerpt": "Fremont-Winema NF Burned Area Emergency Response Assessment, August 2021"
+          }
+        ],
+        "reasoning_chain": [
+          "Analyzing MTBS burn severity classification across 413,765-acre fire perimeter",
+          "dNBR values range from 0.18 (low) to 0.75 (high) across 10 sectors",
+          "Identifying priority areas based on severity, watershed impacts, and seed source loss",
+          "Sprague River North and Summer Lake Basin combine high severity with critical resource values",
+          "Tribal consultation zones identified for Chiloquin Ridge and Heritage Trail areas"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_trail_001",
+      "parent_event_id": "evt_burn_001",
+      "correlation_id": "session_bootleg_001",
+      "timestamp": "2022-04-16T10:15:00Z",
+      "type": "insight",
+      "source_agent": "trail_assessor",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-121.58, 42.42]
+          },
+          "properties": {
+            "label": "OC&E Historic Trestle",
+            "damage_id": "FRWN-520-DP01"
+          }
+        }
+      },
+      "content": {
+        "summary": "Critical trail damage: 4 bridges destroyed including historic OC&E trestle. $1.2M repairs needed across 87.7 miles.",
+        "detail": "Assessment of 6 trails reveals 18 damage points including 4 bridge failures. Historic OC&E Woods Line trestle requires $320K structural assessment and repair - highest priority. Fremont NRT has 42.5 miles within fire with Sprague River crossing failed. Klamath Tribes Heritage Trail requires mandatory tribal consultation before any work. Bridge failures: OC&E trestle (historic), Sprague River (steel), Log stringer (Fremont NRT), Sycan River boardwalk. 348 crew-days needed for full restoration.",
+        "suggested_actions": [
+          {
+            "action_id": "act_003",
+            "label": "Trigger Timber Cruise",
+            "target_agent": "cruising_assistant",
+            "description": "Initiate salvage assessment for accessible high-value sectors",
+            "rationale": "Trail repair and salvage operations can be coordinated for efficiency"
+          },
+          {
+            "action_id": "act_004",
+            "label": "Export TRACS Work Orders",
+            "target_agent": "recovery_coordinator",
+            "description": "Generate TRACS-compatible CSV for work order submission",
+            "rationale": "Standardized format for district maintenance budget allocation"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.88,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "TRACS trail condition survey", "confidence": 0.90, "tier": 1},
+            {"source": "R6 maintenance cost standards", "confidence": 0.92, "tier": 1},
+            {"source": "Burn severity overlay correlation", "confidence": 0.84, "tier": 2}
+          ],
+          "analysis_confidence": 0.88,
+          "recommendation_confidence": 0.85
+        },
+        "citations": [
+          {
+            "source_type": "TRACS",
+            "id": "cite_003",
+            "uri": "ranger://tracs/fsh-2309.18",
+            "excerpt": "Trail Assessment and Condition Survey Standards, FSH 2309.18"
+          },
+          {
+            "source_type": "MOA",
+            "id": "cite_004",
+            "uri": "internal://agreements/klamath-tribes-moa-2018.pdf",
+            "excerpt": "Memorandum of Agreement between USFS and Klamath Tribes, 2018"
+          }
+        ],
+        "reasoning_chain": [
+          "Correlating burn severity with trail network intersections across 6 assessed trails",
+          "Fremont NRT spans 42.5 miles within fire - flagship recreation corridor",
+          "Prioritizing based on historic significance, visitor use, and tribal requirements",
+          "OC&E trestle: State Parks partnership, historic structure, public safety critical",
+          "Heritage Trail: MANDATORY tribal consultation per MOA before any ground-disturbing work"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_timber_001",
+      "parent_event_id": "evt_trail_001",
+      "correlation_id": "session_bootleg_001",
+      "timestamp": "2022-04-16T14:00:00Z",
+      "type": "insight",
+      "source_agent": "cruising_assistant",
+      "severity": "warning",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-121.41, 42.53]
+          },
+          "properties": {
+            "label": "Sprague River Unit A - Premium Ponderosa",
+            "plot_id": "BOOT-47-ALPHA"
+          }
+        }
+      },
+      "content": {
+        "summary": "Salvage opportunity: 77.1 MBF across 8 plots. Premium ponderosa at risk of beetle damage - 18-month window.",
+        "detail": "Cruise data from 8 plots indicates significant salvage potential in fire-killed ponderosa pine and lodgepole stands. Sprague River Unit A (BOOT-47-ALPHA) contains 14.1 MBF/acre premium ponderosa with excellent access - highest priority. Yamsay Flats (BOOT-17-GOLF) has large-diameter sawlogs at 11.4 MBF/acre on flat terrain. Bly Mountain unit (BOOT-61-DELTA) requires northern spotted owl survey before operations. Species mix: 52% Ponderosa Pine, 26% Lodgepole Pine, 19% White Fir. Beetle activity beginning in highest-value units.",
+        "suggested_actions": [
+          {
+            "action_id": "act_006",
+            "label": "Trigger NEPA Review",
+            "target_agent": "nepa_advisor",
+            "description": "Initiate regulatory compliance assessment for salvage operations",
+            "rationale": "Tribal consultation, spotted owl surveys, and ESD timeline constraints require early planning"
+          },
+          {
+            "action_id": "act_007",
+            "label": "Export FSVeg Data",
+            "target_agent": "recovery_coordinator",
+            "description": "Generate FSVeg-compatible XML for NRM upload",
+            "rationale": "Cruise data meets Region 6 standards; ready for timber sale package"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.86,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "BAF 20 cruise plot data", "confidence": 0.90, "tier": 1},
+            {"source": "R6 salvage appraisal standards", "confidence": 0.88, "tier": 1},
+            {"source": "Severity-based volume extrapolation", "confidence": 0.78, "tier": 2}
+          ],
+          "analysis_confidence": 0.86,
+          "recommendation_confidence": 0.83
+        },
+        "citations": [
+          {
+            "source_type": "FSVeg",
+            "id": "cite_005",
+            "uri": "ranger://fsveg/fsh-2409.12",
+            "excerpt": "Common Stand Exam Field Guide, FSH 2409.12"
+          },
+          {
+            "source_type": "PNW Region",
+            "id": "cite_006",
+            "uri": "ranger://r6/salvage-appraisal-2022",
+            "excerpt": "Salvage Timber Appraisal Standards, R6 Supplement 2022"
+          }
+        ],
+        "reasoning_chain": [
+          "Analyzing 8 cruise plots for salvage value and extraction feasibility",
+          "Prioritizing by timber value, access costs, and regulatory constraints",
+          "Premium ponderosa in BOOT-47-ALPHA and BOOT-17-GOLF degrades fastest",
+          "Bly Mountain unit has spotted owl habitat concern - survey required per ESA Section 7",
+          "18-month window based on regional beetle activity and blue stain degradation patterns"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_nepa_001",
+      "parent_event_id": "evt_timber_001",
+      "correlation_id": "session_bootleg_001",
+      "timestamp": "2022-04-16T16:30:00Z",
+      "type": "insight",
+      "source_agent": "nepa_advisor",
+      "severity": "warning",
+      "ui_binding": {
+        "target": "panel_inject",
+        "geo_reference": null
+      },
+      "content": {
+        "summary": "Complex NEPA pathway: Tribal consultation MANDATORY for 2 units. Spotted owl surveys required. ESD available but timeline critical.",
+        "detail": "Bootleg Fire qualifies for expedited review under multiple authorities but has significant constraints. Categorical Exclusion available for hazard tree removal (250-acre limit). Emergency Situation Determination enables expedited EA - 180-day window from declaration. CRITICAL CONSTRAINTS: (1) Klamath Tribes consultation MANDATORY for Heritage Trail and Chiloquin Buffer - 60-day minimum process per MOA; (2) Northern spotted owl protocol surveys required in Bly Mountain unit - March-August survey season; (3) Wilderness adjacency at Gearhart requires additional analysis for mechanized equipment.",
+        "suggested_actions": [
+          {
+            "action_id": "act_009",
+            "label": "Initiate Tribal Consultation",
+            "target_agent": "recovery_coordinator",
+            "description": "Begin formal government-to-government consultation with Klamath Tribes",
+            "rationale": "60-day minimum process - must start immediately to avoid project delays"
+          },
+          {
+            "action_id": "act_010",
+            "label": "Schedule Owl Surveys",
+            "target_agent": "recovery_coordinator",
+            "description": "Contract protocol surveys for northern spotted owl in Bly Mountain unit",
+            "rationale": "Survey season March-August; required before any ground-disturbing activities"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.93,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "FSM 2520 emergency situation criteria", "confidence": 0.95, "tier": 1},
+            {"source": "36 CFR 220.6 CE provisions", "confidence": 0.95, "tier": 1},
+            {"source": "Klamath Tribes MOA consultation requirements", "confidence": 0.98, "tier": 1},
+            {"source": "ESA Section 7 spotted owl protocols", "confidence": 0.92, "tier": 1}
+          ],
+          "analysis_confidence": 0.93,
+          "recommendation_confidence": 0.90
+        },
+        "citations": [
+          {
+            "source_type": "FSM",
+            "id": "cite_007",
+            "uri": "https://www.fs.usda.gov/im/directives/fsm/2500/wo_2520.docx",
+            "excerpt": "FSM 2520.4 Emergency Situations - deteriorating resource condition threshold"
+          },
+          {
+            "source_type": "MOA",
+            "id": "cite_008",
+            "uri": "internal://agreements/klamath-tribes-moa-2018.pdf",
+            "excerpt": "Government-to-government consultation process, minimum 60-day timeline"
+          },
+          {
+            "source_type": "ESA",
+            "id": "cite_009",
+            "uri": "https://www.fws.gov/endangered/laws-policies/section-7.html",
+            "excerpt": "Endangered Species Act Section 7 Consultation Requirements"
+          }
+        ],
+        "reasoning_chain": [
+          "Evaluating NEPA pathway options with tribal and ESA constraints",
+          "FSM 2520.4 emergency criteria met; deteriorating resource threshold applies",
+          "Klamath Tribes MOA requires formal consultation - cannot be expedited or waived",
+          "Spotted owl critical habitat intersects Bly Mountain unit - protocol surveys mandatory",
+          "Recommending parallel process: CE for immediate trail work; tribal consultation + owl surveys for salvage"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.1.0",
+      "event_id": "evt_coordinator_001",
+      "parent_event_id": null,
+      "correlation_id": "session_bootleg_001",
+      "timestamp": "2022-04-16T18:00:00Z",
+      "type": "action_required",
+      "source_agent": "recovery_coordinator",
+      "severity": "critical",
+      "ui_binding": {
+        "target": "modal_interrupt",
+        "geo_reference": null
+      },
+      "content": {
+        "summary": "Bootleg Fire Recovery Synthesis: Tribal consultation is critical path. $4M investment, $27.1M salvage potential.",
+        "detail": "Cross-agent analysis complete for largest 2021 US wildfire. Critical dependency identified: Klamath Tribes consultation (60-day minimum) is the critical path for all operations affecting Heritage Trail and Chiloquin areas. Recommended sequence: 1) Immediately initiate tribal consultation, 2) Apply CE for trail hazard removal (parallel), 3) File ESD documentation for salvage, 4) Contract spotted owl surveys for Bly Mountain, 5) Begin Sprague River Unit A salvage once regulatory clearance obtained. Total investment: $4.0M (trails + salvage prep). Projected salvage revenue: $27.1M. Risk factors: 6-month owl survey window, tribal consultation timeline, beetle degradation.",
+        "suggested_actions": [
+          {
+            "action_id": "act_011",
+            "label": "Approve Recovery Plan",
+            "target_agent": "recovery_coordinator",
+            "description": "Advance to detailed project planning phase",
+            "rationale": "All specialist agents have provided input; synthesis complete"
+          },
+          {
+            "action_id": "act_012",
+            "label": "Export Full Briefing",
+            "target_agent": "recovery_coordinator",
+            "description": "Download complete recovery analysis as PDF with maps and citations",
+            "rationale": "Shareable format for leadership review and stakeholder briefing"
+          },
+          {
+            "action_id": "act_013",
+            "label": "Request Human Review",
+            "target_agent": "recovery_coordinator",
+            "description": "Flag synthesis for Forest Supervisor review - tribal consultation implications",
+            "rationale": "Government-to-government consultation requires supervisor-level engagement"
+          }
+        ]
+      },
+      "proof_layer": {
+        "confidence": 0.89,
+        "confidence_ledger": {
+          "inputs": [
+            {"source": "Burn Analyst severity assessment", "confidence": 0.91, "tier": 1, "notes": "evt_burn_001"},
+            {"source": "Trail Assessor damage inventory", "confidence": 0.88, "tier": 1, "notes": "evt_trail_001"},
+            {"source": "Cruising Assistant salvage analysis", "confidence": 0.86, "tier": 1, "notes": "evt_timber_001"},
+            {"source": "NEPA Advisor compliance guidance", "confidence": 0.93, "tier": 1, "notes": "evt_nepa_001"}
+          ],
+          "analysis_confidence": 0.89,
+          "recommendation_confidence": 0.86
+        },
+        "citations": [],
+        "reasoning_chain": [
+          "Synthesizing outputs from 4 specialist agents for 413,765-acre fire",
+          "Identifying critical path: tribal consultation timeline gates multiple work streams",
+          "Calculating integrated investment: $1.2M trails + $2.8M salvage prep = $4.0M",
+          "Projected return: $27.1M salvage value potential at 6.8:1 ROI",
+          "Risk assessment: tribal timeline, owl survey season, and beetle degradation create constraints"
+        ]
+      }
+    }
+  ],
+  "demo_sequence": {
+    "description": "Recommended order for demo playback via cascade triggers",
+    "steps": [
+      {"event_id": "evt_burn_001", "trigger": "lifecycle_rail_click", "rail_phase": "IMPACT", "delay_ms": 0},
+      {"event_id": "evt_trail_001", "trigger": "suggested_action", "action_id": "act_001", "delay_ms": 1500},
+      {"event_id": "evt_timber_001", "trigger": "suggested_action", "action_id": "act_003", "delay_ms": 1500},
+      {"event_id": "evt_nepa_001", "trigger": "suggested_action", "action_id": "act_006", "delay_ms": 1500},
+      {"event_id": "evt_coordinator_001", "trigger": "cascade_complete", "delay_ms": 500}
+    ]
+  }
+}

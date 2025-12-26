@@ -1,34 +1,44 @@
+/**
+ * App.tsx - Root application component and view orchestrator
+ *
+ * Manages:
+ * - View switching between NATIONAL and TACTICAL modes
+ * - Initial fixture loading
+ * - Lab route handling
+ * - View transitions (swoop animation)
+ */
+
 import React, { useEffect, useState, Suspense, lazy } from 'react';
-import Header from '@/components/layout/Header';
-import Sidebar from '@/components/layout/Sidebar';
-import InsightPanel from '@/components/panels/InsightPanel';
-import MapControls from '@/components/map/MapControls';
-import Attribution from '@/components/map/Attribution';
-import DemoTourOverlay from '@/components/tour/DemoTourOverlay';
-import ChatPanel from '@/components/chat/ChatPanel';
+
 import ErrorBoundary from '@/components/common/ErrorBoundary';
-import MapLoadingSkeleton from '@/components/common/MapLoadingSkeleton';
 import mockBriefingService from '@/services/mockBriefingService';
 import { useBriefingStore } from '@/stores/briefingStore';
-import BriefingObserver from '@/components/briefing/BriefingObserver';
-
-// Lazy load the heavy map component
-const CedarCreekMap = lazy(() => import('@/components/map/CedarCreekMap'));
+import {
+  useMissionStore,
+  useViewMode,
+  useTransitionState,
+} from '@/stores/missionStore';
+import { useFireContextStore } from '@/stores/fireContextStore';
+import { TacticalView, MissionControlView } from '@/views';
 
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const viewMode = useViewMode();
+  const transitionState = useTransitionState();
   const addEvent = useBriefingStore((state) => state.addEvent);
+  const { setViewMode, setTransitionState } = useMissionStore();
+  const { selectFire } = useFireContextStore();
 
-  // Connect to gateway on mount
+  // Connect to gateway on mount and load fixtures for active fire
   useEffect(() => {
-    // Load fixture data
+    // Load fixture data for the active fire
     mockBriefingService.loadFixtures()
       .then(() => {
         setIsReady(true);
       })
       .catch(() => {
         // Still set ready to true so we can see the UI even if fixtures fail
+        setIsReady(true);
       });
 
     // Subscribe to incoming events
@@ -41,6 +51,44 @@ const App: React.FC = () => {
     };
   }, [addEvent]);
 
+  // Handle transition completion
+  useEffect(() => {
+    if (transitionState === 'swooping_in') {
+      // Get the selected fire ID from mission store
+      const selectedFireId = useMissionStore.getState().selectedFireId;
+
+      // After transition animation, switch to tactical view
+      const timer = setTimeout(() => {
+        if (selectedFireId) {
+          selectFire(selectedFireId);
+        }
+        setViewMode('TACTICAL');
+        setTransitionState('idle');
+      }, 1500); // Match animation duration
+
+      return () => clearTimeout(timer);
+    }
+
+    if (transitionState === 'swooping_out') {
+      // After transition animation, switch to national view
+      const timer = setTimeout(() => {
+        setViewMode('NATIONAL');
+        setTransitionState('idle');
+      }, 1500); // Match animation duration
+
+      return () => clearTimeout(timer);
+    }
+  }, [transitionState, setViewMode, setTransitionState, selectFire]);
+
+  // Simple URL-based routing for experiments
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
   // Show loading state while fixtures load
   if (!isReady) {
     return (
@@ -50,61 +98,24 @@ const App: React.FC = () => {
     );
   }
 
+  // Lab Route (isolated)
+  if (currentPath === '/lab/forensic-insight') {
+    const ForensicInsightLab = lazy(() => import('@/prototypes/ForensicInsightLab'));
+    return (
+      <Suspense fallback={<div className="p-10 mono text-xs">Initializing Lab...</div>}>
+        <ForensicInsightLab />
+      </Suspense>
+    );
+  }
+
+  // View orchestration based on mission store state
   return (
     <ErrorBoundary>
-      <BriefingObserver autoConnect={false}>
-        <div className="relative w-screen h-screen overflow-hidden bg-background flex text-text-primary">
-          {/* MapLibre GL Map - Cedar Creek Fire (Willamette NF, Oregon) */}
-          <Suspense fallback={<MapLoadingSkeleton />}>
-            <CedarCreekMap />
-          </Suspense>
-
-          {/* Demo Tour Overlay - Guided Experience */}
-          <DemoTourOverlay />
-
-          {/* Lifecycle Navigation Rail */}
-          <Sidebar />
-
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col relative z-10">
-            <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />
-
-            <main className="flex-1 relative p-6 pointer-events-none">
-              <div className="pointer-events-auto contents">
-                {/* Insight Panel - Top Right */}
-                <InsightPanel />
-
-                {/* Map Controls - Bottom Right */}
-                <MapControls />
-
-                {/* Attribution - Bottom Left */}
-                <Attribution />
-
-                {/* Chat Panel - Bottom Right (toggleable) */}
-                {isChatOpen && <ChatPanel />}
-              </div>
-
-              {/* Geographic Markers */}
-              <div className="absolute top-[28%] left-[32%] flex flex-col items-center gap-1 pointer-events-none opacity-80">
-                <div className="w-2 h-2 bg-accent-cyan rounded-full shadow-[0_0_14px_cyan]" />
-                <span className="text-[11px] mono uppercase tracking-[0.3em] font-bold text-accent-cyan text-shadow-sm">
-                  Lookout Peak
-                </span>
-                <div className="bg-cyan-950/50 px-1.5 py-0.5 border border-accent-cyan/30 text-[9px] mono text-accent-cyan/80 rounded-[2px] backdrop-blur-sm">
-                  4,821 FT
-                </div>
-              </div>
-
-              <div className="absolute top-[68%] left-[58%] flex flex-col items-center gap-1 pointer-events-none opacity-80">
-                <div className="w-2 h-2 bg-safe rounded-full shadow-[0_0_14px_#10B981]" />
-                <span className="text-[11px] mono uppercase tracking-[0.3em] font-bold text-safe text-shadow-sm">
-                  Mill Creek
-                </span>
-              </div>
-            </main>
-          </div>
-        </div>
-      </BriefingObserver>
+      {viewMode === 'NATIONAL' ? (
+        <MissionControlView />
+      ) : (
+        <TacticalView />
+      )}
     </ErrorBoundary>
   );
 };

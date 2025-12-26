@@ -7,10 +7,26 @@
  */
 
 import React from 'react';
-import { AlertTriangle, Lightbulb, AlertCircle, Info, ChevronDown } from 'lucide-react';
+import {
+  AlertTriangle,
+  Lightbulb,
+  AlertCircle,
+  Info,
+  ChevronDown,
+  HelpCircle,
+  FileText,
+  MapPin,
+  Download,
+  ExternalLink,
+  ClipboardList,
+  Play,
+  Eye,
+} from 'lucide-react';
 
-import type { AgentBriefingEvent, EventType, Severity } from '@/types/briefing';
+import type { AgentBriefingEvent, EventType, Severity, SuggestedAction } from '@/types/briefing';
 import { AGENT_DISPLAY_NAMES } from '@/types/briefing';
+import { ReasoningChain } from './ReasoningChain';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface InsightCardProps {
   event: AgentBriefingEvent;
@@ -39,6 +55,60 @@ const SEVERITY_DOT: Record<Severity, string> = {
   critical: 'bg-severe',
 };
 
+/**
+ * Get icon for action based on label keywords
+ */
+const getActionIcon = (label: string): React.ReactNode => {
+  const lowerLabel = label.toLowerCase();
+  if (lowerLabel.includes('view') || lowerLabel.includes('show')) {
+    return <Eye size={12} />;
+  }
+  if (lowerLabel.includes('generate') || lowerLabel.includes('create')) {
+    return <FileText size={12} />;
+  }
+  if (lowerLabel.includes('export') || lowerLabel.includes('download')) {
+    return <Download size={12} />;
+  }
+  if (lowerLabel.includes('map') || lowerLabel.includes('locate') || lowerLabel.includes('navigate')) {
+    return <MapPin size={12} />;
+  }
+  if (lowerLabel.includes('regulatory') || lowerLabel.includes('compliance') || lowerLabel.includes('nepa')) {
+    return <ClipboardList size={12} />;
+  }
+  if (lowerLabel.includes('start') || lowerLabel.includes('run') || lowerLabel.includes('analyze')) {
+    return <Play size={12} />;
+  }
+  if (lowerLabel.includes('open') || lowerLabel.includes('link')) {
+    return <ExternalLink size={12} />;
+  }
+  return <Play size={12} />;
+};
+
+/**
+ * Determine if action should be primary (first action or contains priority keywords)
+ */
+const isPrimaryAction = (action: SuggestedAction, index: number): boolean => {
+  if (index === 0) return true;
+  const lowerLabel = action.label.toLowerCase();
+  return lowerLabel.includes('generate') || lowerLabel.includes('start') || lowerLabel.includes('create');
+};
+
+/**
+ * Get confidence tier styling based on percentage
+ * Tier 1 (90%+): Green - Direct use, no hedging
+ * Tier 2 (70-89%): Amber - Caution-flagged, human decision pending
+ * Tier 3 (<70%): Red - Demo only, synthetic
+ */
+const getConfidenceTier = (confidence: number): { bg: string; text: string; label: string } => {
+  if (confidence >= 90) {
+    return { bg: 'bg-safe/20', text: 'text-safe', label: 'High confidence - Direct use' };
+  }
+  if (confidence >= 70) {
+    return { bg: 'bg-warning/20', text: 'text-warning', label: 'Medium confidence - Verify before use' };
+  }
+  return { bg: 'bg-severe/20', text: 'text-severe', label: 'Low confidence - Demo/synthetic data' };
+};
+
 export const InsightCard: React.FC<InsightCardProps> = ({
   event,
   onDismiss,
@@ -50,6 +120,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
 
   const agentName = AGENT_DISPLAY_NAMES[event.source_agent];
   const confidencePercent = Math.round(event.proof_layer.confidence * 100);
+  const confidenceTier = getConfidenceTier(confidencePercent);
 
   return (
     <div
@@ -68,9 +139,30 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           </span>
           <span className="text-text-muted">{TYPE_ICONS[event.type]}</span>
         </div>
-        <div className="bg-surface-elevated text-text-secondary px-1.5 py-0.5 rounded text-[10px] mono font-medium">
-          {confidencePercent}% CONF
-        </div>
+        {/* Confidence badge with color tier and tooltip */}
+        <Tooltip
+          content={{
+            title: `${confidencePercent}% Confidence`,
+            description: confidenceTier.label,
+            tip: confidencePercent >= 90
+              ? 'This analysis can be used directly'
+              : confidencePercent >= 70
+              ? 'Review recommended before action'
+              : 'For demonstration purposes only',
+          }}
+        >
+          <div
+            className={`
+              ${confidenceTier.bg} ${confidenceTier.text}
+              px-2 py-0.5 rounded text-[10px] mono font-medium
+              flex items-center gap-1.5 cursor-help
+              border border-current/20
+            `}
+          >
+            <span>{confidencePercent}%</span>
+            <HelpCircle size={10} className="opacity-60" />
+          </div>
+        </Tooltip>
       </div>
 
       {/* Summary */}
@@ -99,19 +191,13 @@ export const InsightCard: React.FC<InsightCardProps> = ({
                 {event.content.detail}
               </p>
 
-              {/* Reasoning chain */}
+              {/* Reasoning chain - using new prominent component */}
               {event.proof_layer.reasoning_chain.length > 0 && (
                 <div className="border-t border-white/5 pt-3">
-                  <p className="text-[10px] uppercase tracking-wider text-text-muted mb-2">
-                    Reasoning
-                  </p>
-                  <ul className="space-y-1">
-                    {event.proof_layer.reasoning_chain.map((step, i) => (
-                      <li key={i} className="text-[11px] text-text-secondary mono">
-                        {step}
-                      </li>
-                    ))}
-                  </ul>
+                  <ReasoningChain
+                    steps={event.proof_layer.reasoning_chain}
+                    defaultExpanded={true}
+                  />
                 </div>
               )}
 
@@ -139,20 +225,35 @@ export const InsightCard: React.FC<InsightCardProps> = ({
       {/* Suggested Actions */}
       {event.content.suggested_actions.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          {event.content.suggested_actions.map((action) => (
-            <button
-              key={action.action_id}
-              onClick={() => onActionClick?.(action.action_id)}
-              className="
-                px-3 py-1.5 rounded text-[11px] font-medium
-                bg-safe/10 text-safe border border-safe/30
-                hover:bg-safe/20 transition-colors
-              "
-              title={action.rationale}
-            >
-              {action.label}
-            </button>
-          ))}
+          {event.content.suggested_actions.map((action, index) => {
+            const primary = isPrimaryAction(action, index);
+            return (
+              <Tooltip
+                key={action.action_id}
+                content={{
+                  title: action.label,
+                  description: action.rationale,
+                  tip: `Handled by ${action.target_agent.replace('-', ' ')}`,
+                }}
+              >
+                <button
+                  onClick={() => onActionClick?.(action.action_id)}
+                  className={`
+                    px-3 py-1.5 rounded text-[11px] font-medium
+                    flex items-center gap-1.5
+                    transition-all duration-150
+                    ${primary
+                      ? 'bg-safe text-slate-900 hover:bg-safe/90 shadow-sm shadow-safe/20'
+                      : 'bg-safe/10 text-safe border border-safe/30 hover:bg-safe/20'
+                    }
+                  `}
+                >
+                  {getActionIcon(action.label)}
+                  {action.label}
+                </button>
+              </Tooltip>
+            );
+          })}
         </div>
       )}
 

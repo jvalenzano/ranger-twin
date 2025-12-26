@@ -1,0 +1,235 @@
+{
+  "fire_id": "bootleg-2021",
+  "assessment_date": "2021-10-15",
+  "assessor": "Fremont-Winema NF Trail Crew",
+  "trails": [
+    {
+      "trail_id": "FRWN-101",
+      "name": "Fremont National Recreation Trail",
+      "total_miles": 130.2,
+      "miles_in_fire": 42.5,
+      "status": "closed",
+      "damage_points": [
+        {
+          "point_id": "FRWN-101-DP01",
+          "coordinates": [-121.38, 42.52],
+          "type": "bridge_failure",
+          "severity": "critical",
+          "description": "Sprague River crossing - steel bridge deck warped, approaches burned",
+          "estimated_repair_cost": 185000,
+          "crew_days": 45,
+          "photos": ["boot_frwn101_dp01_a.jpg", "boot_frwn101_dp01_b.jpg"]
+        },
+        {
+          "point_id": "FRWN-101-DP02",
+          "coordinates": [-121.42, 42.48],
+          "type": "hazard_trees",
+          "severity": "high",
+          "description": "Dense snag field - 85+ trees within falling distance of trail",
+          "estimated_repair_cost": 42000,
+          "crew_days": 14,
+          "photos": ["boot_frwn101_dp02.jpg"]
+        },
+        {
+          "point_id": "FRWN-101-DP03",
+          "coordinates": [-121.35, 42.58],
+          "type": "tread_erosion",
+          "severity": "moderate",
+          "description": "Switchback section - multiple debris flow channels crossed trail",
+          "estimated_repair_cost": 28000,
+          "crew_days": 10,
+          "photos": []
+        },
+        {
+          "point_id": "FRWN-101-DP04",
+          "coordinates": [-121.28, 42.62],
+          "type": "bridge_failure",
+          "severity": "high",
+          "description": "Log stringer bridge - complete loss to fire, approaches unstable",
+          "estimated_repair_cost": 65000,
+          "crew_days": 18,
+          "photos": ["boot_frwn101_dp04.jpg"]
+        }
+      ],
+      "notes": "Flagship trail - high public interest. Coordinate with Pacific Crest Trail Association for shared sections."
+    },
+    {
+      "trail_id": "FRWN-205",
+      "name": "Gearhart Mountain Trail",
+      "total_miles": 12.8,
+      "miles_in_fire": 12.8,
+      "status": "closed",
+      "damage_points": [
+        {
+          "point_id": "FRWN-205-DP01",
+          "coordinates": [-121.18, 42.38],
+          "type": "hazard_trees",
+          "severity": "critical",
+          "description": "Entire corridor requires hazard tree assessment - lodgepole mortality",
+          "estimated_repair_cost": 95000,
+          "crew_days": 32,
+          "photos": ["boot_frwn205_dp01.jpg"]
+        },
+        {
+          "point_id": "FRWN-205-DP02",
+          "coordinates": [-121.22, 42.41],
+          "type": "tread_erosion",
+          "severity": "high",
+          "description": "Summit approach - severe gully formation, rock armoring needed",
+          "estimated_repair_cost": 52000,
+          "crew_days": 16,
+          "photos": []
+        },
+        {
+          "point_id": "FRWN-205-DP03",
+          "coordinates": [-121.15, 42.36],
+          "type": "signage_destroyed",
+          "severity": "moderate",
+          "description": "All trailhead and junction signs burned - 8 locations",
+          "estimated_repair_cost": 12000,
+          "crew_days": 4,
+          "photos": []
+        }
+      ],
+      "notes": "Popular wilderness access - designated Wilderness; mechanized equipment restrictions apply."
+    },
+    {
+      "trail_id": "FRWN-312",
+      "name": "Sycan River Trail",
+      "total_miles": 8.4,
+      "miles_in_fire": 6.2,
+      "status": "closed",
+      "damage_points": [
+        {
+          "point_id": "FRWN-312-DP01",
+          "coordinates": [-121.52, 42.48],
+          "type": "bridge_failure",
+          "severity": "high",
+          "description": "Puncheon boardwalk - 200ft section burned through wetland crossing",
+          "estimated_repair_cost": 78000,
+          "crew_days": 22,
+          "photos": ["boot_frwn312_dp01_a.jpg", "boot_frwn312_dp01_b.jpg"]
+        },
+        {
+          "point_id": "FRWN-312-DP02",
+          "coordinates": [-121.48, 42.51],
+          "type": "hazard_trees",
+          "severity": "moderate",
+          "description": "Riparian corridor snags - 40+ trees, coordinate with fish habitat",
+          "estimated_repair_cost": 24000,
+          "crew_days": 8,
+          "photos": []
+        }
+      ],
+      "notes": "Critical for Sycan Marsh wildlife viewing access. Coordinate clearing with ODFW."
+    },
+    {
+      "trail_id": "FRWN-418",
+      "name": "Campbell Lake Loop",
+      "total_miles": 4.2,
+      "miles_in_fire": 4.2,
+      "status": "closed",
+      "damage_points": [
+        {
+          "point_id": "FRWN-418-DP01",
+          "coordinates": [-121.48, 42.58],
+          "type": "facility_damage",
+          "severity": "high",
+          "description": "Trailhead parking and restroom destroyed - full reconstruction",
+          "estimated_repair_cost": 145000,
+          "crew_days": 40,
+          "photos": ["boot_frwn418_dp01.jpg"]
+        },
+        {
+          "point_id": "FRWN-418-DP02",
+          "coordinates": [-121.51, 42.61],
+          "type": "hazard_trees",
+          "severity": "moderate",
+          "description": "Lakeshore section - hazard trees threaten dispersed campsites",
+          "estimated_repair_cost": 18000,
+          "crew_days": 6,
+          "photos": []
+        },
+        {
+          "point_id": "FRWN-418-DP03",
+          "coordinates": [-121.46, 42.59],
+          "type": "tread_erosion",
+          "severity": "low",
+          "description": "Minor washout at inlet crossing - rock placement needed",
+          "estimated_repair_cost": 5000,
+          "crew_days": 2,
+          "photos": []
+        }
+      ],
+      "notes": "High-use family destination. Recreation fee area - coordinate with concessionaire."
+    },
+    {
+      "trail_id": "FRWN-520",
+      "name": "OC&E Woods Line State Trail",
+      "total_miles": 100.0,
+      "miles_in_fire": 18.6,
+      "status": "restricted",
+      "damage_points": [
+        {
+          "point_id": "FRWN-520-DP01",
+          "coordinates": [-121.58, 42.42],
+          "type": "bridge_failure",
+          "severity": "critical",
+          "description": "Historic trestle - significant structural damage, engineering assessment required",
+          "estimated_repair_cost": 320000,
+          "crew_days": 90,
+          "photos": ["boot_frwn520_dp01_a.jpg", "boot_frwn520_dp01_b.jpg", "boot_frwn520_dp01_c.jpg"]
+        },
+        {
+          "point_id": "FRWN-520-DP02",
+          "coordinates": [-121.62, 42.38],
+          "type": "hazard_trees",
+          "severity": "moderate",
+          "description": "Rail corridor snags - 65 trees identified along 3-mile stretch",
+          "estimated_repair_cost": 32000,
+          "crew_days": 11,
+          "photos": []
+        }
+      ],
+      "notes": "Multi-use rail trail (hike, bike, horse, winter). State Parks partnership - shared jurisdiction."
+    },
+    {
+      "trail_id": "FRWN-615",
+      "name": "Klamath Tribes Heritage Trail",
+      "total_miles": 6.8,
+      "miles_in_fire": 3.4,
+      "status": "closed",
+      "damage_points": [
+        {
+          "point_id": "FRWN-615-DP01",
+          "coordinates": [-121.61, 42.48],
+          "type": "cultural_site",
+          "severity": "critical",
+          "description": "Interpretive shelter and signage burned - tribal consultation required",
+          "estimated_repair_cost": 85000,
+          "crew_days": 25,
+          "photos": ["boot_frwn615_dp01.jpg"]
+        },
+        {
+          "point_id": "FRWN-615-DP02",
+          "coordinates": [-121.58, 42.51],
+          "type": "hazard_trees",
+          "severity": "low",
+          "description": "Scattered snags near cultural features - careful removal needed",
+          "estimated_repair_cost": 15000,
+          "crew_days": 5,
+          "photos": []
+        }
+      ],
+      "notes": "MANDATORY: All work requires Klamath Tribes consultation. Cultural resources inventory before clearing."
+    }
+  ],
+  "summary": {
+    "total_trails_assessed": 6,
+    "total_damage_points": 18,
+    "total_estimated_cost": 1201000,
+    "total_crew_days": 348,
+    "bridge_failures": 4,
+    "critical_hazard_zones": 3
+  }
+}

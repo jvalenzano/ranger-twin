@@ -74,11 +74,12 @@ ranger/
 ├── infrastructure/
 │   ├── terraform/             # GCP IaC
 │   └── docker/                # Container definitions
-├── data/                      # Digital twin data (Git LFS)
-│   ├── documents/             # NEPA docs, FSM/FSH (PDF)
-│   ├── layers/                # Vector data (GeoJSON)
-│   ├── rasters/               # Imagery (GeoTIFF)
-│   └── synthetic/             # Generated test data
+├── data/
+│   ├── fixtures/              # Phase 1: Cedar Creek simulation data (ACTIVE)
+│   ├── layers/                # Phase 2+: Real GeoJSON (empty)
+│   ├── rasters/               # Phase 2+: Satellite imagery (empty)
+│   ├── synthetic/             # Phase 2+: AI-generated tests (empty)
+│   └── documents/             # NEPA reference docs
 └── docs/                      # Documentation
 ```
 
@@ -112,6 +113,9 @@ docker-compose up -d
 # Frontend: http://localhost:5173
 # API: http://localhost:8000
 # API Docs: http://localhost:8000/docs
+
+> [!NOTE]
+> For detailed setup, testing procedures, and verification workflows, see the **[Local Development & Testing Guide](docs/onboarding/LOCAL-DEVELOPMENT-GUIDE.md)**.
 ```
 
 ### Development
@@ -165,6 +169,7 @@ cd apps/command-console && pnpm test
 | Document | Description |
 |----------|-------------|
 | [PROJECT-BRIEF.md](docs/PROJECT-BRIEF.md) | Master document: vision, agents, 6-week sprint plan |
+| [GLOSSARY.md](docs/GLOSSARY.md) | Comprehensive glossary of 100+ acronyms and technical terms |
 | [BRAND-ARCHITECTURE.md](docs/brand/BRAND-ARCHITECTURE.md) | Naming conventions and brand hierarchy |
 | [STAKEHOLDER-MESSAGING.md](docs/brand/STAKEHOLDER-MESSAGING.md) | Audience-specific messaging guide |
 | [GCP-ARCHITECTURE.md](docs/architecture/GCP-ARCHITECTURE.md) | Infrastructure patterns, cost breakdown |

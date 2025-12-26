@@ -9,13 +9,30 @@
     },
     "geometry": {
       "type": "Polygon",
-      "coordinates": [[
-        [-122.1460, 43.5756],
-        [-122.1460, 43.8012],
-        [-121.9008, 43.8012],
-        [-121.9008, 43.5756],
-        [-122.1460, 43.5756]
-      ]]
+      "coordinates": [
+        [
+          [
+            -122.1460,
+            43.5756
+          ],
+          [
+            -122.1460,
+            43.8012
+          ],
+          [
+            -121.9008,
+            43.8012
+          ],
+          [
+            -121.9008,
+            43.5756
+          ],
+          [
+            -122.1460,
+            43.5756
+          ]
+        ]
+      ]
     }
   },
   "burnSeverity": {
@@ -33,13 +50,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.0847, 43.7523],
-            [-122.0234, 43.7523],
-            [-122.0234, 43.8012],
-            [-122.0847, 43.8012],
-            [-122.0847, 43.7523]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.0847,
+                43.7523
+              ],
+              [
+                -122.0234,
+                43.7523
+              ],
+              [
+                -122.0234,
+                43.8012
+              ],
+              [
+                -122.0847,
+                43.8012
+              ],
+              [
+                -122.0847,
+                43.7523
+              ]
+            ]
+          ]
         }
       },
       {
@@ -54,13 +88,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.0847, 43.6934],
-            [-122.0234, 43.6934],
-            [-122.0234, 43.7523],
-            [-122.0847, 43.7523],
-            [-122.0847, 43.6934]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.0847,
+                43.6934
+              ],
+              [
+                -122.0234,
+                43.6934
+              ],
+              [
+                -122.0234,
+                43.7523
+              ],
+              [
+                -122.0847,
+                43.7523
+              ],
+              [
+                -122.0847,
+                43.6934
+              ]
+            ]
+          ]
         }
       },
       {
@@ -75,13 +126,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.9621, 43.7523],
-            [-121.9008, 43.7523],
-            [-121.9008, 43.8012],
-            [-121.9621, 43.8012],
-            [-121.9621, 43.7523]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.9621,
+                43.7523
+              ],
+              [
+                -121.9008,
+                43.7523
+              ],
+              [
+                -121.9008,
+                43.8012
+              ],
+              [
+                -121.9621,
+                43.8012
+              ],
+              [
+                -121.9621,
+                43.7523
+              ]
+            ]
+          ]
         }
       },
       {
@@ -96,13 +164,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-121.9621, 43.6934],
-            [-121.9008, 43.6934],
-            [-121.9008, 43.7523],
-            [-121.9621, 43.7523],
-            [-121.9621, 43.6934]
-          ]]
+          "coordinates": [
+            [
+              [
+                -121.9621,
+                43.6934
+              ],
+              [
+                -121.9008,
+                43.6934
+              ],
+              [
+                -121.9008,
+                43.7523
+              ],
+              [
+                -121.9621,
+                43.7523
+              ],
+              [
+                -121.9621,
+                43.6934
+              ]
+            ]
+          ]
         }
       },
       {
@@ -117,13 +202,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.1460, 43.6345],
-            [-122.0847, 43.6345],
-            [-122.0847, 43.6934],
-            [-122.1460, 43.6934],
-            [-122.1460, 43.6345]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.1460,
+                43.6345
+              ],
+              [
+                -122.0847,
+                43.6345
+              ],
+              [
+                -122.0847,
+                43.6934
+              ],
+              [
+                -122.1460,
+                43.6934
+              ],
+              [
+                -122.1460,
+                43.6345
+              ]
+            ]
+          ]
         }
       },
       {
@@ -138,13 +240,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.1460, 43.5756],
-            [-122.0847, 43.5756],
-            [-122.0847, 43.6345],
-            [-122.1460, 43.6345],
-            [-122.1460, 43.5756]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.1460,
+                43.5756
+              ],
+              [
+                -122.0847,
+                43.5756
+              ],
+              [
+                -122.0847,
+                43.6345
+              ],
+              [
+                -122.1460,
+                43.6345
+              ],
+              [
+                -122.1460,
+                43.5756
+              ]
+            ]
+          ]
         }
       },
       {
@@ -159,13 +278,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.0234, 43.5756],
-            [-121.9621, 43.5756],
-            [-121.9621, 43.6345],
-            [-122.0234, 43.6345],
-            [-122.0234, 43.5756]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.0234,
+                43.5756
+              ],
+              [
+                -121.9621,
+                43.5756
+              ],
+              [
+                -121.9621,
+                43.6345
+              ],
+              [
+                -122.0234,
+                43.6345
+              ],
+              [
+                -122.0234,
+                43.5756
+              ]
+            ]
+          ]
         }
       },
       {
@@ -180,13 +316,30 @@
         },
         "geometry": {
           "type": "Polygon",
-          "coordinates": [[
-            [-122.0847, 43.6345],
-            [-122.0234, 43.6345],
-            [-122.0234, 43.6934],
-            [-122.0847, 43.6934],
-            [-122.0847, 43.6345]
-          ]]
+          "coordinates": [
+            [
+              [
+                -122.0847,
+                43.6345
+              ],
+              [
+                -122.0234,
+                43.6345
+              ],
+              [
+                -122.0234,
+                43.6934
+              ],
+              [
+                -122.0847,
+                43.6934
+              ],
+              [
+                -122.0847,
+                43.6345
+              ]
+            ]
+          ]
         }
       }
     ]
@@ -201,9 +354,15 @@
           "trail_name": "Waldo Lake Trail #3536",
           "type": "BRIDGE_FAILURE",
           "severity": 5,
-          "description": "Complete loss of 40ft timber bridge crossing North Fork"
+          "description": "Complete loss of 40ft timber bridge crossing North Fork."
         },
-        "geometry": { "type": "Point", "coordinates": [-122.0412, 43.7234] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0412,
+            43.7234
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -212,9 +371,15 @@
           "trail_name": "Waldo Lake Trail #3536",
           "type": "DEBRIS_FLOW",
           "severity": 4,
-          "description": "Major debris accumulation. Trail obliterated for 200 meters."
+          "description": "Major debris accumulation from post-fire erosion. Trail obliterated for 200 meters."
         },
-        "geometry": { "type": "Point", "coordinates": [-122.0289, 43.7456] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0289,
+            43.7456
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -223,9 +388,32 @@
           "trail_name": "Waldo Lake Trail #3536",
           "type": "HAZARD_TREES",
           "severity": 3,
-          "description": "Corridor of standing dead timber. ~45 hazard trees."
+          "description": "Corridor of standing dead timber. ~45 hazard trees identified."
         },
-        "geometry": { "type": "Point", "coordinates": [-122.0156, 43.7623] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0156,
+            43.7623
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "WL-004",
+          "trail_name": "Waldo Lake Trail #3536",
+          "type": "TREAD_EROSION",
+          "severity": 2,
+          "description": "Minor rill erosion on south-facing slope."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9834,
+            43.7891
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -236,7 +424,13 @@
           "severity": 5,
           "description": "Puncheon bridge completely destroyed."
         },
-        "geometry": { "type": "Point", "coordinates": [-121.9345, 43.7123] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9345,
+            43.7123
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -245,9 +439,66 @@
           "trail_name": "Bobby Lake Trail #3526",
           "type": "HAZARD_TREES",
           "severity": 4,
-          "description": "Dense stand of fire-killed lodgepole pine. Over 100 hazard trees."
+          "description": "Dense stand of fire-killed lodgepole pine."
         },
-        "geometry": { "type": "Point", "coordinates": [-121.9278, 43.7234] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9278,
+            43.7234
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "BL-003",
+          "trail_name": "Bobby Lake Trail #3526",
+          "type": "DEBRIS_FLOW",
+          "severity": 3,
+          "description": "Moderate debris deposit. Trail passable but requires clearing and drainage restoration."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9189,
+            43.7345
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "CL-001",
+          "trail_name": "Charlton Lake Trail #3578",
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "30 hazard trees identified along corridor."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9012,
+            43.7689
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "CL-002",
+          "trail_name": "Charlton Lake Trail #3578",
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Trailhead sign and two wayfinding markers destroyed. Posts remain."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.8923,
+            43.7756
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -258,7 +509,13 @@
           "severity": 5,
           "description": "Primary bridge over Hills Creek destroyed. Critical access point."
         },
-        "geometry": { "type": "Point", "coordinates": [-122.1234, 43.6567] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1234,
+            43.6567
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -267,9 +524,83 @@
           "trail_name": "Hills Creek Trail #3510",
           "type": "DEBRIS_FLOW",
           "severity": 5,
-          "description": "Massive debris flow. Trail buried for 400 meters."
+          "description": "Massive debris flow from steep slopes. Trail completely buried for 400 meters."
         },
-        "geometry": { "type": "Point", "coordinates": [-122.1089, 43.6678] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1089,
+            43.6678
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-003",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Large diameter Douglas-fir mortality. High value timber, also high risk."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0945,
+            43.6789
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "HC-004",
+          "trail_name": "Hills Creek Trail #3510",
+          "type": "TREAD_EROSION",
+          "severity": 3,
+          "description": "Significant gully formation on steep section."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0823,
+            43.6856
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "TL-001",
+          "trail_name": "Timpanogas Lake Trail #3527",
+          "type": "HAZARD_TREES",
+          "severity": 2,
+          "description": "Scattered hazard trees. Low density, manageable with hand crews."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1345,
+            43.5923
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "damage_id": "TL-002",
+          "trail_name": "Timpanogas Lake Trail #3527",
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Lake overlook interpretive sign damaged. Frame salvageable."
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1267,
+            43.5989
+          ]
+        }
       }
     ]
   },
@@ -286,7 +617,13 @@
           "mbf_per_acre": 32.4,
           "salvage_value_per_acre": 2174
         },
-        "geometry": { "type": "Point", "coordinates": [-122.1156, 43.6567] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1156,
+            43.6567
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -298,7 +635,13 @@
           "mbf_per_acre": 42.8,
           "salvage_value_per_acre": 2914
         },
-        "geometry": { "type": "Point", "coordinates": [-122.1089, 43.6623] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1089,
+            43.6623
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -310,7 +653,13 @@
           "mbf_per_acre": 8.2,
           "salvage_value_per_acre": 152
         },
-        "geometry": { "type": "Point", "coordinates": [-122.0523, 43.7678] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0523,
+            43.7678
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -322,7 +671,13 @@
           "mbf_per_acre": 24.6,
           "salvage_value_per_acre": 1159
         },
-        "geometry": { "type": "Point", "coordinates": [-122.0478, 43.6589] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0478,
+            43.6589
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -334,7 +689,13 @@
           "mbf_per_acre": 6.4,
           "salvage_value_per_acre": 189
         },
-        "geometry": { "type": "Point", "coordinates": [-121.9234, 43.7745] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9234,
+            43.7745
+          ]
+        }
       },
       {
         "type": "Feature",
@@ -346,7 +707,13 @@
           "mbf_per_acre": 48.2,
           "salvage_value_per_acre": 3225
         },
-        "geometry": { "type": "Point", "coordinates": [-122.1278, 43.6478] }
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.1278,
+            43.6478
+          ]
+        }
       }
     ]
   }

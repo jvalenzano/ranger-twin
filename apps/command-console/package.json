@@ -8,14 +8,21 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet for command-console\" && exit 0",
+    "generate:types": "cd ../../packages/agent-common && python scripts/generate-types.py"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@turf/area": "^7.3.1",
+    "@turf/distance": "^7.3.1",
+    "@turf/helpers": "^7.3.1",
     "lucide-react": "^0.468.0",
     "maplibre-gl": "^5.15.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.11.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
