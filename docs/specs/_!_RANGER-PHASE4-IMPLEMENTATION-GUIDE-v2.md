@@ -19,6 +19,10 @@
 | useADKStream React Hook | Existing | ✅ Implemented |
 | SSE Client Parser | Existing | ✅ Implemented |
 | MCP Fixtures Server | `services/mcp-fixtures/` | ✅ 4 tools working |
+| ADK Chat Service | `fbef1b4` | ✅ NEW - Bridges chat UI to ADK |
+| Dual-mode chatStore | `fbef1b4` | ✅ NEW - ADK + Legacy modes |
+| ADK mode toggle UI | `b78a26b` | ✅ NEW - Visual mode indicator |
+| Agent tests | 645 tests | ✅ ALL PASSING |
 
 ### Agent Hierarchy (Verified)
 
@@ -40,15 +44,26 @@ coordinator (gemini-2.0-flash)
 
 ### 🔄 In Progress
 
-- React Command Console integration
-- main.py FastAPI + ADK orchestrator
-- End-to-end testing
+- End-to-end testing with GOOGLE_API_KEY
+- Cloud Run deployment configuration
 
 ### ⏳ Pending
 
 - Cloud Run deployment
 - Firestore session integration
 - Production hardening
+- Load testing (10-20 concurrent SSE connections)
+
+### Environment Variables
+
+```bash
+# Required for ADK
+GOOGLE_API_KEY=your_key_here
+
+# Frontend (.env.local)
+VITE_USE_ADK=true                    # Enable ADK mode
+VITE_ADK_URL=http://localhost:8000   # ADK orchestrator URL
+```
 
 ---
 
