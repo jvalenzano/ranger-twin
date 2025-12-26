@@ -128,6 +128,15 @@ Fire lifecycle follows a **4-phase model** aligned with practitioner terminology
 RANGER uses a Skills-First Multi-Agent Architecture where domain expertise is
 packaged as portable Skills that enhance Agents running on Google ADK.
 
+### ADK Naming Requirements
+
+**CRITICAL:** Google ADK requires directory names to be valid Python identifiers.
+- Agent directories MUST use **underscores**, not hyphens: `cruising_assistant` ✓, `cruising-assistant` ✗
+- Skill directories within agents can use hyphens (e.g., `skills/csv-insight/`)
+- Agent `name` in `agent.py` should also use underscores: `name="cruising_assistant"`
+
+This is enforced by Pydantic validation in the ADK App class.
+
 ### Agent Roster
 
 | Agent | Role | Skills |
@@ -138,33 +147,35 @@ packaged as portable Skills that enhance Agents running on Google ADK.
 | **Cruising Assistant** | Timber inventory, salvage | `volume-estimation`, `salvage-assessment`, `cruise-methodology` |
 | **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `pathway-decision`, `compliance-timeline`, `documentation` |
 
-All agents located in `agents/<agent-name>/` with skills in `agents/<agent-name>/skills/`.
+All agents located in `agents/<agent_name>/` with skills in `agents/<agent_name>/skills/`.
 
 ### Skills Library
 
-**14 skills across 5 agents** (each skill has `skill.md`, `scripts/`, `resources/`, `tests/`):
+**16 skills across 5 agents** (each skill has `skill.md`, `scripts/`, `resources/`, `tests/`):
 
 ```
 agents/
 ├── coordinator/skills/
 │   ├── portfolio-triage/      # Fire prioritization scoring
 │   └── delegation/            # Query routing to specialists
-├── burn-analyst/skills/
+├── burn_analyst/skills/
 │   ├── mtbs-classification/   # MTBS severity classification
 │   ├── soil-burn-severity/    # Soil burn analysis
 │   └── boundary-mapping/      # Fire perimeter mapping
-├── trail-assessor/skills/
+├── trail_assessor/skills/
 │   ├── damage-classification/ # USFS Type I-IV damage
 │   ├── closure-decision/      # Risk-based closure eval
 │   └── recreation-priority/   # Usage-weighted prioritization
-├── cruising-assistant/skills/
+├── cruising_assistant/skills/
 │   ├── volume-estimation/     # MBF/CCF timber volume
 │   ├── salvage-assessment/    # Economic viability
-│   └── cruise-methodology/    # Sampling protocols
-└── nepa-advisor/skills/
+│   ├── cruise-methodology/    # Sampling protocols
+│   └── csv-insight/           # CSV data analysis
+└── nepa_advisor/skills/
     ├── pathway-decision/      # CE/EA/EIS determination
     ├── compliance-timeline/   # Milestone scheduling
-    └── documentation/         # Checklist generation
+    ├── documentation/         # Checklist generation
+    └── pdf-extraction/        # PDF document extraction
 
 skills/                        # Shared/foundation skills (future)
 ├── foundation/
@@ -173,15 +184,16 @@ skills/                        # Shared/foundation skills (future)
 
 ### Agent Directory Structure
 
-Each agent follows this pattern:
+Each agent follows this pattern (note: underscores required for ADK):
 ```
-agent-name/
-├── agent.py          # ADK Agent definition (exports root_agent)
-├── config.yaml       # Runtime configuration
-├── __init__.py       # Package marker
-├── .env.example      # Environment template
-├── skills/           # Agent-specific skills
-└── tests/            # pytest test suite
+agent_name/              # MUST use underscores, not hyphens
+├── agent.py             # ADK Agent definition (exports root_agent)
+├── config.yaml          # Runtime configuration
+├── __init__.py          # Package marker
+├── .env.example         # Environment template
+├── skills/              # Agent-specific skills (can use hyphens)
+│   └── skill-name/      # Skill directories can use hyphens
+└── tests/               # pytest test suite
 ```
 
 ### Key Specifications
