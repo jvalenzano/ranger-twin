@@ -31,7 +31,7 @@ if BOUNDARY_PATH.exists():
     sys.path.insert(0, str(BOUNDARY_PATH))
 
 
-def assess_severity(fire_id: str, sectors: list[dict] | None = None, include_geometry: bool = False) -> dict:
+def assess_severity(fire_id: str, sectors_json: str = "[]", include_geometry: bool = False) -> dict:
     """
     Assess soil burn severity for a fire incident.
 
@@ -41,8 +41,9 @@ def assess_severity(fire_id: str, sectors: list[dict] | None = None, include_geo
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        sectors: Optional pre-loaded sector data with dNBR values.
-                 If not provided, loads from Cedar Creek fixtures.
+        sectors_json: JSON array of sector data with dNBR values. Example:
+            '[{"id": "sector-1", "dnbr": 0.45, "acres": 500}]'
+            If empty, loads from Cedar Creek fixtures.
         include_geometry: Whether to include GeoJSON in response (default: False)
 
     Returns:
@@ -58,7 +59,9 @@ def assess_severity(fire_id: str, sectors: list[dict] | None = None, include_geo
             - data_sources: Sources used (e.g., MTBS, imagery date)
             - recommendations: BAER assessment recommendations
     """
+    import json
     from assess_severity import execute
+    sectors = json.loads(sectors_json) if sectors_json and sectors_json != "[]" else None
     return execute({
         "fire_id": fire_id,
         "sectors": sectors,
@@ -66,7 +69,7 @@ def assess_severity(fire_id: str, sectors: list[dict] | None = None, include_geo
     })
 
 
-def classify_mtbs(fire_id: str, sectors: list[dict] | None = None, include_class_map: bool = False) -> dict:
+def classify_mtbs(fire_id: str, sectors_json: str = "[]", include_class_map: bool = False) -> dict:
     """
     Classify fire sectors using MTBS (Monitoring Trends in Burn Severity) protocol.
 
@@ -75,8 +78,9 @@ def classify_mtbs(fire_id: str, sectors: list[dict] | None = None, include_class
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        sectors: Optional pre-loaded sector data with dNBR values.
-                 If not provided, loads from Cedar Creek fixtures.
+        sectors_json: JSON array of sector data with dNBR values. Example:
+            '[{"id": "sector-1", "dnbr": 0.45, "acres": 500}]'
+            If empty, loads from Cedar Creek fixtures.
         include_class_map: Whether to include GeoJSON in response (default: False)
 
     Returns:
@@ -90,7 +94,9 @@ def classify_mtbs(fire_id: str, sectors: list[dict] | None = None, include_class
             - mtbs_metadata: MTBS source, imagery date, thresholds
             - reasoning_chain: Step-by-step classification decisions
     """
+    import json
     from classify_mtbs import execute
+    sectors = json.loads(sectors_json) if sectors_json and sectors_json != "[]" else None
     return execute({
         "fire_id": fire_id,
         "sectors": sectors,
@@ -98,7 +104,7 @@ def classify_mtbs(fire_id: str, sectors: list[dict] | None = None, include_class
     })
 
 
-def validate_boundary(fire_id: str, sectors: list[dict] | None = None, tolerance: float = 5.0) -> dict:
+def validate_boundary(fire_id: str, sectors_json: str = "[]", tolerance: float = 5.0) -> dict:
     """
     Validate fire perimeter geometry and calculate boundary statistics.
 
@@ -107,8 +113,9 @@ def validate_boundary(fire_id: str, sectors: list[dict] | None = None, tolerance
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        sectors: Optional pre-loaded sector data with geometry.
-                 If not provided, loads from Cedar Creek fixtures.
+        sectors_json: JSON array of sector data with geometry. Example:
+            '[{"id": "sector-1", "geometry": {...}, "reported_acres": 500}]'
+            If empty, loads from Cedar Creek fixtures.
         tolerance: Acreage discrepancy tolerance percentage (default: 5.0)
 
     Returns:
@@ -124,7 +131,9 @@ def validate_boundary(fire_id: str, sectors: list[dict] | None = None, tolerance
             - validation_status: VALID, WARNING, or INVALID
             - reasoning_chain: Step-by-step validation decisions
     """
+    import json
     from validate_boundary import execute
+    sectors = json.loads(sectors_json) if sectors_json and sectors_json != "[]" else None
     return execute({
         "fire_id": fire_id,
         "sectors": sectors,

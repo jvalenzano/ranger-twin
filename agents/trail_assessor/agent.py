@@ -31,7 +31,7 @@ if PRIORITY_PATH.exists():
     sys.path.insert(0, str(PRIORITY_PATH))
 
 
-def classify_damage(fire_id: str, trail_id: str | None = None, damage_points: list[dict] | None = None) -> dict:
+def classify_damage(fire_id: str, trail_id: str = "", damage_points_json: str = "[]") -> dict:
     """
     Classify trail damage into USFS Type I-IV categories.
 
@@ -40,9 +40,10 @@ def classify_damage(fire_id: str, trail_id: str | None = None, damage_points: li
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        trail_id: Optional specific trail to analyze (analyzes all if not provided)
-        damage_points: Optional pre-loaded damage point data.
-                      If not provided, loads from Cedar Creek fixtures.
+        trail_id: Specific trail to analyze (analyzes all if empty)
+        damage_points_json: JSON array of damage point data. Example:
+            '[{"trail_id": "TR-101", "location": "mile 2.3", "severity": 4, "type": "washout"}]'
+            If empty, loads from Cedar Creek fixtures.
 
     Returns:
         Dictionary containing:
@@ -57,15 +58,17 @@ def classify_damage(fire_id: str, trail_id: str | None = None, damage_points: li
             - data_sources: Sources used
             - recommendations: Damage mitigation recommendations
     """
+    import json
     from classify_damage import execute
+    damage_points = json.loads(damage_points_json) if damage_points_json and damage_points_json != "[]" else None
     return execute({
         "fire_id": fire_id,
-        "trail_id": trail_id,
+        "trail_id": trail_id if trail_id else None,
         "damage_points": damage_points,
     })
 
 
-def evaluate_closure(fire_id: str, trail_id: str | None = None, season: str = "summer") -> dict:
+def evaluate_closure(fire_id: str, trail_id: str = "", season: str = "summer") -> dict:
     """
     Determine risk-based trail closure recommendations.
 
@@ -74,7 +77,7 @@ def evaluate_closure(fire_id: str, trail_id: str | None = None, season: str = "s
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        trail_id: Optional specific trail to analyze (analyzes all if not provided)
+        trail_id: Specific trail to analyze (analyzes all if empty)
         season: Season for risk adjustment (summer, fall, winter, spring)
 
     Returns:
@@ -93,12 +96,12 @@ def evaluate_closure(fire_id: str, trail_id: str | None = None, season: str = "s
     from evaluate_closure import execute
     return execute({
         "fire_id": fire_id,
-        "trail_id": trail_id,
+        "trail_id": trail_id if trail_id else None,
         "season": season,
     })
 
 
-def prioritize_trails(fire_id: str, budget: float | None = None, include_quick_wins: bool = True) -> dict:
+def prioritize_trails(fire_id: str, budget: float = 0.0, include_quick_wins: bool = True) -> dict:
     """
     Prioritize trail repairs using multi-factor analysis.
 
@@ -107,7 +110,7 @@ def prioritize_trails(fire_id: str, budget: float | None = None, include_quick_w
 
     Args:
         fire_id: Unique fire identifier (e.g., "cedar-creek-2022")
-        budget: Optional budget constraint in dollars (no limit if not provided)
+        budget: Budget constraint in dollars (0 = no limit)
         include_quick_wins: Whether to identify quick-win opportunities (default: True)
 
     Returns:
@@ -126,7 +129,7 @@ def prioritize_trails(fire_id: str, budget: float | None = None, include_quick_w
     from prioritize_trails import execute
     return execute({
         "fire_id": fire_id,
-        "budget": budget,
+        "budget": budget if budget > 0 else None,
         "include_quick_wins": include_quick_wins,
     })
 

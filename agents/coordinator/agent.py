@@ -27,7 +27,7 @@ if DELEGATION_PATH.exists():
     sys.path.insert(0, str(DELEGATION_PATH))
 
 
-def portfolio_triage(fires: list[dict], top_n: int | None = None) -> dict:
+def portfolio_triage(fires_json: str, top_n: int = 0) -> dict:
     """
     Calculate portfolio triage scores for BAER prioritization.
 
@@ -36,13 +36,9 @@ def portfolio_triage(fires: list[dict], top_n: int | None = None) -> dict:
     baer_implementation, in_restoration) with weighted scoring.
 
     Args:
-        fires: List of fire objects, each containing:
-            - id: Unique fire identifier
-            - name: Display name (e.g., "Cedar Creek Fire")
-            - severity: "critical" | "high" | "moderate" | "low"
-            - acres: Total burned acres
-            - phase: "active" | "baer_assessment" | "baer_implementation" | "in_restoration"
-        top_n: Optional limit on number of results to return (default: all fires)
+        fires_json: JSON array of fire objects. Example:
+            '[{"id": "cedar-creek", "name": "Cedar Creek Fire", "severity": "high", "acres": 12000, "phase": "baer_assessment"}]'
+        top_n: Limit on number of results (0 = all fires)
 
     Returns:
         Dictionary containing:
@@ -51,11 +47,13 @@ def portfolio_triage(fires: list[dict], top_n: int | None = None) -> dict:
             - confidence: Overall confidence in the ranking (0-1)
             - summary: Brief portfolio overview for briefings
     """
+    import json
     from calculate_priority import execute
-    return execute({"fires": fires, "top_n": top_n})
+    fires = json.loads(fires_json) if fires_json else []
+    return execute({"fires": fires, "top_n": top_n if top_n > 0 else None})
 
 
-def delegate_query(query: str, context: dict | None = None) -> dict:
+def delegate_query(query: str, context_json: str = "{}") -> dict:
     """
     Route a user query to the appropriate specialist agent.
 
@@ -65,10 +63,8 @@ def delegate_query(query: str, context: dict | None = None) -> dict:
 
     Args:
         query: The user's natural language query
-        context: Optional session context containing:
-            - active_fire: Currently selected fire ID
-            - previous_agent: Last agent that responded
-            - session_id: Current session identifier
+        context_json: JSON string with session context. Example:
+            '{"active_fire": "cedar-creek-2022", "previous_agent": "burn-analyst"}'
 
     Returns:
         Dictionary containing:
@@ -80,8 +76,10 @@ def delegate_query(query: str, context: dict | None = None) -> dict:
             - requires_synthesis: Whether response needs multi-agent synthesis
             - synthesis_agents: List of agents needed for synthesis (if applicable)
     """
+    import json
     from route_query import execute
-    return execute({"query": query, "context": context or {}})
+    context = json.loads(context_json) if context_json else {}
+    return execute({"query": query, "context": context})
 
 
 # Initialize Coordinator Agent
