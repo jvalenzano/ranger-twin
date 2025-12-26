@@ -11,7 +11,8 @@
 Read the following files to understand the current state:
 
 1. `docs/_!_IMPLEMENTATION-ROADMAP.md` - Master roadmap with phases 0-2 complete
-2. `agents/burn-analyst/agent.py` - Reference implementation for specialist agents
+2. `docs/specs/SKILL-RUNTIME-SPEC.md` - **Authoritative Skill Runtime Standard**
+3. `agents/burn-analyst/agent.py` - Reference implementation for specialist agents
 3. `agents/burn-analyst/skills/soil-burn-severity/` - Reference skill implementation
 4. `agents/coordinator/implementation.py` - CoordinatorService with routing
 5. `packages/skill-runtime/skill_runtime/testing.py` - MCPMockProvider pattern
@@ -202,7 +203,7 @@ Each skill follows this structure (from Burn Analyst):
 agents/{agent}/skills/{skill-name}/
 ├── skill.md                    # Triggers, inputs, outputs, examples
 ├── scripts/
-│   └── {action}.py             # def execute(inputs: dict) -> dict
+│   └── {action}.py             # def execute(inputs: dict, tools: dict) -> dict
 ├── resources/
 │   └── *.json                  # Reference data, thresholds
 └── tests/
@@ -212,11 +213,12 @@ agents/{agent}/skills/{skill-name}/
 
 ### Key Patterns to Follow:
 
-1. **Pure Functions**: `def execute(inputs: dict) -> dict`
-2. **Reasoning Chain**: Include `reasoning_chain` in output for proof layer
-3. **Confidence Scores**: Return confidence based on data quality
-4. **Fixture-Based Testing**: Use `data/fixtures/` for test data
-5. **Tool Registration**: Register in agent.py with proper path setup
+1. **Explicit Tool Injection**: `def execute(inputs: dict, tools: dict) -> dict`. No global tool usage.
+2. **Pure Functions**: functional core, imperative shell.
+3. **Reasoning Chain**: Include `reasoning_chain` in output for proof layer
+4. **Confidence Scores**: Return confidence based on data quality
+5. **Fixture-Based Testing**: Use `data/fixtures/` for test data
+6. **Tool Registration**: Register in agent.py with proper path setup
 
 ---
 

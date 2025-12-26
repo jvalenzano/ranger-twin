@@ -1,5 +1,13 @@
 # Handoff Brief: Phase 1 Strategic Alignment
 
+> [!CAUTION]
+> **CRITICAL INSTRUCTION: BRANCH ENFORCEMENT**
+> You MUST work on the **`mega-build`** branch.
+> *   Do NOT switch back to `feature/*` branches.
+> *   Do NOT switch to `develop` or `main`.
+> *   All Phase 1 & 2 work has been consolidated here.
+> *   **Verification:** Run `git branch --show-current` immediately. If it is not `mega-build`, switch to it: `git checkout mega-build`.
+
 **To:** Claude Code (Senior Developer)
 **From:** Antigravity (Strategic Planner)
 **Date:** December 25, 2025
