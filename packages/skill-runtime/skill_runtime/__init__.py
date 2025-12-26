@@ -2,66 +2,41 @@
 RANGER Skill Runtime
 
 Utilities for loading, parsing, and executing RANGER skills.
+Provides testing infrastructure for deterministic skill validation.
 
-This package is a placeholder for Phase 0. Full implementation
-will be completed in Phase 1.
+Phase 2 Implementation (Hybrid Approach):
+- MCPMockProvider for fixture injection in tests
+- Basic skill discovery and loading
+- Script execution support
+
+Deferred to Phase 3:
+- Full SkillTestHarness wrapper
+- mcp.json registry integration
+- AgentBriefingEvent wrapping
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-# Placeholder exports - to be implemented in Phase 1
+from .loader import (
+    SkillMetadata,
+    discover_skills,
+    execute_skill,
+    load_skill_script,
+    parse_skill_md,
+)
+from .testing import (
+    MCPMockProvider,
+    SkillExecutionContext,
+)
+
 __all__ = [
+    # Loader
+    "SkillMetadata",
     "discover_skills",
-    "load_skill",
-    "execute_script",
+    "execute_skill",
+    "load_skill_script",
+    "parse_skill_md",
+    # Testing
+    "MCPMockProvider",
+    "SkillExecutionContext",
 ]
-
-
-def discover_skills(paths: list[str]) -> list[dict]:
-    """
-    Discover skills from the given paths.
-
-    Args:
-        paths: List of directories to scan for skills
-
-    Returns:
-        List of skill metadata dictionaries
-
-    Note:
-        Placeholder implementation for Phase 0.
-    """
-    raise NotImplementedError("Skill discovery will be implemented in Phase 1")
-
-
-def load_skill(skill_name: str) -> dict:
-    """
-    Load a skill by name.
-
-    Args:
-        skill_name: Name of the skill to load
-
-    Returns:
-        Skill data dictionary
-
-    Note:
-        Placeholder implementation for Phase 0.
-    """
-    raise NotImplementedError("Skill loading will be implemented in Phase 1")
-
-
-def execute_script(skill_name: str, script_name: str, inputs: dict) -> dict:
-    """
-    Execute a skill script.
-
-    Args:
-        skill_name: Name of the skill
-        script_name: Name of the script to execute
-        inputs: Input parameters for the script
-
-    Returns:
-        Script output dictionary
-
-    Note:
-        Placeholder implementation for Phase 0.
-    """
-    raise NotImplementedError("Script execution will be implemented in Phase 1")
