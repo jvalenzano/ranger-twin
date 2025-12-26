@@ -30,6 +30,11 @@ SALVAGE_PATH = SKILLS_DIR / "salvage-assessment" / "scripts"
 if SALVAGE_PATH.exists():
     sys.path.insert(0, str(SALVAGE_PATH))
 
+# CSV Insight skill
+CSV_INSIGHT_PATH = SKILLS_DIR / "csv-insight" / "scripts"
+if CSV_INSIGHT_PATH.exists():
+    sys.path.insert(0, str(CSV_INSIGHT_PATH))
+
 
 def recommend_methodology(
     fire_id: str,
@@ -173,6 +178,53 @@ def assess_salvage(
     })
 
 
+def analyze_csv_data(
+    file_path: str,
+    analysis_type: str = "summary",
+    group_by: str = "",
+    filters: str = "{}"
+) -> dict:
+    """
+    Analyze timber inventory CSV files with statistics and insights.
+
+    Provides summary statistics, species breakdowns, volume aggregations,
+    and data quality assessments for cruise data, plot summaries, and
+    timber sale tabulations.
+
+    Args:
+        file_path: Path to CSV file (can be filename in skill data directory)
+        analysis_type: Type of analysis: "summary", "species", "volume", "quality"
+        group_by: Column to group by for aggregation (e.g., "species", "plot_id")
+        filters: JSON string with filter conditions. Example:
+            '{"species": "PSME", "dbh_min": 12}'
+
+    Returns:
+        Dictionary containing:
+            - success: Whether analysis succeeded
+            - file_name: Name of analyzed file
+            - row_count: Total rows in dataset
+            - column_count: Total columns
+            - columns: List of column names with types
+            - summary: Statistical summary by column
+            - species_breakdown: Species distribution (if species column exists)
+            - quality_issues: Data quality problems detected
+            - quality_score: Overall data quality score (0-1)
+            - insights: Key findings and observations
+            - error: Error message if analysis failed
+    """
+    import json
+    from analyze_csv import execute
+
+    filter_dict = json.loads(filters) if filters else {}
+
+    return execute({
+        "file_path": file_path,
+        "analysis_type": analysis_type,
+        "group_by": group_by if group_by else None,
+        "filters": filter_dict,
+    })
+
+
 # Initialize Cruising Assistant Agent
 # Export as `root_agent` per ADK convention for `adk run` command
 root_agent = Agent(
@@ -251,6 +303,29 @@ The tool assesses viability based on:
 
 Returns priority plots with viability scores, urgency levels, and salvage windows.
 
+### analyze_csv_data
+Use this tool when users ask about:
+- Analyzing timber cruise CSV files
+- Data summaries or statistics from cruise data
+- Species distribution in CSV data
+- Volume aggregations from tabular data
+- Data quality assessment for inventory files
+
+The tool provides:
+- Summary statistics (mean, median, min, max, std dev)
+- Species breakdown with counts and percentages
+- Volume aggregations by species or plot
+- Data quality checks against valid ranges
+- Insights and observations from the data
+
+Input parameters:
+- file_path: Path to CSV file (required)
+- analysis_type: "summary", "species", "volume", or "quality"
+- group_by: Column for aggregation (e.g., "species", "plot_id")
+- filters: JSON string with filter conditions
+
+Returns column summaries, species breakdown, quality score, and insights.
+
 ## Response Format
 When presenting timber assessments:
 1. Start with fire identification and overview
@@ -294,7 +369,7 @@ When asked "What's the salvage potential for Cedar Creek?":
 5. Provide salvage window timelines
 6. Recommend immediate harvest priorities
 """,
-    tools=[recommend_methodology, estimate_volume, assess_salvage],
+    tools=[recommend_methodology, estimate_volume, assess_salvage, analyze_csv_data],
 )
 
 # Alias for backward compatibility

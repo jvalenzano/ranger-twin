@@ -1,0 +1,23 @@
+{
+  "description": "Standard FSVeg column name mappings for timber cruise data",
+  "species_columns": ["species", "SPECIES", "Species", "spp", "SPP", "sp_code", "SPCD"],
+  "dbh_columns": ["dbh", "DBH", "Dbh", "diameter", "DIAMETER", "dia"],
+  "height_columns": ["height", "HEIGHT", "Height", "ht", "HT", "total_height", "merch_height"],
+  "volume_columns": ["volume", "VOLUME", "vol", "VOL", "volume_bf", "bf", "BF", "mbf", "MBF"],
+  "plot_columns": ["plot_id", "PLOT_ID", "plot", "PLOT", "plot_num"],
+  "defect_columns": ["defect", "DEFECT", "defect_pct", "def_pct", "cull", "CULL"],
+  "species_codes": {
+    "PSME": {"name": "Douglas-fir", "blue_stain_months": 12},
+    "TSHE": {"name": "Western hemlock", "blue_stain_months": 6},
+    "THPL": {"name": "Western redcedar", "blue_stain_months": 24},
+    "ABGR": {"name": "Grand fir", "blue_stain_months": 8},
+    "ABAM": {"name": "Pacific silver fir", "blue_stain_months": 8},
+    "PICO": {"name": "Lodgepole pine", "blue_stain_months": 6},
+    "PIPO": {"name": "Ponderosa pine", "blue_stain_months": 18},
+    "PILA": {"name": "Sugar pine", "blue_stain_months": 12},
+    "PIMO": {"name": "Western white pine", "blue_stain_months": 10},
+    "CANO": {"name": "Alaska yellow-cedar", "blue_stain_months": 36},
+    "ALRU": {"name": "Red alder", "blue_stain_months": 3},
+    "ACMA": {"name": "Bigleaf maple", "blue_stain_months": 4}
+  }
+}
