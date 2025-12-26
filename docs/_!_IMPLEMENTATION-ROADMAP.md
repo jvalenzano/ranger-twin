@@ -39,7 +39,7 @@ This document is the **north star** for RANGER implementation. It consolidates s
 |-----------|--------|-------|
 | **Mission Control UI** | ✅ Complete | 4-phase model, triage scoring, portfolio view |
 | **NIFC Integration** | ✅ Complete | Real fire data from NIFC API |
-| **OpenRouter Integration** | ✅ Complete | LLM gateway for AI features |
+
 | **Site Analysis Feature** | ✅ Complete | Feature-triggered AI analysis |
 | **Fixture Data** | ✅ Complete | Cedar Creek, Bootleg fire fixtures |
 | **Map Visualization** | ✅ Complete | MapLibre GL with fire markers |
@@ -374,6 +374,7 @@ User: "What's the burn severity for Cedar Creek Fire?"
 | Cruise Methodology | Standard cruise protocols |
 | Volume Estimation | Board foot calculations |
 | Salvage Assessment | Viability criteria, market factors |
+| **CSV Insight Skill** | (Adopted) Automated table analysis |
 
 #### 3C: NEPA Advisor (Week 3-4)
 
@@ -382,6 +383,7 @@ User: "What's the burn severity for Cedar Creek Fire?"
 | Pathway Decision | CE vs EA vs EIS logic |
 | Documentation | Doc requirements, templates |
 | NEPA Library | RAG over NEPA corpus |
+| **PDF Extraction Skill** | (Adopted) Regulatory doc parsing |
 
 #### Success Criteria for Phase 3
 
@@ -405,6 +407,8 @@ User: "What's the burn severity for Cedar Creek Fire?"
 | Geospatial Analysis | Burn Analyst | High — universal pattern |
 | Document Generation | Multiple | High — standard outputs |
 | Federal Reporting | New | High — congressional reporting |
+| **Theme Factory** | (Adopted) | High — enforces USDA branding |
+| **Tapestry Skill** | (Adopted) | High — connects fire/trail/NEPA knowledge |
 
 #### MCP Servers to Build
 

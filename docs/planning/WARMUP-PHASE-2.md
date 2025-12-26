@@ -35,7 +35,7 @@ We implemented the Coordinator agent with two functional skills:
 
 4. **Frontend Integration** (`apps/command-console/src/services/aiBriefingService.ts`)
    - Updated to call RANGER API as primary provider
-   - Fallback chain: RANGER API → Google Direct → OpenRouter → Simulation
+   - Fallback chain: RANGER API → Google Direct → Simulation
    - New env vars: `VITE_RANGER_API_URL`, `VITE_USE_RANGER_API`
 
 ### Test Results (All Passing)

@@ -57,5 +57,6 @@ I have created initial implementations to demonstrate the required patterns. You
 1.  **Hardening**: Add proper error handling and logging to `CoordinatorService`.
 2.  **Mocking**: Populate `MCPMockProvider` with realistic fixtures for Cedar Creek.
 3.  **Tests**: Implement the integration tests described in the updated `SKILL-RUNTIME-SPEC`.
+4.  **Adopted Skills**: I have updated the Roadmap to include 4 external skills (`pdf-skill`, `csv-summarizer`, `tapestry`, `theme-factory`) starting in Phase 3. Review the Roadmap for details.
 
 Good luck with the build. The strategy is solid.
