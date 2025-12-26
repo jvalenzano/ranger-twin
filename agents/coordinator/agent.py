@@ -6,12 +6,29 @@ This agent is responsible for delegating queries to specialty agents
 and synthesizing domain-specific skills for cross-functional insights.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
+
+Sub-Agents:
+    - burn_analyst: Fire severity, MTBS classification, soil burn severity
+    - trail_assessor: Trail damage, closures, recreation infrastructure
+    - cruising_assistant: Timber inventory, volume estimation, salvage
+    - nepa_advisor: NEPA compliance, CE/EA/EIS pathway decisions
 """
 
 import sys
 from pathlib import Path
 
 from google.adk.agents import Agent
+
+# Import specialist agents for multi-agent orchestration
+# Note: Using relative imports within agents/ directory
+AGENTS_DIR = Path(__file__).parent.parent
+if str(AGENTS_DIR) not in sys.path:
+    sys.path.insert(0, str(AGENTS_DIR))
+
+from burn_analyst.agent import root_agent as burn_analyst
+from trail_assessor.agent import root_agent as trail_assessor
+from cruising_assistant.agent import root_agent as cruising_assistant
+from nepa_advisor.agent import root_agent as nepa_advisor
 
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -147,6 +164,7 @@ Always structure your responses with:
 4. Confidence level and data sources
 """,
     tools=[portfolio_triage, delegate_query],
+    sub_agents=[burn_analyst, trail_assessor, cruising_assistant, nepa_advisor],
 )
 
 # Alias for backward compatibility
@@ -157,3 +175,4 @@ if __name__ == "__main__":
     print(f"Model: {root_agent.model}")
     print(f"Description: {root_agent.description}")
     print(f"Tools: {[t.__name__ for t in root_agent.tools]}")
+    print(f"Sub-agents: {[a.name for a in root_agent.sub_agents]}")
