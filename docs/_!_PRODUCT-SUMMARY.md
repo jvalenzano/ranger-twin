@@ -1,6 +1,9 @@
 # RANGER: Product Summary
-
-**Version:** 1.0  
+ 
+ > [!IMPORTANT]
+ > **Architectural Source of Truth:** This document has been aligned with [ADR-005: Skills-First Architecture](file:///Users/jvalenzano/Projects/ranger-twin/docs/adr/ADR-005-skills-first-architecture.md). RANGER has moved from a FastAPI-centric microservice model to a **Skills-First paradigm** powered by the **Google ADK** and **Gemini 2.0 Flash**.
+ 
+ **Version:** 1.0  
 **Date:** December 24, 2025  
 **Purpose:** A single document the product team can rally behind
 
@@ -14,17 +17,17 @@
 
 ## What Is RANGER?
 
-RANGER is an **Agentic Operating System for Natural Resource Recovery**. It's not a dashboard, not a GIS viewer, and not another federal IT system with AI bolted on. It's a **multi-agent coordination platform** where specialized AI agents—each expert in a domain—talk to each other, synthesize insights, and present human decision-makers with actionable briefings.
+RANGER is an **Agentic Operating System for Natural Resource Recovery**. It's not a dashboard, not a GIS viewer, and not another federal IT system with AI bolted on. It's a **multi-agent coordination platform** where specialized AI agents—each expert in a domain and enhanced by portable **Skills**—talk to each other, synthesize insights, and present human decision-makers with actionable briefings.
 
 Think of it as a **digital crew** for post-fire recovery:
 
-| Agent | Role | What It Does |
+| Agent | Role | Domain Expertise (Skills) |
 |-------|------|--------------|
-| **Burn Analyst** | Fire Impact Specialist | Analyzes burn severity, identifies erosion risks, maps recovery priorities |
-| **Trail Assessor** | Infrastructure Damage Expert | Catalogs trail damage, estimates repair costs, generates work orders |
-| **Cruising Assistant** | Timber Salvage Advisor | Analyzes timber mortality, calculates salvage value, prioritizes harvest |
-| **NEPA Advisor** | Compliance Specialist | Searches regulations, identifies NEPA pathways, drafts compliance memos |
-| **Recovery Coordinator** | Mission Commander | Orchestrates all agents, synthesizes cross-domain insights, generates unified briefings |
+| **Burn Analyst** | Fire Impact Specialist | MTBS Classification, Soil Burn Severity, Boundary Mapping |
+| **Trail Assessor** | Infrastructure Damage Expert | Damage Classification, Closure Decision, Repair Prioritization |
+| **Cruising Assistant** | Timber Salvage Advisor | Cruise Methodology, Volume Estimation, Salvage Assessment |
+| **NEPA Advisor** | Compliance Specialist | Pathway Decision (CE/EA/EIS), Documentation, RAG over FSM/FSH |
+| **Recovery Coordinator** | Mission Commander | Delegation, Portfolio Triage, Cross-Domain Synthesis |
 
 **The key insight:** These agents don't just answer questions—they coordinate. When the Burn Analyst finds high-severity burn in a sector, it automatically briefs the Recovery Coordinator to task the Trail Assessor with prioritizing trails in that area. The system thinks across domains the way a well-functioning team would.
 
@@ -257,16 +260,14 @@ RANGER aligns perfectly with the mandate. The question isn't "should we build th
 │                     RANGER COMMAND CONSOLE                          │
 │                   (React + MapLibre + Tailwind)                     │
 ├─────────────────────────────────────────────────────────────────────┤
-│                     API GATEWAY (FastAPI)                           │
-├─────────────────────────────────────────────────────────────────────┤
 │                   RECOVERY COORDINATOR (ADK)                        │
 │         Routes queries → Aggregates results → Generates briefings   │
 ├────────────┬────────────┬────────────┬────────────┬─────────────────┤
 │    BURN    │   TRAIL    │  CRUISING  │    NEPA    │                 │
 │  ANALYST   │  ASSESSOR  │  ASSISTANT │   ADVISOR  │   Sub-agents    │
-│   (ADK)    │   (ADK)    │   (ADK)    │   (ADK)    │                 │
+│ (Skills)   │ (Skills)   │ (Skills)   │ (Skills)   │     (ADK)       │
 ├────────────┴────────────┴────────────┴────────────┴─────────────────┤
-│                  TOOLS (Python functions)                           │
+│                  TOOLS (Python functions / MCP)                      │
 │   query_burn_severity() │ query_trail_damage() │ search_regulations()│
 ├─────────────────────────────────────────────────────────────────────┤
 │     Phase 1: Fixture data          │    Phase 2: Real APIs          │
@@ -279,9 +280,9 @@ RANGER aligns perfectly with the mandate. The question isn't "should we build th
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Agent framework | Google ADK | FedRAMP authorized, simple orchestration |
-| Agent pattern | ToolCallingAgents | Sub-second latency (vs. code generation) |
+| Agent pattern | Skills-First | Domain expertise encapsulated in portable skills (ADR-005) |
 | Frontend | React + MapLibre | Open source, performant, well-supported |
-| Backend | FastAPI | Async-native, fast, type-safe |
+| Backend | FastAPI / MCP | Lifecycle APIs and data connectivity |
 | Database | PostGIS + pgvector | Spatial + vector search in one |
 | Cloud | GCP | FedRAMP High, Vertex AI integration |
 

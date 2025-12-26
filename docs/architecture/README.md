@@ -9,9 +9,9 @@ This directory contains the comprehensive architecture specifications for the RA
 | Document | Purpose | Audience | Status |
 |----------|---------|----------|--------|
 | **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)** | **Primary Architecture Decision.** Multi-agent + Skills hybrid model | All team members | **NORTH STAR** |
-| **[AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md)** | Multi-agent orchestration design using Google ADK | All team members | Active |
+| **[AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md)** | Legacy microservice orchestration design (Superseded) | All team members | **[AMENDED]** |
 | **[GCP-DEPLOYMENT.md](GCP-DEPLOYMENT.md)** | Deploy 7 Cloud Run services (agents, gateway, UI) | DevOps, Developers | Phase 2 Planning |
-| **[DATA-INGESTION-ADAPTERS.md](DATA-INGESTION-ADAPTERS.md)** | Normalize external data (InciWeb, IRWIN, Survey123) | Backend Developers | Phase 2 Spec |
+| **[DATA-INGESTION-ADAPTERS.md](DATA-INGESTION-ADAPTERS.md)** | Normalize external data (InciWeb, IRWIN, Survey123) via MCP | Backend Developers | **[AMENDED]** |
 | **[FIXTURE-DATA-FORMATS.md](FIXTURE-DATA-FORMATS.md)** | Phase 1 fixture schemas and production mappings | All Developers | Active |
 | **[AGENT-MESSAGING-PROTOCOL.md](AGENT-MESSAGING-PROTOCOL.md)** | AgentBriefingEvent schema and UI binding contracts | Frontend/Backend | Active |
 | **[FIELD-AI-STRATEGY.md](FIELD-AI-STRATEGY.md)** | Field Companion PWA strategy (Phase 2+) | Product | Future Vision |
@@ -31,7 +31,7 @@ Aligned with **ADR-005** and the **IMPLEMENTATION-ROADMAP**, RANGER is built on 
 
 ### 2. **Agent Pipeline Layer** (Orchestration)
 - **Recovery Coordinator** (Google ADK) - Orchestrates specialist agents
-- **Shared Session State** (Redis) - Persistence across agent interactions
+- **ADK Session State** - Global state managed by Google ADK (supersedes Redis)
 - See: [AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md), [AGENT-MESSAGING-PROTOCOL.md](AGENT-MESSAGING-PROTOCOL.md)
 
 ### 3. **Skills Library Layer** (Domain Expertise)

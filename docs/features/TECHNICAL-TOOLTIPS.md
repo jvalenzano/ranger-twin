@@ -1,5 +1,8 @@
 # DX Tooltips Feature Specification
 
+> [!IMPORTANT]
+> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. Technical explanations in tooltips should cross-reference specific **Skills Library** packages and **MCP Servers** for data-flow logic.
+
 ## Executive Summary
 
 **DX Tooltips** (Developer Experience Tooltips) is a feature that provides contextual, in-app technical documentation. When enabled, UI elements display purple indicator dots that, when clicked, reveal detailed explanations of data flows, system integrations, and technical implementation details.

@@ -1,6 +1,9 @@
 # RANGER Strategic Reframe
-
-**Purpose:** Document the architectural clarity achieved through strategic analysis
+ 
+ > [!IMPORTANT]
+ > **Architectural Source of Truth:** This document has been aligned with [ADR-005: Skills-First Architecture](file:///Users/jvalenzano/Projects/ranger-twin/docs/adr/ADR-005-skills-first-architecture.md). RANGER has moved from a FastAPI-centric microservice model to a **Skills-First paradigm** powered by the **Google ADK** and **Gemini 2.0 Flash**.
+ 
+ **Purpose:** Document the architectural clarity achieved through strategic analysis
 **See Also:** [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) for Phase 1 implementation boundaries
 
 ---
@@ -38,13 +41,13 @@ The "agents" aren't products—they're **workflow lenses** on the same underlyin
 
 ## What the "Agents" Actually Are
 
-| Agent Name | What It Really Is |
-|------------|-------------------|
-| **Burn Analyst** | IMPACT lifecycle view + MTBS/RAVG API + Gemini narrative |
-| **Trail Assessor** | DAMAGE lifecycle view + field capture + Gemini video analysis |
-| **Cruising Assistant** | TIMBER lifecycle view + field capture + Gemini multimodal |
-| **NEPA Advisor** | COMPLIANCE lifecycle view + FSM/FSH RAG + Gemini citations |
-| **Recovery Coordinator** | Cross-lifecycle orchestration + Gemini synthesis |
+| Agent Name | What It Really Is | Specialist Skills |
+|------------|-------------------|-------------------|
+| **Burn Analyst** | IMPACT Specialist | MTBS Classification, Soil Burn Severity |
+| **Trail Assessor** | DAMAGE Specialist | Damage Classification, Repair Priority |
+| **Cruising Assistant** | TIMBER Specialist | Volume Estimation, Salvage Assessment |
+| **NEPA Advisor** | COMPLIANCE Specialist | FSM/FSH RAG, Pathway Decision |
+| **Recovery Coordinator** | Root Orchestrator | Delegation, Portfolio Triage, Synthesis |
 
 **Key distinction:**
 - We're not competing with RAVG—we're **wrapping it**

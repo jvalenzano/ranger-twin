@@ -1,5 +1,8 @@
 # Mission Control: Portfolio Triage Console
 
+> [!IMPORTANT]
+> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. Triage logic and explainability are orchestrated via the Skills Library.
+
 **Status:** Implementation Ready
 **Architecture Alignment:** ADR-005 (Skills-First)
 **Primary North Star:** [IMPLEMENTATION-ROADMAP.md](../IMPLEMENTATION-ROADMAP.md)

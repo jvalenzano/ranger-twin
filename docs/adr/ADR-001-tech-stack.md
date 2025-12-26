@@ -1,10 +1,11 @@
 # ADR-001: Technology Stack Selection
 
-**Status:** Accepted
+**Status:** Amended (Superseded in part by [ADR-005](./ADR-005-skills-first-architecture.md))
 **Date:** 2025-12-19
 **Decision Makers:** TechTrend Federal - Digital Twin Team
 
-> **Note:** This ADR documents the full stack architecture. Phase 1 uses a subset of these technologies with simulated data inputs. See [DATA-SIMULATION-STRATEGY.md](../DATA-SIMULATION-STRATEGY.md) for Phase 1 scope boundaries.
+> [!IMPORTANT]
+> This ADR has been amended. While the base technology choices (React, PostgreSQL) remain valid, the primary orchestration layer has shifted from a FastAPI-led microservice approach to a **Skills-First architecture** using the **Google ADK** and **MCP**. See [ADR-005](./ADR-005-skills-first-architecture.md) for the definitive orchestration standard.
 
 ## Context
 
@@ -162,4 +163,5 @@ Compare to commercial alternatives:
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2025-12-19 | Accepted | Team consensus; aligns with zero-licensing philosophy |
-| 2025-12-22 | Amended | Updated AI/ML stack: Gemini 2.0 → 3 Flash, removed LangChain (pure ADK), added Gemini File Search Tool for RAG. See ADR-003 for detailed rationale. |
+| 2025-12-22 | Amended | Updated AI/ML stack: Gemini 2.0 → 3 Flash, removed LangChain (pure ADK), added Gemini File Search Tool for RAG. |
+| 2025-12-25 | Amended | Re-prioritized **Google ADK + MCP** as the primary orchestration layer over legacy FastAPI services. See ADR-005. |

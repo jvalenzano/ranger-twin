@@ -1,8 +1,5 @@
 # Agent Interface Specification (v1.0)
 
-> [!IMPORTANT]
-> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. All agent communication occurs via the Google ADK using specialized **Skills**.
-
 **Status:** Active
 **Last Updated:** December 25, 2025
 **Owner:** RANGER Team
@@ -24,7 +21,7 @@ Development Kit).
 |----------|-------|
 | Name | `coordinator` |
 | Role | Root orchestrator |
-| Model | `gemini-3-flash` |
+| Model | `gemini-2.0-flash` |
 | Location | `agents/coordinator/` |
 
 **Responsibilities:**
@@ -76,16 +73,17 @@ In production, agents register with the Central Runtime for discovery and load b
 
 ### 3. Query Processing
 ```
-User Query → App Shell → Coordinator → Delegation Skill → Specialist Skill → Response → Coordinator → User
+User Query → Coordinator → Delegation Skill → Specialist → Response → Coordinator → User
 ```
 
 **Flow Details:**
-1. User sends query via chat interface (App Shell)
-2. Coordinator agent processes query
-3. Coordinator invokes Delegation skill to route to specialized Skill
-4. Specialist Skill processes domain-specific query via ADK Tool Calling
-5. Response flows back through Coordinator
-6. Coordinator synthesizes and formats final response
+1. User sends query via chat interface
+2. FastAPI endpoint receives request
+3. Coordinator agent processes query
+4. Coordinator invokes Delegation skill to route
+5. Specialist agent processes domain-specific query
+6. Response flows back through Coordinator
+7. Coordinator synthesizes and formats final response
 
 ---
 
@@ -150,7 +148,7 @@ Each agent must have a `config.yaml` at its root:
 
 agent:
   name: agent-name
-  model: gemini-3-flash
+  model: gemini-2.0-flash
   version: 0.1.0
   description: "Agent description"
   role: specialist  # or orchestrator

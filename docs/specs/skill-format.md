@@ -76,13 +76,8 @@ conflicts with other skills.
 ### 4. Instructions (Required)
 ```markdown
 ## Instructions
-Step-by-step reasoning for the agent:
-1. First, [Action]
-2. Then, [Evaluation]
-3. Finally, [Output]
+Detailed instructions for the agent on how to execute this skill.
 ```
-Provide clear, numbered steps the LLM should follow. Include decision points
-and branching logic if applicable.
 
 ### 5. Inputs (Required)
 ```markdown
@@ -92,13 +87,6 @@ and branching logic if applicable.
 | param_name | string | Yes | Description |
 ```
 
-**Supported Types:**
-- `string` - Text values
-- `number` - Integer or float
-- `boolean` - true/false
-- `object` - JSON object
-- `array` - JSON array
-
 ### 6. Outputs (Required)
 ```markdown
 ## Outputs
@@ -107,7 +95,18 @@ and branching logic if applicable.
 | result_name | string | Description |
 ```
 
-### 7. Resources (Optional)
+### 7. Reasoning Chain (Required)
+```markdown
+## Reasoning Chain
+Step-by-step reasoning for the agent:
+1. First, [Action]
+2. Then, [Evaluation]
+3. Finally, [Output]
+```
+Provide clear, numbered steps the LLM should follow. Include decision points
+and branching logic if applicable. This is critical for the "Proof Layer" in the UI.
+
+### 8. Resources (Optional)
 ```markdown
 ## Resources
 - `thresholds.json` - Classification thresholds

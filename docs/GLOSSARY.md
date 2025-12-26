@@ -21,6 +21,7 @@
 | **MCP Server** | Model Context Protocol server for data connectivity |
 | **MCP Connectivity** | Data integration layer separate from expertise layer |
 | **skill.md** | Core instruction file in every skill folder |
+| **Specialist Agent** | An ADK agent expert in a domain, enhanced by portable Skills |
 
 ---
 
@@ -429,7 +430,7 @@
 ### FastAPI
 **Official Name:** FastAPI
 
-**Description:** Modern Python web framework for building APIs with automatic OpenAPI documentation, type hints, and high performance.
+**Description:** Modern Python web framework for building APIs with automatic OpenAPI documentation. In RANGER, FastAPI is used for the application shell and lifecycle management, while core orchestration is handled by the Google ADK.
 
 **URL:** https://fastapi.tiangolo.com/
 
@@ -624,7 +625,7 @@
 ### LangChain
 **Official Name:** LangChain
 
-**Description:** Framework for building LLM applications with document loaders, text splitters, vector store integrations, and retrieval chains. Used for NEPA Advisor's RAG pipeline.
+**Description:** Framework for building LLM applications. Note: RANGER has transitioned to pure **Google ADK** for orchestration and **Gemini File Search** for RAG, though LangChain patterns remain historically relevant to the architecture.
 
 **URL:** https://www.langchain.com/
 

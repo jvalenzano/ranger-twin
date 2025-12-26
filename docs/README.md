@@ -31,28 +31,36 @@
 | [adr/ADR-002-brand-naming-strategy.md](./adr/ADR-002-brand-naming-strategy.md) | Decision rationale for naming strategy |
 
 ### Architecture
-
-| Document | Description |
-|----------|-------------|
-| [architecture/AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) | Google ADK agent system design, Recovery Coordinator pattern |
-| [architecture/GCP-ARCHITECTURE.md](./architecture/GCP-ARCHITECTURE.md) | GCP infrastructure patterns, serverless design, cost estimates |
-| [architecture/OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md) | Complete inventory of open source tools with GitHub links |
-| [architecture/UX-VISION.md](./architecture/UX-VISION.md) | "Tactical Futurism" design philosophy, mockups, prototyping guide |
-| [architecture/AGENT-MESSAGING-PROTOCOL.md](./architecture/AGENT-MESSAGING-PROTOCOL.md) | AgentBriefingEvent schema and messaging patterns |
-| [architecture/BRIEFING-UX-SPEC.md](./architecture/BRIEFING-UX-SPEC.md) | UI rendering spec for AgentBriefingEvents and reasoning transparency |
-| [architecture/LEGACY-INTEGRATION-SCHEMAS.md](./architecture/LEGACY-INTEGRATION-SCHEMAS.md) | TRACS, FSVeg export schemas for USFS legacy system integration |
-| [architecture/FIXTURE-DATA-FORMATS.md](./architecture/FIXTURE-DATA-FORMATS.md) | Phase 1 fixture schemas (burn severity, trails, timber, briefings) |
-| [architecture/DATA-INGESTION-ADAPTERS.md](./architecture/DATA-INGESTION-ADAPTERS.md) | External data source adapter pattern and specifications |
+ 
+ | Document | Description |
+ |----------|-------------|
+ | [architecture/AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) | Google ADK agent system design, Recovery Coordinator pattern |
+ | [adr/ADR-005-skills-first-architecture.md](./adr/ADR-005-skills-first-architecture.md) | **Core Standard:** Skills-First Multi-Agent Architecture |
+ | [architecture/GCP-DEPLOYMENT.md](./architecture/GCP-DEPLOYMENT.md) | GCP deployment guide (Supersedes GCP-ARCHITECTURE.md) |
+ | [architecture/OPEN-SOURCE-INVENTORY.md](./architecture/OPEN-SOURCE-INVENTORY.md) | Complete inventory of open source tools with GitHub links |
+ | [architecture/UX-VISION.md](./architecture/UX-VISION.md) | "Tactical Futurism" design philosophy, mockups, prototyping guide |
+ | [architecture/AGENT-MESSAGING-PROTOCOL.md](./architecture/AGENT-MESSAGING-PROTOCOL.md) | AgentBriefingEvent schema and messaging patterns |
+ | [architecture/BRIEFING-UX-SPEC.md](./architecture/BRIEFING-UX-SPEC.md) | UI rendering spec for AgentBriefingEvents and reasoning transparency |
+ | [architecture/FIXTURE-DATA-FORMATS.md](./architecture/FIXTURE-DATA-FORMATS.md) | Phase 1 fixture schemas (burn severity, trails, timber, briefings) |
+ | [architecture/DATA-INGESTION-ADAPTERS.md](./architecture/DATA-INGESTION-ADAPTERS.md) | External data source adapter pattern and specifications |
 
 ### Agent Specifications ("The Crew")
 
 | Agent | Role Title | Document | Purpose |
 |-------|------------|----------|---------|
 | **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product** |
-| Burn Analyst | Specialist | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
-| Trail Assessor | Specialist | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
-| Cruising Assistant | Specialist | [agents/CRUISING-ASSISTANT-SPEC.md](./agents/CRUISING-ASSISTANT-SPEC.md) | Multimodal timber inventory |
-| NEPA Advisor | Specialist | [agents/NEPA-ADVISOR-SPEC.md](./agents/NEPA-ADVISOR-SPEC.md) | NEPA regulatory guidance |
+| Burn Analyst | Specialist | [archive/legacy/agents/BURN-ANALYST-SPEC.md](./archive/legacy/agents/BURN-ANALYST-SPEC.md) | Legacy satellite burn severity (reference only) |
+| Trail Assessor | Specialist | [archive/legacy/agents/TRAIL-ASSESSOR-SPEC.md](./archive/legacy/agents/TRAIL-ASSESSOR-SPEC.md) | Legacy trail damage (reference only) |
+| Cruising Assistant | Specialist | [archive/legacy/agents/CRUISING-ASSISTANT-SPEC.md](./archive/legacy/agents/CRUISING-ASSISTANT-SPEC.md) | Legacy timber inventory (reference only) |
+| NEPA Advisor | Specialist | [archive/legacy/agents/NEPA-ADVISOR-SPEC.md](./archive/legacy/agents/NEPA-ADVISOR-SPEC.md) | Legacy NEPA regulatory (reference only) |
+
+### Skills & Interface Specs
+
+| Document | Description |
+|----------|-------------|
+| [specs/agent-interface.md](./specs/agent-interface.md) | Standard communication protocol between Coordinator and Skills |
+| [specs/skill-format.md](./specs/skill-format.md) | Canonical format for Skills Library packages (instructions, tools, tests) |
+| [specs/SKILLS-LIBRARY-INDEX.md](./specs/SKILLS-LIBRARY-INDEX.md) | Index of domain expertise packages available to agents |
 
 ### Testing & QA
 
@@ -74,7 +82,11 @@
 
 | Document | Description |
 |----------|-------------|
-| [features/_MISSION-CONTROL.md](./features/_MISSION-CONTROL.md) | Mission Control portfolio view implementation plan |
+| [features/MISSION-CONTROL.md](./features/MISSION-CONTROL.md) | Mission Control portfolio view implementation plan |
+| [features/SITE-ANALYSIS-SPEC.md](./features/SITE-ANALYSIS-SPEC.md) | AI-powered forensic analysis and Quick Queries |
+| [features/MAP-LEGEND-SPEC.md](./features/MAP-LEGEND-SPEC.md) | Interactive, phase-aware map legend control |
+| [features/IR-VIEW-SPEC.md](./features/IR-VIEW-SPEC.md) | Thermal situational awareness and satellite attribution |
+| [features/TECHNICAL-TOOLTIPS.md](./features/TECHNICAL-TOOLTIPS.md) | DX/UX tooltip system and technical documentation |
 
 ### Architecture Decision Records
 
@@ -99,15 +111,17 @@ Expert panel workshop outputs describing the full production vision.
 | [workshop/WORKSHOP-DEMO-ALIGNMENT.md](./workshop/WORKSHOP-DEMO-ALIGNMENT.md) | How workshop vision maps to our demo |
 
 ### Archive
-
-Historical documents from Phase 1 (demo development) are preserved in [archive/phase1/](./archive/phase1/):
-
-| Document | Description |
-|----------|-------------|
-| [archive/phase1/RANGER-DEMO-MANIFESTO.md](./archive/phase1/RANGER-DEMO-MANIFESTO.md) | 8-milestone demo plan (all complete) |
-| [archive/phase1/DATA-SIMULATION-STRATEGY.md](./archive/phase1/DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation boundaries and fixture contract |
-| [archive/phase1/SPRINT-FOCUS.md](./archive/phase1/SPRINT-FOCUS.md) | Phase 1 development priorities |
-| [archive/session-logs/PROGRESS-2025.md](./archive/session-logs/PROGRESS-2025.md) | Historical session journal (archived) |
+ 
+ Historical documents from Phase 1 (demo development) and legacy FastAPI architectural drafts:
+ 
+ | Document | Description |
+ |----------|-------------|
+ | [archive/legacy/AGENT-STRUCTURE-STANDARD.md](./archive/legacy/AGENT-STRUCTURE-STANDARD.md) | Legacy FastAPI-based agent structure (Superseded by Skills) |
+ | [archive/legacy/agent-interface.md](./archive/legacy/agent-interface.md) | Legacy agent messaging spec (Superseded by ADK) |
+ | [archive/phase1/RANGER-DEMO-MANIFESTO.md](./archive/phase1/RANGER-DEMO-MANIFESTO.md) | 8-milestone demo plan (all complete) |
+ | [archive/phase1/DATA-SIMULATION-STRATEGY.md](./archive/phase1/DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation boundaries and fixture contract |
+ | [archive/phase1/SPRINT-FOCUS.md](./archive/phase1/SPRINT-FOCUS.md) | Phase 1 development priorities |
+ | [archive/session-logs/PROGRESS-2025.md](./archive/session-logs/PROGRESS-2025.md) | Historical session journal (archived) |
 
 Additional archived materials from initial exploration and completed milestones are in [archive/](./archive/).
 

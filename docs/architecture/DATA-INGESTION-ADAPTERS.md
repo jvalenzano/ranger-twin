@@ -14,6 +14,9 @@
 > 
 > **See:** [`DATA-SIMULATION-STRATEGY.md`](../DATA-SIMULATION-STRATEGY.md) for the authoritative Phase 1 scope.
 
+> [!IMPORTANT]
+> **Architecture Update:** While the **Common Data Schema (CDS)** defined here remains the standard for internal normalization, ingestion is now primarily handled through **[MCP Servers](../adr/ADR-005-skills-first-architecture.md)** and **Skills** rather than a central FastAPI `/ingest/` endpoint.
+
 ---
 
 ## 1. Overview
@@ -114,11 +117,10 @@ The adapter pattern (Section 3) implements this philosophy—each adapter acts a
                                  │
                                  ▼
                     ┌────────────────────────────────┐
-                    │   API GATEWAY (port 8000)     │
-                    │   /api/v1/ingest/             │
+                    │   AGENTIC SKILLS / MCP        │
                     │   - Validation                │
                     │   - Deduplication             │
-                    │   - Redis storage             │
+                    │   - ADK Session State         │
                     └────────────┬───────────────────┘
                                  │
                                  ▼

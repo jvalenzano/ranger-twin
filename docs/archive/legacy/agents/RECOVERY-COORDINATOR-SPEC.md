@@ -1,8 +1,5 @@
 # Recovery Coordinator - Agent Specification
 
-> [!IMPORTANT]
-> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. The Recovery Coordinator serves as the root orchestration layer, delegating to specialized **Skills** via the Google ADK.
-
 > *Root LlmAgent for the RANGER Command Console — Orchestrates lifecycle specialists*
 
 **Status:** Phase 1 (Core Implementation)
@@ -27,17 +24,17 @@ This is where the real work happens. This is what we're proving.
 |--------|----------------------|
 | **Agent Logic** | ✅ FULLY IMPLEMENTED (not simulated) |
 | **User Query Handling** | ✅ Real Gemini calls for intent parsing and routing |
-| **Skill Execution** | ✅ Real ADK-based delegation to specialized Skills |
-| **Cross-Skill Synthesis** | ✅ Real multi-skill insight generation using Gemini |
-| **Session State Management** | ✅ Managed by Google ADK (Global Context) |
+| **Sub-Agent Dispatch** | ✅ Real ADK-based delegation to specialized agents |
+| **Cross-Agent Synthesis** | ✅ Real multi-agent insight generation using Gemini |
+| **Session State Management** | ✅ Real Redis session persistence |
 | **AgentBriefingEvent Orchestration** | ✅ Real correlation ID minting, event routing, and UI binding |
-| **Skill Data Sources** | ⚠️ Simulated (static fixtures) — but Coordinator doesn't care |
+| **Sub-Agent Data Sources** | ⚠️ Simulated (static fixtures) — but Coordinator doesn't care |
 
 **What This Means:**
 - The Coordinator receives real user queries via the Command Console
 - It makes real routing decisions using Gemini reasoning
-- It delegates to specialized **Skills** using real ADK mechanisms
-- Skills return simulated results, but the Coordinator synthesizes them using real Gemini calls
+- It delegates to sub-agents using real ADK `transfer_to_agent` mechanisms
+- Sub-agents return simulated results, but the Coordinator synthesizes them using real Gemini calls
 - All AgentBriefingEvents are real, properly formatted, and drive the UI
 
 The simulation boundary is **upstream** of the Coordinator. From the Coordinator's perspective, it's operating in production mode.
@@ -101,25 +98,25 @@ The Coordinator uses the LLM to decide when to:
 ```python
 from google.adk.agents import Agent
 
-# Skills are defined in the Skills Library
-# ... (see individual skill definitions) ...
+# Sub-agents are defined first
+# ... (see individual specs) ...
 
 recovery_coordinator = Agent(
     name="recovery_coordinator",
-    model="gemini-3-flash",
-    description="Main coordinator for RANGER. Routes to specialized skills.",
+    model="gemini-3-flash",  # Updated per ADR-003
+    description="Main coordinator for RANGER. Routes to lifecycle specialists.",
     instruction="""
     You are the RANGER Recovery Coordinator. Your job is to:
-    1. Determine if a query should be handled by a specialized skill.
-    2. Delegate specific tasks to the appropriate skill:
-       - Burn severity, satellite imagery, dNBR → burn_analyst_skill
-       - Trail damage, field capture, work orders → trail_assessor_skill
-       - Timber inventory, species ID, cruising → cruising_assistant_skill
-       - NEPA, compliance, regulations → nepa_advisor_skill
-    3. Synthesize responses when queries require information from multiple skills.
+    1. Determine if a query should be handled by a specialist agent.
+    2. Delegate specific tasks to the appropriate sub_agent:
+       - Burn severity, satellite imagery, dNBR → burn_analyst
+       - Trail damage, field capture, work orders → trail_assessor
+       - Timber inventory, species ID, cruising → cruising_assistant
+       - NEPA, compliance, regulations → nepa_advisor
+    3. Synthesize responses when queries require information from multiple specialists.
     4. Provide high-level platform overviews and summaries.
     """,
-    skills=[burn_analyst_skill, trail_assessor_skill, cruising_assistant_skill, nepa_advisor_skill]
+    sub_agents=[burn_analyst, trail_assessor, cruising_assistant, nepa_advisor]
 )
 ```
 
@@ -208,16 +205,26 @@ def generate_summary(params: SummaryParams) -> ToolResult:
 
 | Component | Technology | Notes |
 |-----------|------------|-------|
-| **Root Agent** | Gemini 3 Flash | Cost-effective, high-speed orchestration |
-| **Framework** | Google ADK | Native multi-agent and skill support |
-| **State Store** | ADK Session State | Built-in context management (supersedes Redis) |
-| **App Shell** | Vite / React | Managed frontend environment |
+| **Root Agent** | Gemini 3 Flash | Cost-effective, high-speed orchestration (Updated per ADR-003) |
+| **Framework** | Google ADK | Native multi-agent support |
+| **State Store** | Redis | Per-session agent context and sub-agent output cache |
+| **API Gateway** | FastAPI | Unified entry point for the Command Console |
+
+---
+
+## Success Metrics
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Routing Accuracy** | >95% | Correct sub-agent selected for single-domain queries |
+| **Synthesis Fidelity** | High | Subjective review of cross-lifecycle summaries |
+| **Latency Overhead** | <2s | Additional time added by the coordinator layer |
 
 ---
 
 ## References
 
-- [_!_IMPLEMENTATION-ROADMAP.md](../_!_IMPLEMENTATION-ROADMAP.md)
+- [DATA-SIMULATION-STRATEGY.md](../DATA-SIMULATION-STRATEGY.md) — **Phase 1 scope boundaries**
 - [ADK Coordinator Pattern](https://cloud.google.com/blog/products/ai-machine-learning/introducing-agent-development-kit)
 - [STRATEGIC-REFRAME.md](../STRATEGIC-REFRAME.md)
 - [PROJECT-BRIEF.md](../PROJECT-BRIEF.md)
@@ -227,7 +234,7 @@ def generate_summary(params: SummaryParams) -> ToolResult:
 
 ## Technical Appendix: Shared State Schema
 
-The Recovery Coordinator manages the "Brain" of the operation via ADK Session State. This ensures cross-skill context persists through a session.
+The Recovery Coordinator manages the "Brain" of the operation via Redis. This ensures cross-agent context persists through a session.
 
 ### Redis Key Structure
 

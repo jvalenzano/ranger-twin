@@ -1,5 +1,8 @@
 # RANGER Site Analysis: Feature-Triggered Field Assessment
 
+> [!IMPORTANT]
+> **Standard:** This document is aligned with **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**. Site Analysis queries are handled by specialized **Skills** (e.g., `nepa-advisor`, `burn-analyst`) orchestrated via Google ADK.
+
 > **Status**: Approved (Post-UX Review)  
 > **Version**: 2.0  
 > **Author**: RANGER Development Team  
@@ -418,6 +421,26 @@ export const SiteAnalysisButton: React.FC<SiteAnalysisButtonProps> = ({
 - [ ] Add missing chips (wilderness, tribal, litigation)
 - [ ] Export to PDF option
 - [ ] Recent analyses history
+
+---
+
+---
+
+## Technical Appendix: Configuration & Implementation
+
+### 1. Chip Configuration Structure
+See: `src/config/siteAnalysisChips.ts`
+
+Domain-specific query templates for each feature type. Templates use `{placeholders}` that get filled from feature properties.
+
+### 2. Store Integration (Zustand)
+Site Analysis state is managed in `visualAuditStore.ts`, tracking `entryMode` ('area' vs 'feature'), feature metadata, and chip selection.
+
+### 3. AI Service Flow
+1. **Trigger:** `Analyze Site` button in map popup.
+2. **Context:** `startFeatureAnalysis(metadata)` populates store.
+3. **Refinement:** User selects chips or enters custom text.
+4. **Execution:** `aiBriefingService.query()` sends full context to Recovery Coordinator.
 
 ---
 

@@ -7,7 +7,10 @@
 
 ---
 
-## Executive Summary
+> [!WARNING]
+> **LEGACY ARCHITECTURE:** This document describes the initial microservice-per-agent model. It is now **superseded** by **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**, which uses a modular Skills Library. Refer to `agents/` and `skills/` directories for the actual implementation.
+
+## 1. Executive Summary
 
 RANGER uses **Google ADK (Agent Development Kit)** with **ToolCallingAgents** to implement multi-agent orchestration for post-fire forest recovery. This architecture prioritizes:
 

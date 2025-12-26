@@ -8,7 +8,8 @@
 
 ---
 
-**Note:** This document describes FUTURE production architecture. Phase 1 runs locally with Docker and simulated data. See `docs/DATA-SIMULATION-STRATEGY.md` for current scope.
+> [!NOTE]
+> **Component Status:** This document is categorized as **Infrastructure Reference**. For current deployment automation and specific service configurations, please refer to **[GCP-DEPLOYMENT.md](GCP-DEPLOYMENT.md)**.
 
 ---
 
