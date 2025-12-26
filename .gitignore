@@ -184,3 +184,4 @@ Thumbs.db
 
 # RANGER - Runtime generated configs
 **/.nepa_store_config.json
+.adk/
