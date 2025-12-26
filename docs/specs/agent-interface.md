@@ -24,7 +24,7 @@ Development Kit).
 |----------|-------|
 | Name | `coordinator` |
 | Role | Root orchestrator |
-| Model | `gemini-3-flash` |
+| Model | `gemini-2.0-flash` |
 | Location | `agents/coordinator/` |
 
 **Responsibilities:**
@@ -150,7 +150,7 @@ Each agent must have a `config.yaml` at its root:
 
 agent:
   name: agent-name
-  model: gemini-3-flash
+  model: gemini-2.0-flash
   version: 0.1.0
   description: "Agent description"
   role: specialist  # or orchestrator
