@@ -1,10 +1,7 @@
-# RANGER: Field AI Strategy
-
-> **"Transforming the 'Stop, Measure, Write' workflow into a 'Walk and Talk' experience."**
-
-## 1. Vision: The Multimodal Sensor Layer
-
 While the RANGER Command Console provides the "Strategic View" (Nerve Center), the Field AI applications serve as the "Sensory Layer." These applications harness modern multimodal AI to automate data capture in the most challenging environments on Earth.
+
+> [!NOTE]
+> **Skills-First Alignment:** In accordance with [ADR-005](../adr/ADR-005-skills-first-architecture.md), field-specific logic is encapsulated as **Application Skills** (Tier 3), enabling identical reasoning logic to be shared between field PWAs and the Command Console.
 
 ### The Core Inversion
 Traditional field apps are **Data Entry Forms**.
@@ -90,3 +87,4 @@ RANGER is designed to be **Platform Agnostic**. We can ingest data from:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-12-20 | Initial Strategy Document |
+| 1.1 | 2025-12-25 | Aligned with ADR-005 Skills-First Architecture |

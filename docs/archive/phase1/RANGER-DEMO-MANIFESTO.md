@@ -254,7 +254,7 @@ Milestone 7 (Polish)       ←── Ship it
 ## Related Documents
 
 - [SPRINT-FOCUS.md](./SPRINT-FOCUS.md) — Current development priorities
-- [PROGRESS.md](../PROGRESS.md) — Detailed session logs
+- [PROGRESS-2025.md](../session-logs/PROGRESS-2025.md) — Detailed session logs
 - [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) — AI stack decisions
 - [AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) — Agent system design
 

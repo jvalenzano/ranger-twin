@@ -12,9 +12,9 @@ This document provides comprehensive manual testing procedures for the RANGER Co
 
 1. [Test Environment Setup](#1-test-environment-setup)
 2. [Persona Workflow Narratives](#2-persona-workflow-narratives)
-   - [Sarah Chen: Fire Management Officer (IMPACT)](#21-sarah-chen-fire-management-officer)
-   - [Marcus Rodriguez: Recreation Technician (DAMAGE)](#22-marcus-rodriguez-recreation-technician)
-   - [Elena Vasquez: Timber Cruiser (TIMBER)](#23-elena-vasquez-timber-cruiser)
+   - [Sarah Chen: Fire Management Officer (ACT/ASM)](#21-sarah-chen-fire-management-officer)
+   - [Marcus Rodriguez: Recreation Technician (IMP)](#22-marcus-rodriguez-recreation-technician)
+   - [Elena Vasquez: Timber Cruiser (RST)](#23-elena-vasquez-timber-cruiser)
    - [Dr. James Park: Environmental Coordinator (COMPLIANCE)](#24-dr-james-park-environmental-coordinator)
 3. [Component Test Cases](#3-component-test-cases)
 4. [Keyboard Shortcuts](#4-keyboard-shortcuts)
@@ -39,7 +39,7 @@ This document provides comprehensive manual testing procedures for the RANGER Co
 Before beginning tests, verify the application loads correctly:
 
 - [ ] Map renders with Cedar Creek fire area visible
-- [ ] Sidebar shows 4 lifecycle phases (IMPACT, DAMAGE, TIMBER, COMPLIANCE)
+- [ ] Sidebar shows 4 lifecycle phases (Active, Assessment, Implementation, Restoration)
 - [ ] Header displays RANGER branding, timestamp, and controls
 - [ ] No console errors on initial load
 
@@ -57,7 +57,7 @@ All tests use the **Cedar Creek Fire** fixture data:
 
 ### 2.1 Sarah Chen: Fire Management Officer
 
-**Role:** IMPACT Phase Lead
+**Role:** Active / BAER Assessment Phase Lead
 **Goal:** Assess burn severity and generate initial recovery briefing
 **Pain Point:** Currently spends 2-3 hours in QGIS assembling burn severity analysis
 
@@ -126,7 +126,7 @@ All tests use the **Cedar Creek Fire** fixture data:
 
 ### 2.2 Marcus Rodriguez: Recreation Technician
 
-**Role:** DAMAGE Phase Lead
+**Role:** BAER Implementation Phase Lead
 **Goal:** Inventory trail damage and generate TRACS work orders
 **Pain Point:** Manual paper forms with no spatial link to fire data
 
@@ -194,7 +194,7 @@ All tests use the **Cedar Creek Fire** fixture data:
 
 ### 2.3 Elena Vasquez: Timber Cruiser
 
-**Role:** TIMBER Phase Lead
+**Role:** Restoration Phase Lead
 **Goal:** Plan salvage operations and generate FSVeg-compatible data
 **Pain Point:** Manual data entry isolated from compliance context
 

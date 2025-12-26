@@ -2,7 +2,25 @@
 
 **Purpose:** Comprehensive glossary of acronyms and domain-specific terms used throughout the RANGER repository.
 
-**Last Updated:** 2025-12-22
+**Last Updated:** 2025-12-25
+
+---
+
+## Skills-First Architecture (ADR-005)
+
+| Term | Definition |
+|------|------------|
+| **Skill** | Organized folder containing domain expertise (skill.md + scripts + resources) |
+| **Skill Package** | A complete, versioned skill ready for deployment |
+| **Skills Library** | Collection of all skills, organized by tier |
+| **Foundation Skills** | Cross-agency reusable skills (NEPA, geospatial, docs) |
+| **Agency Skills** | Agency-specific shared skills (USFS fire terminology) |
+| **Application Skills** | Single-application skills (BAER assessment) |
+| **Progressive Disclosure** | Only skill metadata loaded until invoked |
+| **Agent Pipeline** | Google ADK orchestration layer (Coordinator + Specialists) |
+| **MCP Server** | Model Context Protocol server for data connectivity |
+| **MCP Connectivity** | Data integration layer separate from expertise layer |
+| **skill.md** | Core instruction file in every skill folder |
 
 ---
 

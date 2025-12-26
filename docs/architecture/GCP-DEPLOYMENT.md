@@ -14,7 +14,9 @@
 > **This Document Covers:** Deploying the **agentic application layer** (Command Console, API Gateway, Recovery Coordinator, and 4 specialist agents) to Google Cloud Platform.
 >
 > **Related Documents:**
-> - [GCP-ARCHITECTURE.md](GCP-ARCHITECTURE.md) - Geospatial data processing infrastructure (Earth Engine, BigQuery GIS, satellite imagery pipelines, PostGIS, GeoServer)
+> - [ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md) - Strategic decision for multi-agent hybrid model
+> - [IMPLEMENTATION-ROADMAP.md](../IMPLEMENTATION-ROADMAP.md) - 13-week phased plan to MVP
+> - [GCP-ARCHITECTURE.md](GCP-ARCHITECTURE.md) - Geospatial data processing infrastructure
 > - [DATA-INGESTION-ADAPTERS.md](DATA-INGESTION-ADAPTERS.md) - Phase 2 data ingestion patterns for external systems (InciWeb, IRWIN, Survey123, ArcGIS Collector)
 > - [AGENTIC-ARCHITECTURE.md](AGENTIC-ARCHITECTURE.md) - Multi-agent orchestration design and ADK patterns
 >
@@ -790,7 +792,7 @@ constraints/gcp.resourceLocations:
 ```
 
 **Required Controls:**
-- ✅ Vertex AI (FedRAMP High authorized)
+- ✅ Vertex AI (Gemini 3 Flash / FedRAMP High authorized)
 - ✅ Cloud Run (FedRAMP High authorized)
 - ✅ Cloud SQL (FedRAMP High authorized)
 - ✅ Cloud Storage (FedRAMP High authorized)

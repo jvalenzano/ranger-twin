@@ -16,8 +16,9 @@ The December 2025 workshop describes a **$704K / 26-week / 8 FTE** production sy
 
 | Architecture Element | Workshop Vision | Demo Implementation | Status |
 |---------------------|-----------------|---------------------|--------|
-| Multi-agent coordinator pattern | Vertex AI Agent Builder, Gemini 2.5 | Simulated with fixture data | ✅ Aligned |
-| 4 specialist agents + coordinator | FireSight, TrailScan, TimberScribe, PolicyPilot, Coordinator | Burn Analyst, Trail Assessor, Cruising Assistant, NEPA Advisor, Recovery Coordinator | ✅ Aligned (names differ) |
+| Multi-agent coordinator pattern | Vertex AI Agent Builder, Gemini 2.5 | Implemented with Google ADK + Gemini 3 Flash | ✅ Aligned |
+| Skills-First Architecture | Expertise as portable packages | [ADR-005](../adr/ADR-005-skills-first-architecture.md) adopted | ✅ Aligned |
+| Data Connectivity | Real-time sensor integration | Model Context Protocol (MCP) servers | ✅ Aligned |
 | AgentBriefingEvent contract | Full schema with confidence ledger | Implemented in Python + TypeScript | ✅ Aligned |
 | Reasoning transparency | Chain-of-thought visible in UI | `reasoning_chain` in ProofLayer | ✅ Aligned |
 | Confidence Ledger | Per-input confidence with data tiers | Added to schema (v1.1.0) | ✅ Aligned |

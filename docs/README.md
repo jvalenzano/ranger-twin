@@ -7,6 +7,7 @@
 | Document | Description |
 |----------|-------------|
 | [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | **Start here.** Single rallying document for the product team — vision, architecture, current focus, operational reality |
+| [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) | **Implementation North Star.** 13-week phased plan to MVP ($704K) |
 | [GLOSSARY.md](./GLOSSARY.md) | 100+ acronyms and domain terms (BAER, NEPA, FSM/FSH, etc.) |
 
 ## Quick Navigation
@@ -16,6 +17,7 @@
 | Document | Description |
 |----------|-------------|
 | [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | Comprehensive product overview — what, why, how, and current priorities |
+| [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) | 13-week phased plan to MVP (Supersedes all previous sprint plans) |
 | [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Original vision document with agent specifications and UX concepts |
 | [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: "one console, multiple views" insight |
 | [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | Phase 1→2 transition plan for external data sources (NIFC, FIRMS, MTBS) |
@@ -47,10 +49,10 @@
 | Agent | Role Title | Document | Purpose |
 |-------|------------|----------|---------|
 | **Recovery Coordinator** | **Root Agent** | [agents/RECOVERY-COORDINATOR-SPEC.md](./agents/RECOVERY-COORDINATOR-SPEC.md) | **Orchestration layer — this is the product** |
-| Burn Analyst | The Burn Analyst | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
-| Trail Assessor | The Trail Assessor | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
-| Cruising Assistant | The Cruising Assistant | [agents/CRUISING-ASSISTANT-SPEC.md](./agents/CRUISING-ASSISTANT-SPEC.md) | Multimodal timber inventory |
-| NEPA Advisor | The NEPA Advisor | [agents/NEPA-ADVISOR-SPEC.md](./agents/NEPA-ADVISOR-SPEC.md) | NEPA regulatory guidance |
+| Burn Analyst | Specialist | [agents/BURN-ANALYST-SPEC.md](./agents/BURN-ANALYST-SPEC.md) | Satellite burn severity assessment |
+| Trail Assessor | Specialist | [agents/TRAIL-ASSESSOR-SPEC.md](./agents/TRAIL-ASSESSOR-SPEC.md) | Trail damage detection |
+| Cruising Assistant | Specialist | [agents/CRUISING-ASSISTANT-SPEC.md](./agents/CRUISING-ASSISTANT-SPEC.md) | Multimodal timber inventory |
+| NEPA Advisor | Specialist | [agents/NEPA-ADVISOR-SPEC.md](./agents/NEPA-ADVISOR-SPEC.md) | NEPA regulatory guidance |
 
 ### Testing & QA
 
@@ -82,6 +84,7 @@
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
 | [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) | Gemini 3 Flash + File Search | Accepted |
 | [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Accepted |
+| [ADR-005](./adr/ADR-005-skills-first-architecture.md) | Skills-First Multi-Agent Architecture | Accepted |
 
 ### Workshop (Production Vision)
 
@@ -104,8 +107,9 @@ Historical documents from Phase 1 (demo development) are preserved in [archive/p
 | [archive/phase1/RANGER-DEMO-MANIFESTO.md](./archive/phase1/RANGER-DEMO-MANIFESTO.md) | 8-milestone demo plan (all complete) |
 | [archive/phase1/DATA-SIMULATION-STRATEGY.md](./archive/phase1/DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation boundaries and fixture contract |
 | [archive/phase1/SPRINT-FOCUS.md](./archive/phase1/SPRINT-FOCUS.md) | Phase 1 development priorities |
+| [archive/session-logs/PROGRESS-2025.md](./archive/session-logs/PROGRESS-2025.md) | Historical session journal (archived) |
 
-Additional archived materials from initial exploration are in [archive/](./archive/).
+Additional archived materials from initial exploration and completed milestones are in [archive/](./archive/).
 
 ---
 
@@ -130,11 +134,11 @@ Additional archived materials from initial exploration are in [archive/](./archi
 
 As of December 2025, the team is focused on:
 
-1. **Mission Control UX** — Portfolio triage interface for 30-50 fire incidents
-2. **API Integration** — Transitioning from fixtures to live NIFC/FIRMS data
-3. **Trust Repair** — Filter feedback, triage explainability, visual consistency
+1. **Skills Library Development** — Porting domain expertise to portable skill packages (ADR-005)
+2. **Mission Control UX** — Portfolio triage interface for 30-50 fire incidents
+3. **API Integration** — Transitioning from fixtures to live NIFC/FIRMS data
 
-See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for current priorities and the "8-minute reality" that drives our UX decisions.
+See [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) for the 13-week path to MVP and [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for current priorities and the "8-minute reality" that drives our UX decisions.
 
 ---
 

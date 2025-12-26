@@ -446,7 +446,35 @@ This document provides a comprehensive inventory of open source tools, public da
 
 ---
 
-## 5. MAPPING & VISUALIZATION
+## 5. AGENTIC AI & ORCHESTRATION
+
+### Multi-Agent Frameworks
+
+#### Google ADK (Agent Development Kit)
+- **Status:** Primary orchestration layer for RANGER
+- **Features:** 
+  - ToolCallingAgents for deterministic task execution
+  - Orchestrator/Specialist communication patterns
+  - Native integration with Gemini 3 Flash
+- **FedRAMP:** Uses Vertex AI backend (FedRAMP High)
+
+#### Model Context Protocol (MCP)
+- **Status:** Standard for data connectivity
+- **Implementations:** 
+  - `mcp-nifc`: Fire incident data
+  - `mcp-postgres`: Spatial query interface
+  - `mcp-filesystem`: Fixture data access
+- **Benefits:** Decouples data retrieval from agent logic
+
+### Skills Library Management
+Current implementation follows **ADR-005** using a tiered structure:
+- **Foundation Skills:** Generic USFS/USDA logic
+- **Agency Skills:** Specific forest service protocols
+- **Application Skills:** Workflow-specific expertise
+
+---
+
+## 6. MAPPING & VISUALIZATION
 
 ### Free Mapping Libraries
 
