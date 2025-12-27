@@ -8,7 +8,7 @@
  * Based on: Implementation Guide Section 8 (Proof Layer Implementation)
  */
 
-import type { ADKEvent } from '@/lib/adkClient';
+import type { ADKEvent } from '@/utils/adkClient';
 import type {
   AgentBriefingEvent,
   EventType,

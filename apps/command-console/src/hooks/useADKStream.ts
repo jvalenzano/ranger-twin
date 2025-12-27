@@ -8,7 +8,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { streamADK, type ADKEvent, isRetryableError } from '@/lib/adkClient';
+import { streamADK, type ADKEvent, isRetryableError } from '@/utils/adkClient';
 import { ADKEventTransformer } from '@/services/adkEventTransformer';
 import type { AgentBriefingEvent } from '@/types/briefing';
 
