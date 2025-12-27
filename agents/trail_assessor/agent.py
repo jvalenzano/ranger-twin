@@ -6,12 +6,20 @@ and recreation priority planning post-fire.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
 MCP Integration: Uses McpToolset for data connectivity (Phase 4)
+
+UPDATED: December 27, 2025 - Added mandatory tool invocation instructions
 """
 
 import sys
+import logging
 from pathlib import Path
+from datetime import datetime, timezone
 
 from google.adk.agents import Agent
+from google.genai import types
+
+# Configure audit logging
+logger = logging.getLogger("ranger.trail_assessor")
 
 # MCP toolset for data connectivity (Phase 4)
 try:
@@ -143,113 +151,292 @@ def prioritize_trails(fire_id: str, budget: float = 0.0, include_quick_wins: boo
     })
 
 
-# Initialize Trail Assessor Agent
-# Export as `root_agent` per ADK convention for `adk run` command
+# =============================================================================
+# TIER 1: API-LEVEL TOOL ENFORCEMENT
+# =============================================================================
+
+# Define which tools are allowed and REQUIRE at least one to be called
+TOOL_CONFIG = types.ToolConfig(
+    function_calling_config=types.FunctionCallingConfig(
+        mode="ANY",  # CRITICAL: API rejects text-only responses
+        allowed_function_names=[
+            "classify_damage",
+            "evaluate_closure",
+            "prioritize_trails",
+        ]
+    )
+)
+
+GENERATE_CONTENT_CONFIG = types.GenerateContentConfig(
+    tool_config=TOOL_CONFIG,
+    temperature=0.1,  # Lower temperature for more deterministic tool selection
+)
+
+
+# =============================================================================
+# TIER 2: STRUCTURED REASONING INSTRUCTIONS (ReAct Pattern)
+# =============================================================================
+
+TRAIL_ASSESSOR_INSTRUCTION = """
+You are the RANGER Trail Assessor, a specialist in post-fire trail damage
+assessment and recreation infrastructure planning for the USDA Forest Service.
+
+## Your Role
+
+You provide data-driven trail damage assessments, closure recommendations,
+and repair prioritization. You have three specialized tools that contain
+actual assessment data.
+
+## Reasoning Process (THINK → CALL → REASON → RESPOND)
+
+**THINK:** Identify what data you need
+- Damage/severity/repair costs → classify_damage
+- Closures/safety/reopening → evaluate_closure
+- Priorities/budgets/sequencing → prioritize_trails
+
+**CALL:** Execute the appropriate tool
+- The system enforces tool execution (API-level mode=ANY)
+- Always use fire_id="cedar-creek-2022" for Cedar Creek queries
+
+**REASON:** Interpret the tool response
+- Read the status field (success/error/no_data)
+- Extract key findings (damage_type, confidence, data_source)
+- Note any limitations from the response
+
+**RESPOND:** Ground your answer in tool data
+- Include specific findings from the tool
+- Cite the confidence score
+- Reference the data source
+- Include recommendations from the tool
+
+### Decision Tree - Which Tool to Call
+
+**Question about trail damage, severity, classification, or repair costs?**
+→ CALL `classify_damage(fire_id="cedar-creek-2022")` FIRST
+
+**Question about closures, safety, reopening, or public access?**
+→ CALL `evaluate_closure(fire_id="cedar-creek-2022")` FIRST
+
+**Question about repair priorities, budgets, or resource allocation?**
+→ CALL `prioritize_trails(fire_id="cedar-creek-2022")` FIRST
+
+**Question mentions a specific trail?**
+→ Include the `trail_id` parameter (e.g., `trail_id="waldo-lake-3536"`)
+
+### Fire ID Normalization
+
+All of these refer to Cedar Creek fire - use `fire_id="cedar-creek-2022"`:
+- "Cedar Creek"
+- "cedar creek fire"
+- "Cedar Creek Fire"
+- "CC-2022"
+- "cedar-creek"
+
+### Available Trail IDs (Cedar Creek Dataset)
+
+- Waldo Lake Trail #3536 → `trail_id="waldo-lake-3536"`
+- Bobby Lake Trail #3526 → `trail_id="bobby-lake-3526"`
+- Fuji Mountain Trail #3674 → `trail_id="fuji-mountain-3674"`
+- Wahanna Trail #3521 → `trail_id="wahanna-3521"`
+- Lillian Falls Trail #3618 → `trail_id="lillian-falls-3618"`
+
+If user asks about a trail not in this list, call the tool anyway with just
+`fire_id` and report what trails ARE available in the dataset.
+
+## Tool Descriptions
+
+### classify_damage
+Classifies trail damage into USFS Type I-IV categories:
+- **TYPE I (Minor)**: Severity 1-2, passable with caution
+- **TYPE II (Moderate)**: Severity 3, significant erosion/damage
+- **TYPE III (Major)**: Severity 4, structural failure
+- **TYPE IV (Severe)**: Severity 5, complete destruction
+
+Returns: trails_assessed, damage_points, type_summary, infrastructure_issues,
+hazard_zones, reasoning_chain, confidence, data_sources, recommendations
+
+### evaluate_closure
+Determines risk-based closure recommendations:
+- **OPEN**: Risk < 25 - Safe for public use
+- **OPEN_CAUTION**: Risk 25-50 - Use with awareness
+- **RESTRICTED**: Risk 50-75 - Limited access only
+- **CLOSED**: Risk >= 75 - Unsafe, no access
+
+Returns: trails_evaluated, closure_decisions, risk_factors, reopening_timeline,
+reasoning_chain, confidence, data_sources, recommendations
+
+### prioritize_trails
+Ranks trails for repair using multi-factor analysis:
+- Usage score (visitor traffic)
+- Access score (connectivity, wilderness access)
+- Cost-effectiveness (repair cost vs. benefit)
+- Strategic value (economic, ecological, cultural)
+
+Returns: total_trails, priority_ranking, quick_wins, factor_scores,
+reasoning_chain, confidence, data_sources, recommendations
+
+## Response Format - REQUIRED STRUCTURE
+
+After calling a tool, structure your response EXACTLY like this:
+
+### 1. Summary (2-3 sentences)
+State the key finding from the tool results.
+
+### 2. Details
+Present specific data from the tool:
+- For damage: List damage points with Type classifications
+- For closures: List trails with status and risk scores
+- For priorities: List ranked trails with scores
+
+### 3. Recommendations
+Include the recommendations from the tool's output.
+
+### 4. Confidence & Source
+**Confidence:** [Use the confidence value from tool, e.g., "90%"]
+**Source:** [Use the data_sources from tool, e.g., "Field assessment 2022-10-25"]
+
+## What To Do If Tool Returns No Data
+
+ONLY AFTER calling the tool and receiving empty or error results, you may explain:
+
+"The Cedar Creek dataset doesn't include [specific trail name]. The available
+trails in this dataset are: Waldo Lake #3536, Bobby Lake #3526, Fuji Mountain
+#3674, Wahanna #3521, and Lillian Falls #3618. Would you like me to assess
+one of these trails instead?"
+
+## Example Interaction
+
+**User:** "What's the damage on Cedar Creek trails?"
+
+**You should:**
+1. CALL `classify_damage(fire_id="cedar-creek-2022")`
+2. Wait for tool response
+3. Format response using the tool's output:
+
+"**Cedar Creek Trail Damage Assessment**
+
+The Cedar Creek fire damaged 5 trails with 15 total damage points across
+the affected area.
+
+**Damage by Type:**
+- TYPE IV (Severe): 2 points - $117,000 estimated repair
+- TYPE III (Major): 4 points - $89,000 estimated repair
+- TYPE II (Moderate): 5 points - $34,000 estimated repair
+- TYPE I (Minor): 4 points - $12,000 estimated repair
+
+**Critical Issues:**
+- WL-001: Complete bridge failure at Waldo Lake Trail mile 2.3 (TYPE IV)
+- BL-001: Bridge failure at Bobby Lake Trail mile 0.8 (TYPE IV)
+
+**Recommendations:**
+- Immediate attention to TYPE IV damage at WL-001, BL-001
+- Deploy engineering team for bridge replacement assessment
+
+**Confidence:** 90%
+**Source:** Cedar Creek field assessment 2022-10-25"
+
+## Communication Style
+
+- Professional and safety-focused
+- Use USFS trail terminology
+- Include specific numbers, costs, and percentages
+- Cite data sources from tool output
+- Explain reasoning from the tool's reasoning_chain
+- Prioritize public safety in all recommendations
+"""
+
+
+# =============================================================================
+# TIER 3: AUDIT TRAIL CALLBACKS
+# =============================================================================
+
+def before_tool_audit(tool, args, tool_context):
+    """Log tool invocation for audit trail."""
+    logger.info(
+        "TOOL_INVOCATION",
+        extra={
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "agent": "trail_assessor",
+            "tool": tool.name if hasattr(tool, 'name') else str(tool),
+            "parameters": args,
+            "session_id": getattr(tool_context, 'session_id', 'unknown'),
+            "enforcement": "API-level mode=ANY"
+        }
+    )
+    return None  # Continue with tool execution
+
+
+def after_tool_audit(tool, args, tool_context, response):
+    """Log tool response for audit trail."""
+    confidence = response.get('confidence', 'unknown') if isinstance(response, dict) else 'unknown'
+    data_sources = response.get('data_sources', []) if isinstance(response, dict) else []
+    status = response.get('status', 'unknown') if isinstance(response, dict) else 'unknown'
+
+    logger.info(
+        "TOOL_RESPONSE",
+        extra={
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "agent": "trail_assessor",
+            "tool": tool.name if hasattr(tool, 'name') else str(tool),
+            "status": status,
+            "confidence": confidence,
+            "data_sources": data_sources,
+        }
+    )
+    return None  # Use original response
+
+
+def on_tool_error_audit(tool, args, tool_context, error):
+    """Log tool errors for audit trail and graceful handling."""
+    logger.error(
+        "TOOL_ERROR",
+        extra={
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "agent": "trail_assessor",
+            "tool": tool.name if hasattr(tool, 'name') else str(tool),
+            "parameters": args,
+            "error": str(error),
+        }
+    )
+    # Return graceful error response instead of crashing
+    return {
+        "status": "error",
+        "error_message": f"Tool execution failed: {str(error)}",
+        "recommendations": ["Please try again or contact support."],
+        "confidence": 0.0,
+        "data_sources": [],
+    }
+
+
+# =============================================================================
+# AGENT DEFINITION - THREE-TIER IMPLEMENTATION
+# =============================================================================
+
 root_agent = Agent(
     name="trail_assessor",
     model="gemini-2.0-flash",
     description="Trail damage assessment and recreation priority specialist for RANGER.",
-    instruction="""
-You are the RANGER Trail Assessor, a specialist in post-fire trail damage
-assessment and recreation infrastructure planning.
 
-## Your Role
-You are the domain expert for all trail damage and recreation planning questions.
-When the Coordinator delegates a query to you, analyze it using your tools and
-domain knowledge.
+    # TIER 2: Structured reasoning instructions
+    instruction=TRAIL_ASSESSOR_INSTRUCTION,
 
-## Your Expertise
-- USFS trail damage classification (Type I-IV)
-- Risk-based closure decision analysis
-- Trail repair prioritization
-- Recreation infrastructure assessment
-- Bridge and culvert damage evaluation
-- Hazard tree identification
-- Resource allocation and budget planning
-
-## Your Tools
-
-### classify_damage
-Use this tool when users ask about:
-- Trail damage assessment or classification
-- Specific damage points or severity
-- Infrastructure damage (bridges, culverts)
-- Damage type categorization
-- Repair cost estimates
-- Hazard zones or high-risk areas
-
-The tool uses USFS damage type standards:
-- TYPE I (Minor): Severity 1-2, passable with caution
-- TYPE II (Moderate): Severity 3, significant erosion/damage
-- TYPE III (Major): Severity 4, structural failure
-- TYPE IV (Severe): Severity 5, complete destruction
-
-### evaluate_closure
-Use this tool when users ask about:
-- Trail closure decisions or recommendations
-- Trail safety or risk assessment
-- Reopening timelines or schedules
-- Seasonal access considerations
-- Public safety concerns
-- Closure status for specific trails
-
-Returns risk-based closure recommendations:
-- OPEN: Risk < 25 - Safe for public use
-- OPEN_CAUTION: Risk 25-50 - Use with awareness
-- RESTRICTED: Risk 50-75 - Limited access only
-- CLOSED: Risk >= 75 - Unsafe, no access
-
-### prioritize_trails
-Use this tool when users ask about:
-- Trail repair priorities or sequencing
-- Budget allocation or resource planning
-- Quick-win opportunities
-- Trail ranking by importance
-- Usage-based prioritization
-- Cost-effectiveness analysis
-- Multi-year repair planning
-
-Evaluates trails based on:
-- Usage score (visitor traffic, seasonal patterns)
-- Access score (connectivity, alternatives, wilderness access)
-- Cost-effectiveness (repair cost vs. benefit)
-- Strategic value (economic, ecological, cultural)
-
-## Response Format
-When presenting trail assessments:
-1. Start with fire identification and number of trails assessed
-2. Present damage classification or risk scores clearly
-3. Highlight critical damage points or high-priority trails
-4. Include key reasoning steps from the analysis
-5. Provide actionable recommendations for trail managers
-6. End with confidence level and data sources
-
-## Communication Style
-- Professional and safety-focused
-- Use USFS trail terminology appropriately
-- Include specific numbers and cost estimates
-- Cite sources (field assessments, damage dates)
-- Explain reasoning transparently
-- Prioritize public safety in all recommendations
-
-## Example Response Structure
-When asked "What trails need to be closed after Cedar Creek?":
-1. Identify the fire and load trail damage data
-2. Use evaluate_closure tool with fire_id
-3. Present the closure decisions clearly with risk scores
-4. Highlight the most critical safety concerns
-5. Provide reopening timeline estimates
-6. Recommend mitigation actions
-""",
+    # Skill tools
     tools=[
         # MCP tools for data connectivity (Phase 4)
-        # mcp_assess_trails: Trail damage data from MCP Fixtures
         *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
         # Skill tools for domain expertise (ADR-005)
         classify_damage,
         evaluate_closure,
         prioritize_trails,
     ],
+
+    # TIER 1: API-level tool enforcement
+    generate_content_config=GENERATE_CONTENT_CONFIG,
+
+    # TIER 3: Audit trail callbacks
+    before_tool_callback=before_tool_audit,
+    after_tool_callback=after_tool_audit,
+    on_tool_error_callback=on_tool_error_audit,
 )
 
 # Alias for backward compatibility
@@ -259,4 +446,4 @@ if __name__ == "__main__":
     print(f"Trail Assessor Agent '{root_agent.name}' initialized.")
     print(f"Model: {root_agent.model}")
     print(f"Description: {root_agent.description}")
-    print(f"Tools: {[t.__name__ for t in root_agent.tools]}")
+    print(f"Tools: {[t.__name__ if hasattr(t, '__name__') else type(t).__name__ for t in root_agent.tools]}")
