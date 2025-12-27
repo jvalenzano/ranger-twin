@@ -366,11 +366,11 @@ def before_tool_audit(tool, args, tool_context):
     return None  # Continue with tool execution
 
 
-def after_tool_audit(tool, args, tool_context, response):
+def after_tool_audit(tool, args, tool_context, tool_response):
     """Log tool response for audit trail."""
-    confidence = response.get('confidence', 'unknown') if isinstance(response, dict) else 'unknown'
-    data_sources = response.get('data_sources', []) if isinstance(response, dict) else []
-    status = response.get('status', 'unknown') if isinstance(response, dict) else 'unknown'
+    confidence = tool_response.get('confidence', 'unknown') if isinstance(tool_response, dict) else 'unknown'
+    data_sources = tool_response.get('data_sources', []) if isinstance(tool_response, dict) else []
+    status = tool_response.get('status', 'unknown') if isinstance(tool_response, dict) else 'unknown'
 
     logger.info(
         "TOOL_RESPONSE",
