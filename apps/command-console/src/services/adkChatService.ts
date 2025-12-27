@@ -58,10 +58,44 @@ class ADKChatService {
   private transformer: ADKEventTransformer;
   private abortController: AbortController | null = null;
   private sessionId: string;
+  private sessionCreated: boolean = false;
 
   constructor() {
     this.transformer = new ADKEventTransformer();
     this.sessionId = crypto.randomUUID();
+  }
+
+  /**
+   * Create a session on the ADK server
+   * Must be called before sending messages to a new session.
+   * The server assigns the session ID - we capture it from the response.
+   */
+  private async createSession(): Promise<void> {
+    if (this.sessionCreated) return;
+
+    try {
+      const response = await fetch(
+        `${ADK_URL}/apps/${ADK_APP_NAME}/users/${ADK_USER_ID}/sessions`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to create session: ${response.status}`);
+      }
+
+      // Server assigns the session ID - capture it from the response
+      const sessionData = await response.json();
+      this.sessionId = sessionData.id;
+      this.sessionCreated = true;
+      console.log('[ADK] Session created:', this.sessionId);
+    } catch (error) {
+      console.error('[ADK] Session creation failed:', error);
+      throw error;
+    }
   }
 
   /**
@@ -97,6 +131,7 @@ class ADKChatService {
    */
   newSession(): string {
     this.sessionId = crypto.randomUUID();
+    this.sessionCreated = false;
     this.transformer.reset(this.sessionId);
     return this.sessionId;
   }
@@ -120,10 +155,12 @@ class ADKChatService {
     // Update briefing store connection status
     const briefingStore = useBriefingStore.getState();
     briefingStore.setConnectionStatus('connected');
-    briefingStore.setSessionId(this.sessionId);
-
 
     try {
+      // Ensure session exists on server before streaming
+      // Session ID is assigned by server and captured in createSession()
+      await this.createSession();
+      briefingStore.setSessionId(this.sessionId);
       const controller = await streamADK(
         {
           baseUrl: ADK_URL,
