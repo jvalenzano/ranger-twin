@@ -99,12 +99,38 @@ def delegate_query(query: str, context_json: str = "{}") -> dict:
     return execute({"query": query, "context": context})
 
 
+# =============================================================================
+# TIER 1: API-LEVEL TOOL ENFORCEMENT (ADR-007.1)
+# =============================================================================
+
+# Import shared configuration with mode="AUTO" (eliminates infinite loop)
+from agents.shared.config import GENERATE_CONTENT_CONFIG
+
+
+# =============================================================================
+# TIER 3: AUDIT TRAIL CALLBACKS (ADR-007.1)
+# =============================================================================
+
+# Import shared audit callbacks for transparency (optional for coordinator)
+# Coordinator does NOT use validation layer - routing flexibility is intentional
+from agents.shared.callbacks import create_audit_callbacks
+
+# Create callbacks for audit trail visibility
+before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("coordinator")
+
+
+# =============================================================================
+# AGENT DEFINITION
+# =============================================================================
+
 # Initialize Coordinator Agent
 # Export as `root_agent` per ADK convention for `adk run` command
 root_agent = Agent(
     name="coordinator",
     model="gemini-2.0-flash",
     description="Root orchestrator for RANGER post-fire recovery platform.",
+
+    # TIER 2: Basic orchestration instructions (intentionally flexible)
     instruction="""
 You are the RANGER Recovery Coordinator, the central intelligence hub for
 post-fire forest recovery operations.
@@ -163,8 +189,19 @@ Always structure your responses with:
 3. Recommended next steps (if applicable)
 4. Confidence level and data sources
 """,
+    # Orchestration tools
     tools=[portfolio_triage, delegate_query],
+
+    # Specialist agents for delegation
     sub_agents=[burn_analyst, trail_assessor, cruising_assistant, nepa_advisor],
+
+    # TIER 1: API-level tool enforcement (mode="AUTO" allows flexible routing)
+    generate_content_config=GENERATE_CONTENT_CONFIG,
+
+    # TIER 3: Audit trail callbacks (for transparency, NO validation layer)
+    before_tool_callback=before_tool_audit,
+    after_tool_callback=after_tool_audit,
+    on_tool_error_callback=on_tool_error_audit,
 )
 
 # Alias for backward compatibility
