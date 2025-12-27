@@ -121,6 +121,11 @@ export function useADKStream(options?: ADKStreamOptions) {
                 // Transform and add event
                 const briefingEvent = transformerRef.current.transformEvent(adkEvent);
 
+                // Skip null transformations (non-transformable events like heartbeats)
+                if (!briefingEvent) {
+                  return;
+                }
+
                 setState((prev) => ({
                   ...prev,
                   events: [...prev.events, briefingEvent],

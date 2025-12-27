@@ -264,10 +264,12 @@ async def health_check(request):
 
 
 # Starlette app with routes
+# Note: MCP client POSTs to /sse endpoint, so we need POST handler there too
 app = Starlette(
     debug=True,
     routes=[
-        Route("/sse", endpoint=handle_sse),
+        Route("/sse", endpoint=handle_sse, methods=["GET"]),
+        Route("/sse", endpoint=handle_messages, methods=["POST"]),
         Route("/messages", endpoint=handle_messages, methods=["POST"]),
         Route("/health", endpoint=health_check),
         Route("/", endpoint=health_check),  # Root health check

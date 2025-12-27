@@ -21,6 +21,38 @@ import type {
 } from '@/types/briefing';
 
 /**
+ * Determines if an ADK event contains enough data to transform.
+ * Filters out heartbeats, partials, and system events.
+ */
+function isTransformableEvent(event: ADKEvent): boolean {
+  // Must have author (heartbeats/system events don't)
+  if (!event.author) return false;
+
+  // Must have invocationId for correlation
+  if (!event.invocationId) return false;
+
+  // Must have id
+  if (!event.id) return false;
+
+  // Must have some content or data
+  if (!event.content?.parts && !event.actions) return false;
+
+  return true;
+}
+
+/**
+ * Safely extracts text content from ADK event.
+ * Reduces repetitive optional chaining throughout transformer.
+ */
+function getEventText(event: ADKEvent): string {
+  // Extract text from content parts
+  const text = event.content?.parts?.[0]?.text;
+  if (text && typeof text === 'string') return text;
+
+  return '';
+}
+
+/**
  * Metadata about each agent for enriching events
  */
 interface AgentMetadata {
@@ -67,7 +99,12 @@ const AGENT_METADATA: Record<string, AgentMetadata> = {
 /**
  * Normalize agent name to SourceAgent type
  */
-function normalizeAgentName(author: string): SourceAgent {
+function normalizeAgentName(author: string | undefined): SourceAgent {
+  // Handle undefined or empty author
+  if (!author) {
+    return 'recovery_coordinator';
+  }
+
   const normalized = author.toLowerCase().replace(/-/g, '_');
 
   // Map known variations
@@ -208,29 +245,42 @@ function extractReasoningChain(event: ADKEvent): string[] {
  */
 function extractCitations(event: ADKEvent, metadata: AgentMetadata): Citation[] {
   const citations: Citation[] = [];
-  const text = event.content?.parts?.[0]?.text || '';
+  const text = getEventText(event);
 
   // Try to parse JSON for structured citations
   try {
     const data = JSON.parse(text);
-    if (data.mtbs_id || data.id) {
+
+    // Validate data is an object
+    if (typeof data !== 'object' || data === null) {
+      throw new Error('Invalid data structure');
+    }
+
+    // Extract citation from MTBS/ID fields with type validation
+    const mtbsId = data.mtbs_id || data.id;
+    if (mtbsId && (typeof mtbsId === 'string' || typeof mtbsId === 'number')) {
+      const summary = typeof data.summary === 'string' ? data.summary : text.slice(0, 100);
       citations.push({
         source_type: metadata.dataSource,
-        id: data.mtbs_id || data.id || 'unknown',
-        uri: `ranger://data/${metadata.dataSource.toLowerCase()}/${data.mtbs_id || data.id}`,
-        excerpt: data.summary || text.slice(0, 100),
+        id: String(mtbsId),
+        uri: `ranger://data/${metadata.dataSource.toLowerCase()}/${mtbsId}`,
+        excerpt: summary,
       });
     }
-    if (data.source) {
+
+    // Extract citation from source field with type validation
+    if (data.source && typeof data.source === 'string') {
+      const fireId = data.fire_id || 'cedar-creek';
+      const fireName = typeof data.fire_name === 'string' ? data.fire_name : 'fire';
       citations.push({
         source_type: data.source,
-        id: data.fire_id || 'cedar-creek',
-        uri: `ranger://data/${data.source.toLowerCase()}/${data.fire_id || 'cedar-creek'}`,
-        excerpt: `${data.source} data for ${data.fire_name || 'fire'}`,
+        id: String(fireId),
+        uri: `ranger://data/${data.source.toLowerCase()}/${fireId}`,
+        excerpt: `${data.source} data for ${fireName}`,
       });
     }
   } catch {
-    // Not JSON, add generic citation based on agent
+    // Not JSON or invalid structure, add generic citation based on agent
   }
 
   // Always add data source citation if none found
@@ -251,7 +301,7 @@ function extractCitations(event: ADKEvent, metadata: AgentMetadata): Citation[] 
  */
 function buildUIBinding(event: ADKEvent, eventType: EventType): UIBinding {
   // Check for geographic data
-  const text = event.content?.parts?.[0]?.text || '';
+  const text = getEventText(event);
   let geoReference = null;
 
   try {
@@ -264,11 +314,16 @@ function buildUIBinding(event: ADKEvent, eventType: EventType): UIBinding {
       };
     }
     if (data.coordinates) {
+      // Safe coordinate extraction with validation
+      const coords = data.coordinates as { longitude?: unknown; latitude?: unknown } | undefined;
+      const longitude = typeof coords?.longitude === 'number' ? coords.longitude : 0;
+      const latitude = typeof coords?.latitude === 'number' ? coords.latitude : 0;
+
       geoReference = {
         type: 'Feature' as const,
         geometry: {
           type: 'Point' as const,
-          coordinates: [data.coordinates.longitude, data.coordinates.latitude],
+          coordinates: [longitude, latitude],
         },
         properties: { source: 'agent_response' },
       };
@@ -298,16 +353,22 @@ function buildUIBinding(event: ADKEvent, eventType: EventType): UIBinding {
  * Extract summary from event content
  */
 function extractSummary(event: ADKEvent): string {
-  const text = event.content?.parts?.[0]?.text || '';
+  // Use safe text extraction
+  const text = getEventText(event);
 
   // Try JSON first
   try {
     const data = JSON.parse(text);
     if (data.summary) return data.summary;
 
-    // Build summary from structured data
-    if (data.severity && data.confidence) {
-      return `Severity: ${data.severity.toUpperCase()} (${Math.round(data.confidence * 100)}% confidence)`;
+    // Build summary from structured data with safe confidence handling
+    if (data.severity) {
+      let confidenceStr = '';
+      if (typeof data.confidence === 'number' && !isNaN(data.confidence)) {
+        const percentage = Math.round(data.confidence * 100);
+        confidenceStr = ` (${percentage}% confidence)`;
+      }
+      return `Severity: ${data.severity.toUpperCase()}${confidenceStr}`;
     }
   } catch {
     // Not JSON
@@ -339,8 +400,21 @@ export class ADKEventTransformer {
   /**
    * Transform an ADK event into an AgentBriefingEvent
    */
-  transformEvent(adkEvent: ADKEvent): AgentBriefingEvent {
-    const sourceAgent = normalizeAgentName(adkEvent.author);
+  transformEvent(adkEvent: ADKEvent): AgentBriefingEvent | null {
+    // Validation gate - skip non-transformable events
+    if (!isTransformableEvent(adkEvent)) {
+      console.debug('[ADK Transformer] Skipping non-transformable event:', {
+        id: adkEvent.id,
+        hasAuthor: !!adkEvent.author,
+        hasInvocationId: !!adkEvent.invocationId,
+        hasContent: !!adkEvent.content,
+        hasActions: !!adkEvent.actions,
+      });
+      return null;
+    }
+
+    // Safe to access required fields after validation
+    const sourceAgent = normalizeAgentName(adkEvent.author!);
     const metadata = AGENT_METADATA[sourceAgent] || DEFAULT_METADATA;
     const eventType = inferEventType(adkEvent);
     const severity = inferSeverity(adkEvent);
@@ -358,11 +432,14 @@ export class ADKEventTransformer {
       suggested_actions: [], // Can be enhanced with action extraction
     };
 
+    // Generate fallback correlation ID if missing (should never happen after validation)
+    const correlationId = adkEvent.invocationId || this.correlationId;
+
     const briefingEvent: AgentBriefingEvent = {
       schema_version: '1.1.0',
       event_id: adkEvent.id || crypto.randomUUID(),
       parent_event_id: this.findParentEventId(adkEvent),
-      correlation_id: adkEvent.invocationId || this.correlationId,
+      correlation_id: correlationId,
       timestamp: new Date().toISOString(),
       type: eventType,
       source_agent: sourceAgent,

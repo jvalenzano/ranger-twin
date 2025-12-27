@@ -7,7 +7,7 @@
 # Run locally:
 #   docker run -p 8000:8080 -e GOOGLE_API_KEY=xxx ranger-orchestrator
 #
-# Deploy to Cloud Run:
+# Deploy to Cloud Run (Vertex AI with ADC):
 #   gcloud run deploy ranger-coordinator \
 #     --source . \
 #     --project ranger-twin-dev \
@@ -15,7 +15,7 @@
 #     --cpu 2 --memory 4Gi \
 #     --concurrency 20 --min-instances 1 \
 #     --timeout 600 \
-#     --set-secrets GOOGLE_API_KEY=projects/ranger-twin-dev/secrets/gemini-key:latest \
+#     --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=TRUE,GOOGLE_CLOUD_PROJECT=ranger-twin-dev,GOOGLE_CLOUD_LOCATION=us-central1,MCP_FIXTURES_URL=https://ranger-mcp-fixtures-1058891520442.us-central1.run.app/sse \
 #     --allow-unauthenticated
 
 FROM python:3.11-slim
@@ -34,8 +34,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy agents directory
 COPY agents/ ./agents/
 
-# Copy skills (shared if any)
-COPY skills/ ./skills/ 2>/dev/null || mkdir -p ./skills
+# Create skills directory (shared skills, if any exist)
+RUN mkdir -p ./skills
 
 # Copy main application
 COPY main.py .

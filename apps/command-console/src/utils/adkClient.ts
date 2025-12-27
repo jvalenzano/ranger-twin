@@ -65,8 +65,8 @@ export interface ADKActions {
  */
 export interface ADKEvent {
   id: string;
-  invocationId: string;
-  author: string;
+  invocationId?: string; // Optional: May be undefined in heartbeats/system events
+  author?: string; // Optional: May be undefined in some event types
   content?: ADKEventContent;
   actions?: ADKActions;
   partial: boolean;

@@ -1,0 +1,112 @@
+"""
+RANGER MCP Client Utilities
+
+Provides ADK-native McpToolset factories for connecting agents to the
+MCP Fixtures Server. Uses SseConnectionParams for SSE-based MCP communication.
+
+Per ADR-005: Skills-First Architecture - MCP for Connectivity, Skills for Expertise
+Reference: docs/specs/_!_PHASE4-MCP-INTEGRATION-PLAN.md
+"""
+
+import os
+from typing import Optional
+
+
+# MCP Fixtures Server URL - defaults to local dev, override in production
+MCP_FIXTURES_URL = os.environ.get(
+    "MCP_FIXTURES_URL",
+    "http://localhost:8080/sse"
+)
+
+
+def get_mcp_toolset(
+    tool_filter: Optional[list[str]] = None,
+    tool_name_prefix: str = "mcp_"
+):
+    """
+    Create an ADK-native McpToolset connected to the MCP Fixtures Server.
+
+    This is the recommended way to connect agents to MCP data sources.
+    ADK handles connection lifecycle, retries, and tool schema management.
+
+    Args:
+        tool_filter: List of MCP tool names to expose (None = all tools)
+        tool_name_prefix: Prefix for tool names in agent's tool list
+
+    Returns:
+        McpToolset instance configured for SSE connection
+
+    Example:
+        toolset = get_mcp_toolset(
+            tool_filter=["get_fire_context", "mtbs_classify"],
+            tool_name_prefix="mcp_"
+        )
+        # Adds mcp_get_fire_context, mcp_mtbs_classify to agent
+    """
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+
+    return McpToolset(
+        connection_params=SseConnectionParams(
+            url=MCP_FIXTURES_URL,
+            sse_read_timeout=30
+        ),
+        tool_filter=tool_filter,
+        tool_name_prefix=tool_name_prefix
+    )
+
+
+def get_burn_analyst_toolset():
+    """
+    McpToolset for Burn Analyst agent.
+
+    Exposes:
+    - mcp_get_fire_context: Fire metadata and summary
+    - mcp_mtbs_classify: MTBS burn severity data
+    """
+    return get_mcp_toolset(
+        tool_filter=["get_fire_context", "mtbs_classify"],
+        tool_name_prefix="mcp_"
+    )
+
+
+def get_trail_assessor_toolset():
+    """
+    McpToolset for Trail Assessor agent.
+
+    Exposes:
+    - mcp_assess_trails: Trail damage assessment data
+    """
+    return get_mcp_toolset(
+        tool_filter=["assess_trails"],
+        tool_name_prefix="mcp_"
+    )
+
+
+def get_cruising_assistant_toolset():
+    """
+    McpToolset for Cruising Assistant agent.
+
+    Exposes:
+    - mcp_get_timber_plots: Timber cruise plot data
+    """
+    return get_mcp_toolset(
+        tool_filter=["get_timber_plots"],
+        tool_name_prefix="mcp_"
+    )
+
+
+def get_coordinator_toolset():
+    """
+    McpToolset for Coordinator agent (full access).
+
+    Exposes all MCP tools for routing and overview queries:
+    - mcp_get_fire_context
+    - mcp_mtbs_classify
+    - mcp_assess_trails
+    - mcp_get_timber_plots
+    """
+    return get_mcp_toolset(
+        tool_filter=None,  # All tools
+        tool_name_prefix="mcp_"
+    )

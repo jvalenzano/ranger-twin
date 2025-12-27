@@ -176,6 +176,7 @@ cd apps/command-console && pnpm test
 | [OPEN-SOURCE-INVENTORY.md](docs/architecture/OPEN-SOURCE-INVENTORY.md) | Complete tool inventory with links |
 | [UX-VISION.md](docs/architecture/UX-VISION.md) | "Tactical Futurism" design philosophy |
 | [MARKET-RESEARCH.md](docs/research/MARKET-RESEARCH.md) | Competitive landscape, go/no-go analysis |
+| [ADK-OPERATIONS-RUNBOOK.md](docs/runbooks/ADK-OPERATIONS-RUNBOOK.md) | **Critical** developer guide for ADK/Agent integration |
 
 ## Design: "Tactical Futurism"
 

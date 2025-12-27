@@ -107,4 +107,5 @@ pytest
 ## 📖 Related Documentation
 *   [README.md](../../README.md) - Project Overview
 *   [DEMO-TOUR-WALKTHROUGH.md](../../docs/implementation/DEMO-TOUR-WALKTHROUGH.md) - Deep dive into tour mechanics
+*   [ADK-OPERATIONS-RUNBOOK.md](../../docs/runbooks/ADK-OPERATIONS-RUNBOOK.md) - **Read before touching agents**
 *   [BRAND-ARCHITECTURE.md](../../docs/brand/BRAND-ARCHITECTURE.md) - Naming and style guidelines

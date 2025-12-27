@@ -59,7 +59,8 @@ def test_agent_uses_correct_model(agent_module):
 def test_agent_has_assess_severity_tool(agent_module):
     """Agent should have the assess_severity tool."""
     root_agent = agent_module.root_agent
-    tool_names = [t.__name__ for t in root_agent.tools]
+    # Handle both function tools and McpToolset objects
+    tool_names = [t.__name__ for t in root_agent.tools if hasattr(t, '__name__')]
     assert "assess_severity" in tool_names
 
 

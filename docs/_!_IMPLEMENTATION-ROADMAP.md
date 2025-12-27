@@ -1,7 +1,23 @@
 # RANGER Implementation Roadmap
 
-**Version:** 2.0
-**Date:** December 25, 2025
+> **📍 CURRENT STATUS — December 27, 2025**
+>
+> **Phase 4: ADK Integration — ✅ COMPLETED**
+> - Multi-agent orchestration deployed to Cloud Run
+> - Vertex AI + ADC authentication working
+> - 5 agents, 16+ tools, 645 tests passing
+>
+> **Phase 5: Production Hardening — 🔄 IN PROGRESS**
+> - Fire ID normalization
+> - Error handling improvements
+> - Demo preparation
+>
+> **Production URLs:**
+> - Coordinator: https://ranger-coordinator-1058891520442.us-central1.run.app
+> - MCP Fixtures: https://ranger-mcp-fixtures-1058891520442.us-central1.run.app
+
+**Version:** 2.1
+**Date:** December 25, 2025 (Updated December 27, 2025)
 **Status:** Active — Single Source of Truth
 **Supersedes:** All previous sprint plans, phase documents, and feature backlogs
 

@@ -6,8 +6,22 @@ Monitoring Trends in Burn Severity (MTBS) protocol.
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Literal, TypedDict
+
+# Add shared utilities to path
+_shared_path = Path(__file__).parent.parent.parent.parent.parent / "shared"
+if str(_shared_path) not in sys.path:
+    sys.path.insert(0, str(_shared_path))
+
+try:
+    from fire_utils import normalize_fire_id
+except ImportError:
+    def normalize_fire_id(fire_id: str) -> str:
+        if fire_id and fire_id.lower() in ["cedar-creek", "cedar_creek", "cc-2022"]:
+            return "cedar-creek-2022"
+        return fire_id
 
 
 # MTBS classification thresholds (Key & Benson 2006)
@@ -65,11 +79,14 @@ def load_fixture_data(fire_id: str) -> dict | None:
     Load burn severity data from fixtures.
 
     Args:
-        fire_id: Fire identifier (e.g., "cedar-creek-2022")
+        fire_id: Fire identifier (e.g., "cedar-creek-2022" or "cedar-creek")
 
     Returns:
         Fire data dict or None if not found
     """
+    # Normalize fire ID to canonical form
+    canonical_id = normalize_fire_id(fire_id)
+
     script_dir = Path(__file__).parent
     fixture_path = script_dir.parent.parent.parent.parent.parent / "data" / "fixtures" / "cedar-creek" / "burn-severity.json"
 
@@ -79,7 +96,7 @@ def load_fixture_data(fire_id: str) -> dict | None:
     if fixture_path.exists():
         with open(fixture_path) as f:
             data = json.load(f)
-            if data.get("fire_id") == fire_id:
+            if data.get("fire_id") == canonical_id:
                 return data
 
     return None

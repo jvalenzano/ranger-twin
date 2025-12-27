@@ -5,12 +5,21 @@ Specialist agent for trail damage assessment, closure decisions,
 and recreation priority planning post-fire.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
+MCP Integration: Uses McpToolset for data connectivity (Phase 4)
 """
 
 import sys
 from pathlib import Path
 
 from google.adk.agents import Agent
+
+# MCP toolset for data connectivity (Phase 4)
+try:
+    from agents.shared.mcp_client import get_trail_assessor_toolset
+    MCP_TOOLSET = get_trail_assessor_toolset()
+except ImportError:
+    # Fallback for local development without MCP
+    MCP_TOOLSET = None
 
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -232,7 +241,15 @@ When asked "What trails need to be closed after Cedar Creek?":
 5. Provide reopening timeline estimates
 6. Recommend mitigation actions
 """,
-    tools=[classify_damage, evaluate_closure, prioritize_trails],
+    tools=[
+        # MCP tools for data connectivity (Phase 4)
+        # mcp_assess_trails: Trail damage data from MCP Fixtures
+        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
+        # Skill tools for domain expertise (ADR-005)
+        classify_damage,
+        evaluate_closure,
+        prioritize_trails,
+    ],
 )
 
 # Alias for backward compatibility

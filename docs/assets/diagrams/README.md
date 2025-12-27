@@ -10,16 +10,26 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 |---------|----------|---------------------|
 | [Cedar Creek Fire 2022](Cedar%20Creek%20Fire%202022.png) | All audiences | "Why does this problem matter?" |
 
-### Technical Architecture
+### Technical Architecture (Skills-First ADK)
 
 | Diagram | Audience | Question It Answers |
 |---------|----------|---------------------|
-| [Local Developer Stack](Local%20Developer%20Stack.png) | Developers | "What's running where, on which port, with what data?" |
-| [How the pieces fit together](How%20the%20pieces%20fit%20together.png) | Developers | "How does Phase 1 vs Phase 2 work?" |
-| [Agentic AI Architecture](Agentic%20AI%20Architecture.png) | Developers | "How does the local vs cloud workflow operate?" |
+| [The Skills-First Architecture](The%20Skills-First%20Architecture.png) (Planned) | Developers | "How does the ADK runtime work with Skills?" |
+| [Phase 4 ADK Developer Stack](Phase%204%20ADK%20Developer%20Stack.png) (Planned) | Developers | "What ports are running? (3000/8000/8080)" |
+| [ADK Data Flow & SSE Streaming](ADK%20Data%20Flow%20&%20SSE%20Streaming.png) (Planned) | Architects | "How do events stream to the UI?" |
+| [The MCP Abstraction Layer](The%20MCP%20Abstraction%20Layer.png) (Planned) | Technical reviewers | "How do we switch between Fixtures and Real Data?" |
+| [The Coordinator's Skill Roster](The%20Coordinator's%20Skill%20Roster.png) (Planned) | Architects | "Which agent has which skills?" |
 | [AgentBriefingEvent Rendering Pipeline](AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" |
-| [Coordinator Routing & Cross-Agent Cascade](Coordinator%20Routing%20&%20Cross-Agent%20Cascade.png) | Architects | "How does orchestration work?" |
-| [Phase 1 Architecture Boundaries](Phase%201%20Architecture%20Boundaries.png) | Technical reviewers | "What's real vs simulated?" |
+
+### [ARCHIVED] Microservices Architecture (Legacy)
+
+| Diagram | Status |
+|---------|--------|
+| [Local Developer Stack](Local%20Developer%20Stack.png) | Superseded by Phase 4 Stack |
+| [How the pieces fit together](How%20the%20pieces%20fit%20together.png) | Superseded by ADK Data Flow |
+| [Agentic AI Architecture](Agentic%20AI%20Architecture.png) | Superseded by Skills-First Architecture |
+| [Coordinator Routing & Cross-Agent Cascade](Coordinator%20Routing%20&%20Cross-Agent%20Cascade.png) | Superseded by Coordinator's Skill Roster |
+| [Phase 1 Architecture Boundaries](Phase%201%20Architecture%20Boundaries.png) | Superseded by MCP Abstraction Layer |
 
 ### Value Proposition
 
@@ -31,9 +41,9 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 
 ## Quick Reference
 
-**For developer onboarding:** Cedar Creek Fire 2022 (context) → **Local Development Stack** (ports & data) → How the pieces fit together → Rendering Pipeline → Coordinator Routing
+**For developer onboarding:** Cedar Creek Fire 2022 (context) → **Phase 4 ADK Developer Stack** (ports) → The Skills-First Architecture → ADK Data Flow
 
-**For investor/partner presentations:** Cedar Creek Fire 2022 (problem) → Phase 1 Boundaries → Recovery Chain
+**For investor/partner presentations:** Cedar Creek Fire 2022 (problem) → The MCP Abstraction Layer → Recovery Chain
 
 **For government procurement:** Cedar Creek Fire 2022 (context) → Confidence Ledger → Legacy Bridge
 

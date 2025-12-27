@@ -35,6 +35,7 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 - `docs/architecture/AGENT-MESSAGING-PROTOCOL.md` - AgentBriefingEvent JSON schema
 - `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec
 - `docs/specs/SKILL-VERIFICATION-STANDARD.md` - Quality Gates (DoD, Evaluation 10)
+- `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md` - **CRITICAL:** ADK patterns & anti-patterns
 
 ## Commands
 

@@ -5,12 +5,21 @@ Specialist agent for timber inventory, volume estimation,
 and salvage viability assessment.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
+MCP Integration: Uses McpToolset for data connectivity (Phase 4)
 """
 
 import sys
 from pathlib import Path
 
 from google.adk.agents import Agent
+
+# MCP toolset for data connectivity (Phase 4)
+try:
+    from agents.shared.mcp_client import get_cruising_assistant_toolset
+    MCP_TOOLSET = get_cruising_assistant_toolset()
+except ImportError:
+    # Fallback for local development without MCP
+    MCP_TOOLSET = None
 
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -379,7 +388,16 @@ When asked "What's the salvage potential for Cedar Creek?":
 5. Provide salvage window timelines
 6. Recommend immediate harvest priorities
 """,
-    tools=[recommend_methodology, estimate_volume, assess_salvage, analyze_csv_data],
+    tools=[
+        # MCP tools for data connectivity (Phase 4)
+        # mcp_get_timber_plots: Timber plot data from MCP Fixtures
+        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
+        # Skill tools for domain expertise (ADR-005)
+        recommend_methodology,
+        estimate_volume,
+        assess_salvage,
+        analyze_csv_data,
+    ],
 )
 
 # Alias for backward compatibility

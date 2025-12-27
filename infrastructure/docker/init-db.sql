@@ -4,7 +4,7 @@
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS postgis_topology;
-CREATE EXTENSION IF NOT EXISTS vector;  -- pgvector for RAG
+-- CREATE EXTENSION IF NOT EXISTS vector;  -- pgvector for RAG
 
 -- Create schemas for organization
 CREATE SCHEMA IF NOT EXISTS spatial;      -- Geospatial data
@@ -129,13 +129,13 @@ CREATE TABLE documents.chunks (
     chunk_index INTEGER NOT NULL,
     content TEXT NOT NULL,
     metadata JSONB,
-    embedding VECTOR(768),  -- text-embedding-004 dimension
+    -- embedding VECTOR(768),  -- text-embedding-004 dimension
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX idx_chunks_doc ON documents.chunks(document_id);
 CREATE INDEX idx_chunks_type ON documents.chunks(document_type);
-CREATE INDEX idx_chunks_embedding ON documents.chunks USING ivfflat (embedding vector_cosine_ops);
+-- CREATE INDEX idx_chunks_embedding ON documents.chunks USING ivfflat (embedding vector_cosine_ops);
 
 -- =============================================================================
 -- Seed Data - Cedar Creek Fire

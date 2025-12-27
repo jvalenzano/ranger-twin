@@ -176,8 +176,16 @@ class ADKChatService {
               return;
             }
 
-            // Transform to AgentBriefingEvent and add to briefing store
+            // Transform to AgentBriefingEvent
             const briefingEvent = this.transformer.transformEvent(adkEvent);
+
+            // Handle null transformation (non-transformable event like heartbeats)
+            if (!briefingEvent) {
+              // Skip non-transformable events silently
+              return;
+            }
+
+            // Add to briefing store
             briefingStore.addEvent(briefingEvent);
 
             // Transform to chat response

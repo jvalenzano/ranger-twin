@@ -5,12 +5,21 @@ Specialist agent for fire severity analysis, MTBS classification,
 and soil burn severity assessment.
 
 Per ADR-005: Skills-First Multi-Agent Architecture
+MCP Integration: Uses McpToolset for data connectivity (Phase 4)
 """
 
 import sys
 from pathlib import Path
 
 from google.adk.agents import Agent
+
+# MCP toolset for data connectivity (Phase 4)
+try:
+    from agents.shared.mcp_client import get_burn_analyst_toolset
+    MCP_TOOLSET = get_burn_analyst_toolset()
+except ImportError:
+    # Fallback for local development without MCP
+    MCP_TOOLSET = None
 
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -227,7 +236,16 @@ When asked "What's the burn severity for Cedar Creek?":
 4. Highlight the most critical sectors
 5. Provide actionable recommendations
 """,
-    tools=[assess_severity, classify_mtbs, validate_boundary],
+    tools=[
+        # MCP tools for data connectivity (Phase 4)
+        # mcp_get_fire_context: Fire metadata from MCP Fixtures
+        # mcp_mtbs_classify: MTBS burn severity data from MCP Fixtures
+        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
+        # Skill tools for domain expertise (ADR-005)
+        assess_severity,
+        classify_mtbs,
+        validate_boundary,
+    ],
 )
 
 # Alias for backward compatibility
