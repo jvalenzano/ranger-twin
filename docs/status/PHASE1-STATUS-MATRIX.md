@@ -2,7 +2,7 @@
 
 **Last Updated:** December 27, 2025
 **Overall Status:** 🟢 GREEN (Demo Ready with Known Gaps)
-**Test Pass Rate:** 99.6% (669/672 tests passing)
+**Test Pass Rate:** 100% (672/672 tests passing)
 **Deployment:** Production URLs active on Google Cloud Run
 
 **Production URLs:**
@@ -16,7 +16,7 @@
 | Agent | Status | Evidence | Test Count | Model | Blocking Issues |
 |-------|--------|----------|------------|-------|-----------------|
 | **Coordinator** | ✅ Ready | ADR-007.1 compliant, mode=AUTO, callbacks wired | 16 integration tests | gemini-2.0-flash | None |
-| **Burn Analyst** | ✅ Ready | 3 skills (MTBS, soil burn, boundary), mode=AUTO | 109 skill tests | gemini-2.0-flash | 3 test failures (fixture data) |
+| **Burn Analyst** | ✅ Ready | 3 skills (MTBS, soil burn, boundary), mode=AUTO | 109 skill tests | gemini-2.0-flash | None |
 | **Trail Assessor** | ✅ Ready | 3 skills (damage, closure, priority), mode=AUTO | 107 skill tests | gemini-2.0-flash | None |
 | **Cruising Assistant** | ✅ Ready | 4 skills (volume, salvage, cruise, CSV), mode=AUTO | ~120 skill tests | gemini-2.0-flash | None |
 | **NEPA Advisor** | ✅ Ready | 4 skills (pathway, timeline, docs, PDF), mode=AUTO | ~90 skill tests | gemini-2.5-flash | None |
@@ -29,6 +29,7 @@
 - ✅ Tier 3 (Validation): Before/after/error callbacks for audit trail
 
 **Recent Commits:**
+- `b01cce1` - fix(burn-analyst): reconcile test fixtures with canonical Cedar Creek data
 - `bc13ae7` - feat(coordinator): implement ADR-007.1 three-layer pattern
 - `a5008a1` - feat(nepa-advisor): implement ADR-007.1 three-layer pattern
 - `e78b853` - feat(cruising-assistant): implement ADR-007.1 three-layer pattern
@@ -194,22 +195,20 @@ npm run lint       # ESLint validation
 
 ## Known Issues
 
-### 1. Burn Analyst Test Failures (3 tests, 0.4% failure rate)
+### ~~1. Burn Analyst Test Failures~~ ✅ FIXED
 
-**Tests failing:**
+**Status:** RESOLVED in commit `b01cce1`
+
+**Previously failing tests (now passing):**
 1. `agents/burn_analyst/skills/mtbs-classification/tests/test_mtbs_classification.py::TestExecute::test_execute_with_cedar_creek`
 2. `agents/burn_analyst/skills/mtbs-classification/tests/test_mtbs_classification.py::TestExecute::test_execute_returns_dominant_class`
 3. `agents/burn_analyst/skills/soil-burn-severity/tests/test_soil_burn_severity.py::TestExecute::test_execute_with_cedar_creek`
 
-**Root Cause:** Test expectations not updated after Cedar Creek fixture reconciliation (December 27)
+**Resolution:** Test fixtures reconciled with canonical Cedar Creek data
+- Total acres: Updated to 127,831 acres (canonical value)
+- High severity: Updated expectations to match 63.6% by area (42% by classification count)
 
-**Expected vs. Actual:**
-- Total acres: Expected 127341, Actual 127831 (490 acre difference)
-- High severity: Expected >60%, Actual 42%
-
-**Impact:** Non-blocking for demo (agents work correctly, tests just need assertion updates)
-
-**Fix:** Update test assertions to match canonical data (1-2 hour effort)
+**Test Pass Rate:** 672/672 (100%)
 
 ---
 
@@ -221,9 +220,9 @@ npm run lint       # ESLint validation
 | Progressive Proof Layer UI | P1 | 1-2 days | User trust, reasoning visibility |
 | Frontend-Backend Integration Testing | P0 | 1-2 days | End-to-end demo validation |
 | Multi-Agent Orchestration Testing | P0 | 1 day | Coordinator delegation untested in runtime |
-| Cedar Creek Test Failures | P2 | 1-2 hours | 100% test coverage |
+| ~~Cedar Creek Test Failures~~ | ~~P2~~ | ~~1-2 hours~~ | ✅ FIXED (commit b01cce1) |
 
-**Total Effort to Full Demo-Ready:** ~5-8 days (P0 items only)
+**Total Effort to Full Demo-Ready:** ~5-7 days (P0 items only)
 
 **See:** `docs/status/IMPLEMENTATION-GAPS.md` for detailed gap analysis
 
