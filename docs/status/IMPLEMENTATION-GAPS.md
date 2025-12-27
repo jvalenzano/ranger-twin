@@ -2,7 +2,7 @@
 
 **Purpose:** Track what's designed but not yet implemented
 **Last Updated:** December 27, 2025
-**Status:** 5 gaps identified (3 P0, 1 P1, 1 P2)
+**Status:** 4 active gaps (3 P0, 1 P1), 1 resolved
 
 ---
 
@@ -14,9 +14,9 @@
 | Progressive Proof Layer UI | ❌ Not Started | 1-2 days | P1 | User trust, reasoning visibility |
 | Frontend-Backend Integration | ⏳ Partial | 1-2 days | P0 | User-facing demo |
 | Multi-Agent Orchestration Testing | ⏳ Untested | 1 day | P0 | Full demo scenario |
-| Cedar Creek Test Failures | ⏳ Known | 1-2 hours | P2 | 100% test coverage |
+| ~~Cedar Creek Test Failures~~ | ✅ Fixed | ~~1-2 hours~~ | ~~P2~~ | Fixed in commit b01cce1 |
 
-**Total Effort to Demo-Ready:** ~5-8 days (P0 items only)
+**Total Effort to Demo-Ready:** ~5-7 days (P0 items only)
 
 ---
 
@@ -1010,19 +1010,21 @@ pytest tests/ -v  # Should pass
 
 ---
 
-## Gap 5: Cedar Creek Fixture Test Failures
+## ~~Gap 5: Cedar Creek Fixture Test Failures~~ ✅ RESOLVED
 
 **Identified in:** `docs/validation/ADR-007.1-VALIDATION-REPORT.md`
 
-**Current State:** 3 tests failing (0.4% failure rate, 669/672 passing)
+**Status:** ✅ FIXED in commit `b01cce1`
 
-**Blocking:** 100% test coverage confidence
+**Previous State:** 3 tests failing (0.4% failure rate, 669/672 passing)
 
-**Effort Estimate:** 1-2 hours
+**Resolution:** Test fixtures reconciled with canonical Cedar Creek data
+
+**Test Pass Rate:** 672/672 (100%)
 
 ---
 
-### Failed Tests
+### Previously Failed Tests (Now Passing)
 
 #### 1. test_execute_with_cedar_creek (MTBS Classification)
 **File:** `agents/burn_analyst/skills/mtbs-classification/tests/test_mtbs_classification.py::TestExecute::test_execute_with_cedar_creek`
@@ -1119,14 +1121,16 @@ pytest agents/burn_analyst/skills/soil-burn-severity/tests/test_soil_burn_severi
 
 ---
 
-### Impact Analysis
+### Resolution Summary
 
-**Impact:** Non-blocking for demo
-- Agents work correctly with real data
-- Tests just have incorrect expectations
-- No functional regression
+**Fixed in:** Commit `b01cce1` - "fix(burn-analyst): reconcile test fixtures with canonical Cedar Creek data"
 
-**Priority:** P2 (low priority, nice-to-have for 100% coverage)
+**Changes Applied:**
+- Updated test expectations to match canonical Cedar Creek data
+- Total acres: 127,341 → 127,831 (canonical value)
+- High severity: Updated threshold expectations to match actual 63.6% by area
+
+**Result:** 100% test pass rate achieved (672/672 tests passing)
 
 ---
 
@@ -1161,13 +1165,11 @@ pytest agents/burn_analyst/skills/soil-burn-severity/tests/test_soil_burn_severi
 
 **Total P1 effort:** 1-2 days
 
-### P2 Gaps (Nice-to-Have)
+### ~~P2 Gaps~~ ✅ All Resolved
 
-1. **Cedar Creek Test Failures** (1-2 hours)
-   - Update test expectations
-   - Achieve 100% test coverage
-
-**Total P2 effort:** 1-2 hours
+1. ~~**Cedar Creek Test Failures**~~ ✅ FIXED in commit `b01cce1`
+   - Test expectations updated
+   - 100% test coverage achieved (672/672 passing)
 
 ### Recommended Priorities
 
@@ -1178,13 +1180,13 @@ pytest agents/burn_analyst/skills/soil-burn-severity/tests/test_soil_burn_severi
 **Post-Demo (Week 1):**
 1. Frontend-Backend Integration Testing (P0)
 2. Multi-Agent Orchestration Testing (P0)
-3. Cedar Creek Test Failures (P2)
+3. ~~Cedar Creek Test Failures (P2)~~ ✅ Already fixed
 
 **Post-Demo (Week 2):**
 1. Progressive Proof Layer UI (P1)
 2. MCP Server Connectivity (P0, if needed)
 
-**Total effort to full production:** 5-8 days
+**Total effort to full production:** 5-7 days
 
 ---
 
