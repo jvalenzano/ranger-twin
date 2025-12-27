@@ -152,25 +152,12 @@ def prioritize_trails(fire_id: str, budget: float = 0.0, include_quick_wins: boo
 
 
 # =============================================================================
-# TIER 1: API-LEVEL TOOL ENFORCEMENT
+# TIER 1: API-LEVEL TOOL ENFORCEMENT (ADR-007.1)
 # =============================================================================
 
-# Define which tools are allowed and REQUIRE at least one to be called
-TOOL_CONFIG = types.ToolConfig(
-    function_calling_config=types.FunctionCallingConfig(
-        mode="ANY",  # CRITICAL: API rejects text-only responses
-        allowed_function_names=[
-            "classify_damage",
-            "evaluate_closure",
-            "prioritize_trails",
-        ]
-    )
-)
-
-GENERATE_CONTENT_CONFIG = types.GenerateContentConfig(
-    tool_config=TOOL_CONFIG,
-    temperature=0.1,  # Lower temperature for more deterministic tool selection
-)
+# Import shared configuration with mode="AUTO" (eliminates infinite loop)
+# Previously used mode="ANY" which caused infinite loops (ADR-007.1)
+from agents.shared.config import GENERATE_CONTENT_CONFIG
 
 
 # =============================================================================
@@ -347,65 +334,15 @@ the affected area.
 
 
 # =============================================================================
-# TIER 3: AUDIT TRAIL CALLBACKS
+# TIER 3: AUDIT TRAIL CALLBACKS (ADR-007.1)
 # =============================================================================
 
-def before_tool_audit(tool, args, tool_context):
-    """Log tool invocation for audit trail."""
-    logger.info(
-        "TOOL_INVOCATION",
-        extra={
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "agent": "trail_assessor",
-            "tool": tool.name if hasattr(tool, 'name') else str(tool),
-            "parameters": args,
-            "session_id": getattr(tool_context, 'session_id', 'unknown'),
-            "enforcement": "API-level mode=ANY"
-        }
-    )
-    return None  # Continue with tool execution
+# Import shared audit callbacks that integrate with AuditEventBridge
+# Replaces manual logging-only callbacks with proof layer integration
+from agents.shared.callbacks import create_audit_callbacks
 
-
-def after_tool_audit(tool, args, tool_context, tool_response):
-    """Log tool response for audit trail."""
-    confidence = tool_response.get('confidence', 'unknown') if isinstance(tool_response, dict) else 'unknown'
-    data_sources = tool_response.get('data_sources', []) if isinstance(tool_response, dict) else []
-    status = tool_response.get('status', 'unknown') if isinstance(tool_response, dict) else 'unknown'
-
-    logger.info(
-        "TOOL_RESPONSE",
-        extra={
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "agent": "trail_assessor",
-            "tool": tool.name if hasattr(tool, 'name') else str(tool),
-            "status": status,
-            "confidence": confidence,
-            "data_sources": data_sources,
-        }
-    )
-    return None  # Use original response
-
-
-def on_tool_error_audit(tool, args, tool_context, error):
-    """Log tool errors for audit trail and graceful handling."""
-    logger.error(
-        "TOOL_ERROR",
-        extra={
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "agent": "trail_assessor",
-            "tool": tool.name if hasattr(tool, 'name') else str(tool),
-            "parameters": args,
-            "error": str(error),
-        }
-    )
-    # Return graceful error response instead of crashing
-    return {
-        "status": "error",
-        "error_message": f"Tool execution failed: {str(error)}",
-        "recommendations": ["Please try again or contact support."],
-        "confidence": 0.0,
-        "data_sources": [],
-    }
+# Create callbacks for this agent
+before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("trail_assessor")
 
 
 # =============================================================================
