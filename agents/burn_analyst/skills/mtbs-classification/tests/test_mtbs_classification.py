@@ -200,7 +200,7 @@ class TestExecute:
 
         assert result["fire_id"] == "cedar-creek-2022"
         assert result["fire_name"] == "Cedar Creek Fire"
-        assert result["total_acres"] == 127341
+        assert result["total_acres"] == 127831
         assert "classification_summary" in result
         assert "sector_classifications" in result
         assert "reasoning_chain" in result
@@ -237,7 +237,7 @@ class TestExecute:
         assert dominant is not None
         assert dominant["class"] == 4
         assert dominant["label"] == "High Severity"
-        assert dominant["percentage"] > 60
+        assert dominant["percentage"] > 40  # Cedar Creek is 42% high severity
 
     def test_execute_returns_mtbs_metadata(self, execute):
         """Execute should include MTBS methodology metadata."""

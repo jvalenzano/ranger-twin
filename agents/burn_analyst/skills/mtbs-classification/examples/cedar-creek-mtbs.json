@@ -6,24 +6,24 @@
   "output": {
     "fire_id": "cedar-creek-2022",
     "fire_name": "Cedar Creek Fire",
-    "total_acres": 127341,
+    "total_acres": 127831,
     "classification_summary": {
       "class_4": {
         "label": "High Severity",
-        "acres": 81041,
-        "percentage": 63.6,
+        "acres": 53689,
+        "percentage": 42.0,
         "sector_count": 4
       },
       "class_3": {
         "label": "Moderate Severity",
-        "acres": 37900,
-        "percentage": 29.8,
+        "acres": 44740,
+        "percentage": 35.0,
         "sector_count": 3
       },
       "class_2": {
         "label": "Low Severity",
-        "acres": 8400,
-        "percentage": 6.6,
+        "acres": 29402,
+        "percentage": 23.0,
         "sector_count": 1
       }
     },
@@ -34,7 +34,7 @@
         "mtbs_class": 4,
         "mtbs_label": "High Severity",
         "dnbr_mean": 0.81,
-        "acres": 27001
+        "acres": 17887
       },
       {
         "id": "SW-1",
@@ -42,7 +42,7 @@
         "mtbs_class": 4,
         "mtbs_label": "High Severity",
         "dnbr_mean": 0.76,
-        "acres": 21500
+        "acres": 14244
       },
       {
         "id": "NW-1",
@@ -50,7 +50,7 @@
         "mtbs_class": 4,
         "mtbs_label": "High Severity",
         "dnbr_mean": 0.72,
-        "acres": 18340
+        "acres": 12150
       },
       {
         "id": "NW-2",
@@ -58,7 +58,7 @@
         "mtbs_class": 4,
         "mtbs_label": "High Severity",
         "dnbr_mean": 0.68,
-        "acres": 14200
+        "acres": 9408
       },
       {
         "id": "SE-1",
@@ -66,7 +66,7 @@
         "mtbs_class": 3,
         "mtbs_label": "Moderate Severity",
         "dnbr_mean": 0.48,
-        "acres": 15600
+        "acres": 18415
       },
       {
         "id": "NE-1",
@@ -74,7 +74,7 @@
         "mtbs_class": 3,
         "mtbs_label": "Moderate Severity",
         "dnbr_mean": 0.45,
-        "acres": 12500
+        "acres": 14756
       },
       {
         "id": "NE-2",
@@ -82,7 +82,7 @@
         "mtbs_class": 3,
         "mtbs_label": "Moderate Severity",
         "dnbr_mean": 0.42,
-        "acres": 9800
+        "acres": 11569
       },
       {
         "id": "SW-2",
@@ -90,13 +90,13 @@
         "mtbs_class": 2,
         "mtbs_label": "Low Severity",
         "dnbr_mean": 0.22,
-        "acres": 8400
+        "acres": 29402
       }
     ],
     "dominant_class": {
       "class": 4,
       "label": "High Severity",
-      "percentage": 63.6
+      "percentage": 42.0
     },
     "mtbs_metadata": {
       "source": "MTBS",
@@ -107,7 +107,7 @@
     "reasoning_chain": [
       "Loaded 8 sectors for Cedar Creek Fire",
       "Applied MTBS classification to each sector",
-      "Class 4 (High Severity) is dominant at 63.6% of area"
+      "Class 4 (High Severity) is dominant at 42.0% of area"
     ]
   }
 }

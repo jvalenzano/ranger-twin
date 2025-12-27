@@ -259,7 +259,7 @@ class TestExecute:
 
         assert result["fire_id"] == "cedar-creek-2022"
         assert result["fire_name"] == "Cedar Creek Fire"
-        assert result["total_acres"] == 127341
+        assert result["total_acres"] == 127831
         assert "severity_breakdown" in result
         assert "reasoning_chain" in result
         assert result["confidence"] > 0.9
