@@ -20,6 +20,11 @@ from pathlib import Path
 
 from google.adk.agents import Agent
 
+# Add project root to path for agents.shared imports
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 # Add agent directory to path for local imports
 AGENT_DIR = Path(__file__).parent
 if str(AGENT_DIR) not in sys.path:

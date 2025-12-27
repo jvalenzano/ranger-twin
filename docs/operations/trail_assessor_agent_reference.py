@@ -11,20 +11,9 @@ UPDATED: December 27, 2025 - Added mandatory tool invocation instructions
 """
 
 import sys
-import logging
 from pathlib import Path
-from datetime import datetime, timezone
 
 from google.adk.agents import Agent
-from google.genai import types
-
-# Add project root to path for agents.shared imports
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-# Configure audit logging
-logger = logging.getLogger("ranger.trail_assessor")
 
 # MCP toolset for data connectivity (Phase 4)
 try:
@@ -157,16 +146,7 @@ def prioritize_trails(fire_id: str, budget: float = 0.0, include_quick_wins: boo
 
 
 # =============================================================================
-# TIER 1: API-LEVEL TOOL ENFORCEMENT (ADR-007.1)
-# =============================================================================
-
-# Import shared configuration with mode="AUTO" (eliminates infinite loop)
-# Previously used mode="ANY" which caused infinite loops (ADR-007.1)
-from agents.shared.config import GENERATE_CONTENT_CONFIG
-
-
-# =============================================================================
-# TIER 2: STRUCTURED REASONING INSTRUCTIONS (ReAct Pattern)
+# AGENT INSTRUCTION - Updated with Mandatory Tool Invocation
 # =============================================================================
 
 TRAIL_ASSESSOR_INSTRUCTION = """
@@ -175,31 +155,18 @@ assessment and recreation infrastructure planning for the USDA Forest Service.
 
 ## Your Role
 
-You provide data-driven trail damage assessments, closure recommendations,
-and repair prioritization. You have three specialized tools that contain
-actual assessment data.
+You are the domain expert for all trail damage and recreation planning questions.
+When the Coordinator delegates a query to you, you MUST analyze it using your
+tools and return data-driven insights.
 
-## Reasoning Process (THINK → CALL → REASON → RESPOND)
+## ⚠️ MANDATORY TOOL USAGE - CRITICAL
 
-**THINK:** Identify what data you need
-- Damage/severity/repair costs → classify_damage
-- Closures/safety/reopening → evaluate_closure
-- Priorities/budgets/sequencing → prioritize_trails
+**YOU MUST CALL A TOOL BEFORE RESPONDING TO ANY DOMAIN QUESTION.**
 
-**CALL:** Execute the appropriate tool
-- The system enforces tool execution (API-level mode=ANY)
-- Always use fire_id="cedar-creek-2022" for Cedar Creek queries
-
-**REASON:** Interpret the tool response
-- Read the status field (success/error/no_data)
-- Extract key findings (damage_type, confidence, data_source)
-- Note any limitations from the response
-
-**RESPOND:** Ground your answer in tool data
-- Include specific findings from the tool
-- Cite the confidence score
-- Reference the data source
-- Include recommendations from the tool
+- DO NOT answer from general knowledge
+- DO NOT say "I don't have data" or "Let me help you with that" without calling a tool first
+- DO NOT generate generic responses
+- ALWAYS call the appropriate tool first, even if you're uncertain it will return results
 
 ### Decision Tree - Which Tool to Call
 
@@ -337,32 +304,15 @@ the affected area.
 - Prioritize public safety in all recommendations
 """
 
-
 # =============================================================================
-# TIER 3: AUDIT TRAIL CALLBACKS (ADR-007.1)
-# =============================================================================
-
-# Import shared audit callbacks that integrate with AuditEventBridge
-# Replaces manual logging-only callbacks with proof layer integration
-from agents.shared.callbacks import create_audit_callbacks
-
-# Create callbacks for this agent
-before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("trail_assessor")
-
-
-# =============================================================================
-# AGENT DEFINITION - THREE-TIER IMPLEMENTATION
+# AGENT DEFINITION
 # =============================================================================
 
 root_agent = Agent(
     name="trail_assessor",
     model="gemini-2.0-flash",
     description="Trail damage assessment and recreation priority specialist for RANGER.",
-
-    # TIER 2: Structured reasoning instructions
     instruction=TRAIL_ASSESSOR_INSTRUCTION,
-
-    # Skill tools
     tools=[
         # MCP tools for data connectivity (Phase 4)
         *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
@@ -371,14 +321,6 @@ root_agent = Agent(
         evaluate_closure,
         prioritize_trails,
     ],
-
-    # TIER 1: API-level tool enforcement
-    generate_content_config=GENERATE_CONTENT_CONFIG,
-
-    # TIER 3: Audit trail callbacks
-    before_tool_callback=before_tool_audit,
-    after_tool_callback=after_tool_audit,
-    on_tool_error_callback=on_tool_error_audit,
 )
 
 # Alias for backward compatibility

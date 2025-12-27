@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Bell,
   ChevronRight,
-  ChevronDown,
   Play,
   MessageSquare,
   X,
@@ -13,9 +12,7 @@ import {
   Settings,
   LogOut,
   User,
-  Shield,
   Clock,
-  Check,
   MessageCircle,
 } from 'lucide-react';
 
@@ -27,7 +24,7 @@ import { useActiveFire } from '@/stores/fireContextStore';
 import { FireSelector } from '@/components/fire';
 import { CompactTokenUsage } from '@/components/common/CompactTokenUsage';
 import { LocationSelector } from '@/components/common/LocationSelector';
-import { TIMEZONE_OPTIONS, formatTimestamp, getTimezoneAbbr } from '@/utils/time';
+import { formatTimestamp, getTimezoneAbbr } from '@/utils/time';
 
 // Map phase IDs to user-friendly labels (consistent naming)
 const PHASE_LABELS: Record<LifecyclePhase, string> = {
@@ -124,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
   const activeLayer = useActiveLayer();
   const uxTooltipsEnabled = useUxTooltipsEnabled();
   const dxTooltipsEnabled = useDxTooltipsEnabled();
-  const { toggleUxTooltips, toggleDxTooltips, setTimeZone } = usePreferencesStore();
+  const { toggleUxTooltips, toggleDxTooltips } = usePreferencesStore();
   const timeZone = useTimeZone();
   const activeFire = useActiveFire();
 

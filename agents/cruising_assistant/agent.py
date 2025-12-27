@@ -15,6 +15,11 @@ from pathlib import Path
 
 from google.adk.agents import Agent
 
+# Add project root to path for agents.shared imports
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 # MCP toolset for data connectivity (Phase 4)
 try:
     from agents.shared.mcp_client import get_cruising_assistant_toolset

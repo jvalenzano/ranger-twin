@@ -1,161 +1,237 @@
-# Stakeholder Diagram Prompts
+# Stakeholder Diagram Prompts (v2.0)
 
-**Purpose:** Value communication for USFS, partners, and investors.
-**Audience:** Non-technical stakeholders.
+> **Updated:** December 28, 2025  
+> **Aligned With:** ADR-007.1 Three-Layer Tool Invocation Strategy  
+> **Master Reference:** [_RANGER-DIAGRAM-PROMPTS-v2.md](../_prompts/_RANGER-DIAGRAM-PROMPTS-v2.md)
+
+**Purpose:** Value communication for USFS, partners, investors, and **auditors**.  
+**Audience:** Non-technical stakeholders, federal compliance reviewers.  
 **Aesthetic:** Tactical Whiteboard (Dark slate blue #0F172A).
 
 ---
 
-## 1. Cedar Creek Context (P0)
+## 🆕 What's New in v2.0
 
-**Output File:** `cedar-creek-context.png` (simulates `Cedar Creek Fire 2022.png`)
-**Concept:** The "Why we are here" context slide.
+| Change | Rationale |
+|--------|-----------|
+| Added **Federal Compliance Overview** | Auditor-ready executive slide |
+| **Confidence Ledger** now has 4 pillars | Added validation as trust component |
+| **Value Loop** shows validation checkpoint | Accuracy with current architecture |
+| Enhanced **federal compliance language** | FedRAMP audit readiness |
+
+---
+
+## Diagram Index
+
+| # | Diagram | File | Priority | Status |
+|---|---------|------|----------|--------|
+| 0 | Federal Compliance Overview | `federal-compliance-overview.png` | P0 | 🆕 NEW |
+| 1 | Cedar Creek Context | `cedar-creek-context.png` | P0 | ✅ Unchanged |
+| 2 | RANGER Value Loop | `ranger-value-loop.png` | P0 | ✏️ Updated |
+| 3 | Recovery Chain (Personas) | `recovery-chain-personas.png` | P0 | ✅ Unchanged |
+| 4 | Legacy Bridge | `legacy-bridge.png` | P0 | ✅ Unchanged |
+| 5 | Confidence Ledger | `confidence-ledger.png` | P1 | ✏️ Updated |
+| 6 | Maria's 8-Minute Morning | `marias-morning.png` | P1 | ✏️ Updated |
+
+---
+
+## Quick Reference Prompts
+
+For complete, detailed prompts, see the [master prompts file](../_prompts/_RANGER-DIAGRAM-PROMPTS-v2.md#track-2-stakeholder-diagrams).
+
+Below are condensed versions for quick generation:
+
+---
+
+### 0. Federal Compliance Overview (NEW - P0)
+
+**File:** `federal-compliance-overview.png`  
+**Question It Answers:** "Is this system compliant with federal AI requirements?"
 
 ```
-Tactical briefing infographic, dark slate chalkboard style, dramatic aerial
-perspective of Oregon's Cascade Range wildfire scene.
+Create an executive compliance diagram titled "RANGER: Federal AI Compliance Architecture" on deep slate blue (#0F172A).
 
-Central composition: Bird's-eye view of Waldo Lake (distinctive pristine blue
-oval) with mosaic burn severity patterns (patches of green, amber, red showing
-varied damage) spreading westward toward Oakridge. Massive pyrocumulonimbus
-cloud tower rising. Retardant planes and helicopter with water bucket.
-Topographic contour lines visible.
+Three interconnected components:
+1. TRANSPARENCY - Every AI decision explained, reasoning chains visible
+2. AUDITABILITY - Every tool call logged, immutable timestamps
+3. RELIABILITY - 99% tool invocation, three-layer enforcement
 
-Top header: "CEDAR CREEK FIRE • WILLAMETTE NATIONAL FOREST • 2022"
+Include:
+- FedRAMP High Compatible badge
+- USDA GenAI Strategy Compliant badge
+- Q&A format answering auditor questions
+- Compliance checklist with green checkmarks
 
-Key stats (top left): "127,311 ACRES • $58M • 2,000+ EVACUATED"
-
-Oregon locator map (top right corner): State silhouette with Portland, Eugene
-marked, fire location glowing amber.
-
-Timeline strip (bottom center):
-"AUG 1: ¼ acre → SEPT 8: EAST WINDS → SEPT 11: 86,000 acres (4 DAYS) → NOV 22:
-CONTAINED"
-
-Four assessment domain icons (bottom, above timeline):
-🔥 BURN SEVERITY | 🥾 TRAIL DAMAGE | 🌲 TIMBER | 📋 NEPA
-
-Bottom corners: USDA Forest Service shield (left), RANGER AGENTIC OS badge
-(right)
-
-Small annotation near Oakridge: "Level 3 Evacuation - Sept 9"
-Small annotation near fire origin: "Rappellers refused - terrain too hazardous"
-
-Style: Dark tactical military briefing aesthetic, chalk and graphite textures,
-burnt orange and amber fire tones, cool blue lake contrast, cream annotations.
-Emergency operations center mood. Illustrated tactical map, not photorealistic.
+Key tagline: "RANGER uses AI responsibly, transparently, and defensibly."
 
 --ar 16:9
 ```
 
 ---
 
-## 2. The Legacy Bridge (P0)
+### 1. Cedar Creek Context (P0) - Unchanged
 
-**Output File:** `legacy-bridge.png`
-**Concept:** Modern AI augmenting legacy systems without replacing them.
+**File:** `cedar-creek-context.png`
 
 ```
-Create a technical whiteboard diagram titled "The Legacy Bridge: Augmentation, Not Replacement"
+Tactical briefing infographic: "CEDAR CREEK FIRE • WILLAMETTE NATIONAL FOREST • 2022"
 
-Style: Clean engineering whiteboard aesthetic. Dark slate blue background.
+Key elements:
+- 127,311 ACRES • $58M • 2,000+ EVACUATED
+- Bird's-eye view of Waldo Lake with mosaic burn patterns
+- Timeline: AUG 1 → SEPT 8: EAST WINDS → SEPT 11: 86,000 acres → NOV 22: CONTAINED
+- Four domain icons: 🔥 BURN | 🥾 TRAIL | 🌲 TIMBER | 📋 NEPA
 
-Layout: Left (New) -> Bridge (Transform) -> Right (Old).
+Style: Military tactical briefing, emergency operations center mood.
 
-LEFT SECTION - "Modern RANGER (AI)"
-Sleek, futuristic card UI.
-Content: "Trail Assessor Briefing"
-Data: "Damage: Washout, Cost: $45k"
-Visual: Glowing, modern interface.
-
-CENTER SECTION - "The Bridge"
-Visual: A literal architectural bridge.
-Label: "Schema Transformer"
-Gears turning, converting JSON to CSV/XML.
-Caption: "Zero Data Loss"
-
-RIGHT SECTION - "Legacy Systems (USFS)"
-Two retro-styled computer terminals (90s aesthetic).
-1. Terminal "TRACS": Showing CSV import screen. Green Checkmark.
-2. Terminal "FSVeg": Showing XML import screen. Green Checkmark.
-
-BOTTOM CAPTION:
-"The fastest path to adoption isn't replacing legacy systems—it's making them smarter."
+--ar 16:9
 ```
 
 ---
 
-## 3. The Recovery Chain (P0)
+### 2. RANGER Value Loop (P0) - Updated
 
-**Output File:** `recovery-chain-personas.png`
-**Concept:** Human personas triggering each other in a coordinated workflow.
+**File:** `ranger-value-loop.png`
 
 ```
-Create a technical whiteboard diagram titled "The Cedar Creek Recovery Chain: Four Personas, One Mission"
+Elegant circular flow diagram titled "RANGER: The Value Loop"
 
-Style: Clean engineering whiteboard aesthetic. Dark slate blue background.
-Layout: Circular flow.
+Five nodes (clockwise):
+1. USER QUESTION - "What's the recovery status?"
+2. COORDINATED ANALYSIS - Four specialists in parallel
+3. VALIDATED - Shield with checkmark, "Tool invocation verified" (NEW)
+4. UNIFIED BRIEFING - Synthesized, cited, transparent, verified
+5. INFORMED DECISION - Human decides with full context
 
-TOP-LEFT - "Sarah Chen (FMO)"
-Icon: Fire Chief.
-Action: "Identifies high severity zones" -> Triggers Trail Tech.
+Key differentiators (4 boxes):
+- Coordinated, Not Siloed
+- Transparent, Not Black Box
+- Validated, Not Assumed (NEW)
+- Augments, Not Replaces
 
-TOP-RIGHT - "Marcus Rodriguez (Rec Tech)"
-Icon: Hiker/Ranger.
-Action: "Assesses trail closures" -> Informs Timber Cruiser.
+Tagline: "Seconds of unified, validated intelligence."
 
-BOTTOM-RIGHT - "Elena Vasquez (Cruiser)"
-Icon: Forester.
-Action: "Calculates salvage value" -> Triggers NEPA.
-
-BOTTOM-LEFT - "Dr. James Park (NEPA)"
-Icon: Scientist/Clipboard.
-Action: "Checks compliance" -> Feedback to FMO.
-
-Center Hub: "Shared Context (Correlation ID)"
-Caption: "4 Silos -> 1 Team"
+--ar 16:9
 ```
 
 ---
 
-## 4. The Confidence Ledger (P1)
+### 3. Recovery Chain (Personas) (P0) - Unchanged
 
-**Output File:** `confidence-ledger.png`
-**Concept:** Trust architecture (Scores, Citations, Reasoning).
+**File:** `recovery-chain-personas.png`
 
 ```
-Create a technical whiteboard diagram titled "The Confidence Ledger: Trust Architecture"
+Persona workflow diagram: "The Cedar Creek Recovery Chain: Four Personas, One Mission"
 
-Style: Clean engineering whiteboard aesthetic. "Audit Trail" metaphor.
+Circular flow:
+- Sarah Chen (FMO) → 🔥 Burn → Triggers trail priority
+- Marcus Rodriguez (Rec Tech) → 🥾 Trail → Informs timber routes
+- Elena Vasquez (Cruiser) → 🌲 Timber → Triggers compliance
+- Dr. James Park (NEPA) → 📋 NEPA → Refines scope → Back to Sarah
 
-Top Comparison:
-Left: "Black Box AI" (Red X) -> "Trust me bro"
-Right: "RANGER" (Green Check) -> "Here is the evidence"
+Center: "correlation_id: cedar-creek-001" - Shared context
 
-Three Pillars of Proof (Visualized as columns/badges):
-1. "Confidence Score" (Gauge at 87%)
-   - Factors: Data Quality, Model Certainty
-2. "Citation Chain" (Document links)
-   - "FSM 2353.03", "Video Frame 0:42"
-3. "Reasoning Chain" (Step-by-step logic)
-   - "1. Detected crack... 2. Evaluated risk..."
+Before/After: 4 silos → 1 coordinated recovery
 
-Bottom:
-"Immutable Audit Log" (Database Icon)
+--ar 16:9
 ```
 
 ---
 
-## 5. [PLANNED] The RANGER Value Loop (P0)
+### 4. Legacy Bridge (P0) - Unchanged
 
-**Output File:** `ranger-value-loop.png`
-**Concept:** What RANGER does in 30 seconds.
-*(Prompt TBD - Needs Drafting)*
+**File:** `legacy-bridge.png`
+
+```
+Integration diagram: "The Legacy Bridge: From AI Insight to 1999-Era Systems"
+
+Three zones:
+- LEFT: Modern RANGER (sleek AI briefing card, JSON)
+- CENTER: The Bridge (literal bridge, "Schema Transformer", gears)
+- RIGHT: Legacy Systems (retro terminals: TRACS CSV, FSVeg XML)
+
+Benefits:
+- No Rip and Replace
+- Audit Compliance
+- Training Continuity
+
+Tagline: "Making legacy systems smarter, not replacing them."
+
+--ar 16:9
+```
 
 ---
 
-## 6. [PLANNED] Maria's 8-Minute Morning (P1)
+### 5. Confidence Ledger (P1) - Updated
 
-**Output File:** `marias-8-minute-morning.png`
-**Concept:** Before/After workflow comparison.
-*(Prompt TBD - Needs Drafting)*
+**File:** `confidence-ledger.png`
+
+```
+Trust architecture diagram: "The Confidence Ledger: Four Pillars of Federal AI Trust"
+
+Top: Black Box AI (red X) vs RANGER Briefing (green check)
+
+FOUR pillars (expanded from three):
+1. CONFIDENCE SCORE - Gauge at 87%, derived from data quality + model certainty
+2. CITATION CHAIN - [TRACS] [Video] [FSM] chips, click to verify
+3. REASONING CHAIN - Step-by-step logic, numbered flow
+4. VALIDATION STATUS (NEW) - Shield with "✓ VALIDATED", three-layer enforcement
+
+Bottom: Immutable Audit Log timeline with timestamps
+
+Tagline: "Every insight defensible—and now, verified."
+
+--ar 16:9
+```
+
+---
+
+### 6. Maria's 8-Minute Morning (P1) - Updated
+
+**File:** `marias-morning.png`
+
+```
+Before/After workflow: "Maria's 8-Minute Reality"
+
+LEFT (Before - red):
+6:00 AM: 14 systems, 2+ hours, no validation
+Bottom stats: Low confidence, Unknown blind spots
+
+RIGHT (After - emerald):
+6:30 AM: Single interface, 15 minutes
+Includes: "✓ Validated" badges, "All insights verified"
+Bottom stats: High confidence, Every insight validated
+
+Four key questions:
+1. What's going sideways? → AI surfaces anomalies
+2. Where's the risk? → Ranked with reasoning
+3. What do I tell Washington? → Summary with citations
+4. Can I defend this? (NEW) → Every insight validated and logged
+
+Tagline: "8 minutes back, confidence to use them, audit trail to prove it."
+
+--ar 16:9
+```
+
+---
+
+## Generation Tips
+
+1. **Use Nano Banana Pro** in Google AI Studio
+2. **Set aspect ratio to 16:9** before generating
+3. **Edit, don't re-roll** - if 80% correct, ask for specific changes
+4. **Emphasize federal compliance** - FedRAMP badges, audit language
+5. **Include validation elements** - shields, checkmarks, "verified" badges
+
+---
+
+## Related Documents
+
+- [Master Prompts File (v2)](../_prompts/_RANGER-DIAGRAM-PROMPTS-v2.md)
+- [ADR-007.1: Three-Layer Enforcement](../../adr/ADR-007.1-tool-invocation-strategy.md)
+- [PROOF-LAYER-DESIGN.md](../../specs/PROOF-LAYER-DESIGN.md)
+
+---
+
+**Last Updated:** December 28, 2025  
+**Version:** 2.0

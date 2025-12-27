@@ -2,21 +2,22 @@
 RANGER MCP Client Utilities
 
 Provides ADK-native McpToolset factories for connecting agents to the
-MCP Fixtures Server. Uses SseConnectionParams for SSE-based MCP communication.
+MCP Fixtures Server. Uses StdioConnectionParams for stdio-based MCP communication.
 
 Per ADR-005: Skills-First Architecture - MCP for Connectivity, Skills for Expertise
 Reference: docs/specs/_!_PHASE4-MCP-INTEGRATION-PLAN.md
+
+NOTE: Using stdio transport for Phase 1 (simpler, more reliable than HTTP/SSE)
 """
 
 import os
+from pathlib import Path
 from typing import Optional
 
 
-# MCP Fixtures Server URL - defaults to local dev, override in production
-MCP_FIXTURES_URL = os.environ.get(
-    "MCP_FIXTURES_URL",
-    "http://localhost:8080/sse"
-)
+# Path to MCP Fixtures Server script
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+MCP_SERVER_PATH = PROJECT_ROOT / "services" / "mcp-fixtures" / "server.py"
 
 
 def get_mcp_toolset(
@@ -24,7 +25,7 @@ def get_mcp_toolset(
     tool_name_prefix: str = "mcp_"
 ):
     """
-    Create an ADK-native McpToolset connected to the MCP Fixtures Server.
+    Create an ADK-native McpToolset connected to the MCP Fixtures Server via stdio.
 
     This is the recommended way to connect agents to MCP data sources.
     ADK handles connection lifecycle, retries, and tool schema management.
@@ -34,7 +35,7 @@ def get_mcp_toolset(
         tool_name_prefix: Prefix for tool names in agent's tool list
 
     Returns:
-        McpToolset instance configured for SSE connection
+        McpToolset instance configured for stdio connection
 
     Example:
         toolset = get_mcp_toolset(
@@ -44,12 +45,17 @@ def get_mcp_toolset(
         # Adds mcp_get_fire_context, mcp_mtbs_classify to agent
     """
     from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+    from mcp.client.stdio import StdioServerParameters
 
     return McpToolset(
-        connection_params=SseConnectionParams(
-            url=MCP_FIXTURES_URL,
-            sse_read_timeout=30
+        connection_params=StdioConnectionParams(
+            server_params=StdioServerParameters(
+                command="python",
+                args=[str(MCP_SERVER_PATH)],
+                env=None  # Inherit parent environment
+            ),
+            timeout=30.0  # Allow time for server startup
         ),
         tool_filter=tool_filter,
         tool_name_prefix=tool_name_prefix

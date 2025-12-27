@@ -8,20 +8,19 @@ Tools:
 - get_fire_context: Fire metadata and summary
 - mtbs_classify: MTBS burn severity classification
 - assess_trails: Trail damage assessment data
+- get_timber_plots: Timber cruise plot data
 
-Run locally: uvicorn server:app --host 0.0.0.0 --port 8080
+Transport: stdio (for local development and ADK integration)
+Run locally: python services/mcp-fixtures/server.py
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
-from mcp.server.sse import SseServerTransport
 from mcp.types import Tool, TextContent
-from starlette.applications import Starlette
-from starlette.routing import Route
-from starlette.responses import Response
 
 # Path to fixture data
 FIXTURES_DIR = Path(__file__).parent.parent.parent / "data" / "fixtures" / "cedar-creek"
@@ -227,60 +226,33 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         return [TextContent(type="text", text=json.dumps({"error": f"Unknown tool: {name}"}))]
 
 
-# Create SSE transport for HTTP-based MCP
-sse_transport = SseServerTransport("/sse")
-
-
-async def handle_sse(request):
-    """Handle SSE connection for MCP."""
-    async with sse_transport.connect_sse(
-        request.scope, request.receive, request._send
-    ) as streams:
-        await mcp_server.run(
-            streams[0], streams[1], mcp_server.create_initialization_options()
-        )
-
-
-async def handle_messages(request):
-    """Handle MCP message endpoint."""
-    await sse_transport.handle_post_message(request.scope, request.receive, request._send)
-
-
-async def health_check(request):
-    """Health check endpoint for Cloud Run."""
-    return Response(
-        content=json.dumps({
-            "status": "healthy",
-            "service": "ranger-mcp-fixtures",
-            "fixtures_loaded": {
-                "incident": bool(INCIDENT_DATA and "fire_id" in INCIDENT_DATA),
-                "burn_severity": bool(BURN_SEVERITY_DATA and "sectors" in BURN_SEVERITY_DATA),
-                "trail_damage": bool(TRAIL_DAMAGE_DATA and "trails" in TRAIL_DAMAGE_DATA),
-                "timber_plots": bool(TIMBER_PLOTS_DATA)
-            }
-        }),
-        media_type="application/json"
-    )
-
-
-# Starlette app with routes
-# Note: MCP client POSTs to /sse endpoint, so we need POST handler there too
-app = Starlette(
-    debug=True,
-    routes=[
-        Route("/sse", endpoint=handle_sse, methods=["GET"]),
-        Route("/sse", endpoint=handle_messages, methods=["POST"]),
-        Route("/messages", endpoint=handle_messages, methods=["POST"]),
-        Route("/health", endpoint=health_check),
-        Route("/", endpoint=health_check),  # Root health check
-    ]
-)
-
-
+# Main entry point for stdio transport
 if __name__ == "__main__":
-    import uvicorn
-    print("Starting RANGER MCP Fixtures Server...")
-    print(f"Fixtures directory: {FIXTURES_DIR}")
-    print(f"Loaded fires: cedar-creek")
-    print(f"Tools: get_fire_context, mtbs_classify, assess_trails, get_timber_plots")
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    import asyncio
+    import logging
+    from mcp.server.stdio import stdio_server
+
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        stream=sys.stderr  # Log to stderr so stdout is clean for MCP protocol
+    )
+    logger = logging.getLogger("ranger.mcp-fixtures")
+
+    logger.info("Starting RANGER MCP Fixtures Server (stdio transport)")
+    logger.info(f"Fixtures directory: {FIXTURES_DIR}")
+    logger.info(f"Loaded fires: cedar-creek")
+    logger.info(f"Tools: get_fire_context, mtbs_classify, assess_trails, get_timber_plots")
+    logger.info("Waiting for MCP client connection on stdin/stdout...")
+
+    # Run the MCP server with stdio transport
+    async def main():
+        async with stdio_server() as (read_stream, write_stream):
+            await mcp_server.run(
+                read_stream,
+                write_stream,
+                mcp_server.create_initialization_options()
+            )
+
+    asyncio.run(main())

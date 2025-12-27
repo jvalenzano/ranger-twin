@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useVisualAuditStore } from '@/stores/visualAuditStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
-import { X, Globe, ShieldCheck, AlertCircle, FileText, Share2, Download, Search, Info } from 'lucide-react';
+import { X, Globe, ShieldCheck, FileText, Share2, Search } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 export const ForensicReportModal: React.FC = () => {
