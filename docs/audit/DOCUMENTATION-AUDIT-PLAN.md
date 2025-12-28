@@ -61,5 +61,5 @@ For every folder and file audited, follow this workflow:
 
 ## 🔗 Reference Links
 - [ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)
-- [Implementation Roadmap](../_!_IMPLEMENTATION-ROADMAP.md)
+- [Implementation Roadmap](../IMPLEMENTATION-ROADMAP.md)
 - [Strategic Intelligence Report](../research/STRATEGIC-INTELLIGENCE-REPORT.md)

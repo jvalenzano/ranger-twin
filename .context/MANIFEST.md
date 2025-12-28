@@ -9,7 +9,7 @@
 | Skills-First Architecture | `docs/adr/ADR-005-skills-first-architecture.md` | Core paradigm |
 | Google-Only LLM | `docs/adr/ADR-006-google-only-llm-strategy.md` | API simplification |
 | Tool Invocation | `docs/adr/ADR-007.1-tool-invocation-strategy.md` | Prevents infinite loops |
-| Product Summary | `docs/_!_PRODUCT-SUMMARY.md` | What RANGER is |
+| Product Summary | `docs/PRODUCT-SUMMARY.md` | What RANGER is |
 
 ## Tier 2: Implementation Reference
 

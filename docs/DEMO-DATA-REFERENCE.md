@@ -139,7 +139,7 @@ DEMO                                    PRODUCTION
 - [ADR-009: Fixture-First Development Strategy](./adr/ADR-009-fixture-first-development.md) — Full architectural rationale
 - [ADR-005: Skills-First Architecture](./adr/ADR-005-skills-first-architecture.md) — MCP abstraction layer
 - [PROOF-LAYER-DESIGN.md](./specs/PROOF-LAYER-DESIGN.md) — Citation and transparency requirements
-- [_!_PRODUCT-SUMMARY.md](./_!_PRODUCT-SUMMARY.md) — Full product overview
+- [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) — Full product overview
 
 ---
 

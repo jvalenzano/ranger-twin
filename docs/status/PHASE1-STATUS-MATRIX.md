@@ -271,7 +271,7 @@ npm run lint       # ESLint validation
 ## References
 
 **Key Documents:**
-- Implementation Roadmap: `docs/_!_IMPLEMENTATION-ROADMAP.md`
+- Implementation Roadmap: `docs/IMPLEMENTATION-ROADMAP.md`
 - Validation Report: `docs/validation/ADR-007.1-VALIDATION-REPORT.md`
 - Demo Checklist: `docs/demo/CEDAR-CREEK-DEMO-CHECKLIST.md`
 - Implementation Gaps: `docs/status/IMPLEMENTATION-GAPS.md`

@@ -137,6 +137,6 @@ Behavior Change     → Actually implementing AI guidance
 ---
 
 **Keep Learning:**
-- `docs/_!_PRODUCT-SUMMARY.md` - Full product context
+- `docs/PRODUCT-SUMMARY.md` - Full product context
 - `docs/adr/ADR-005-skills-first-architecture.md` - Why skills matter
 - `docs/specs/PROOF-LAYER-DESIGN.md` - Transparency requirements

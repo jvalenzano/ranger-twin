@@ -169,7 +169,7 @@ As of December 2025, the team is in **Phase 0-1 (Demo)** focused on:
 | [ADR-009](./adr/ADR-009-fixture-first-development.md) | Demo vs. production data strategy |
 | [DEMO-DATA-REFERENCE.md](./DEMO-DATA-REFERENCE.md) | Quick reference for stakeholder conversations |
 
-See [_!_PRODUCT-SUMMARY.md](./_!_PRODUCT-SUMMARY.md) for full context and the "8-minute reality" that drives our UX decisions.
+See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for full context and the "8-minute reality" that drives our UX decisions.
 
 ---
 
