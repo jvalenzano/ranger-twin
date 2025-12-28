@@ -34,6 +34,32 @@
 
 ---
 
+### [PL-002] Recovery Briefing Query Fails - Wrong ADK Pattern
+- **Type:** Bug (Architecture)
+- **Severity:** P0 (Blocker)
+- **Location:** Backend → Agent Orchestration
+- **Description:** "Give me a recovery briefing" routes to Burn Analyst which refuses, instead of Coordinator orchestrating all specialists
+- **Root Cause:** Using `sub_agents=[]` pattern which transfers control. Should use `AgentTool` wrappers to keep Coordinator in control.
+- **Expected:** Coordinator should call all 4 specialist tools and synthesize results
+- **Status:** Open
+- **Fix Reference:** `docs/runbooks/GOOGLE-ADK-RUNBOOK.md` - "Sub-Agents vs AgentTools" section
+- **Notes:** Expert panel identified this as fundamental ADK pattern mismatch (Dec 27, 2025)
+
+---
+
+### [PL-003] Confidence Scores Static at 75%
+- **Type:** Bug
+- **Severity:** P1 (High)
+- **Location:** Chat → Agent Responses
+- **Description:** All responses show "75% confidence" regardless of actual skill output
+- **Root Cause:** Skills return dynamic confidence (0.85-0.98) but LLM summarizes as text, losing numeric value. Frontend defaults to 0.75 when parsing fails.
+- **Expected:** Confidence should reflect actual skill calculations (vary between 0.82-0.98)
+- **Status:** Open
+- **Fix Reference:** `docs/runbooks/GOOGLE-ADK-RUNBOOK.md` - "Confidence Score Propagation" section
+- **Notes:** Requires either structured output schema or state-based metadata
+
+---
+
 ## Fixed Issues
 
 *(Move issues here when resolved)*
@@ -50,7 +76,7 @@
 
 | Status | Count |
 |--------|-------|
-| Open | 1 |
+| Open | 3 |
 | In Progress | 0 |
 | Fixed | 0 |
 | Won't Fix | 0 |
