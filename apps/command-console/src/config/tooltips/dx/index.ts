@@ -38,10 +38,17 @@ export const dxTooltips: DxTooltipRegistry = {
  * Get a specific tooltip by ID
  * @throws if tooltip not found (helps catch typos)
  */
+// Track warned IDs to avoid console spam
+const warnedIds = new Set<string>();
+
 export function getDxTooltip(id: string): DxTooltipContent {
     const tooltip = dxTooltips[id];
     if (!tooltip) {
-        console.warn(`[DX Tooltips] Unknown tooltip ID: "${id}"`);
+        // Only warn once per ID to avoid console spam
+        if (!warnedIds.has(id)) {
+            warnedIds.add(id);
+            console.warn(`[DX Tooltips] Unknown tooltip ID: "${id}"`);  
+        }
         // Return a fallback instead of throwing to prevent UI crashes
         return {
             id,

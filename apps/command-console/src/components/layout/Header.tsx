@@ -100,7 +100,8 @@ const MOCK_USER = {
   name: 'Sarah Chen',
   role: 'District Resource Specialist',
   district: 'Willamette National Forest',
-  avatar: 'https://picsum.photos/seed/ranger-sarah/64/64',
+  // Inline base64 SVG to avoid Basic Auth issues with external image requests
+  avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIEJhY2tncm91bmQgY2lyY2xlIC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjMyIiBmaWxsPSIjMzM0MTU1Ii8+CgogIDwhLS0gVXNlciBpY29uIC0tPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE2LCAxNikiPgogICAgPCEtLSBIZWFkIC0tPgogICAgPGNpcmNsZSBjeD0iMTYiIGN5PSIxMiIgcj0iOCIgZmlsbD0iIzk0YTNiOCIvPgoKICAgIDwhLS0gQm9keSAtLT4KICAgIDxwYXRoIGQ9Ik0xNiAyMiBDOSAyMiwgNCAyNywgNCAzNCBMMjggMzQgQzI4IDI3LCAyMyAyMiwgMTYgMjIgWiIgZmlsbD0iIzk0YTNiOCIvPgogIDwvZz4KPC9zdmc+Cg==',
 };
 
 interface HeaderProps {

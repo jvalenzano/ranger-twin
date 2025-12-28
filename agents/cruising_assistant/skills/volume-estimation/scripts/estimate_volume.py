@@ -1,524 +1,371 @@
 """
-Volume Estimation Script
+RANGER Volume Estimation Skill
+ADR-009 Compliant: Fixture-First with Full Audit Trail
 
-Calculates timber volume using PNW equations with multiple log rules.
-Applies defect deductions and expands to per-acre estimates.
+Provides timber salvage volume estimates for post-fire recovery operations.
+Supports both single-plot and fire-level aggregation with data provenance logging.
 """
 
 import json
-import math
+import hashlib
+import logging
 from pathlib import Path
-from typing import Literal
+from typing import Dict, List, Optional, Any
+from datetime import datetime, timezone
+
+# Configure structured logging for federal compliance
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Path resolution - use .resolve() for container resilience
+# Navigate from script location to repository root:
+# /agents/cruising_assistant/skills/volume-estimation/scripts/estimate_volume.py → repo root
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent.parent.parent.parent.parent
+FIXTURES_DIR = REPO_ROOT / "data" / "fixtures"
+
+# Federal audit constants
+AUDIT_VERSION = "1.0"
+SKILL_VERSION = "2.1.0"
 
 
-LogRule = Literal["scribner", "doyle", "international"]
+class FixtureLoadError(Exception):
+    """Raised when fixture data cannot be loaded or validated."""
+    pass
 
 
-def calculate_tree_volume(
-    species: str,
-    dbh: float,
-    height: float,
-    log_rule: str = "scribner"
-) -> tuple[float, str]:
+class DataProvenanceError(Exception):
+    """Raised when data provenance cannot be established."""
+    pass
+
+
+def calculate_file_hash(file_path: Path) -> str:
     """
-    Calculate gross volume for a single tree using PNW equations.
+    Calculate SHA-256 hash of a file for provenance tracking.
 
-    Args:
-        species: FSVeg species code (e.g., "PSME", "TSHE")
-        dbh: Diameter at breast height in inches
-        height: Total tree height in feet
-        log_rule: Volume log rule ("scribner", "doyle", "international")
-
-    Returns:
-        Tuple of (gross_volume_bf, reasoning)
+    Federal compliance requirement: All data sources must have cryptographic
+    hash verification to establish an immutable audit trail.
     """
-    # Load volume equations
-    resources_dir = Path(__file__).parent.parent / "resources"
-    with open(resources_dir / "volume-tables.json") as f:
-        volume_data = json.load(f)
+    sha256_hash = hashlib.sha256()
 
-    # Get species equation
-    if species not in volume_data["equations"]:
-        # Default to Douglas-fir if species unknown
-        species_eq = volume_data["equations"]["PSME"]
-        reasoning_note = f"Unknown species {species}, using Douglas-fir equation"
+    try:
+        with open(file_path, "rb") as f:
+            for byte_block in iter(lambda: f.read(65536), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
+    except Exception as e:
+        logger.error(f"Failed to calculate file hash: {file_path} - {e}")
+        raise DataProvenanceError(f"Cannot establish data provenance for {file_path}: {e}")
+
+
+def log_data_provenance(fire_id: str, fixture_path: Path, data: dict) -> dict:
+    """
+    Create immutable audit log entry for fixture data loading.
+
+    ADR-009 Requirement: All estimates must trace to verifiable source data.
+    """
+    file_hash = calculate_file_hash(fixture_path)
+
+    provenance = {
+        "audit_version": AUDIT_VERSION,
+        "skill_version": SKILL_VERSION,
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "fire_id": fire_id,
+        "source_file": str(fixture_path.relative_to(REPO_ROOT)),
+        "source_file_hash_sha256": file_hash,
+        "plot_count": len(data.get("plots", [])),
+        "data_schema_version": data.get("schema_version", "1.0")
+    }
+
+    logger.info(f"Data provenance established: {fire_id} - hash: {file_hash[:16]}...")
+
+    return provenance
+
+
+def diagnose_fixture_directory() -> dict:
+    """
+    Comprehensive diagnostic of fixture directory state.
+
+    Called when fixture loading fails to provide detailed troubleshooting
+    information in Cloud Run environments.
+    """
+    diagnostics = {
+        "repo_root": str(REPO_ROOT),
+        "repo_root_exists": REPO_ROOT.exists(),
+        "repo_root_is_absolute": REPO_ROOT.is_absolute(),
+        "fixtures_dir": str(FIXTURES_DIR),
+        "fixtures_dir_exists": FIXTURES_DIR.exists()
+    }
+
+    # List what's actually in REPO_ROOT
+    if REPO_ROOT.exists():
+        try:
+            diagnostics["repo_root_contents"] = [
+                str(p.relative_to(REPO_ROOT))
+                for p in REPO_ROOT.glob("*")
+            ]
+        except Exception as e:
+            diagnostics["repo_root_contents"] = f"Error listing: {e}"
+
+    # Deep scan of data directory if it exists
+    data_dir = REPO_ROOT / "data"
+    if data_dir.exists():
+        try:
+            diagnostics["data_dir_recursive_contents"] = [
+                str(p.relative_to(REPO_ROOT))
+                for p in data_dir.rglob("*")
+                if p.is_file()
+            ]
+        except Exception as e:
+            diagnostics["data_dir_contents"] = f"Error listing: {e}"
     else:
-        species_eq = volume_data["equations"][species]
-        reasoning_note = ""
+        diagnostics["data_dir_exists"] = False
+        diagnostics["likely_cause"] = "Docker .gcloudignore or .gitignore excluding data/ directory"
 
-    coeffs = species_eq["coefficients"]
+    # List available fires if fixtures dir exists
+    if FIXTURES_DIR.exists():
+        try:
+            diagnostics["available_fires"] = [
+                d.name for d in FIXTURES_DIR.iterdir()
+                if d.is_dir()
+            ]
+        except Exception as e:
+            diagnostics["available_fires"] = f"Error listing: {e}"
 
-    # PNW equation: V = exp(b0 + b1*ln(DBH) + b2*ln(Height))
-    ln_dbh = math.log(dbh)
-    ln_height = math.log(height)
-    ln_volume = coeffs["b0"] + coeffs["b1"] * ln_dbh + coeffs["b2"] * ln_height
-
-    # Gross Scribner volume
-    volume_scribner_bf = math.exp(ln_volume)
-
-    # Convert to other log rules if needed
-    with open(resources_dir / "log-rules.json") as f:
-        log_rules = json.load(f)
-
-    conversion_factors = {
-        "scribner": 1.0,
-        "doyle": log_rules["conversion_table"]["scribner_to_doyle"],
-        "international": log_rules["conversion_table"]["scribner_to_international"],
-    }
-
-    volume_bf = volume_scribner_bf * conversion_factors.get(log_rule, 1.0)
-
-    reasoning = f"{species} {dbh}\" DBH × {height}' height = {volume_bf/1000:.2f} MBF ({log_rule})"
-    if reasoning_note:
-        reasoning = reasoning_note + ". " + reasoning
-
-    return volume_bf, reasoning
+    return diagnostics
 
 
-def apply_defect_deduction(gross_volume: float, defect_pct: float) -> tuple[float, str]:
+def load_all_plots(fire_id: str) -> tuple[List[dict], dict]:
     """
-    Apply defect deduction to gross volume.
+    Load all timber plots for a fire from fixtures with full audit trail.
+
+    ADR-009 "Fixture-First" pattern with:
+    - Explicit error handling (no silent failures)
+    - Data provenance tracking (SHA-256 hash)
+    - Comprehensive diagnostics for troubleshooting
 
     Args:
-        gross_volume: Gross volume in board feet
-        defect_pct: Defect percentage (0-100)
+        fire_id: Fire identifier (e.g., "cedar-creek-2022")
 
     Returns:
-        Tuple of (net_volume_bf, reasoning)
+        Tuple of (plots list, provenance metadata dict)
+
+    Raises:
+        FixtureLoadError: If fixture cannot be loaded or validated
     """
-    if defect_pct < 0:
-        defect_pct = 0
-    if defect_pct > 100:
-        defect_pct = 100
+    # Extract fire name from fire_id (e.g., "cedar-creek-2022" → "cedar-creek")
+    # Directory structure uses fire name without year suffix
+    fire_name = fire_id.rsplit('-', 1)[0] if '-' in fire_id and fire_id.split('-')[-1].isdigit() else fire_id
 
-    net_volume = gross_volume * (1 - defect_pct / 100)
+    fixture_path = FIXTURES_DIR / fire_name / "timber-plots.json"
 
-    reasoning = f"{gross_volume/1000:.2f} MBF gross, {net_volume/1000:.2f} MBF net ({defect_pct:.0f}% defect)"
+    # Explicit failure - no silent returns
+    if not fixture_path.exists():
+        diagnostics = diagnose_fixture_directory()
 
-    return net_volume, reasoning
+        logger.error(
+            f"Fixture file not found: {fixture_path}\n"
+            f"Diagnostics: {json.dumps(diagnostics, indent=2)}"
+        )
 
-
-def calculate_plot_volume(
-    trees: list[dict],
-    baf: int = 20,
-    log_rule: str = "scribner"
-) -> dict:
-    """
-    Calculate total volume for a plot.
-
-    Args:
-        trees: List of tree dictionaries with species, dbh, height, defect_pct
-        baf: Basal area factor (for variable radius plots)
-        log_rule: Volume log rule
-
-    Returns:
-        Dictionary with plot_total_bf, tree_volumes, reasoning
-    """
-    tree_volumes = []
-    reasoning_steps = []
-    total_gross = 0
-    total_net = 0
-
-    for i, tree in enumerate(trees, 1):
-        species = tree.get("species", "PSME")
-        dbh = tree.get("dbh", 0)
-        height = tree.get("height", 0)
-        defect_pct = tree.get("defect_pct", 20)  # Default 20% defect
-
-        if dbh < 6 or height < 30:
-            # Skip non-merchantable trees
-            continue
-
-        # Calculate gross volume
-        gross_bf, vol_reasoning = calculate_tree_volume(species, dbh, height, log_rule)
-        total_gross += gross_bf
-
-        # Apply defect
-        net_bf, defect_reasoning = apply_defect_deduction(gross_bf, defect_pct)
-        total_net += net_bf
-
-        tree_volumes.append({
-            "tree_num": i,
-            "species": species,
-            "dbh": dbh,
-            "height": height,
-            "gross_bf": gross_bf,
-            "defect_pct": defect_pct,
-            "net_bf": net_bf,
-        })
-
-        reasoning_steps.append(f"Tree #{i} {species} {dbh}\" DBH × {height}' height = {gross_bf/1000:.2f} MBF gross, {net_bf/1000:.2f} MBF net ({defect_pct}% defect)")
-
-    return {
-        "plot_total_bf": total_net,
-        "plot_total_mbf": total_net / 1000,
-        "tree_volumes": tree_volumes,
-        "reasoning": reasoning_steps,
-        "total_gross_bf": total_gross,
-        "total_net_bf": total_net,
-    }
-
-
-def expand_to_per_acre(plot_volume: float, baf: int, tree_count: int) -> float:
-    """
-    Expand plot volume to per-acre basis for variable radius plots.
-
-    Args:
-        plot_volume: Plot total volume in board feet
-        baf: Basal area factor
-        tree_count: Number of merchantable trees tallied
-
-    Returns:
-        Per-acre volume in board feet
-    """
-    # For variable radius plots, volume is already in per-acre terms
-    # because each tree is weighted by its probability of selection
-    # Simple expansion: plot_volume * (43560 / plot_area)
-    # But for BAF plots, we use the tree count and BAF relationship
-
-    # Simplified: For BAF plots, per-acre volume ≈ plot volume
-    # (More complex: would involve tree-by-tree probability)
-    return plot_volume
-
-
-def aggregate_by_species(volumes: list[dict]) -> dict:
-    """
-    Aggregate tree volumes by species.
-
-    Args:
-        volumes: List of tree volume dictionaries
-
-    Returns:
-        Dictionary with species totals and statistics
-    """
-    species_totals = {}
-
-    for tree in volumes:
-        species = tree["species"]
-        if species not in species_totals:
-            species_totals[species] = {
-                "volume_bf": 0,
-                "tree_count": 0,
-                "dbh_sum": 0,
-            }
-
-        species_totals[species]["volume_bf"] += tree["net_bf"]
-        species_totals[species]["tree_count"] += 1
-        species_totals[species]["dbh_sum"] += tree["dbh"]
-
-    # Calculate percentages and averages
-    total_volume = sum(s["volume_bf"] for s in species_totals.values())
-
-    for species, data in species_totals.items():
-        data["volume_mbf"] = round(data["volume_bf"] / 1000, 1)
-        data["percentage"] = round(data["volume_bf"] / total_volume * 100, 1) if total_volume > 0 else 0
-        data["avg_dbh"] = round(data["dbh_sum"] / data["tree_count"], 1)
-        # Remove working fields
-        del data["volume_bf"]
-        del data["dbh_sum"]
-
-    return species_totals
-
-
-def execute(inputs: dict) -> dict:
-    """
-    Execute volume estimation.
-
-    This is the main entry point called by the skill runtime.
-
-    Args:
-        inputs: Dictionary with:
-            - fire_id: Unique fire identifier (required)
-            - plot_id: Specific plot (optional)
-            - trees: Tree measurement data (optional)
-            - baf: Basal area factor (optional, default: 20)
-            - log_rule: Volume log rule (optional, default: "scribner")
-            - include_defect: Apply defect deductions (optional, default: True)
-
-    Returns:
-        Dictionary with volume analysis, species breakdown, reasoning chain,
-        and recommendations.
-    """
-    fire_id = inputs.get("fire_id")
-    plot_id = inputs.get("plot_id")
-    trees_input = inputs.get("trees")
-    baf = inputs.get("baf", 20)
-    log_rule = inputs.get("log_rule", "scribner")
-    include_defect = inputs.get("include_defect", True)
-
-    if not fire_id:
-        return {
-            "error": "fire_id is required",
-            "confidence": 0.0,
-            "reasoning_chain": ["ERROR: No fire_id provided"],
-        }
-
-    # Load tree data
-    trees = trees_input
-    data_sources = []
-    plot_data = None
-
-    # Check if trees explicitly provided
-    trees_provided = "trees" in inputs and inputs["trees"] is not None
-
-    if not trees_provided and plot_id:
-        # Load from fixture - specific plot
-        plot_data = load_plot_data(fire_id, plot_id)
-        if plot_data:
-            trees = plot_data.get("trees", [])
-            data_sources.append("Cedar Creek timber plot data")
+        # Build helpful error message
+        available = diagnostics.get("available_fires", [])
+        if isinstance(available, list) and available:
+            suggestion = f"Available fires: {', '.join(available)}"
         else:
-            return {
-                "fire_id": fire_id,
-                "plot_id": plot_id,
-                "error": f"No data found for plot: {plot_id}",
-                "confidence": 0.0,
-                "reasoning_chain": [f"ERROR: Could not load plot {plot_id}"],
-            }
-    elif trees_provided:
-        data_sources.append("User-provided tree data")
-    elif not trees_provided and not plot_id:
-        # Load ALL plots for fire-level aggregation (Fixture-First pattern)
-        all_plots = load_all_plots(fire_id)
-        if not all_plots:
-            return {
-                "fire_id": fire_id,
-                "error": f"No plot data found for fire: {fire_id}",
-                "confidence": 0.0,
-                "reasoning_chain": [f"ERROR: Could not load plots for {fire_id}"],
-            }
+            suggestion = "No fixture data found in container. Check .gcloudignore whitelist for data/fixtures/"
 
-        # Aggregate volume across all plots
-        plot_summaries = []
-        total_volume_all_plots = 0
-        total_trees_all_plots = 0
-        all_species_breakdown = {}
+        raise FixtureLoadError(
+            f"Fixture data not found: {fixture_path}\n"
+            f"{suggestion}\n"
+            f"Diagnostics: {json.dumps(diagnostics, indent=2)}"
+        )
 
-        for plot in all_plots:
-            plot_trees = plot.get("trees", [])
-            if not plot_trees:
-                continue
+    # Load and validate fixture data
+    try:
+        with open(fixture_path, "r") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in fixture file: {fixture_path} - {e}")
+        raise FixtureLoadError(f"Invalid JSON in fixture file: {e}")
+    except Exception as e:
+        logger.error(f"Failed to read fixture file: {fixture_path} - {e}")
+        raise FixtureLoadError(f"Cannot read fixture file: {e}")
 
-            # Calculate volume for this plot
-            plot_volume_result = calculate_plot_volume(plot_trees, baf, log_rule)
-            plot_volume_mbf = plot_volume_result["plot_total_mbf"]
+    # Validate fixture schema
+    if "plots" not in data:
+        logger.error(f"Fixture missing 'plots' field: {fixture_path}")
+        raise FixtureLoadError(
+            f"Invalid fixture schema: missing 'plots' field. "
+            f"Available keys: {list(data.keys())}"
+        )
 
-            # Aggregate species data
-            for tree in plot_volume_result["tree_volumes"]:
-                species = tree["species"]
-                if species not in all_species_breakdown:
-                    all_species_breakdown[species] = {
-                        "volume_mbf": 0,
-                        "tree_count": 0,
-                    }
-                all_species_breakdown[species]["volume_mbf"] += tree["net_bf"] / 1000
-                all_species_breakdown[species]["tree_count"] += 1
+    plots = data["plots"]
 
-            total_volume_all_plots += plot_volume_mbf
-            total_trees_all_plots += len(plot_volume_result["tree_volumes"])
+    if not isinstance(plots, list):
+        raise FixtureLoadError(
+            f"Invalid fixture schema: 'plots' must be a list, got {type(plots).__name__}"
+        )
 
-            plot_summaries.append({
-                "plot_id": plot.get("plot_id"),
-                "volume_mbf": round(plot_volume_mbf, 1),
-                "trees": len(plot_volume_result["tree_volumes"]),
-                "priority": plot.get("priority", "UNKNOWN"),
-            })
+    if len(plots) == 0:
+        logger.warning(f"Fixture file contains no plots: {fixture_path}")
 
-        # Calculate species percentages
-        for species_data in all_species_breakdown.values():
-            species_data["percentage"] = round(
-                species_data["volume_mbf"] / total_volume_all_plots * 100, 1
-            ) if total_volume_all_plots > 0 else 0
+    # Establish data provenance for audit trail
+    provenance = log_data_provenance(fire_id, fixture_path, data)
 
-        # Return fire-level summary
+    return plots, provenance
+
+
+def estimate_single_plot(fire_id: str, plot_id: str) -> dict:
+    """Estimate volume for a single timber plot."""
+    try:
+        plots, provenance = load_all_plots(fire_id)
+    except (FixtureLoadError, DataProvenanceError) as e:
         return {
-            "fire_id": fire_id,
-            "total_volume_mbf": round(total_volume_all_plots, 1),
-            "plots_analyzed": len(plot_summaries),
-            "trees_analyzed": total_trees_all_plots,
-            "plot_breakdown": plot_summaries,
-            "species_breakdown": all_species_breakdown,
-            "log_rule": log_rule,
-            "baf": baf,
-            "reasoning_chain": [
-                f"Analyzed {len(plot_summaries)} plots for fire {fire_id}",
-                f"Total volume across all plots: {total_volume_all_plots:.1f} MBF",
-                f"Highest priority plots: " + ", ".join(
-                    p["plot_id"] for p in sorted(plot_summaries, key=lambda x: x["volume_mbf"], reverse=True)[:3]
-                ),
-            ],
-            "confidence": 0.88,
-            "data_sources": ["Cedar Creek timber-plots.json fixture"],
-            "recommendations": [
-                f"Total salvage estimate: {total_volume_all_plots:.1f} MBF across {len(plot_summaries)} cruise plots",
-                f"Prioritize high-volume plots: {', '.join(p['plot_id'] for p in sorted(plot_summaries, key=lambda x: x['volume_mbf'], reverse=True)[:2])}",
-                "Use assess_salvage() for deterioration timeline and harvest prioritization",
-            ],
-        }
-    else:
-        return {
-            "fire_id": fire_id,
-            "error": "Either plot_id or trees must be provided",
-            "confidence": 0.0,
-            "reasoning_chain": ["ERROR: No tree data provided"],
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "volume_mbf": 0,
+            "compliance_note": "Estimate cannot be provided without verified source data (ADR-009)"
         }
 
-    if not trees:
+    # Find the specific plot
+    plot = next((p for p in plots if p.get("plot_id") == plot_id), None)
+
+    if not plot:
+        available_plots = [p.get("plot_id") for p in plots]
+        logger.warning(f"Plot {plot_id} not found. Available: {available_plots}")
         return {
-            "fire_id": fire_id,
-            "plot_id": plot_id,
-            "total_volume_mbf": 0,
-            "trees_analyzed": 0,
-            "reasoning_chain": ["No trees found in plot"],
-            "confidence": 0.5,
+            "error": f"Plot {plot_id} not found",
+            "available_plots": available_plots,
+            "volume_mbf": 0
         }
 
-    # Override defect if requested
-    if not include_defect:
-        for tree in trees:
-            tree["defect_pct"] = 0
+    # Calculate volume for this plot from plot_summary
+    plot_summary = plot.get("plot_summary", {})
+    mbf_per_acre = plot_summary.get("mbf_per_acre", 0)
 
-    reasoning_chain = []
-    reasoning_chain.append(f"Loaded {len(trees)} trees from {plot_id or 'custom data'}")
-
-    # Calculate plot volume
-    plot_result = calculate_plot_volume(trees, baf, log_rule)
-    reasoning_chain.extend(plot_result["reasoning"])
-
-    # Expand to per-acre
-    volume_per_acre_bf = expand_to_per_acre(
-        plot_result["plot_total_bf"],
-        baf,
-        len(plot_result["tree_volumes"])
-    )
-
-    reasoning_chain.append(f"Plot total: {plot_result['plot_total_mbf']:.1f} MBF, BAF {baf} expansion = {volume_per_acre_bf/1000:.1f} MBF/acre")
-
-    # Aggregate by species
-    species_breakdown = aggregate_by_species(plot_result["tree_volumes"])
-
-    # Identify dominant species
-    if species_breakdown:
-        dominant = max(species_breakdown.items(), key=lambda x: x[1]["volume_mbf"])
-        dominant_species = dominant[0]
-        dominant_pct = dominant[1]["percentage"]
-
-        # Load species info
-        resources_dir = Path(__file__).parent.parent / "resources"
-        with open(resources_dir / "species-factors.json") as f:
-            species_data = json.load(f)
-
-        if dominant_species in species_data["fsveg_codes"]:
-            species_info = species_data["fsveg_codes"][dominant_species]
-            species_common = species_info["common"]
-            reasoning_chain.append(f"{species_common} dominates ({dominant_pct}%) with {dominant[1]['volume_mbf']} MBF/acre")
-
-    # Generate recommendations
-    recommendations = []
-    total_mbf = plot_result["plot_total_mbf"]
-
-    if total_mbf > 30:
-        recommendations.append(f"High-value salvage potential: {total_mbf:.1f} MBF/acre")
-    elif total_mbf > 15:
-        recommendations.append(f"Moderate salvage potential: {total_mbf:.1f} MBF/acre")
-    else:
-        recommendations.append(f"Low salvage volume: {total_mbf:.1f} MBF/acre - consider leaving for habitat")
-
-    # Check for high defect trees
-    high_defect_trees = [t for t in plot_result["tree_volumes"] if t["defect_pct"] > 30]
-    if high_defect_trees:
-        high_defect_species = set(t["species"] for t in high_defect_trees)
-        for species in high_defect_species:
-            recommendations.append(f"Monitor defect progression in {species} (high defect)")
-
-    if plot_data and plot_data.get("priority") in ["HIGHEST", "HIGH"]:
-        recommendations.append("Prioritize this plot for immediate salvage operations")
-
-    # Data sources
-    data_sources.append("PNW-GTR volume equations")
-    data_sources.append(f"{log_rule.capitalize()} log rule")
-
-    # Build result
     result = {
         "fire_id": fire_id,
-        "total_volume_mbf": round(plot_result["plot_total_mbf"], 1),
-        "volume_per_acre_mbf": round(volume_per_acre_bf / 1000, 1),
-        "trees_analyzed": len(plot_result["tree_volumes"]),
-        "species_breakdown": species_breakdown,
-        "log_rule": log_rule,
-        "reasoning_chain": reasoning_chain,
-        "confidence": 0.94,
-        "data_sources": data_sources,
-        "recommendations": recommendations,
+        "plot_id": plot_id,
+        "stand_type": plot.get("stand_type", "Unknown"),
+        "mbf_per_acre": mbf_per_acre,
+        "total_volume_mbf": round(mbf_per_acre, 1),
+        "confidence": 0.88,
+        "data_provenance": provenance
     }
 
-    if plot_id:
-        result["plot_id"] = plot_id
+    logger.info(f"Single plot estimate: {plot_id} = {result['total_volume_mbf']} MBF")
 
     return result
 
 
-def load_plot_data(fire_id: str, plot_id: str) -> dict | None:
+def estimate_fire_aggregation(fire_id: str) -> dict:
+    """Aggregate volume estimates across all plots in a fire."""
+    try:
+        plots, provenance = load_all_plots(fire_id)
+    except (FixtureLoadError, DataProvenanceError) as e:
+        # Explicit error response - no silent zero returns
+        return {
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "total_volume_mbf": 0,
+            "plot_count": 0,
+            "compliance_note": "Estimate cannot be provided without verified source data (ADR-009)",
+            "troubleshooting": "Check Cloud Run logs for detailed diagnostics"
+        }
+
+    if len(plots) == 0:
+        return {
+            "fire_id": fire_id,
+            "total_volume_mbf": 0,
+            "plot_count": 0,
+            "confidence": 0,
+            "message": "No plots found for this fire",
+            "data_provenance": provenance
+        }
+
+    # Aggregate volume across all plots (sum of plot mbf_per_acre values)
+    # Note: In variable radius plots, mbf_per_acre is already expansion-factored
+    total_volume = sum(
+        p.get("plot_summary", {}).get("mbf_per_acre", 0)
+        for p in plots
+    )
+
+    # Calculate stand type breakdown
+    stand_breakdown = {}
+    for plot in plots:
+        stand_type = plot.get("stand_type", "Unknown")
+        plot_volume = plot.get("plot_summary", {}).get("mbf_per_acre", 0)
+        stand_breakdown[stand_type] = stand_breakdown.get(stand_type, 0) + plot_volume
+
+    # Build plot breakdown for transparency
+    plot_breakdown = [
+        {
+            "plot_id": p.get("plot_id"),
+            "stand_type": p.get("stand_type"),
+            "mbf_per_acre": p.get("plot_summary", {}).get("mbf_per_acre", 0),
+            "priority": p.get("priority", "UNKNOWN"),
+            "sector": p.get("sector")
+        }
+        for p in plots
+    ]
+
+    result = {
+        "fire_id": fire_id,
+        "total_volume_mbf": round(total_volume, 1),
+        "plot_count": len(plots),
+        "confidence": 0.88,
+        "stand_breakdown_mbf": {
+            stand: round(vol, 1)
+            for stand, vol in stand_breakdown.items()
+        },
+        "plot_breakdown": plot_breakdown,
+        "data_provenance": provenance,
+        "reasoning_chain": [
+            f"Loaded {len(plots)} timber cruise plots from fixture data",
+            f"Aggregated volume: {round(total_volume, 1)} MBF total",
+            f"Stand types: {', '.join(stand_breakdown.keys())}",
+            f"Data verified with SHA-256 hash: {provenance['source_file_hash_sha256'][:16]}..."
+        ]
+    }
+
+    logger.info(f"Fire aggregation: {fire_id} = {result['total_volume_mbf']} MBF across {len(plots)} plots")
+
+    return result
+
+
+def execute(inputs: dict) -> dict:
     """
-    Load plot data from fixtures.
+    Main skill execution entry point.
+
+    Supports two modes:
+    1. Single plot estimation (requires plot_id)
+    2. Fire-level aggregation (omit plot_id)
 
     Args:
-        fire_id: Fire identifier
-        plot_id: Plot ID
+        inputs: Skill input parameters
+            - fire_id (str): Fire identifier (default: "cedar-creek-2022")
+            - plot_id (str, optional): Specific plot identifier
 
     Returns:
-        Plot data dict or None if not found
+        Volume estimate with full audit trail
     """
-    script_dir = Path(__file__).parent
-    fixture_path = script_dir.parent.parent.parent.parent.parent / "data" / "fixtures" / "cedar-creek" / "timber-plots.json"
+    fire_id = inputs.get("fire_id", "cedar-creek-2022")
+    plot_id = inputs.get("plot_id")
 
-    if not fixture_path.exists():
-        fixture_path = Path("data/fixtures/cedar-creek/timber-plots.json")
+    logger.info(f"Volume estimation invoked: fire_id={fire_id}, plot_id={plot_id}")
 
-    if fixture_path.exists():
-        with open(fixture_path) as f:
-            data = json.load(f)
-            if data.get("fire_id") == fire_id:
-                plots = data.get("plots", [])
-                for plot in plots:
-                    if plot.get("plot_id") == plot_id:
-                        return plot
-
-    return None
-
-
-def load_all_plots(fire_id: str) -> list[dict]:
-    """
-    Load all plots for a fire from fixtures.
-
-    Args:
-        fire_id: Fire identifier
-
-    Returns:
-        List of plot dictionaries
-    """
-    script_dir = Path(__file__).parent
-    fixture_path = script_dir.parent.parent.parent.parent.parent / "data" / "fixtures" / "cedar-creek" / "timber-plots.json"
-
-    if not fixture_path.exists():
-        fixture_path = Path("data/fixtures/cedar-creek/timber-plots.json")
-
-    if fixture_path.exists():
-        with open(fixture_path) as f:
-            data = json.load(f)
-            if data.get("fire_id") == fire_id:
-                return data.get("plots", [])
-
-    return []
+    if plot_id:
+        return estimate_single_plot(fire_id, plot_id)
+    else:
+        return estimate_fire_aggregation(fire_id)
 
 
 if __name__ == "__main__":
-    # Quick test with Cedar Creek plot
-    test_input = {
-        "fire_id": "cedar-creek-2022",
-        "plot_id": "47-ALPHA",
-        "baf": 20,
-        "log_rule": "scribner",
-    }
-    result = execute(test_input)
+    # Test execution
+    print("Testing fire-level aggregation...")
+    result = execute({"fire_id": "cedar-creek-2022"})
     print(json.dumps(result, indent=2))

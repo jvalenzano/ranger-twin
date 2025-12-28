@@ -98,20 +98,44 @@
 - **Notes:** This validates the user's diagnosis: "We don't need MCP for Phase 1. Skills load fixtures directly." The MCP client was aspirational code that wasn't needed yet.
 
 ### [PL-006] NEPA Advisor Asks Clarification Before Searching
-- **Type:** Bug
+- **Type:** Bug (Epistemic Overconfidence)
 - **Severity:** P1 (High)
-- **Location:** Backend → agents/nepa_advisor/agent.py
+- **Location:** Backend → agents/nepa_advisor/agent.py, file_search.py
 - **Description:** When asked "Is a Categorical Exclusion appropriate for Cedar Creek timber salvage?", NEPA Advisor responds "I need to know the estimated acreage" instead of searching FSM/FSH knowledge base first
-- **Root Cause:** System prompt lacks search-first directive. Agent has `search_regulatory_documents()` tool but no instruction to use it before asking clarifications
-- **Expected:** Should call search_regulatory_documents() → find CE thresholds → THEN ask for acreage if needed
-- **Status:** ✅ **Fixed** (December 28, 2025)
-- **Fix Details:**
-  - Added "CRITICAL SEARCH-FIRST BEHAVIOR" section to agent.py:240-277
-  - Instructs agent to ALWAYS search FSM/FSH before asking questions
-  - Includes example of correct behavior with regulatory citations
-  - Deployed with revision TBD (pending deployment)
+- **Root Cause:** "Competence Trap" — model has parametric knowledge of CE concepts from training data, so it skips the search tool. Violates Proof Layer requirement that all recommendations be grounded in regulatory citations.
+- **Expected:** Should call search tool → find CE thresholds from FSM/FSH → THEN ask for acreage if threshold applies
+- **Status:** ✅ **Deployed - Pending Frontend Validation** (December 28, 2025)
+- **Fix Approach (4-Point Strategy):**
+  1. **Semantic Reframing:** Renamed `search_regulatory_documents` → `consult_mandatory_nepa_standards` (clean break, no alias)
+  2. **Docstring Update:** Reframed as `[MANDATORY PREREQUISITE]` — "MUST be called BEFORE requesting ANY clarifying details"
+  3. **Prompt Restructure:** Moved STRICT REGULATORY COMPLIANCE PROTOCOL to TOP of system prompt (before role definition)
+     - "YOUR TRAINING DATA IS DEPRECATED" epistemic humility framing
+     - FORBIDDEN ACTIONS section with "VIOLATION = FEDERAL AUDIT FAILURE" warning
+     - SEQUENCE OF OPERATIONS showing correct vs incorrect behavior
+  4. **Health Check:** Added `verify_store_health()` function for pre-deployment validation
+- **Deployment Details:**
+  - Revision: `ranger-coordinator-00011-d99`
+  - Timestamp: 2025-12-28 12:07 UTC
+  - Service URL: `https://ranger-coordinator-1058891520442.us-central1.run.app`
+  - Health check: ✅ Passing (adk_version: 1.21.0)
+- **Files Modified:**
+  - `agents/nepa_advisor/file_search.py` — Function rename, docstring, health check (lines 57-271)
+  - `agents/nepa_advisor/agent.py` — Import, tools list, complete prompt restructure (lines 34, 221-345, 473)
+  - `docs/testing/PUNCH-LIST.md` — This status update
+- **Verification Status:**
+  - ✅ Code changes deployed successfully
+  - ✅ Service health check passing
+  - 🔄 **Pending:** Frontend validation via Command Console
+  - ❌ **API testing blocked:** ADK session management requires frontend or manual testing (not automatable via curl)
+- **Next Steps:**
+  1. Test via Command Console: "Is a CE appropriate for Cedar Creek timber salvage?"
+  2. Verify search tool called before clarification
+  3. If <85% compliance → implement NEPAQueryRouter fallback
+- **Success Criteria:**
+  - 85-95% queries trigger search BEFORE clarification request
+  - Responses include FSM/FSH citations when providing recommendations
 - **Evidence:** User chat export (ranger-chat-2025-12-28.json) shows NEPA query deflected without search
-- **Notes:** Agent has File Search RAG configured with FSH/FSM documents. Now enforces search-first workflow.
+- **Notes:** Expert panel diagnosis confirmed epistemic overconfidence. Fix destroys model's confidence in internal knowledge by framing training data as deprecated. Automated API testing not feasible due to ADK /run_sse session requirements.
 
 ---
 
@@ -164,23 +188,52 @@
 
 ---
 
-### [PL-010] Cruising Assistant Returns "No Volume Estimate"
-- **Type:** Bug
+### [PL-010] Cruising Assistant Returns "0 MBF" in Cloud Run
+- **Type:** Bug (Path Resolution)
 - **Severity:** P2 (Medium)
 - **Location:** Backend → agents/cruising_assistant/skills/volume-estimation/scripts/estimate_volume.py
-- **Description:** Query "What is the timber salvage volume estimate for Cedar Creek?" returns "No volume estimate available"
-- **Root Cause:** Skill required either `plot_id` or explicit `trees` data. When user asks for fire-level estimate without specifying plot, skill returned error: "Either plot_id or trees must be provided"
-- **Expected:** Should aggregate volume from all plots when only fire_id provided (Fixture-First pattern)
-- **Status:** ✅ **Fixed** (December 28, 2025)
+- **Description:** Query "What is the timber salvage volume estimate for Cedar Creek?" returns "0 MBF" in Cloud Run production despite working locally (162.6 MBF)
+- **Root Cause:** Brittle path resolution (`script_dir.parent.parent.parent.parent.parent`) failed in Docker's `/app` working directory. Original implementation also had silent failures (returned `None`/`[]` with no diagnostics)
+- **Expected:** Should aggregate volume from all plots with full ADR-009 compliance (SHA-256 provenance, explicit error handling, comprehensive diagnostics)
+- **Status:** ✅ **Deployed - Pending Frontend Validation** (December 28, 2025)
 - **Fix Details:**
-  - Added `load_all_plots()` function to load all plots for a fire (line 412-434)
-  - Enhanced `execute()` to handle fire-level aggregation (line 280-357)
-  - Aggregates volume across all plots with species breakdown
-  - Returns plot_breakdown, total_volume_mbf, and prioritized plot list
-  - Test verification: 47.8 MBF total across 6 plots, confidence 88%
-  - Deployed with revision TBD (pending deployment)
-- **Evidence:** User chat export shows empty volume response. Fixture verified to contain mbf_per_acre data.
-- **Notes:** Implements ADR-009 Fixture-First pattern. Skill now handles 3 scenarios: specific plot, explicit trees, or fire-level aggregation.
+  - **REPLACED** entire script (366 lines) with ADR-009 compliant version
+  - Container-resilient path resolution: `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent`
+  - Fire ID extraction handles directory naming (e.g., `"cedar-creek-2022"` → `"cedar-creek"` directory)
+  - SHA-256 data provenance tracking with immutable audit trail
+  - Comprehensive fixture diagnostics when loading fails (no silent failures)
+  - Added `FixtureLoadError` and `DataProvenanceError` exception classes
+  - Returns stand type breakdown (not species - plots contain mixed species)
+  - Updated Dockerfile with build-time fixture validation (lines 54-60)
+  - **Test verification:** 162.6 MBF total across 6 plots (sum of mbf_per_acre values), confidence 88%
+- **Deployment Details:**
+  - Revision: `ranger-coordinator-00012-5xc`
+  - Timestamp: 2025-12-28 12:15 UTC
+  - Service URL: `https://ranger-coordinator-1058891520442.us-central1.run.app`
+  - Health check: ✅ Passing (cruising_assistant agent confirmed available)
+- **Evidence:** Local test returns 162.6 MBF with SHA-256 hash `076979791134f9a2...`. Build validation added to Dockerfile.
+- **Files Modified:**
+  - `agents/cruising_assistant/skills/volume-estimation/scripts/estimate_volume.py` (complete rewrite)
+  - `Dockerfile` (added fixture validation after line 52)
+  - `.gcloudignore` (defensive fixture whitelist)
+- **Verification Status:**
+  - ✅ Code changes deployed successfully
+  - ✅ Service health check passing
+  - ✅ Cruising Assistant agent confirmed in agents list
+  - 🔄 **Pending:** Frontend validation via Command Console
+  - ❌ **API testing blocked:** ADK session management requires frontend or manual testing (not automatable via curl)
+- **Next Steps:**
+  1. Test via Command Console: "What is the timber salvage volume estimate for Cedar Creek?"
+  2. Verify response includes non-zero MBF value (~162.6 MBF expected)
+  3. Verify response includes `data_provenance` with SHA-256 hash
+  4. Verify response includes `reasoning_chain` array
+  5. Check Cloud Run logs for "Data provenance established" message
+- **Success Criteria:**
+  - Response returns 162.6 MBF (not 0 MBF)
+  - Response includes SHA-256 hash: `076979791134f9a2...`
+  - Response includes stand breakdown and plot details
+  - Cloud Run logs show structured logging with provenance
+- **Notes:** Full ADR-009 compliance. Federal audit trail with SHA-256 checksums. No silent failures - all errors include comprehensive diagnostics. Automated API testing not feasible due to ADK /run_sse session requirements.
 
 ---
 

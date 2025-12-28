@@ -531,9 +531,11 @@ If users don't trust the basic data display (filtered counts, visual consistency
 | [_MISSION-CONTROL.md](./features/_MISSION-CONTROL.md) | Current implementation plan |
 | [DATA-SIMULATION-STRATEGY.md](./DATA-SIMULATION-STRATEGY.md) | Phase 1 simulation boundaries |
 | [STAKEHOLDER-MESSAGING.md](./brand/STAKEHOLDER-MESSAGING.md) | Audience-specific messaging |
+| [ADR-009: Fixture-First Development](./adr/ADR-009-fixture-first-development.md) | Demo vs. production architecture |
+| [DEMO-DATA-REFERENCE.md](./DEMO-DATA-REFERENCE.md) | Quick reference for stakeholder conversations |
 
 ---
 
 **Document Owner:** RANGER Product Team  
-**Last Updated:** December 24, 2025  
+**Last Updated:** December 27, 2025  
 **Status:** Living document — update as we learn

@@ -1,18 +1,24 @@
 # RANGER: Fixture Data Formats
 
-**Status:** Authoritative Reference
-**Phase:** 1 (Simulation)
+**Status:** Authoritative Reference  
+**Phase:** 1 (Fixture-First Development)  
+**Last Updated:** 2025-12-27  
 **Purpose:** Comprehensive documentation of all fixture data schemas used in RANGER Phase 1
+
+---
+
+> [!IMPORTANT]
+> **Fixture-First Strategy (ADR-009):** Fixtures contain **real federal data** cached locally for demo reliability. The data formats, values, and structures are authentic—only the delivery mechanism (local files vs. live APIs) differs between demo and production. See [ADR-009: Fixture-First Development](../adr/ADR-009-fixture-first-development.md) for the full architectural rationale.
 
 ---
 
 ## Overview
 
-This document catalogs the complete set of fixture data formats used in the RANGER system during Phase 1. These fixtures simulate the outputs of upstream data systems (satellite imagery processing, field capture apps, etc.) to enable development and demonstration of the core orchestration capabilities.
+This document catalogs the complete set of fixture data formats used in the RANGER system during Phase 1. These fixtures are **derived from real federal data sources** (MTBS, IRWIN, TRACS) to ensure authentic data formats while enabling reliable demonstrations.
 
-**Key Principle:** While the *input data is simulated*, the *agent reasoning and export formats are production-ready*.
+**Key Principle:** The *input data is real* (cached federal data), and the *agent reasoning and export formats are production-ready*. Only the data source changes between demo and production.
 
-For the authoritative scope document defining what is simulated vs. real, see [`DATA-SIMULATION-STRATEGY.md`](../DATA-SIMULATION-STRATEGY.md).
+For the authoritative data strategy, see [ADR-009: Fixture-First Development](../adr/ADR-009-fixture-first-development.md).
 
 ---
 

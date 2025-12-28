@@ -1,16 +1,18 @@
 # RANGER Demo Access
 
+> **Last Updated:** December 27, 2025
+
 ## URLs
 
 | Service | URL |
 |---------|-----|
-| **Frontend** | https://ranger-console-1058891520442.us-central1.run.app |
-| **Backend** | https://ranger-coordinator-1058891520442.us-central1.run.app |
+| **Frontend** | https://ranger-console-fqd6rb7jba-uc.a.run.app |
+| **Backend** | https://ranger-coordinator-fqd6rb7jba-uc.a.run.app |
 
 ## Demo Credentials
 
-- **Username:** ranger
-- **Password:** CedarCreek2025!
+- **Username:** `ranger`
+- **Password:** `RangerDemo2025!`
 
 ## Quick Test
 
@@ -21,30 +23,62 @@
 ## Health Check
 
 ```bash
-curl https://ranger-console-1058891520442.us-central1.run.app/health
+# Frontend
+curl -u ranger:RangerDemo2025! https://ranger-console-fqd6rb7jba-uc.a.run.app/health
+
+# Backend
+curl https://ranger-coordinator-fqd6rb7jba-uc.a.run.app/health
 ```
 
-Expected: `{"status":"healthy","service":"ranger-console"}`
+## Deployment Details
 
-## Deployed
+| Property | Value |
+|----------|-------|
+| **Date** | December 27, 2025 |
+| **Platform** | Cloud Run (Google Cloud Platform) |
+| **Region** | us-central1 |
+| **Project** | ranger-twin-dev |
 
-**Date:** December 27, 2025
-**Revision:** ranger-console-00003-hkk
-**Platform:** Cloud Run (Google Cloud Platform)
-**Region:** us-central1
-**Project:** ranger-twin-dev
+## Architecture
 
-## Technical Details
+| Component | Technology |
+|-----------|------------|
+| Frontend | React 18.3 + Vite 6.0 + Tailwind CSS |
+| Authentication | HTTP Basic Auth |
+| Backend | Google ADK + Gemini 2.0 Flash |
+| Data | Fixture-First (real federal data bundled) |
+| Map | MapLibre GL + MapTiler |
 
-- **Frontend**: React 18.3 + Vite 6.0 + Tailwind CSS
-- **Authentication**: HTTP Basic Auth via nginx
-- **Backend API**: Google ADK orchestrator with Gemini 2.0 Flash
-- **Map**: MapLibre GL + MapTiler
-- **Resources**: 256MB RAM, 1 CPU, 0-3 instances
+## What's Deployed
 
-## Notes
+Per our architecture decisions:
 
-- Frontend and backend CORS are configured for cross-origin requests
-- Health endpoint (`/health`) bypasses authentication for Cloud Run health checks
-- Password is baked into the Docker image at build time
-- Frontend environment variables (VITE_ADK_URL, VITE_MAPTILER_API_KEY) are compiled into the build
+- **ADR-008 (AgentTool Pattern):** All agents in single `ranger-coordinator` service
+- **ADR-009 (Fixture-First):** Real MTBS/IRWIN/TRACS data bundled in Docker images
+- **ADR-006 (Google-Only):** Gemini 2.0 Flash via Vertex AI
+
+## Known Limitations (Demo Phase)
+
+- Sessions are in-memory (lost on container restart)
+- Only Cedar Creek and Bootleg fires have fixture data
+- No persistent user authentication (Basic Auth only)
+
+## Redeployment
+
+```bash
+# Frontend
+cd /Users/jvalenzano/Projects/ranger-twin
+./scripts/deploy-frontend.sh
+
+# Backend
+gcloud run deploy ranger-coordinator \
+  --source . \
+  --region us-central1 \
+  --set-env-vars "GOOGLE_GENAI_USE_VERTEXAI=TRUE,ALLOW_ORIGINS=https://ranger-console-fqd6rb7jba-uc.a.run.app"
+```
+
+## Documentation
+
+- [ADR-009: Fixture-First Development](../adr/ADR-009-fixture-first-development.md)
+- [DEMO-DATA-REFERENCE.md](../DEMO-DATA-REFERENCE.md)
+- [GCP-DEPLOYMENT.md](../architecture/GCP-DEPLOYMENT.md)

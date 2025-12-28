@@ -19,11 +19,14 @@ RUN npm ci
 COPY . .
 
 # Build arguments for environment configuration
+# IMPORTANT: These must be passed via --build-arg when using docker build,
+# or via cloudbuild.yaml when using gcloud builds submit.
+# The --set-build-env-vars flag does NOT work with Docker ARGs.
 ARG VITE_ADK_URL
 ARG VITE_MAPTILER_API_KEY
 ARG VITE_USE_ADK=true
 
-# Set environment variables for build
+# Convert ARGs to ENVs for Vite to pick up during build
 ENV VITE_ADK_URL=$VITE_ADK_URL
 ENV VITE_MAPTILER_API_KEY=$VITE_MAPTILER_API_KEY
 ENV VITE_USE_ADK=$VITE_USE_ADK

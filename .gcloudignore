@@ -1,0 +1,49 @@
+# .gcloudignore
+# Controls what gets uploaded to Cloud Build (NOT what goes in the container)
+# If this file doesn't exist, .gitignore patterns are used automatically
+
+# ===== EXCLUDE: Development/Build Artifacts =====
+.git
+.gitignore
+.dockerignore
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# ===== EXCLUDE: Local Development =====
+.venv/
+venv/
+.env
+.env.local
+*.log
+
+# ===== EXCLUDE: IDE/Editor =====
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ===== EXCLUDE: Node (if frontend exists) =====
+node_modules/
+dist/
+build/
+
+# ===== EXCLUDE: Documentation (not needed in container) =====
+docs/
+*.md
+!README.md
+
+# ===== CRITICAL: WHITELIST FIXTURE DATA =====
+# These patterns OVERRIDE any exclusions above
+!agents/*/skills/*/data/
+!agents/*/skills/*/data/**
+!data/fixtures/
+!data/fixtures/**

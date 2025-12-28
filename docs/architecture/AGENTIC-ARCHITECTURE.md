@@ -1,406 +1,331 @@
 # RANGER Agentic Architecture
 
-**Status:** Active
-**Created:** 2025-12-22
-**Author:** RANGER Team
+**Status:** Active  
+**Created:** 2025-12-22  
+**Last Updated:** 2025-12-27  
+**Author:** RANGER Team  
 **Purpose:** Define the multi-agent orchestration architecture for RANGER's fire recovery platform
 
 ---
 
-> [!WARNING]
-> **LEGACY ARCHITECTURE:** This document describes the initial microservice-per-agent model. It is now **superseded** by **[ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md)**, which uses a modular Skills Library. Refer to `agents/` and `skills/` directories for the actual implementation.
+> [!IMPORTANT]
+> **Current Architecture:** This document describes the **Skills-First Architecture** per [ADR-005](../adr/ADR-005-skills-first-architecture.md). RANGER uses a **single Cloud Run service** (`ranger-coordinator`) that hosts the Recovery Coordinator and all specialist agents via the **AgentTool pattern** per [ADR-008](../adr/ADR-008-agent-tool-pattern.md).
+
+---
 
 ## 1. Executive Summary
 
-RANGER uses **Google ADK (Agent Development Kit)** with **ToolCallingAgents** to implement multi-agent orchestration for post-fire forest recovery. This architecture prioritizes:
+RANGER uses **Google ADK (Agent Development Kit)** with the **AgentTool pattern** to implement multi-agent orchestration for post-fire forest recovery. This architecture prioritizes:
 
-- **Simplicity**: Pure ADK, no hybrid frameworks
-- **Speed**: Sub-second tool calls vs. code generation latency
-- **Compliance**: FedRAMP High authorized GCP services only
-- **Trust**: Confidence scores, reasoning chains, and verification patterns
+- **Simplicity**: Single Cloud Run service, AgentTool wrappers (not microservices)
+- **Skills-First**: Domain expertise in portable skill packages, not monolithic prompts
+- **Fixture-First**: Demo uses real federal data cached locally; production swaps to MCP
+- **Compliance**: FedRAMP High authorized GCP services, Proof Layer for auditability
 
 ---
 
-## Architecture Overview
+## 2. Architecture Overview
+
+### Current State (Phase 0-1: Demo)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Command Console (React)                                     │
-│  localhost:3000                                              │
-│  - AgentBriefingEvent display                               │
-│  - Reasoning chain visualization                            │
-│  - Confidence score badges                                  │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ WebSocket / REST
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  API Gateway (FastAPI)                                       │
-│  localhost:8000                                              │
-│  - Route queries to Recovery Coordinator                    │
-│  - Stream AgentBriefingEvents to UI                        │
-│  - Handle authentication (Phase 2)                          │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Recovery Coordinator (ADK Orchestrator)                     │
-│  localhost:8005                                              │
-│  - Understand user intent                                   │
-│  - Route to specialist agents                               │
-│  - Aggregate results with reasoning                         │
-│  - Generate unified briefings                               │
-└───────┬─────────┬─────────┬─────────┬───────────────────────┘
-        │         │         │         │
-        ▼         ▼         ▼         ▼
-   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-   │  Burn  │ │ Trail  │ │Cruising│ │  NEPA  │
-   │Analyst │ │Assessor│ │  Asst  │ │Advisor │
-   │ :8001  │ │ :8002  │ │ :8003  │ │ :8004  │
-   │        │ │        │ │        │ │        │
-   │ ADK    │ │ ADK    │ │ ADK    │ │ ADK    │
-   │ Tool   │ │ Tool   │ │ Tool   │ │ Tool   │
-   │ Calling│ │ Calling│ │ Calling│ │ Calling│
-   └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘
-       │         │         │         │
-       ▼         ▼         ▼         ▼
-   ┌─────────────────────────────────────────┐
-   │  Tools (Python functions)                │
-   │                                          │
-   │  Phase 1: Fixture data                   │
-   │  - query_burn_severity(fire_id, bbox)   │
-   │  - query_trail_damage(trail_id)         │
-   │  - query_timber_plots(sector_id)        │
-   │  - search_nepa_guidance(query)          │
-   │                                          │
-   │  Phase 2: Real APIs (same interface)     │
-   │  - MTBS, RAVG, Sentinel-2               │
-   │  - FACTS, ArcGIS Enterprise             │
-   │  - Forest Service Manual RAG            │
-   └─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Cloud Run: ranger-console (React Frontend)                              │
+│  https://ranger-console-xxx-uc.a.run.app                                │
+│  - Mission Control UI                                                    │
+│  - Chat interface for agent queries                                      │
+│  - Proof Layer visualization (reasoning chains, citations)               │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    │ HTTPS (SSE streaming)
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Cloud Run: ranger-coordinator (ADK Backend)                             │
+│  https://ranger-coordinator-xxx-uc.a.run.app                            │
+│                                                                          │
+│  ┌────────────────────────────────────────────────────────────────────┐ │
+│  │  Recovery Coordinator (root_agent)                                  │ │
+│  │  - Understands user intent                                          │ │
+│  │  - Calls specialists via AgentTool pattern                          │ │
+│  │  - Synthesizes cross-domain insights                                │ │
+│  │  - Generates unified briefings with Proof Layer                     │ │
+│  └──────────────┬─────────────┬─────────────┬─────────────┬───────────┘ │
+│                 │             │             │             │              │
+│        AgentTool│    AgentTool│    AgentTool│    AgentTool│              │
+│                 ▼             ▼             ▼             ▼              │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐                    │
+│  │  Burn    │ │  Trail   │ │ Cruising │ │  NEPA    │                    │
+│  │ Analyst  │ │ Assessor │ │ Assistant│ │ Advisor  │                    │
+│  │          │ │          │ │          │ │          │                    │
+│  │ Skills:  │ │ Skills:  │ │ Skills:  │ │ Skills:  │                    │
+│  │ -Severity│ │ -Damage  │ │ -Volume  │ │ -Pathway │                    │
+│  │ -MTBS    │ │ -Closure │ │ -Salvage │ │ -CE/EA   │                    │
+│  │ -Boundary│ │ -Priority│ │ -Cruise  │ │ -RAG     │                    │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘                    │
+│       │            │            │            │                          │
+│       └────────────┴────────────┴────────────┘                          │
+│                           │                                              │
+│                           ▼                                              │
+│  ┌────────────────────────────────────────────────────────────────────┐ │
+│  │  data/fixtures/ (Bundled in Docker image)                          │ │
+│  │  ├── cedar-creek/                                                   │ │
+│  │  │   ├── burn-severity.json    (Real MTBS data, Oct 2022)          │ │
+│  │  │   ├── trail-damage.json     (Real TRACS format, Nov 2022)       │ │
+│  │  │   ├── timber-plots.json     (Real FSVeg format, Nov 2022)       │ │
+│  │  │   └── incident-metadata.json (Real IRWIN data, Aug 2022)        │ │
+│  │  └── bootleg/                                                       │ │
+│  └────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    │ API calls
+                                    ▼
+                           ┌────────────────────┐
+                           │  Gemini 2.0 Flash  │
+                           │  (via Vertex AI)   │
+                           │  FedRAMP High      │
+                           └────────────────────┘
 ```
 
-> [!NOTE]
-> **NEPA Advisor Data Source:** The NEPA Advisor does not have a dedicated fixture file. It receives project context from other agents and uses embedded FSM/FSH citations. In Phase 2, it will use a RAG pipeline over the full Forest Service Manual corpus. See [`briefing-events.json`](../../data/fixtures/cedar-creek/briefing-events.json) event `evt_nepa_001` for the current approach.
+### Key Architecture Decisions
+
+| Decision | Choice | Rationale | Reference |
+|----------|--------|-----------|-----------|
+| Agent Framework | Google ADK | FedRAMP authorized, native Gemini integration | ADR-005 |
+| Multi-Agent Pattern | AgentTool wrappers | Coordinator retains control, enables synthesis | ADR-008 |
+| LLM Provider | Google Gemini only | Simplicity, ADK native, Vertex AI compliance | ADR-006 |
+| Data Strategy | Fixture-First | Demo reliability, real data formats, MCP-ready | ADR-009 |
+| Tool Invocation | mode="AUTO" | Prevents infinite loops, allows flexible routing | ADR-007.1 |
 
 ---
 
-## Design Decisions
+## 3. Agent Specifications
 
-### Why Pure ADK (Not Hybrid)
+### Recovery Coordinator (Orchestrator)
 
-| Consideration | ADK ToolCallingAgents | Hybrid (ADK + SmolAgents) |
-|---------------|----------------------|---------------------------|
-| **Latency** | Sub-second tool calls | +2-4 seconds for code generation |
-| **Debugging** | Single framework, structured events | Two frameworks, disconnected traces |
-| **FedRAMP** | Vertex AI authorized | E2B not authorized |
-| **Complexity** | One testing strategy | Two pipelines, two observability stacks |
+**File:** `agents/coordinator/agent.py`  
+**Role:** Central orchestrator that understands user intent and delegates to specialists
 
-**Decision**: Pure ADK. The expressivity benefits of code generation don't justify the complexity for RANGER's use cases.
+**Capabilities:**
+- Parse natural language queries about fire recovery
+- Route single-domain queries to appropriate specialist
+- Execute multi-domain queries by calling ALL four specialists
+- Synthesize cross-domain insights into unified briefings
+- Calculate portfolio triage scores for incident prioritization
 
-### Why ToolCallingAgents (Not CodeAgents)
+**Tools:**
+- `burn_analyst_tool` (AgentTool) — Fire severity assessment
+- `trail_assessor_tool` (AgentTool) — Infrastructure damage evaluation
+- `cruising_assistant_tool` (AgentTool) — Timber salvage analysis
+- `nepa_advisor_tool` (AgentTool) — Regulatory compliance guidance
+- `portfolio_triage` (Function) — BAER prioritization scoring
 
-RANGER's agents perform:
-- Spatial queries (read-only)
-- Data aggregation (deterministic)
-- Report generation (templated)
+### Burn Analyst (Specialist)
 
-None of these require generating and executing arbitrary Python code. Tool calling with well-designed parameters is sufficient and 10x faster to debug.
+**File:** `agents/burn_analyst/agent.py`  
+**Role:** Fire severity and burn impact analysis
 
-### Why Five Specialized Agents (Not Three)
+**Skills:**
+- `assess_severity` — dNBR-based soil burn severity classification
+- `classify_mtbs` — MTBS protocol severity class assignment (1-4)
+- `validate_boundary` — Fire perimeter geometry validation
 
-The expert panel suggested consolidating to 3 agents. We retain 5 because:
+**Data Sources (Demo):** `data/fixtures/cedar-creek/burn-severity.json`  
+**Data Sources (Production):** MTBS API, Sentinel-2 via MCP
 
-1. **Domain expertise**: Each agent has specialized system prompts, tools, and reasoning patterns
-2. **Parallel execution**: Independent agents can run concurrently
-3. **Clear responsibility**: Easier to attribute errors and improve specific capabilities
-4. **USFS alignment**: Maps to actual Forest Service roles (burn specialist, trail crew, timber cruiser, NEPA planner)
+### Trail Assessor (Specialist)
 
----
+**File:** `agents/trail_assessor/agent.py`  
+**Role:** Trail and infrastructure damage evaluation
 
-## Agent Specifications
+**Skills:**
+- `assess_trail_damage` — Damage classification per TRACS codes (D1-D5)
+- `recommend_closures` — Safety-based closure recommendations
+- `prioritize_repairs` — Repair prioritization by severity and usage
 
-### Recovery Coordinator (Port 8005)
+**Data Sources (Demo):** `data/fixtures/cedar-creek/trail-damage.json`  
+**Data Sources (Production):** TRACS API via MCP
 
-**Role**: Orchestrator - understands user intent, routes to specialists, aggregates results
+### Cruising Assistant (Specialist)
 
-**Capabilities**:
-- Parse natural language queries
-- Determine which specialists to invoke
-- Aggregate multi-agent responses
-- Generate unified briefings with reasoning chains
+**File:** `agents/cruising_assistant/agent.py`  
+**Role:** Timber salvage assessment and inventory
 
-**Tools**:
-- `route_to_specialist(agent, query)` - Delegate to specialist agent
-- `aggregate_briefings(briefings[])` - Combine specialist outputs
-- `generate_summary(context)` - Create executive summary
+**Skills:**
+- `estimate_volume` — Board feet calculation by species
+- `assess_salvage_viability` — Decay timeline and economic analysis
+- `generate_cruise_report` — FSVeg-compatible export
 
-### Burn Analyst (Port 8001)
+**Data Sources (Demo):** `data/fixtures/cedar-creek/timber-plots.json`  
+**Data Sources (Production):** FSVeg API via MCP
 
-**Role**: Assess fire severity using remote sensing data
+### NEPA Advisor (Specialist)
 
-**Capabilities**:
-- Query burn severity classifications (MTBS, dNBR, NDVI)
-- Identify high-severity zones
-- Calculate affected acreage by severity class
-- Generate severity maps and statistics
+**File:** `agents/nepa_advisor/agent.py`  
+**Role:** Environmental compliance and regulatory guidance
 
-**Tools**:
-- `query_burn_severity(fire_id, bbox, source)` - Get severity data
-- `calculate_severity_stats(polygon)` - Compute area by severity
-- `identify_hot_spots(threshold)` - Find high-severity clusters
+**Skills:**
+- `determine_pathway` — CE/EA/EIS pathway recommendation
+- `search_regulations` — RAG over FSM/FSH corpus
+- `generate_compliance_checklist` — Documentation requirements
 
-### Trail Assessor (Port 8002)
-
-**Role**: Evaluate trail and infrastructure damage
-
-**Capabilities**:
-- Query trail damage assessments
-- Prioritize repairs by severity and usage
-- Estimate repair costs and timelines
-- Generate work orders for trail crews
-
-**Tools**:
-- `query_trail_damage(trail_id)` - Get damage assessment
-- `prioritize_repairs(criteria)` - Rank by severity/usage
-- `estimate_repair_cost(damage_type)` - Cost estimation
-- `generate_work_order(trail_id, damage)` - TRACS-compatible output
-
-### Cruising Assistant (Port 8003)
-
-**Role**: Support timber salvage assessment
-
-**Capabilities**:
-- Query timber plot data
-- Calculate board feet and salvage value
-- Prioritize harvest by decay timeline
-- Generate FSVeg-compatible cruise reports
-
-**Tools**:
-- `query_timber_plots(sector_id)` - Get plot inventory
-- `calculate_board_feet(plot_id, species)` - Volume calculation
-- `estimate_salvage_value(volume, grade)` - Economic analysis
-- `generate_cruise_report(plots[])` - FSVeg export format
-
-### NEPA Advisor (Port 8004)
-
-**Role**: Provide regulatory guidance for recovery actions
-
-**Capabilities**:
-- Search Forest Service Manual and regulations
-- Identify applicable NEPA pathways (CE, EA, EIS)
-- Generate compliance checklists
-- Cite relevant authorities
-
-**Tools**:
-- `search_regulations(query)` - RAG over policy documents
-- `identify_nepa_pathway(action_type)` - Categorical exclusion check
-- `generate_compliance_checklist(pathway)` - Required documentation
-- `cite_authority(regulation_id)` - Formatted citations
+**Data Sources (Demo):** Google File Search (Managed RAG)  
+**Data Sources (Production):** Same (Google File Search is production-ready)
 
 ---
 
-## Production System Mapping
+## 4. Data Architecture
 
-Each agent's tools simulate data from real USFS production systems. In Phase 2, only the tool implementations change—agent code remains identical.
+### Fixture-First Strategy (ADR-009)
 
-**See:** [`FIXTURE-DATA-FORMATS.md - Production Systems Mapping`](./FIXTURE-DATA-FORMATS.md#real-world-data-source-mapping) for the comprehensive production system table showing which real APIs each fixture file will be replaced with in Phase 2.
-
-### Export Compatibility
-
-RANGER generates outputs compatible with existing USFS systems:
-
-| Agent | Export Format | Target System |
-|-------|---------------|---------------|
-| Trail Assessor | TRACS CSV | Trail Condition Assessment System |
-| Cruising Assistant | FSVeg XML | Field Sampled Vegetation database |
-| NEPA Advisor | EA/CE templates | ePlanning / SOPA |
-
-This "Legacy Bridge" approach means USFS staff can import RANGER outputs into their existing workflows without system changes.
-
----
-
-## Tool Interface Standard
-
-All tools follow a consistent interface pattern:
+For Phase 1, skills load data from bundled JSON fixtures derived from real federal sources:
 
 ```python
-from typing import TypedDict
-from packages.twin_core.models import ToolResult
-
-class BurnSeverityParams(TypedDict):
-    fire_id: str
-    bbox: tuple[float, float, float, float]  # (min_lng, min_lat, max_lng, max_lat)
-    source: str  # "mtbs" | "dnbr" | "ndvi"
-
-def query_burn_severity(params: BurnSeverityParams) -> ToolResult:
-    """
-    Query burn severity data for a fire.
-
-    Phase 1: Returns fixture data from data/fixtures/
-    Phase 2: Calls real MTBS/RAVG APIs (same interface)
-
-    Returns:
-        ToolResult with:
-        - data: GeoJSON FeatureCollection of severity polygons
-        - confidence: float (0-1) based on data quality
-        - source: str attribution
-        - reasoning: str explanation of methodology
-    """
-    # Phase 1: Load fixture
-    fixture_path = f"data/fixtures/{params['fire_id']}/burn_severity.geojson"
-    data = load_geojson(fixture_path)
-
-    return ToolResult(
-        data=data,
-        confidence=0.85,
-        source="MTBS (simulated)",
-        reasoning="Burn severity derived from dNBR classification using Landsat imagery"
-    )
+# Example: assess_severity.py
+def load_fixture_data(fire_id: str) -> dict:
+    fixture_path = Path("data/fixtures/cedar-creek/burn-severity.json")
+    with open(fixture_path) as f:
+        return json.load(f)
 ```
 
-**Key principles**:
-1. **Typed parameters**: Use TypedDict for clear contracts
-2. **Confidence scores**: Every result includes a confidence value
-3. **Source attribution**: Cite data sources for transparency
-4. **Reasoning traces**: Explain methodology for auditability
-5. **Phase-agnostic interface**: Same signature for fixtures and real APIs
+**Key Principle:** The skill code is identical between demo and production. Only the data source changes.
+
+### Fixture Provenance
+
+| Fixture File | Federal Source | Date | Authenticity |
+|--------------|---------------|------|--------------|
+| `burn-severity.json` | MTBS | Oct 2022 | Real dNBR values |
+| `trail-damage.json` | TRACS format | Nov 2022 | Real damage codes |
+| `timber-plots.json` | FSVeg format | Nov 2022 | Real plot structure |
+| `incident-metadata.json` | IRWIN | Aug 2022 | Real fire attributes |
+
+### Production Data Path (Phase 2+)
+
+```
+Skills ──► MCP Client ──► MCP Server (Cloud Run) ──► Federal APIs
+                              │
+                              ├── NIFC (fire perimeters)
+                              ├── IRWIN (incident metadata)
+                              ├── MTBS (burn severity)
+                              └── TRACS (trail systems)
+```
+
+MCP servers use **HTTP/SSE transport** per Google Cloud Run requirements (stdio not supported).
 
 ---
 
-## Verification Patterns
+## 5. Session & Memory
 
-### Confidence Scoring
+### Current State (Demo)
 
-Every tool output includes a confidence score (0-1):
+- **Session Storage:** In-memory (ADK default)
+- **Persistence:** Lost on container restart
+- **Multi-user:** Not supported (single demo user)
 
-```python
-confidence_factors = {
-    "data_freshness": 0.9,    # How recent is the source data
-    "spatial_accuracy": 0.85,  # Resolution and alignment
-    "methodology": 0.95,       # Established vs. experimental
-    "completeness": 0.8,       # Coverage of requested area
+### Production State
+
+- **Session Storage:** Firestore
+- **Configuration:** `SESSION_SERVICE_URI=firestore://project/database/sessions`
+- **Persistence:** Survives restarts, shared across instances
+
+**Migration:** Environment variable change only—no code changes required.
+
+---
+
+## 6. Proof Layer
+
+Every agent response includes transparency metadata:
+
+```json
+{
+  "proof_layer": {
+    "confidence": 0.92,
+    "reasoning_chain": [
+      "Loaded 8 sectors from MTBS dataset",
+      "Applied dNBR thresholds: HIGH >= 0.66",
+      "Sector NW-1: dNBR 0.72 -> HIGH severity"
+    ],
+    "citations": [
+      {
+        "source": "MTBS",
+        "reference_id": "cedar-creek-2022",
+        "imagery_date": "2022-10-15"
+      }
+    ]
+  }
 }
-confidence = sum(confidence_factors.values()) / len(confidence_factors)
 ```
 
-### Best of N (Without Sandboxes)
-
-For high-stakes decisions, run multiple approaches in parallel:
-
-```python
-async def assess_burn_severity_verified(fire_id: str):
-    # Run multiple methodologies concurrently
-    results = await asyncio.gather(
-        burn_analyst.assess_via_mtbs(fire_id),
-        burn_analyst.assess_via_dnbr(fire_id),
-        burn_analyst.assess_via_ndvi(fire_id),
-    )
-
-    # Select highest confidence result
-    best = max(results, key=lambda r: r.confidence)
-
-    return AgentBriefingEvent(
-        type="panel_inject",
-        agent="burn-analyst",
-        data={
-            "selected": best,
-            "alternatives": results,
-            "reasoning": f"Selected {best.method} approach (confidence: {best.confidence:.0%})"
-        }
-    )
-```
-
-### Reasoning Chains
-
-Agents emit reasoning steps for transparency:
-
-```python
-reasoning_chain = [
-    {"step": 1, "action": "Query fire perimeter", "result": "Retrieved 15,234 acre boundary"},
-    {"step": 2, "action": "Fetch MTBS severity raster", "result": "2024 classification available"},
-    {"step": 3, "action": "Calculate zonal statistics", "result": "High: 4,521 ac, Mod: 6,892 ac, Low: 3,821 ac"},
-    {"step": 4, "action": "Identify priority areas", "result": "3 high-severity clusters identified"},
-]
-```
-
-Displayed in UI via `ReasoningChain` component.
+**UI Rendering:** `ReasoningAccordion` component displays expandable reasoning chains. Citation chips link to source data.
 
 ---
 
-## Production Deployment (Phase 2+)
+## 7. Deployment Architecture
 
-### GCP Architecture
+### Cloud Run Services
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Cloud Run Services                                          │
-│  (FedRAMP High, us-east4)                                   │
-├─────────────────────────────────────────────────────────────┤
-│  api-gateway        │ recovery-coordinator                  │
-│  burn-analyst       │ trail-assessor                        │
-│  cruising-assistant │ nepa-advisor                          │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────┐
-│  Vertex AI (Gemini 3 Flash)                                 │
-│  - Released Dec 17, 2025                                     │
-│  - 78% SWE-bench • 3x faster than 2.5 Pro                   │
-│  - Agent reasoning, tool selection, response synthesis       │
-└─────────────────────────────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────┐
-│  Data Sources                                                │
-├─────────────────────────────────────────────────────────────┤
-│  Cloud SQL PostGIS  │ BigQuery GIS      │ Cloud Storage     │
-│  (vectors)          │ (analytics)       │ (rasters)         │
-└─────────────────────────────────────────────────────────────┘
+| Service | Purpose | URL Pattern |
+|---------|---------|-------------|
+| `ranger-console` | React frontend | `ranger-console-xxx-uc.a.run.app` |
+| `ranger-coordinator` | ADK backend (all agents) | `ranger-coordinator-xxx-uc.a.run.app` |
+
+### Environment Variables (Coordinator)
+
+```bash
+GOOGLE_CLOUD_PROJECT=ranger-twin-dev
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_GENAI_USE_VERTEXAI=TRUE          # FedRAMP path
+GOOGLE_API_KEY=<optional, for non-Vertex>
+SESSION_SERVICE_URI=<firestore URI for production>
+ALLOW_ORIGINS=https://ranger-console-xxx-uc.a.run.app
 ```
 
-### Scaling Strategy
+### NOT Deployed (Phase 1)
 
-- **Cloud Run**: Scale-to-zero for seasonal workloads (May-Oct active)
-- **Vertex AI**: Batch mode for non-urgent queries (50% cost savings)
-- **Caching**: Redis/Memorystore for repeated tool results
+- ❌ Separate MCP fixture server (fixtures bundled in coordinator)
+- ❌ Cloud SQL / pgvector (not needed for demo)
+- ❌ Firestore sessions (in-memory sufficient for demo)
 
 ---
 
-## Rejected Alternatives
+## 8. Rejected Alternatives
 
-### E2B Sandboxes
+### Microservices Per Agent (Original Design)
 
-**Rejected because**:
+**Rejected because:**
+- Added network latency between coordinator and specialists
+- Complex service mesh for what's a single-process concern
+- AgentTool pattern achieves same modularity without network hops
+
+### E2B Sandboxes / Code Execution
+
+**Rejected because:**
 - No FedRAMP authorization
-- Adds code generation latency (2-4 seconds)
-- Solves a problem RANGER doesn't have (tool calling, not code execution)
+- RANGER doesn't need dynamic code generation
+- Tool calling with typed parameters is sufficient
 
-See `docs/archive/E2B-INTEGRATION-PLAN.md` for full analysis.
+### MCP Server for Demo
 
-### SmolAgents/LangChain Hybrid
-
-**Rejected because**:
-- Two frameworks = two debugging strategies
-- Impedance mismatch between ADK events and code execution logs
-- Complexity not justified by Phase 1 requirements
-
-### Consolidated 3-Agent Architecture
-
-**Considered but rejected** in favor of 5 specialists:
-- Domain expertise requires specialized prompts and tools
-- Maps to USFS organizational structure
-- Enables parallel execution
+**Rejected because:**
+- Adds deployment complexity without demo value
+- Fixtures bundled in Docker work identically
+- MCP is Phase 2 production infrastructure
 
 ---
 
-## References
+## 9. References
 
-- [Google ADK Documentation](https://google.github.io/adk-docs/)
-- [Vertex AI FedRAMP Authorization](https://cloud.google.com/blog/topics/public-sector/vertex-ai-search-and-generative-ai-with-gemini-achieve-fedramp-high)
-- [RANGER GCP Architecture](./GCP-ARCHITECTURE.md)
-- [Agent Messaging Protocol](./AGENT-MESSAGING-PROTOCOL.md)
-- [Briefing UX Spec](./BRIEFING-UX-SPEC.md)
+| Document | Purpose |
+|----------|---------|
+| [ADR-005: Skills-First Architecture](../adr/ADR-005-skills-first-architecture.md) | Core architectural paradigm |
+| [ADR-006: Google-Only LLM](../adr/ADR-006-google-only-llm-strategy.md) | LLM provider decision |
+| [ADR-007.1: Tool Invocation](../adr/ADR-007.1-tool-invocation-strategy.md) | mode="AUTO" infinite loop fix |
+| [ADR-008: AgentTool Pattern](../adr/ADR-008-agent-tool-pattern.md) | Multi-agent orchestration pattern |
+| [ADR-009: Fixture-First](../adr/ADR-009-fixture-first-development.md) | Demo data strategy |
+| [Google ADK Docs](https://google.github.io/adk-docs/) | Framework documentation |
+| [Cloud Run AI Agents](https://docs.cloud.google.com/run/docs/ai-agents) | GCP deployment guidance |
 
 ---
 
-**Document Status:** Active
-**Last Updated:** 2025-12-22
-**Next Review:** After Phase 1 prototype validation
+**Document Owner:** RANGER Architecture Team  
+**Last Updated:** 2025-12-27  
+**Status:** Active — aligned with deployed system

@@ -5,9 +5,9 @@ Provides RAG capabilities using Google's File Search API to query
 FSM/FSH regulatory documents.
 
 Usage:
-    from file_search import search_regulatory_documents
+    from file_search import consult_mandatory_nepa_standards
 
-    result = search_regulatory_documents(
+    result = consult_mandatory_nepa_standards(
         query="What are the categorical exclusion requirements for timber salvage?",
         max_chunks=5
     )
@@ -54,41 +54,49 @@ def _get_store_name() -> str:
     return _store_name
 
 
-def search_regulatory_documents(
-    query: str,
+def consult_mandatory_nepa_standards(
+    topic: str,
     max_chunks: int = 5,
     include_citations: bool = True
 ) -> dict[str, Any]:
     """
-    Search FSM/FSH regulatory documents using semantic search.
+    [MANDATORY PREREQUISITE] Retrieves official FSM/FSH regulatory criteria.
+
+    MUST be called BEFORE requesting ANY clarifying details from the user.
+    Returns current acreage thresholds, CE categories, extraordinary circumstances
+    criteria, and the specific data points required for pathway determination.
+
+    Without calling this first, you cannot know which questions to ask the user.
+    Your internal training data on NEPA thresholds is DEPRECATED and unreliable.
 
     Uses Google's File Search API to find relevant passages from the
     Forest Service Handbooks (FSH) and Manuals (FSM) indexed in the
     NEPA knowledge base.
 
     Args:
-        query: Natural language query about NEPA, environmental analysis,
-               categorical exclusions, or Forest Service procedures.
+        topic: The regulatory topic to retrieve (e.g., "categorical exclusion
+               timber salvage acreage thresholds 36 CFR 220.6"). Frame your
+               query to find the specific regulations that govern the user's question.
         max_chunks: Maximum number of document chunks to retrieve (1-10).
                    More chunks provide more context but use more tokens.
         include_citations: Whether to include source citations in results.
 
     Returns:
         Dictionary containing:
-            - query: The original query
-            - answer: Generated answer based on retrieved documents
-            - citations: List of source citations (if include_citations=True)
+            - query: The original query topic
+            - answer: Generated answer based on retrieved regulations
+            - citations: List of FSM/FSH source citations (if include_citations=True)
             - chunks_retrieved: Number of document chunks used
             - status: "success" or "error"
             - error: Error message if status is "error"
 
     Example:
-        >>> result = search_regulatory_documents(
-        ...     "What size limits apply to categorical exclusions for salvage?"
+        >>> result = consult_mandatory_nepa_standards(
+        ...     topic="categorical exclusion timber salvage acreage thresholds 36 CFR 220.6"
         ... )
         >>> print(result["answer"])
-        "According to FSH 1909.15 Chapter 30, categorical exclusions for
-        timber salvage operations are limited to..."
+        "According to FSM 1950, categorical exclusions for hazard tree removal
+        apply to projects up to 3,000 acres..."
     """
     try:
         from google.genai import types
@@ -100,7 +108,7 @@ def search_regulatory_documents(
         search_prompt = f"""Based on the Forest Service regulatory documents (FSH and FSM),
 answer the following question. Cite specific handbook/manual sections when possible.
 
-Question: {query}
+Question: {topic}
 
 Provide a clear, accurate answer based only on the regulatory documents.
 If the documents don't contain relevant information, say so."""
@@ -157,7 +165,7 @@ If the documents don't contain relevant information, say so."""
                             citations.append(citation)
 
         return {
-            "query": query,
+            "query": topic,
             "answer": answer,
             "citations": citations,
             "chunks_retrieved": len(citations),
@@ -166,7 +174,7 @@ If the documents don't contain relevant information, say so."""
 
     except FileNotFoundError as e:
         return {
-            "query": query,
+            "query": topic,
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
@@ -175,7 +183,7 @@ If the documents don't contain relevant information, say so."""
         }
     except Exception as e:
         return {
-            "query": query,
+            "query": topic,
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
@@ -211,6 +219,58 @@ def get_store_info() -> dict[str, Any]:
     }
 
 
+def verify_store_health() -> dict[str, Any]:
+    """
+    Verify File Search store is accessible and returning results.
+
+    Tests the store with a known query to ensure it's operational.
+    This should be called before deployment to validate the search functionality.
+
+    Returns:
+        Dictionary with health status and diagnostics:
+            - healthy: True if store is operational, False otherwise
+            - store_name: Name of the configured store
+            - answer_preview: Preview of search results (if healthy)
+            - citations_count: Number of citations returned (if healthy)
+            - error: Error message (if unhealthy)
+    """
+    try:
+        # Test with a known regulatory query
+        result = consult_mandatory_nepa_standards(
+            topic="categorical exclusion timber salvage",
+            max_chunks=2
+        )
+
+        if result["status"] != "success":
+            return {
+                "healthy": False,
+                "error": result.get("error", "Unknown error"),
+                "store_name": _get_store_name() if _store_name else "Not loaded"
+            }
+
+        # Verify response has meaningful content
+        if not result.get("answer") or len(result["answer"]) < 50:
+            return {
+                "healthy": False,
+                "error": "Store returned empty or minimal response",
+                "answer_length": len(result.get("answer", "")),
+                "store_name": _get_store_name()
+            }
+
+        return {
+            "healthy": True,
+            "store_name": _get_store_name(),
+            "answer_preview": result["answer"][:200] + "...",
+            "citations_count": len(result.get("citations", []))
+        }
+
+    except Exception as e:
+        return {
+            "healthy": False,
+            "error": f"{type(e).__name__}: {e}"
+        }
+
+
 # For testing
 if __name__ == "__main__":
     print("File Search Store Info:")
@@ -222,8 +282,8 @@ if __name__ == "__main__":
         print()
         print("Testing search...")
         print("-" * 40)
-        result = search_regulatory_documents(
-            "What are the requirements for categorical exclusions?"
+        result = consult_mandatory_nepa_standards(
+            topic="What are the requirements for categorical exclusions?"
         )
         print(f"Status: {result['status']}")
         if result['status'] == 'success':
