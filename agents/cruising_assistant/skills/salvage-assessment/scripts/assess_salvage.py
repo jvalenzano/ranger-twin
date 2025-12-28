@@ -275,7 +275,7 @@ def execute(inputs: dict) -> dict:
         deterioration summary, and recommendations.
     """
     fire_id = inputs.get("fire_id")
-    fire_date = inputs.get("fire_date", "2022-09-15")  # Default Cedar Creek
+    fire_date = inputs.get("fire_date")
     assessment_date = inputs.get("assessment_date", datetime.now().strftime("%Y-%m-%d"))
     plots_input = inputs.get("plots")
     include_recommendations = inputs.get("include_recommendations", True)
@@ -286,6 +286,16 @@ def execute(inputs: dict) -> dict:
             "confidence": 0.0,
             "reasoning_chain": ["ERROR: No fire_id provided"],
         }
+
+    # Load fire_date from fixtures if not provided
+    # Per ADR-009: Fixture-First Strategy - skills load bundled fixtures directly
+    if not fire_date:
+        fire_metadata = load_fire_metadata(fire_id)
+        if fire_metadata:
+            fire_date = fire_metadata.get("containment_date")
+        if not fire_date:
+            # Fallback default for Cedar Creek
+            fire_date = "2022-10-14"
 
     # Calculate time since fire
     months_since_fire = calculate_months_since_fire(fire_date, assessment_date)
@@ -533,6 +543,28 @@ def calculate_deadline(start_date: str, months_ahead: float) -> str:
     deadline = start + timedelta(days=days_ahead)
 
     return deadline.strftime("%Y-%m-%d")
+
+
+def load_fire_metadata(fire_id: str) -> dict | None:
+    """
+    Load fire incident metadata from fixtures.
+
+    Returns fire metadata including containment_date, discovery_date, etc.
+    Per ADR-009 Fixture-First Strategy: Skills load bundled fixtures directly.
+    """
+    script_dir = Path(__file__).parent
+    fixture_path = script_dir.parent.parent.parent.parent.parent / "data" / "fixtures" / "cedar-creek" / "incident-metadata.json"
+
+    if not fixture_path.exists():
+        fixture_path = Path("data/fixtures/cedar-creek/incident-metadata.json")
+
+    if fixture_path.exists():
+        with open(fixture_path) as f:
+            data = json.load(f)
+            if data.get("fire_id") == fire_id:
+                return data
+
+    return None
 
 
 def load_plots_data(fire_id: str) -> list[dict] | None:

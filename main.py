@@ -4,6 +4,11 @@ RANGER ADK Orchestrator
 Main entry point for the RANGER multi-agent platform.
 Uses Google ADK's FastAPI integration for SSE streaming.
 
+Architecture:
+  - Single Cloud Run service hosting Recovery Coordinator + all specialists
+  - AgentTool pattern for orchestration (ADR-008)
+  - Fixture-First data strategy (ADR-009): real federal data bundled in image
+
 Run locally:
   python main.py
   # or
@@ -13,11 +18,11 @@ Run with ADK web UI (for development):
   adk web --port 8000
 
 Environment variables:
-  GOOGLE_API_KEY - Required for Gemini API
-  SESSION_SERVICE_URI - Optional Firestore session backend
+  GOOGLE_API_KEY - Required for Gemini API (dev mode)
+  GOOGLE_GENAI_USE_VERTEXAI - Set to TRUE for production (uses ADC)
+  SESSION_SERVICE_URI - Optional Firestore session backend (Phase 2)
     Example: firestore://projects/ranger-twin-dev/databases/default
-  MCP_FIXTURES_URL - Optional MCP fixtures server URL
-    Example: http://localhost:8080/sse
+  ALLOW_ORIGINS - CORS allowed origins (comma-separated)
 """
 
 import os

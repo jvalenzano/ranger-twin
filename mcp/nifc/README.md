@@ -1,16 +1,21 @@
 # NIFC MCP Server
 
-Model Context Protocol server for NIFC (National Interagency Fire Center) data.
+> **Status:** Specification only (placeholder). Implementation planned for Phase 4.
 
-## Status
-
-**Phase:** Placeholder (Phase 0)
-**Implementation:** Phase 4
+Model Context Protocol server specification for NIFC (National Interagency Fire Center) data.
 
 ## Purpose
 
-Provides fire incident data, perimeters, and status updates from NIFC APIs to
-RANGER agents via the Model Context Protocol.
+This directory contains the **specification** for the NIFC MCP Server. The server will provide fire incident data, perimeters, and status updates from NIFC APIs to RANGER agents via the Model Context Protocol.
+
+## Directory Structure
+
+```
+mcp/
+├── fixtures/              #   Fixtures server specification
+└── nifc/                  # ← You are here (specification)
+    └── README.md          #   Server specification
+```
 
 ## Planned Capabilities
 
@@ -24,15 +29,20 @@ RANGER agents via the Model Context Protocol.
 Refactor from existing frontend service:
 `apps/command-console/src/services/nifcService.ts`
 
-## API Endpoints
+## Planned MCP Tools
 
-To be defined in Phase 4. Will expose MCP-compatible tools for:
-- `get_active_fires` - List active fire incidents
-- `get_fire_perimeter` - Get GeoJSON perimeter for fire
-- `get_fire_details` - Get detailed incident information
+| Tool | Description |
+|------|-------------|
+| `get_active_fires` | List active fire incidents |
+| `get_fire_perimeter` | Get GeoJSON perimeter for fire |
+| `get_fire_details` | Get detailed incident information |
+
+## Data Sources
+
+- [NIFC Open Data](https://data-nifc.opendata.arcgis.com/)
+- [IRWIN API](https://irwin.doi.gov/) (Integrated Reporting of Wildland-Fire Information)
 
 ## References
 
-- [NIFC Open Data](https://data-nifc.opendata.arcgis.com/)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
-- ADR-005: Skills-First Multi-Agent Architecture
+- **Protocol:** [Model Context Protocol](https://modelcontextprotocol.io/)
+- **Architecture:** ADR-005 (Skills-First), MCP-REGISTRY-STANDARD.md

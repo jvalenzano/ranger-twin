@@ -20,14 +20,6 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# MCP toolset for data connectivity (Phase 4)
-try:
-    from agents.shared.mcp_client import get_cruising_assistant_toolset
-    MCP_TOOLSET = get_cruising_assistant_toolset()
-except ImportError:
-    # Fallback for local development without MCP
-    MCP_TOOLSET = None
-
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -195,13 +187,22 @@ def assess_salvage(
 
     plots = json.loads(plots_json) if plots_json else None
 
-    return execute({
+    # Build inputs dict, only including parameters that are provided
+    # This allows the skill's execute() function to use its defaults or load from fixtures
+    inputs = {
         "fire_id": fire_id,
-        "fire_date": fire_date if fire_date else None,
-        "assessment_date": assessment_date if assessment_date else None,
         "plots": plots,
         "include_recommendations": include_recommendations,
-    })
+    }
+
+    # Only include optional params if they're actually provided (not None)
+    # Per ADR-009: Skills load missing data from fixtures
+    if fire_date:
+        inputs["fire_date"] = fire_date
+    if assessment_date:
+        inputs["assessment_date"] = assessment_date
+
+    return execute(inputs)
 
 
 def analyze_csv_data(
@@ -485,8 +486,6 @@ root_agent = Agent(
 
     # Skill tools
     tools=[
-        # MCP tools for data connectivity (Phase 4)
-        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
         # Skill tools for domain expertise (ADR-005)
         recommend_methodology,
         estimate_volume,

@@ -20,14 +20,6 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# MCP toolset for data connectivity (Phase 4)
-try:
-    from agents.shared.mcp_client import get_burn_analyst_toolset
-    MCP_TOOLSET = get_burn_analyst_toolset()
-except ImportError:
-    # Fallback for local development without MCP
-    MCP_TOOLSET = None
-
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -353,8 +345,6 @@ root_agent = Agent(
 
     # Skill tools
     tools=[
-        # MCP tools for data connectivity (Phase 4)
-        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
         # Skill tools for domain expertise (ADR-005)
         assess_severity,
         classify_mtbs,

@@ -330,6 +330,7 @@ export const useChatStore = create<ChatState>()(
             timestamp: msg.timestamp,
             agentRole: msg.agentRole,
             confidence: msg.confidence,
+            reasoning: msg.reasoning, // Proof Layer reasoning chain steps
           })),
         };
         return JSON.stringify(exportData, null, 2);

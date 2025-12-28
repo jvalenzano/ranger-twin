@@ -71,7 +71,7 @@ chmod +x docs/cleanup-stale-docs.sh
 
 | Document | Purpose |
 |----------|---------|
-| `_!_PRODUCT-SUMMARY.md` | Vision and product positioning |
+| `PRODUCT-SUMMARY.md` | Vision and product positioning |
 | `ADR-005-skills-first-architecture.md` | Architectural decisions |
 | `ADR-006-google-only-llm-strategy.md` | LLM strategy |
 | `PROOF-LAYER-DESIGN.md` | UI transparency spec |
@@ -86,7 +86,7 @@ chmod +x docs/cleanup-stale-docs.sh
 docs/
 ├── operations/
 │   └── DEPLOYMENT-READINESS-PLAN.md  ← NEW CANONICAL DOCUMENT
-├── _!_PRODUCT-SUMMARY.md             ← Vision (keep)
+├── PRODUCT-SUMMARY.md             ← Vision (keep)
 ├── _!_IMPLEMENTATION-ROADMAP.md      ← Update status
 ├── adr/
 │   ├── ADR-005-skills-first-architecture.md

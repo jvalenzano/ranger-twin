@@ -2,90 +2,163 @@
 
 Visual explanations of RANGER's architecture, value proposition, and technical contracts.
 
+## Quick Links
+
+- **[PLANNED-DIAGRAMS.md](developer/PLANNED-DIAGRAMS.md)** — Generation prompts for missing developer diagrams
+- **[DIAGRAM-NARRATIVES.md](DIAGRAM-NARRATIVES.md)** — Speaker notes and detailed walkthroughs
+
+---
+
 ## The Diagram Set
 
 ### Context & Introduction
 
-| Diagram | Audience | Question It Answers |
-|---------|----------|---------------------|
-| [Cedar Creek Fire 2022](Cedar%20Creek%20Fire%202022.png) | All audiences | "Why does this problem matter?" |
+| Diagram | Audience | Question It Answers | Status |
+|---------|----------|---------------------|--------|
+| [Cedar Creek Fire 2022](stakeholder/Cedar%20Creek%20Fire%202022.png) | All | "Why does this problem matter?" | ✅ Current |
 
 ### Technical Architecture (Skills-First ADK)
 
-| Diagram | Audience | Question It Answers |
-|---------|----------|---------------------|
-| [The Skills-First Architecture](The%20Skills-First%20Architecture.png) (Planned) | Developers | "How does the ADK runtime work with Skills?" |
-| [Phase 4 ADK Developer Stack](Phase%204%20ADK%20Developer%20Stack.png) (Planned) | Developers | "What ports are running? (3000/8000/8080)" |
-| [ADK Data Flow & SSE Streaming](ADK%20Data%20Flow%20&%20SSE%20Streaming.png) (Planned) | Architects | "How do events stream to the UI?" |
-| [The MCP Abstraction Layer](The%20MCP%20Abstraction%20Layer.png) (Planned) | Technical reviewers | "How do we switch between Fixtures and Real Data?" |
-| [The Coordinator's Skill Roster](The%20Coordinator's%20Skill%20Roster.png) (Planned) | Architects | "Which agent has which skills?" |
-| [AgentBriefingEvent Rendering Pipeline](AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" |
+| Diagram | Audience | Question It Answers | Status |
+|---------|----------|---------------------|--------|
+| [Skills-First Architecture](stakeholder/skills-first-architecture.png) | All | "What's the high-level architecture?" | ✅ Current |
+| [Phase 4 ADK Developer Stack](developer/) | Developers | "What ports are running? Where do I look?" | 📋 Planned |
+| [ADK Data Flow & SSE Streaming](developer/) | Architects | "How do events stream to the UI?" | 📋 Planned |
+| [The MCP Abstraction Layer](developer/) | Technical | "How do we switch between Fixtures and Real Data?" | 📋 Planned |
+| [The Coordinator's Skill Roster](developer/) | Developers | "Which agent has which skills?" | 📋 Planned |
+| [AgentBriefingEvent Rendering Pipeline](developer/AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" | ✅ Current |
 
-### [ARCHIVED] Microservices Architecture (Legacy)
+### Developer Deep-Dives
 
-| Diagram | Status |
-|---------|--------|
-| [Local Developer Stack](Local%20Developer%20Stack.png) | Superseded by Phase 4 Stack |
-| [How the pieces fit together](How%20the%20pieces%20fit%20together.png) | Superseded by ADK Data Flow |
-| [Agentic AI Architecture](Agentic%20AI%20Architecture.png) | Superseded by Skills-First Architecture |
-| [Coordinator Routing & Cross-Agent Cascade](Coordinator%20Routing%20&%20Cross-Agent%20Cascade.png) | Superseded by Coordinator's Skill Roster |
-| [Phase 1 Architecture Boundaries](Phase%201%20Architecture%20Boundaries.png) | Superseded by MCP Abstraction Layer |
+| Diagram | Audience | Question It Answers | Status |
+|---------|----------|---------------------|--------|
+| [ADK Runtime & Skills](developer/adk-runtime-skills.png) | Developers | "How does ADK load and execute skills?" | ✅ Current |
+| [Agent Briefing Event](developer/agent-briefing-event.png) | Developers | "What's the event schema?" | ✅ Current |
+| [Developer Port Map](developer/developer-port-map.png) | Developers | "Which service is on which port?" | ✅ Current |
+| [MCP Data Layer](developer/mcp-data-layer.png) | Developers | "How does MCP connect to data?" | ✅ Current |
+| [Proof Layer Rendering](developer/proof-layer-rendering.png) | Developers | "How does the UI show reasoning?" | ✅ Current |
+| [Skill Anatomy](developer/skill-anatomy.png) | Developers | "What's inside a skill folder?" | ✅ Current |
+| [SSE Streaming Flow](developer/sse-streaming-flow.png) | Developers | "How does SSE work?" | ✅ Current |
+| [Three-Layer Enforcement](developer/three-layer-enforcement.png) | Developers | "How do we prevent infinite loops?" | ✅ Current |
 
-### Value Proposition
+### Stakeholder & Value Proposition
 
-| Diagram | Audience | Question It Answers |
-|---------|----------|---------------------|
-| [The Cedar Creek Recovery Chain](The%20Cedar%20Creek%20Recovery%20Chain%20(Persona%20Cascade).png) | USFS stakeholders | "Why should my team care?" |
-| [The Confidence Ledger](The%20Confidence%20Ledger%20(Trust%20Architecture).png) | Procurement/compliance | "Can we trust this AI?" |
-| [The Legacy Bridge](The%20Legacy%20Bridge%20(TRACS%20&%20FSVeg%20Export).png) | IT decision-makers | "Do we have to replace our systems?" |
+| Diagram | Audience | Question It Answers | Status |
+|---------|----------|---------------------|--------|
+| [The Cedar Creek Recovery Chain](stakeholder/The%20Cedar%20Creek%20Recovery%20Chain%20(Persona%20Cascade).png) | USFS | "Why should my team care?" | ✅ Current |
+| [The Confidence Ledger](stakeholder/The%20Confidence%20Ledger%20(Trust%20Architecture).png) | Procurement | "Can we trust this AI?" | ✅ Current |
+| [The Legacy Bridge](stakeholder/The%20Legacy%20Bridge%20(TRACS%20&%20FSVeg%20Export).png) | IT Leaders | "Do we have to replace our systems?" | ✅ Current |
+| [Moving Up the Stack](stakeholder/moving-up-the-stack.png) | Executives | "Where does value live in AI?" | ✅ Current |
+| [RANGER Value Loop](stakeholder/ranger-value-loop.png) | Executives | "What's the business model?" | ✅ Current |
+| [Maria's Morning](stakeholder/marias-morning.png) | USFS | "What does a day look like?" | ✅ Current |
+| [Federal Compliance Overview](stakeholder/federal-compliance-overview.png) | Compliance | "How do we meet federal requirements?" | ✅ Current |
 
-## Quick Reference
+### [ARCHIVED] Legacy Diagrams
 
-**For developer onboarding:** Cedar Creek Fire 2022 (context) → **Phase 4 ADK Developer Stack** (ports) → The Skills-First Architecture → ADK Data Flow
+These diagrams depict superseded Phase 1-3 microservice architecture. Preserved for historical reference.
 
-**For investor/partner presentations:** Cedar Creek Fire 2022 (problem) → The MCP Abstraction Layer → Recovery Chain
+| Diagram | Superseded By | Notes |
+|---------|---------------|-------|
+| [Local Developer Stack](legacy/Local%20Developer%20Stack.png) | Phase 4 ADK Developer Stack | Showed ports 8001-8004 |
+| [How the pieces fit together](legacy/How%20the%20pieces%20fit%20together.png) | ADK Data Flow & SSE Streaming | Phase 1 vs Phase 2 split |
+| [Agentic AI Architecture](legacy/Agentic%20AI%20Architecture.png) | Skills-First Architecture | Python Agent Services |
+| [Coordinator Routing](legacy/Coordinator%20Routing%20&%20Cross-Agent%20Cascade.png) | Coordinator's Skill Roster | sub_agents pattern |
+| [Phase 1 Architecture Boundaries](legacy/Phase%201%20Architecture%20Boundaries.png) | MCP Abstraction Layer | Mock MCP Layer |
 
-**For government procurement:** Cedar Creek Fire 2022 (context) → Confidence Ledger → Legacy Bridge
+---
 
-**For USFS field staff:** Cedar Creek Fire 2022 (their fire) → Recovery Chain (the human story)
+## Quick Reference by Audience
 
-**For executive briefings:** Cedar Creek Fire 2022 (scale) → Recovery Chain (value) → Confidence Ledger (trust)
+### For Developer Onboarding
+1. [Cedar Creek Fire 2022](stakeholder/Cedar%20Creek%20Fire%202022.png) — Context
+2. **Phase 4 ADK Developer Stack** — Ports (📋 Planned)
+3. [Skills-First Architecture](stakeholder/skills-first-architecture.png) — High-level
+4. [ADK Runtime & Skills](developer/adk-runtime-skills.png) — Runtime details
 
-## Visual Style
+### For Investor/Partner Presentations
+1. [Cedar Creek Fire 2022](stakeholder/Cedar%20Creek%20Fire%202022.png) — Problem
+2. [Moving Up the Stack](stakeholder/moving-up-the-stack.png) — Strategy
+3. [The Cedar Creek Recovery Chain](stakeholder/The%20Cedar%20Creek%20Recovery%20Chain%20(Persona%20Cascade).png) — Value
+
+### For Government Procurement
+1. [Cedar Creek Fire 2022](stakeholder/Cedar%20Creek%20Fire%202022.png) — Context
+2. [The Confidence Ledger](stakeholder/The%20Confidence%20Ledger%20(Trust%20Architecture).png) — Trust
+3. [The Legacy Bridge](stakeholder/The%20Legacy%20Bridge%20(TRACS%20&%20FSVeg%20Export).png) — Integration
+4. [Federal Compliance Overview](stakeholder/federal-compliance-overview.png) — Compliance
+
+### For USFS Field Staff
+1. [Cedar Creek Fire 2022](stakeholder/Cedar%20Creek%20Fire%202022.png) — Their fire
+2. [The Cedar Creek Recovery Chain](stakeholder/The%20Cedar%20Creek%20Recovery%20Chain%20(Persona%20Cascade).png) — Their workflow
+
+---
+
+## Visual Style Guide
 
 All diagrams share a consistent "tactical whiteboard" aesthetic:
 
-- Dark slate blue background (#0F172A)
-- Chalk-on-slate hand-drawn style
-- RANGER severity palette (green/amber/red)
-- Consistent agent icons (fire, boot, tree, document)
+| Element | Specification |
+|---------|--------------|
+| **Background** | Dark slate (#0F172A) |
+| **Lines** | Chalk-drawn white, slight imperfection |
+| **Agent Icons** | 🔥 Burn, 🥾 Trail, 🌲 Timber, 📋 NEPA, 🧠 Coordinator |
+| **Colors** | Emerald (#10B981), Amber (#F59E0B), Red (#EF4444) |
+| **Typography** | Hand-lettered labels, monospace for code |
+| **Flow** | Left-to-right or top-to-bottom |
 
 This style reinforces RANGER's identity as an operational tool for real-world decision-making.
 
-## Detailed Documentation
-
-See **[DIAGRAM-NARRATIVES.md](DIAGRAM-NARRATIVES.md)** for:
-
-- One-sentence summaries
-- Detailed story walkthroughs (2-3 paragraphs each)
-- Key talking points for presentations
-- Audience/purpose mapping tables
-- Generation prompts for reproducibility
+---
 
 ## Creating New Diagrams
 
-The generation prompts are preserved in DIAGRAM-NARRATIVES.md. When creating additional diagrams:
+See **[PLANNED-DIAGRAMS.md](developer/PLANNED-DIAGRAMS.md)** for:
+- Production-ready generation prompts
+- Actual skill inventory (verified from codebase)
+- Post-generation checklist
 
-1. Follow the established prompt structure
+When creating diagrams:
+1. Follow the prompt structure in PLANNED-DIAGRAMS.md
 2. Maintain the chalk-on-slate aesthetic
 3. Use consistent agent iconography
-4. Reference real file names and data structures
-5. Include a clear narrative flow (left-to-right or top-to-bottom)
-6. Add explicit callouts for key insights
+4. Include ADR references where architectural claims are made
+5. Save to appropriate subdirectory (developer/ or stakeholder/)
 
-## File Naming Convention
+---
 
-Use descriptive names that match the diagram title:
-- Spaces are okay (helps readability)
-- Include parenthetical clarifiers when helpful: `(Persona Cascade)`, `(Trust Architecture)`
-- PNG format for all diagrams
+## File Organization
+
+```
+diagrams/
+├── README.md                    # This file
+├── DIAGRAM-NARRATIVES.md        # Speaker notes and walkthroughs
+├── developer/                   # Technical diagrams
+│   ├── PLANNED-DIAGRAMS.md      # Generation prompts for missing diagrams
+│   ├── adk-runtime-skills.png
+│   ├── agent-briefing-event.png
+│   └── ...
+├── stakeholder/                 # Executive/USFS diagrams
+│   ├── skills-first-architecture.png
+│   ├── Cedar Creek Fire 2022.png
+│   └── ...
+└── legacy/                      # Archived Phase 1-3 diagrams
+    ├── Local Developer Stack.png
+    └── ...
+```
+
+---
+
+## Audit Status
+
+Last audit: **December 28, 2025**
+
+| Category | Count | Status |
+|----------|-------|--------|
+| Current (Phase 4) | 21 | ✅ Accurate |
+| Planned | 4 | 📋 Prompts ready |
+| Archived | 5 | ✅ Properly segregated |
+
+Next audit recommended after Phase 4 deployment completion.
+
+---
+
+*Maintained by TechTrend Federal — Digital Twin Initiative*

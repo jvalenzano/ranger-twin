@@ -97,9 +97,13 @@
 | [ADR-001](./adr/ADR-001-tech-stack.md) | Technology Stack Selection | Accepted |
 | [ADR-002](./adr/ADR-002-brand-naming-strategy.md) | Brand Naming Strategy | Accepted |
 | [ADR-003](./adr/ADR-003-gemini-3-flash-file-search.md) | Gemini 3 Flash + File Search | Accepted |
-| [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Superseded |
-| [ADR-005](./adr/ADR-005-skills-first-architecture.md) | Skills-First Multi-Agent Architecture | Accepted |
+| [ADR-004](./adr/ADR-004-site-analysis-openrouter.md) | Site Analysis + OpenRouter | Superseded by ADR-006 |
+| [ADR-005](./adr/ADR-005-skills-first-architecture.md) | Skills-First Multi-Agent Architecture | **Core Standard** |
 | [ADR-006](./adr/ADR-006-google-only-llm-strategy.md) | Google-Only LLM Strategy | Accepted |
+| [ADR-007](./adr/ADR-007-tool-invocation-strategy.md) | Tool Invocation (mode="ANY") | Superseded by ADR-007.1 |
+| [ADR-007.1](./adr/ADR-007.1-tool-invocation-strategy.md) | Three-Layer Tool Invocation (mode="AUTO") | Accepted |
+| [ADR-008](./adr/ADR-008-agent-tool-pattern.md) | AgentTool Pattern for Multi-Agent | Accepted |
+| [ADR-009](./adr/ADR-009-fixture-first-development.md) | Fixture-First Development Strategy | Accepted |
 
 ### Workshop (Production Vision)
 
@@ -149,13 +153,23 @@ Additional archived materials from initial exploration and completed milestones 
 
 ## Current Focus
 
-As of December 2025, the team is focused on:
+As of December 2025, the team is in **Phase 0-1 (Demo)** focused on:
 
-1. **Skills Library Development** — Porting domain expertise to portable skill packages (ADR-005)
-2. **Mission Control UX** — Portfolio triage interface for 30-50 fire incidents
-3. **API Integration** — Transitioning from fixtures to live NIFC/FIRMS data
+1. **Cloud Run Deployment** — Two-service architecture (ranger-console + ranger-coordinator)
+2. **Agent Orchestration** — AgentTool pattern for multi-agent coordination (ADR-008)
+3. **Fixture-First Development** — Real federal data cached locally for demo reliability (ADR-009)
+4. **Stakeholder Demos** — Proving agentic workflow value before infrastructure investment
 
-See [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) for the 13-week path to MVP and [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for current priorities and the "8-minute reality" that drives our UX decisions.
+### Key Architecture Documents
+
+| Document | Why It Matters |
+|----------|----------------|
+| [ADR-005](./adr/ADR-005-skills-first-architecture.md) | Core paradigm: Skills as the value layer |
+| [ADR-008](./adr/ADR-008-agent-tool-pattern.md) | How agents orchestrate (AgentTool, not microservices) |
+| [ADR-009](./adr/ADR-009-fixture-first-development.md) | Demo vs. production data strategy |
+| [DEMO-DATA-REFERENCE.md](./DEMO-DATA-REFERENCE.md) | Quick reference for stakeholder conversations |
+
+See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for full context and the "8-minute reality" that drives our UX decisions.
 
 ---
 
@@ -168,4 +182,4 @@ See [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) for the 13-week pat
 
 ---
 
-*Last updated: December 24, 2025*
+*Last updated: December 27, 2025*

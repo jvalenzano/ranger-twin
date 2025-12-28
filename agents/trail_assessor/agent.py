@@ -26,14 +26,6 @@ if str(PROJECT_ROOT) not in sys.path:
 # Configure audit logging
 logger = logging.getLogger("ranger.trail_assessor")
 
-# MCP toolset for data connectivity (Phase 4)
-try:
-    from agents.shared.mcp_client import get_trail_assessor_toolset
-    MCP_TOOLSET = get_trail_assessor_toolset()
-except ImportError:
-    # Fallback for local development without MCP
-    MCP_TOOLSET = None
-
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -364,8 +356,6 @@ root_agent = Agent(
 
     # Skill tools
     tools=[
-        # MCP tools for data connectivity (Phase 4)
-        *([] if MCP_TOOLSET is None else [MCP_TOOLSET]),
         # Skill tools for domain expertise (ADR-005)
         classify_damage,
         evaluate_closure,

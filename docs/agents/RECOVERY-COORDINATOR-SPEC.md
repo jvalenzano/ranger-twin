@@ -217,7 +217,7 @@ def generate_summary(params: SummaryParams) -> ToolResult:
 
 ## References
 
-- [_!_IMPLEMENTATION-ROADMAP.md](../_!_IMPLEMENTATION-ROADMAP.md)
+- [IMPLEMENTATION-ROADMAP.md](../IMPLEMENTATION-ROADMAP.md)
 - [ADK Coordinator Pattern](https://cloud.google.com/blog/products/ai-machine-learning/introducing-agent-development-kit)
 - [STRATEGIC-REFRAME.md](../STRATEGIC-REFRAME.md)
 - [PROJECT-BRIEF.md](../PROJECT-BRIEF.md)

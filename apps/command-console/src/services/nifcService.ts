@@ -210,11 +210,12 @@ export async function fetchNIFCPerimeters(
   }
 
   // Build query parameters
+  // NOTE: Do NOT include geometryType without a geometry parameter -
+  // newer ArcGIS servers reject this as "Invalid query parameters"
   const params = new URLSearchParams({
     where: buildWhereClause(config),
     outFields: NIFC_FIELDS,
     returnGeometry: 'true',
-    geometryType: 'esriGeometryEnvelope',
     f: 'json',
     resultRecordCount: String(config?.limit ?? 500),
     orderByFields: 'poly_GISAcres DESC',
