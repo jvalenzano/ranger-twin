@@ -1,6 +1,7 @@
 # CLAUDE.md - RANGER Agent Context
 
-> **Token Budget:** ~1000 tokens | **Last Updated:** December 2025
+> **Token Budget:** ~1000 tokens | **Last Updated:** December 2025  
+> **Note:** This is the streamlined reference. See [`../CLAUDE.md`](../CLAUDE.md) for extended context, examples, and troubleshooting.
 
 ## What Is RANGER
 

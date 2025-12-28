@@ -87,40 +87,75 @@ pytest agents/ -v
 ranger-twin/
 ├── agents/                    # ADK Agents (Skills-First)
 │   ├── coordinator/           #   Root orchestrator
-│   │   ├── agent.py           #   Agent definition
-│   │   └── skills/            #   Coordinator skills
+│   │   ├── agent.py           #     Agent definition
+│   │   ├── skills/            #     Coordinator-specific skills
+│   │   └── tests/             #     Agent tests
 │   ├── burn_analyst/          #   Fire severity specialist
 │   ├── trail_assessor/        #   Infrastructure specialist
 │   ├── cruising_assistant/    #   Timber specialist
-│   └── nepa_advisor/          #   Compliance specialist
+│   ├── nepa_advisor/          #   Compliance specialist
+│   ├── shared/                #   Shared agent utilities
+│   └── docs/                  #   Agent documentation
 │
-├── skills/                    # Shared Skills Library (future)
+├── skills/                    # Shared Skills Library
 │   ├── foundation/            #   Cross-agency skills
-│   └── forest-service/        #   USFS-specific skills
+│   │   ├── _template/         #     Skill authoring template
+│   │   └── greeting/          #     Example skill
+│   └── forest-service/        #   USFS-specific skills (planned)
 │
-├── mcp/                       # Model Context Protocol Servers
-│   └── fixtures/              #   Cedar Creek simulation data
+├── mcp/                       # MCP Server Definitions (placeholders)
+│   ├── fixtures/              #   Local fixture server spec
+│   └── nifc/                  #   NIFC data server spec
+│
+├── services/                  # Service Implementations
+│   ├── agents/                #   Agent service containers
+│   ├── api-gateway/           #   FastAPI gateway service
+│   └── mcp-fixtures/          #   MCP fixtures server (implemented)
 │
 ├── apps/
-│   └── command-console/       # React + Vite + Tailwind UI
+│   ├── command-console/       #   React + Vite + Tailwind UI
+│   └── field-companion/       #   Mobile/field app (future)
+│
+├── packages/                  # Shared Libraries (monorepo)
+│   ├── agent-common/          #   Common agent utilities
+│   ├── skill-runtime/         #   Skill loading/execution
+│   ├── twin-core/             #   Core types and interfaces
+│   ├── types/                 #   TypeScript types
+│   └── ui-components/         #   Shared React components
 │
 ├── data/
-│   └── fixtures/              # Phase 1 simulation data
-│       └── cedar-creek/       #   Fire perimeters, trails, timber, NEPA
+│   ├── fixtures/              #   Phase 1 simulation data
+│   │   ├── cedar-creek/       #     Primary test fire
+│   │   └── bootleg/           #     Secondary test fire
+│   ├── documents/             #   NEPA documents, regulations
+│   ├── layers/                #   GIS vector layers
+│   ├── rasters/               #   Satellite imagery/rasters
+│   └── synthetic/             #   Generated test data
 │
-├── docs/
-│   ├── adr/                   # Architecture Decision Records
-│   ├── specs/                 # Technical specifications
-│   └── runbooks/              # Operational guides
+├── docs/                      #   Documentation
+│   ├── adr/                   #     Architecture Decision Records
+│   ├── specs/                 #     Technical specifications
+│   ├── runbooks/              #     Operational guides
+│   ├── architecture/          #     System architecture docs
+│   └── ...                    #     (20+ topic directories)
 │
-├── .context/                  # AI agent context files
-│   ├── CLAUDE.md              #   Streamlined agent instructions
-│   ├── architecture.md        #   Current state summary
-│   └── MANIFEST.md            #   Authoritative doc index
+├── infrastructure/
+│   ├── docker/                #   Docker configurations
+│   └── terraform/             #   Infrastructure as Code
 │
-├── main.py                    # ADK Orchestrator entry point
-├── CLAUDE.md                  # Extended agent context
-└── README.md                  # You are here
+├── scripts/                   #   Utility scripts
+│   ├── deploy-frontend.sh     #     Frontend deployment
+│   ├── test-integration.py    #     Integration tests
+│   └── verify-adk.py          #     ADK verification
+│
+├── .context/                  #   AI agent context files
+│   ├── CLAUDE.md              #     Streamlined agent instructions
+│   ├── architecture.md        #     Current state summary
+│   └── MANIFEST.md            #     Authoritative doc index
+│
+├── main.py                    #   ADK Orchestrator entry point
+├── CLAUDE.md                  #   Extended agent context
+└── README.md                  #   You are here
 ```
 
 ## Key Commands

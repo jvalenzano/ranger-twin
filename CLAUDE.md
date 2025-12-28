@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> **Note:** For token-optimized AI agent context, see [`.context/CLAUDE.md`](.context/CLAUDE.md) (~1000 tokens, quick reference).
+
+This file provides comprehensive guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Core Directive
 RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses simulated data** to prove multi-agent coordination and reasoning transparency.
