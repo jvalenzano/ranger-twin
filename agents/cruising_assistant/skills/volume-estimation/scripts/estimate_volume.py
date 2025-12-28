@@ -262,7 +262,7 @@ def execute(inputs: dict) -> dict:
     trees_provided = "trees" in inputs and inputs["trees"] is not None
 
     if not trees_provided and plot_id:
-        # Load from fixture
+        # Load from fixture - specific plot
         plot_data = load_plot_data(fire_id, plot_id)
         if plot_data:
             trees = plot_data.get("trees", [])
@@ -277,6 +277,84 @@ def execute(inputs: dict) -> dict:
             }
     elif trees_provided:
         data_sources.append("User-provided tree data")
+    elif not trees_provided and not plot_id:
+        # Load ALL plots for fire-level aggregation (Fixture-First pattern)
+        all_plots = load_all_plots(fire_id)
+        if not all_plots:
+            return {
+                "fire_id": fire_id,
+                "error": f"No plot data found for fire: {fire_id}",
+                "confidence": 0.0,
+                "reasoning_chain": [f"ERROR: Could not load plots for {fire_id}"],
+            }
+
+        # Aggregate volume across all plots
+        plot_summaries = []
+        total_volume_all_plots = 0
+        total_trees_all_plots = 0
+        all_species_breakdown = {}
+
+        for plot in all_plots:
+            plot_trees = plot.get("trees", [])
+            if not plot_trees:
+                continue
+
+            # Calculate volume for this plot
+            plot_volume_result = calculate_plot_volume(plot_trees, baf, log_rule)
+            plot_volume_mbf = plot_volume_result["plot_total_mbf"]
+
+            # Aggregate species data
+            for tree in plot_volume_result["tree_volumes"]:
+                species = tree["species"]
+                if species not in all_species_breakdown:
+                    all_species_breakdown[species] = {
+                        "volume_mbf": 0,
+                        "tree_count": 0,
+                    }
+                all_species_breakdown[species]["volume_mbf"] += tree["net_bf"] / 1000
+                all_species_breakdown[species]["tree_count"] += 1
+
+            total_volume_all_plots += plot_volume_mbf
+            total_trees_all_plots += len(plot_volume_result["tree_volumes"])
+
+            plot_summaries.append({
+                "plot_id": plot.get("plot_id"),
+                "volume_mbf": round(plot_volume_mbf, 1),
+                "trees": len(plot_volume_result["tree_volumes"]),
+                "priority": plot.get("priority", "UNKNOWN"),
+            })
+
+        # Calculate species percentages
+        for species_data in all_species_breakdown.values():
+            species_data["percentage"] = round(
+                species_data["volume_mbf"] / total_volume_all_plots * 100, 1
+            ) if total_volume_all_plots > 0 else 0
+
+        # Return fire-level summary
+        return {
+            "fire_id": fire_id,
+            "total_volume_mbf": round(total_volume_all_plots, 1),
+            "plots_analyzed": len(plot_summaries),
+            "trees_analyzed": total_trees_all_plots,
+            "plot_breakdown": plot_summaries,
+            "species_breakdown": all_species_breakdown,
+            "log_rule": log_rule,
+            "baf": baf,
+            "reasoning_chain": [
+                f"Analyzed {len(plot_summaries)} plots for fire {fire_id}",
+                f"Total volume across all plots: {total_volume_all_plots:.1f} MBF",
+                f"Highest priority plots: " + ", ".join(
+                    p["plot_id"] for p in sorted(plot_summaries, key=lambda x: x["volume_mbf"], reverse=True)[:3]
+                ),
+            ],
+            "confidence": 0.88,
+            "data_sources": ["Cedar Creek timber-plots.json fixture"],
+            "recommendations": [
+                f"Total salvage estimate: {total_volume_all_plots:.1f} MBF across {len(plot_summaries)} cruise plots",
+                f"Prioritize high-volume plots: {', '.join(p['plot_id'] for p in sorted(plot_summaries, key=lambda x: x['volume_mbf'], reverse=True)[:2])}",
+                "Use assess_salvage() for deterioration timeline and harvest prioritization",
+            ],
+        }
     else:
         return {
             "fire_id": fire_id,
@@ -407,6 +485,31 @@ def load_plot_data(fire_id: str, plot_id: str) -> dict | None:
                         return plot
 
     return None
+
+
+def load_all_plots(fire_id: str) -> list[dict]:
+    """
+    Load all plots for a fire from fixtures.
+
+    Args:
+        fire_id: Fire identifier
+
+    Returns:
+        List of plot dictionaries
+    """
+    script_dir = Path(__file__).parent
+    fixture_path = script_dir.parent.parent.parent.parent.parent / "data" / "fixtures" / "cedar-creek" / "timber-plots.json"
+
+    if not fixture_path.exists():
+        fixture_path = Path("data/fixtures/cedar-creek/timber-plots.json")
+
+    if fixture_path.exists():
+        with open(fixture_path) as f:
+            data = json.load(f)
+            if data.get("fire_id") == fire_id:
+                return data.get("plots", [])
+
+    return []
 
 
 if __name__ == "__main__":

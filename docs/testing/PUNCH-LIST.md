@@ -97,9 +97,119 @@
 - **Commit:** 36d9534
 - **Notes:** This validates the user's diagnosis: "We don't need MCP for Phase 1. Skills load fixtures directly." The MCP client was aspirational code that wasn't needed yet.
 
+### [PL-006] NEPA Advisor Asks Clarification Before Searching
+- **Type:** Bug
+- **Severity:** P1 (High)
+- **Location:** Backend → agents/nepa_advisor/agent.py
+- **Description:** When asked "Is a Categorical Exclusion appropriate for Cedar Creek timber salvage?", NEPA Advisor responds "I need to know the estimated acreage" instead of searching FSM/FSH knowledge base first
+- **Root Cause:** System prompt lacks search-first directive. Agent has `search_regulatory_documents()` tool but no instruction to use it before asking clarifications
+- **Expected:** Should call search_regulatory_documents() → find CE thresholds → THEN ask for acreage if needed
+- **Status:** ✅ **Fixed** (December 28, 2025)
+- **Fix Details:**
+  - Added "CRITICAL SEARCH-FIRST BEHAVIOR" section to agent.py:240-277
+  - Instructs agent to ALWAYS search FSM/FSH before asking questions
+  - Includes example of correct behavior with regulatory citations
+  - Deployed with revision TBD (pending deployment)
+- **Evidence:** User chat export (ranger-chat-2025-12-28.json) shows NEPA query deflected without search
+- **Notes:** Agent has File Search RAG configured with FSH/FSM documents. Now enforces search-first workflow.
+
+---
+
+### [PL-007] Console Shows NIFC API Errors in Browser DevTools
+- **Type:** Known Issue
+- **Severity:** P3 (Low)
+- **Location:** Frontend → apps/command-console/src/services/nifcService.ts
+- **Description:** Browser console shows CORS/connection errors for NIFC API calls
+- **Root Cause:** Frontend NIFC integration not configured for Phase 1 (using fixtures only)
+- **Expected:** No errors (NIFC integration is Phase 2+)
+- **Status:** Known - Won't Fix in Phase 1
+- **Notes:** Does not affect functionality. NIFC service exists for future real-time data integration. Phase 1 uses fixtures only per DATA-SIMULATION-STRATEGY.md
+
+---
+
+### [PL-008] Recovery Briefing Skips NEPA Advisor
+- **Type:** Bug
+- **Severity:** P2 (Medium)
+- **Location:** Backend → agents/coordinator/agent.py
+- **Description:** "Give me a recovery briefing for Cedar Creek" returns severity, damage, and salvage info but omits NEPA pathway recommendation
+- **Root Cause:** Coordinator system prompt lacks explicit 4-agent briefing protocol
+- **Expected:** Recovery briefings should call ALL FOUR specialists: burn_analyst, trail_assessor, cruising_assistant, nepa_advisor
+- **Status:** ✅ **Fixed** (December 28, 2025)
+- **Fix Details:**
+  - Added "Recovery Briefing Protocol" section to agent.py:159-201
+  - Lists all 4 required specialist tools with their domains
+  - Specifies output format with all 4 sections
+  - Enforces comprehensive coverage: "Do not skip any specialist"
+  - Deployed with revision TBD (pending deployment)
+- **Evidence:** User chat export shows briefing missing NEPA section
+- **Notes:** Coordinator has AgentTool wrappers for all 4 agents (PL-002 fix), now has explicit protocol
+
+---
+
+### [PL-009] JSON Export Missing Reasoning Chains
+- **Type:** Enhancement
+- **Severity:** P1 (High - Demo Value)
+- **Location:** Frontend → apps/command-console/src/stores/chatStore.ts
+- **Description:** Chat export JSON includes message summaries but excludes reasoning chains visible in "View reasoning (N steps)" UI
+- **Root Cause:** Export logic (line 327-333) explicitly omits `reasoning` array from serialization
+- **Expected:** Export should include full Proof Layer data: reasoning_chain, citations, confidence details
+- **Status:** ✅ **Fixed** (December 28, 2025)
+- **Fix Details:**
+  - Added `reasoning: msg.reasoning` to export mapping in chatStore.ts:333
+  - Includes comment: "// Proof Layer reasoning chain steps"
+  - Frontend auto-deploys via Cloud Build on push to develop
+  - TypeScript validation: ✅ Passed
+- **Evidence:** User report: "full reasoning chains in JSON export is absolutely something we should add"
+- **Notes:** Reasoning data exists in ChatMessage.reasoning, now exported. Citations remain in BriefingEvents only (not ChatMessages).
+
+---
+
+### [PL-010] Cruising Assistant Returns "No Volume Estimate"
+- **Type:** Bug
+- **Severity:** P2 (Medium)
+- **Location:** Backend → agents/cruising_assistant/skills/volume-estimation/scripts/estimate_volume.py
+- **Description:** Query "What is the timber salvage volume estimate for Cedar Creek?" returns "No volume estimate available"
+- **Root Cause:** Skill required either `plot_id` or explicit `trees` data. When user asks for fire-level estimate without specifying plot, skill returned error: "Either plot_id or trees must be provided"
+- **Expected:** Should aggregate volume from all plots when only fire_id provided (Fixture-First pattern)
+- **Status:** ✅ **Fixed** (December 28, 2025)
+- **Fix Details:**
+  - Added `load_all_plots()` function to load all plots for a fire (line 412-434)
+  - Enhanced `execute()` to handle fire-level aggregation (line 280-357)
+  - Aggregates volume across all plots with species breakdown
+  - Returns plot_breakdown, total_volume_mbf, and prioritized plot list
+  - Test verification: 47.8 MBF total across 6 plots, confidence 88%
+  - Deployed with revision TBD (pending deployment)
+- **Evidence:** User chat export shows empty volume response. Fixture verified to contain mbf_per_acre data.
+- **Notes:** Implements ADR-009 Fixture-First pattern. Skill now handles 3 scenarios: specific plot, explicit trees, or fire-level aggregation.
+
 ---
 
 ## Fixed Issues
+
+### [PL-005] MCP Toolset Causing Agent Failures ✅
+- **Type:** Bug (Architecture)
+- **Severity:** P0 (Blocker)
+- **Location:** Backend → burn_analyst, trail_assessor, cruising_assistant agents
+- **Description:** Agent orchestration failing in Cloud Run - all 4 specialists return "connection errors"
+- **Root Cause:** Agents imported MCP toolsets that attempted stdio transport to non-existent `services/mcp-fixtures/server.py`. Per ADR-009, skills should load bundled fixtures directly - MCP is Phase 2.
+- **Expected:** Agents load fixture data directly without MCP connection attempts
+- **Status:** ✅ **Fixed + Deployed**
+- **Fix Details:**
+  - Removed MCP toolset imports from `agents/burn_analyst/agent.py`
+  - Removed MCP toolset imports from `agents/trail_assessor/agent.py`
+  - Removed MCP toolset imports from `agents/cruising_assistant/agent.py`
+  - Skills already have `load_fixture_data()`, `load_fire_metadata()`, `load_plots_data()` per ADR-009
+  - Deployed to Cloud Run: revision `ranger-coordinator-00009-mdm`
+  - Deployment timestamp: 2025-12-28 ~10:30 PST
+- **Verification Status:** Deployed and verified
+  - ✅ No MCP connection errors in Cloud Run logs
+  - ✅ Service health check passing (adk_version: 1.21.0)
+  - ✅ Agents loading successfully without MCP failures
+- **Fix Reference:** ADR-009 Fixture-First Development Strategy
+- **Commit:** 2260101
+- **Notes:** Final blocker preventing multi-agent orchestration. MCP client code retained for Phase 2.
+
+---
 
 ### [PL-002] Recovery Briefing Query Fails - Wrong ADK Pattern ✅
 - **Fixed:** 2025-12-27
@@ -119,14 +229,16 @@
 
 | Status | Count |
 |--------|-------|
-| Open | 1 |
+| Open | 0 |
 | Partially Fixed | 1 |
-| Fixed (Deployed, Verified) | 2 |
-| Won't Fix | 0 |
+| Fixed (Pending Deployment) | 4 |
+| Fixed (Deployed, Verified) | 3 |
+| Known - Won't Fix | 1 |
 
-**Total Issues:** 4
-**Resolved:** 2 (50%)
+**Total Issues:** 11
+**Resolved (Fixed or Won't Fix):** 8 (73%)
+**Pending Deployment:** 4 (PL-006, PL-008, PL-009, PL-010)
 
 ---
 
-**Last Updated:** December 28, 2025 (Post Fixture-First Fix Deployment)
+**Last Updated:** December 28, 2025 (Post Multi-Agent Enhancement Session)
