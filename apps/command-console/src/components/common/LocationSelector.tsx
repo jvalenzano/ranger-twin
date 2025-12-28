@@ -10,7 +10,7 @@
  * Follows best practices from Google Maps, weather apps, emergency systems
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MapPin, Navigation, Check, Loader2, AlertCircle } from 'lucide-react';
 import { usePreferencesStore } from '@/stores/preferencesStore';
 
@@ -37,7 +37,6 @@ export function LocationSelector({ onClose }: LocationSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [geoStatus, setGeoStatus] = useState<GeolocationStatus>('idle');
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedDistrict, setSelectedDistrict] = useState(location?.district || 'Willamette National Forest');
 
     // Request geolocation permission and get coordinates
     const handleUseMyLocation = () => {
@@ -56,7 +55,7 @@ export function LocationSelector({ onClose }: LocationSelectorProps) {
                 ];
 
                 // Find nearest forest district (simplified - in production, use reverse geocoding)
-                const nearestDistrict = FOREST_DISTRICTS[0]; // Default to Willamette
+                const nearestDistrict = FOREST_DISTRICTS[0]!; // Default to Willamette (non-null assertion safe because array is hardcoded)
 
                 setLocation({
                     type: 'auto',
@@ -94,7 +93,6 @@ export function LocationSelector({ onClose }: LocationSelectorProps) {
             forest: district.forest,
             coordinates: undefined,
         });
-        setSelectedDistrict(district.forest);
         setIsOpen(false);
         onClose?.();
     };

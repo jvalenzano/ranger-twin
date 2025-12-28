@@ -169,6 +169,8 @@ The strategic review warned against "big bang" platform strategies in federal IT
 
 ### Monorepo Structure
 
+> **Note:** Agent directory names MUST use underscores (valid Python identifiers) for Google ADK compatibility.
+
 ```
 ranger/
 ├── apps/
@@ -183,10 +185,10 @@ ranger/
 │   │   │   ├── portfolio-triage/
 │   │   │   └── user-interaction/
 │   │   └── tests/
-│   ├── burn-analyst/
-│   ├── trail-assessor/
-│   ├── cruising-assistant/
-│   └── nepa-advisor/
+│   ├── burn_analyst/              # Underscores required!
+│   ├── trail_assessor/
+│   ├── cruising_assistant/
+│   └── nepa_advisor/
 │
 ├── skills/                        # Shared Skills Library
 │   ├── foundation/                # Cross-agency

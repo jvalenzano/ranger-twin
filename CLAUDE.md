@@ -34,6 +34,8 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 - `docs/specs/agent-interface.md` - Agent communication protocol
 - `docs/architecture/AGENT-MESSAGING-PROTOCOL.md` - AgentBriefingEvent JSON schema
 - `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec
+- `docs/specs/SKILL-VERIFICATION-STANDARD.md` - Quality Gates (DoD, Evaluation 10)
+- `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md` - **CRITICAL:** ADK patterns & anti-patterns
 
 ## Commands
 
@@ -127,43 +129,93 @@ Fire lifecycle follows a **4-phase model** aligned with practitioner terminology
 RANGER uses a Skills-First Multi-Agent Architecture where domain expertise is
 packaged as portable Skills that enhance Agents running on Google ADK.
 
-### Agent Roster
+### ADK Naming Requirements
 
-| Agent | Role | Skills |
-|-------|------|--------|
-| **Coordinator** | Root orchestrator, delegation, synthesis | `portfolio-triage`, `delegation` |
-| **Burn Analyst** | Fire severity, MTBS, soil burn | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` |
-| **Trail Assessor** | Infrastructure damage, closures | `damage-classification`, `closure-decision`, `recreation-priority` |
-| **Cruising Assistant** | Timber inventory, salvage | `volume-estimation`, `salvage-assessment`, `cruise-methodology` |
-| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | `pathway-decision`, `compliance-timeline`, `documentation` |
+**CRITICAL:** Google ADK requires directory names to be valid Python identifiers.
+- Agent directories MUST use **underscores**, not hyphens: `cruising_assistant` ✓, `cruising-assistant` ✗
+- Skill directories within agents can use hyphens (e.g., `skills/csv-insight/`)
+- Agent `name` in `agent.py` should also use underscores: `name="cruising_assistant"`
 
-All agents located in `agents/<agent-name>/` with skills in `agents/<agent-name>/skills/`.
+This is enforced by Pydantic validation in the ADK App class.
+
+### ADK Tool Parameter Types
+
+**CRITICAL:** Gemini API rejects complex type hints in tool function parameters.
+
+**Forbidden types** (cause `400 INVALID_ARGUMENT` errors):
+- `list[dict]` - Use JSON string instead
+- `dict` as parameter type - Use JSON string instead
+- `list[CustomClass]` - Use JSON string instead
+
+**Allowed types:**
+- `str`, `int`, `float`, `bool` - Primitive types work
+- `str | None` - Optional primitives work
+- `list[str]`, `list[int]` - Simple lists work
+
+**Pattern for complex data:**
+```python
+# ❌ WRONG - Will fail at runtime
+def my_tool(items: list[dict] | None = None) -> dict:
+    ...
+
+# ✓ CORRECT - Use JSON string parameter
+def my_tool(items_json: str = "[]") -> dict:
+    """
+    Args:
+        items_json: JSON string of items. Example:
+            '[{"name": "item1", "value": 42}]'
+    """
+    import json
+    items = json.loads(items_json) if items_json else None
+    ...
+```
+
+This limitation is in the Gemini API's function calling schema validation.
+
+### Agent Roster (All Verified ✅ December 26, 2025)
+
+| Agent | Role | Model | Skills |
+|-------|------|-------|--------|
+| **Coordinator** | Root orchestrator, delegation | gemini-2.0-flash | `portfolio-triage`, `delegation` |
+| **Burn Analyst** | Fire severity, MTBS, soil burn | gemini-2.0-flash | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` |
+| **Trail Assessor** | Infrastructure damage, closures | gemini-2.0-flash | `damage-classification`, `closure-decision`, `recreation-priority` |
+| **Cruising Assistant** | Timber inventory, salvage | gemini-2.0-flash | `volume-estimation`, `salvage-assessment`, `cruise-methodology`, `csv-insight` |
+| **NEPA Advisor** | Compliance, CE/EA/EIS pathways | gemini-2.5-flash | `pathway-decision`, `compliance-timeline`, `documentation`, `pdf-extraction` |
+
+All agents located in `agents/<agent_name>/` with skills in `agents/<agent_name>/skills/`.
+
+**GCP Development Environment:**
+- Project ID: `ranger-twin-dev`
+- Project Number: `1058891520442`
+- Billing: Enabled
 
 ### Skills Library
 
-**14 skills across 5 agents** (each skill has `skill.md`, `scripts/`, `resources/`, `tests/`):
+**16 skills across 5 agents** (each skill has `skill.md`, `scripts/`, `resources/`, `tests/`):
 
 ```
 agents/
 ├── coordinator/skills/
 │   ├── portfolio-triage/      # Fire prioritization scoring
 │   └── delegation/            # Query routing to specialists
-├── burn-analyst/skills/
+├── burn_analyst/skills/
 │   ├── mtbs-classification/   # MTBS severity classification
 │   ├── soil-burn-severity/    # Soil burn analysis
 │   └── boundary-mapping/      # Fire perimeter mapping
-├── trail-assessor/skills/
+├── trail_assessor/skills/
 │   ├── damage-classification/ # USFS Type I-IV damage
 │   ├── closure-decision/      # Risk-based closure eval
 │   └── recreation-priority/   # Usage-weighted prioritization
-├── cruising-assistant/skills/
+├── cruising_assistant/skills/
 │   ├── volume-estimation/     # MBF/CCF timber volume
 │   ├── salvage-assessment/    # Economic viability
-│   └── cruise-methodology/    # Sampling protocols
-└── nepa-advisor/skills/
+│   ├── cruise-methodology/    # Sampling protocols
+│   └── csv-insight/           # CSV data analysis
+└── nepa_advisor/skills/
     ├── pathway-decision/      # CE/EA/EIS determination
     ├── compliance-timeline/   # Milestone scheduling
-    └── documentation/         # Checklist generation
+    ├── documentation/         # Checklist generation
+    └── pdf-extraction/        # PDF document extraction
 
 skills/                        # Shared/foundation skills (future)
 ├── foundation/
@@ -172,15 +224,16 @@ skills/                        # Shared/foundation skills (future)
 
 ### Agent Directory Structure
 
-Each agent follows this pattern:
+Each agent follows this pattern (note: underscores required for ADK):
 ```
-agent-name/
-├── agent.py          # ADK Agent definition (exports root_agent)
-├── config.yaml       # Runtime configuration
-├── __init__.py       # Package marker
-├── .env.example      # Environment template
-├── skills/           # Agent-specific skills
-└── tests/            # pytest test suite
+agent_name/              # MUST use underscores, not hyphens
+├── agent.py             # ADK Agent definition (exports root_agent)
+├── config.yaml          # Runtime configuration
+├── __init__.py          # Package marker
+├── .env.example         # Environment template
+├── skills/              # Agent-specific skills (can use hyphens)
+│   └── skill-name/      # Skill directories can use hyphens
+└── tests/               # pytest test suite
 ```
 
 ### Key Specifications
@@ -188,3 +241,44 @@ agent-name/
 - `docs/specs/skill-format.md` - How to author skills
 - `docs/specs/agent-interface.md` - Agent contracts and lifecycle
 - `docs/adr/ADR-005-skills-first-architecture.md` - Full architecture decision
+
+## Phase 4: ADK Integration (In Progress)
+
+Phase 4 connects ADK agents to the React Command Console via SSE streaming.
+
+### New Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| MCP Fixtures Server | `services/mcp-fixtures/` | Serve Cedar Creek data via MCP |
+| ADK Orchestrator | `main.py` | FastAPI + ADK SSE endpoints |
+| SSE Client | `apps/command-console/src/lib/adkClient.ts` | Parse ADK SSE events |
+| Event Transformer | `apps/command-console/src/services/adkEventTransformer.ts` | Convert ADK → AgentBriefingEvent |
+| useADKStream Hook | `apps/command-console/src/hooks/useADKStream.ts` | React hook for streaming |
+
+### Phase 4 Commands
+
+```bash
+# Start ADK orchestrator locally
+source .venv/bin/activate
+python main.py
+
+# Start MCP fixtures server
+cd services/mcp-fixtures && uvicorn server:app --port 8080
+
+# Test multi-agent wiring
+cd agents && python -c "from validation_spike.agent import root_agent; print(root_agent.sub_agents)"
+
+# Deploy to Cloud Run
+gcloud run deploy ranger-coordinator --source . --project ranger-twin-dev --region us-central1
+```
+
+### Environment Variables
+
+- `GOOGLE_API_KEY` - Required for ADK/Gemini
+- `SESSION_SERVICE_URI` - Firestore session backend (production)
+- `MCP_FIXTURES_URL` - MCP server URL (production)
+
+### Implementation Guide
+
+See `docs/specs/_!_RANGER-PHASE4-IMPLEMENTATION-GUIDE-v2.md` for complete specifications.

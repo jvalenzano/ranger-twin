@@ -1,0 +1,34 @@
+{
+  "description": "Valid value ranges for timber measurements",
+  "dbh": {
+    "min": 1.0,
+    "max": 80.0,
+    "typical_min": 5.0,
+    "typical_max": 60.0,
+    "unit": "inches"
+  },
+  "height": {
+    "min": 10,
+    "max": 400,
+    "typical_min": 20,
+    "typical_max": 250,
+    "unit": "feet"
+  },
+  "defect_pct": {
+    "min": 0,
+    "max": 100,
+    "typical_max": 75,
+    "unit": "percent"
+  },
+  "volume_bf": {
+    "min": 0,
+    "max": 50000,
+    "unit": "board feet"
+  },
+  "basal_area": {
+    "min": 0,
+    "max": 500,
+    "typical_max": 350,
+    "unit": "sq ft per acre"
+  }
+}

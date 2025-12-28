@@ -1,5 +1,5 @@
 {
-  "fire_id": "cedar-creek",
+  "fire_id": "cedar-creek-2022",
   "name": "Cedar Creek Fire",
   "discovery_date": "2022-08-01",
   "containment_date": "2022-10-14",
@@ -18,10 +18,12 @@
     "longitude": -122.0540
   },
   "summary": {
-    "high_severity_acres": 81041,
-    "moderate_severity_acres": 37900,
-    "low_severity_acres": 8400,
-    "high_severity_pct": 63.6
+    "high_severity_acres": 53689,
+    "moderate_severity_acres": 44740,
+    "low_severity_acres": 29402,
+    "high_severity_pct": 42.0,
+    "moderate_severity_pct": 35.0,
+    "low_severity_pct": 23.0
   },
   "baer_status": {
     "team_deployed": true,

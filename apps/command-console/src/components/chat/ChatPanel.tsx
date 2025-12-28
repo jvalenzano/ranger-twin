@@ -26,13 +26,17 @@ import {
   Copy,
   Check,
   Minus,
+  Zap,
+  Cpu,
 } from 'lucide-react';
 import {
   useChatStore,
   useChatMessages,
   useChatLoading,
+  useChatADKMode,
   type ChatMessage,
 } from '@/stores/chatStore';
+import { useConnectionStatus } from '@/stores/briefingStore';
 import type { AgentRole } from '@/services/aiBriefingService';
 import { ChatReasoningChain } from '@/components/briefing/ReasoningChain';
 
@@ -197,9 +201,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose, onMinimize }) => {
   const [copied, setCopied] = useState(false);
   const messages = useChatMessages();
   const isLoading = useChatLoading();
+  const isADKMode = useChatADKMode();
+  const connectionStatus = useConnectionStatus();
   const sendMessage = useChatStore((state) => state.sendMessage);
   const clearMessages = useChatStore((state) => state.clearMessages);
   const exportConversation = useChatStore((state) => state.exportConversation);
+  const toggleADKMode = useChatStore((state) => state.toggleADKMode);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -299,6 +306,35 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose, onMinimize }) => {
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-accent-cyan" />
           <span className="text-sm font-medium text-white">Ask RANGER</span>
+          {/* ADK Mode Badge with connection status */}
+          <button
+            onClick={toggleADKMode}
+            className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider transition-colors ${
+              isADKMode
+                ? connectionStatus === 'connected'
+                  ? 'bg-safe/20 text-safe hover:bg-safe/30'
+                  : connectionStatus === 'reconnecting'
+                  ? 'bg-warning/20 text-warning hover:bg-warning/30'
+                  : 'bg-accent-cyan/20 text-accent-cyan hover:bg-accent-cyan/30'
+                : 'bg-slate-600/50 text-slate-400 hover:bg-slate-500/50'
+            }`}
+            title={`Mode: ${isADKMode ? 'ADK Multi-Agent' : 'Legacy'}${isADKMode ? ` (${connectionStatus})` : ''}. Click to toggle.`}
+          >
+            {isADKMode ? <Zap size={10} /> : <Cpu size={10} />}
+            {isADKMode ? 'ADK' : 'Legacy'}
+            {/* Connection indicator dot */}
+            {isADKMode && (
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  connectionStatus === 'connected'
+                    ? 'bg-safe'
+                    : connectionStatus === 'reconnecting'
+                    ? 'bg-warning animate-pulse'
+                    : 'bg-slate-500'
+                }`}
+              />
+            )}
+          </button>
         </div>
         <div className="flex items-center gap-1">
           {messages.length > 0 && (

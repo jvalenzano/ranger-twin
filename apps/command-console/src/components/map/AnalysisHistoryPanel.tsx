@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAnalysisHistoryStore, downloadAnalysisAsMarkdown, type SavedAnalysis } from '@/stores/analysisHistoryStore';
+import { useAnalysisHistoryStore, downloadAnalysisAsMarkdown } from '@/stores/analysisHistoryStore';
 import { History, X, Trash2, Download, ChevronRight, AlertTriangle, Trees, Flame, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 

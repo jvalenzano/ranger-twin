@@ -36,12 +36,14 @@ Development Kit).
 
 ### Specialist Agents
 
+> **Note:** Agent names must use underscores (valid Python identifiers) for ADK compatibility.
+
 | Agent | Name | Domain | Primary Skills |
 |-------|------|--------|----------------|
-| Burn Analyst | `burn-analyst` | Fire severity | MTBS, Soil Burn Severity |
-| Trail Assessor | `trail-assessor` | Infrastructure | Damage Classification, Closures |
-| Cruising Assistant | `cruising-assistant` | Timber | Volume Estimation, Salvage |
-| NEPA Advisor | `nepa-advisor` | Compliance | Pathway Decision, Documentation |
+| Burn Analyst | `burn_analyst` | Fire severity | MTBS, Soil Burn Severity |
+| Trail Assessor | `trail_assessor` | Infrastructure | Damage Classification, Closures |
+| Cruising Assistant | `cruising_assistant` | Timber | Volume Estimation, Salvage, CSV Insight |
+| NEPA Advisor | `nepa_advisor` | Compliance | Pathway Decision, Documentation, PDF Extraction |
 
 ---
 
@@ -54,7 +56,7 @@ Agents load their configuration and discover available skills.
 from google.adk.agents import Agent
 
 root_agent = Agent(
-    name="agent-name",
+    name="agent_name",  # MUST use underscores, not hyphens
     model="gemini-2.0-flash",
     description="Agent description",
     instruction="Agent instructions...",
@@ -63,13 +65,47 @@ root_agent = Agent(
 ```
 
 **Required Parameters:**
-- `name`: Unique identifier (kebab-case)
+- `name`: Unique identifier (snake_case - MUST use underscores for ADK compatibility)
 - `model`: LLM model to use
 - `instruction`: System prompt defining agent behavior
 
 **Optional Parameters:**
 - `description`: Human-readable description
 - `tools`: List of available tools/functions
+
+### Tool Parameter Type Constraints
+
+> **CRITICAL:** The Gemini API rejects complex type hints in tool function parameters.
+> This causes `400 INVALID_ARGUMENT` errors at runtime.
+
+**Forbidden parameter types:**
+- `list[dict]` - causes schema validation failure
+- `dict` - causes schema validation failure
+- `list[CustomClass]` - causes schema validation failure
+
+**Allowed parameter types:**
+- Primitives: `str`, `int`, `float`, `bool`
+- Optional primitives: `str | None`, `int | None`
+- Simple lists: `list[str]`, `list[int]`
+
+**Pattern for complex data - use JSON strings:**
+
+```python
+# ❌ WRONG - Will fail with 400 error
+def analyze_data(records: list[dict] | None = None) -> dict:
+    ...
+
+# ✓ CORRECT - Parse JSON string in function body
+def analyze_data(records_json: str = "[]") -> dict:
+    """
+    Args:
+        records_json: JSON string of records. Example:
+            '[{"id": 1, "name": "record1"}]'
+    """
+    import json
+    records = json.loads(records_json) if records_json else None
+    # ... rest of implementation
+```
 
 ### 2. Registration (Future)
 In production, agents register with the Central Runtime for discovery and load balancing.
@@ -149,7 +185,7 @@ Each agent must have a `config.yaml` at its root:
 # Per ADR-005: Skills-First Multi-Agent Architecture
 
 agent:
-  name: agent-name
+  name: agent_name    # MUST use underscores for ADK
   model: gemini-2.0-flash
   version: 0.1.0
   description: "Agent description"
@@ -192,14 +228,17 @@ logging:
 
 Each agent follows this structure:
 
+> **CRITICAL:** Agent directory names MUST use underscores (valid Python identifiers).
+> Google ADK's Pydantic validation rejects hyphens in app names.
+
 ```
-agent-name/
+agent_name/           # MUST use underscores, not hyphens!
 ├── agent.py          # Agent definition (Required)
 ├── config.yaml       # Configuration (Required)
 ├── __init__.py       # Package marker (Required)
 ├── .env.example      # Environment template (Required)
 ├── skills/           # Agent-specific skills (Optional)
-│   ├── skill-one/
+│   ├── skill-one/    # Skill dirs CAN use hyphens
 │   └── skill-two/
 └── tests/            # Test suite (Required)
     ├── __init__.py

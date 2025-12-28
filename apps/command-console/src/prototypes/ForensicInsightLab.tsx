@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useMapStore } from '@/stores/mapStore';
 import {
-    Camera, Search, Layers, Clock, Globe, ArrowLeft,
-    Download, Eye, Maximize, Scissors, AlertTriangle,
+    Camera, Search, Clock, Globe, ArrowLeft,
+    Download, Eye, Maximize, AlertTriangle,
     PlayCircle, FileText, Image as ImageIcon
 } from 'lucide-react';
 
@@ -85,7 +85,7 @@ const ForensicInsightLab: React.FC = () => {
         }
 
         // Geospatial context extraction
-        const bounds = mapInstance.getBounds();
+        // const bounds = mapInstance.getBounds();
         // (In a real impl, we'd use mapInstance.unproject to get LngLat for the selection box)
         console.log('[Lab] Area selection captured:', { width, height });
     };

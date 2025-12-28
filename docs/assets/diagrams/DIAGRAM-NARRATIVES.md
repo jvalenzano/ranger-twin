@@ -64,9 +64,11 @@ The **USDA Forest Service shield** (bottom left) and **RANGER AGENTIC OS badge**
 
 ---
 
-## 1. How the Pieces Fit Together
+## 1. [ARCHIVED] How the Pieces Fit Together
 
 **File:** `How the pieces fit together.png`
+
+> **NOTE:** This diagram depicts the Phase 1 vs Phase 2 transition. It is superseded by "ADK Data Flow & SSE Streaming" which depicts the Phase 4 ADK integration.
 
 **One-Sentence Summary:** A developer-focused chalkboard diagram showing the architectural split between Phase 1 (browser-only static demo) and Phase 2 (AI integration), highlighting shared components and the upgrade path.
 
@@ -163,9 +165,11 @@ The bottom section—the "Proof Layer"—is what separates RANGER from black-box
 
 ---
 
-## 2. Recovery Coordinator: Query Routing & Agent Cascade
+## 2. [ARCHIVED] Recovery Coordinator: Query Routing & Agent Cascade
 
 **File:** `Coordinator Routing & Cross-Agent Cascade.png`
+
+> **NOTE:** This diagram depicts microservice routing. Superseded by "The Coordinator's Skill Roster" which depicts Skills-First delegation.
 
 **One-Sentence Summary:** Demonstrates how the Recovery Coordinator intelligently routes user queries—either to a single specialist agent or across multiple agents in parallel—then synthesizes cross-domain insights.
 
@@ -209,9 +213,11 @@ At the bottom, Session State (Redis) shows how the system maintains context acro
 
 ---
 
-## 3. Phase 1 Architecture Boundaries
+## 3. [ARCHIVED] Phase 1 Architecture Boundaries
 
 **File:** `Phase 1 Architecture Boundaries.png`
+
+> **NOTE:** Superseded by "The MCP Abstraction Layer" which reframes the simulated vs. real boundary around the MCP standard.
 
 **One-Sentence Summary:** Clarifies exactly what Phase 1 builds (real AI reasoning and orchestration) versus what it simulates (data inputs), preventing scope confusion and setting realistic expectations.
 
@@ -405,9 +411,11 @@ The gears indicate this is automated engineering, not manual transcription. The 
 
 ---
 
-## 7. Agentic AI Architecture: Body vs. Brain
+## 7. [ARCHIVED] Agentic AI Architecture: Body vs. Brain
 
 **File:** `Agentic AI Architecture.png`
+
+> **NOTE:** Depicts Python Agent Services. Superseded by "The Skills-First Architecture" using Google ADK.
 
 **One-Sentence Summary:** Illustrates the "Body vs. Brain" development workflow, showing how local containers (Body) act as the interface for remote Gemini intelligence (Brain).
 
@@ -445,9 +453,11 @@ This diagram resolves the primary confusion about "where the AI lives" in a loca
 
 ---
 
-## 8. Local Developer Stack
+## 8. [ARCHIVED] Local Developer Stack
 
 **File:** `Local Developer Stack.png`
+
+> **NOTE:** Depicts deprecated microservice ports (8001-8004). Superseded by "Phase 4 ADK Developer Stack".
 
 **One-Sentence Summary:** A comprehensive developer reference showing all services, ports, fixture data, and production system mappings for the complete RANGER local development environment.
 
@@ -1144,3 +1154,251 @@ The drawing is a software schematic divided into two clear zones:
 
 Style: Da Vinci engineering sketch, clean white chalk lines with yellow chalk accents for emphasis, precise technical drawing, photorealistic 8k, educational infographic. --ar 16:9 --v 6.0
 ```
+
+---
+
+## 9. The Skills-First Architecture
+
+**File:** `The Skills-First Architecture.png` (Planned)
+
+**One-Sentence Summary:** Visualizes the Phase 4 architecture where a single ADK Runtime acts as the "Brain," loaded with a library of portable Skills (Tools) and connecting to Data via MCP.
+
+### The Story This Diagram Tells
+
+This diagram represents the major architectural pivot to **Skills-First**. We are no longer building separate microservices for every agent. Instead, we have a unified **ADK Runtime** (powered by Gemini) that dynamically loads **Skills** from a shared library.
+
+The **Command Console (React)** is the "Body" (UI/Input).
+The **ADK Runtime** is the "Brain" (Orchestration/Reasoning).
+The **MCP Servers** are the "Senses" (Data Access).
+
+It emphasizes that "Agents" are just configurations of "Skills."
+
+### Generation Prompt
+
+```
+Create a technical whiteboard diagram titled "The Skills-First Architecture: Modular Intelligence"
+
+Style: Clean engineering whiteboard aesthetic. Dark slate blue background (#0F172A).
+
+Layout: Central Hub and Spoke.
+
+CENTER - "ADK Runtime (The Brain)"
+Large Hexagon.
+Label: "Google ADK Runtime"
+Subtitle: "Gemini 2.0 Flash"
+Contains small icons for: "Context Management", "Tool Execution", "Reasoning"
+
+LEFT - "Skill Library (The Tools)"
+A vertical stack of "Skill Cards" plugging into the Runtime.
+Cards labeled:
+- "Portfolio Triage"
+- "Soil Burn Analysis"
+- "NEPA Guidance"
+- "Timber Cruising"
+Arrow pointing INTO the Runtime: "Dynamic Skill Loading"
+
+RIGHT - "MCP Data Layer (The Senses)"
+Two boxes representing MCP Servers.
+1. "MCP Fixtures" (connected to JSON files)
+2. "MCP External" (connected to Cloud/APIs)
+Double-sided arrows connecting Runtime to MCPs.
+
+TOP - "Command Console (The Body)"
+React/Browser UI frame.
+Arrow pointing DOWN to Runtime: "User Intent (SSE)"
+Arrow pointing UP from Runtime: "Streaming Briefing"
+
+BOTTOM - "Agent Personas"
+Small badges showing "Virtual" agents that emerge from skill combos:
+- Coordinator
+- Burn Analyst
+- Trail Assessor
+Caption: "Agents are just bundles of Skills"
+```
+
+---
+
+## 10. Phase 4 ADK Developer Stack
+
+**File:** `Phase 4 ADK Developer Stack.png` (Planned)
+
+**One-Sentence Summary:** The correct, current map of the development environment, highlighting the simplified port structure and the role of the MCP Fixtures server.
+
+### The Story This Diagram Tells
+
+The "Local Developer Stack" diagram was cluttered with 5 different backend ports. Phase 4 simplifies this.
+There are now only **three** key processes a developer cares about:
+1.  **Port 3000**: The React UI.
+2.  **Port 8000**: The ADK Orchestrator (The main Python process).
+3.  **Port 8080**: The MCP Fixtures Server (Serving the data).
+
+This diagram gives developers the mental map of "Where do I look?"
+
+### Generation Prompt
+
+```
+Create a technical whiteboard diagram titled "Phase 4 Developer Environment"
+
+Style: Tactical whiteboard. Dark background.
+
+Layout: Three horizontal tiers.
+
+TOP TIER - "Frontend (Client)"
+Large Box: "Command Console"
+URL: "http://localhost:3000"
+Tech: React + Vite + useADKStream
+Content: 3D Map, Chat, Sidebar
+
+MIDDLE TIER - "Orchestration (Server)"
+Large Box: "ADK Runtime"
+URL: "http://localhost:8000"
+Tech: Python + Google ADK + Gemini API
+Note: "Single Entry Point for All Agents"
+
+BOTTOM TIER - "Data Services (Sources)"
+Box 1: "MCP Fixtures Server"
+URL: "http://localhost:8080"
+Content: Serves `burn-severity.json`, `trail-damage.json`
+Box 2: "Session Store"
+Tech: InMemory / Redis
+
+ARROWS:
+1. Frontend -> ADK (SSE Connection) "Stream Events"
+2. ADK -> MCP Fixtures "Tool Calls"
+3. ADK -> Internet "Gemini API"
+```
+
+---
+
+## 11. ADK Data Flow & SSE Streaming
+
+**File:** `ADK Data Flow & SSE Streaming.png` (Planned)
+
+**One-Sentence Summary:** A detailed sequence flow showing how a user's question transforms into a streaming React update via Server-Sent Events (SSE).
+
+### The Story This Diagram Tells
+
+This replaces "How pieces fit together" by focusing on the **Streaming** mechanism. RANGER represents a move away from "Request/Response" to "Continuous Streaming."
+The user asks a question -> The ADK thinks (generating reasoning events) -> The ADK acts (calling tools) -> The ADK speaks (final answer).
+All of this happens over a single long-lived SSE connection.
+
+### Generation Prompt
+
+```
+Create a detailed sequence flow diagram titled "The Pulse: ADK Event Streaming"
+
+Style: Engineering flow chart. Dark background.
+
+Swimlanes:
+1. User (React)
+2. ADK (Python)
+3. Gemini (LLM)
+4. MCP (Data)
+
+Steps (Top to Bottom):
+1. User: "Analyze Sector 4" -> ADK
+2. ADK -> Gemini: "Prompt + Context"
+3. Gemini -> ADK: "Reasoning: checking severity..."
+4. ADK -> User (SSE): "Event: reasoning_trace" (UI shows thinking spinner)
+5. Gemini -> ADK: "Call: get_burn_severity(4)"
+6. ADK -> MCP: "get_burn_severity(4)"
+7. MCP -> ADK: "Result: {severity: high}"
+8. ADK -> Gemini: "Tool Result"
+9. Gemini -> ADK: "Final Answer: Sector 4 is critical..."
+10. ADK -> User (SSE): "Event: agent_briefing" (UI renders card)
+```
+
+---
+
+## 12. The MCP Abstraction Layer
+
+**File:** `The MCP Abstraction Layer.png` (Planned)
+
+**One-Sentence Summary:** Explains how the Model Context Protocol (MCP) acts as the universal adapter, allowing RANGER to switch between "Simulation Mode" (Phase 1) and "Mission Mode" (Phase 2+) without changing agent code.
+
+### The Story This Diagram Tells
+
+This is the evolution of "Phase 1 Boundaries." It's not just about "Mock vs Real" anymore; it's about **Portability**.
+The Agents utilize standard tools like `get_burn_severity`.
+The **MCP Layer** decides how to fulfill that.
+-   **Config A (Dev):** MCP Fixtures Server reads a local JSON file.
+-   **Config B (Prod):** MCP Geo Server queries the Google Earth Engine API.
+The Agent *doesn't know the difference*. This is the power of the architecture.
+
+### Generation Prompt
+
+```
+Create a concept diagram titled "The Universal Adapter: MCP"
+
+Style: System architecture. Dark background.
+
+Left Side: "The Agents (Consumers)"
+Icons for Burn Analyst, Trail Assessor.
+Arrow output: `tool_call: get_burn_severity()`
+
+Center: "MCP Router"
+Visual: A switchboard or patch bay.
+Label: "Model Context Protocol"
+
+Right Side: "The Sources (Providers)"
+Split into Top and Bottom.
+
+Top (Active): "Fixtures (Dev)"
+Icon: JSON File
+Connection: Live wire to MCP
+
+Bottom (Future): "Real World (Prod)"
+Icon: Satellite/Cloud
+Connection: Dotted wire (Switchable)
+
+Bottom Caption: "Agents ask 'What'. MCP decides 'How'."
+```
+
+---
+
+## 13. The Coordinator's Skill Roster
+
+**File:** `The Coordinator's Skill Roster.png` (Planned)
+
+**One-Sentence Summary:** A roster view showing the Coordinator Agent and its available skills, replacing the old microservice routing view.
+
+### The Story This Diagram Tells
+
+This replaces "Recovery Coordinator: Query Routing" to reflect the **Skills-First** approach.
+The Coordinator doesn't just "route" blindly; complete delegation happens, but the *capabilities* are defined by the Skills attached to the agent.
+This diagram helps developers understand the structure of the `agents/` and `skills/` directories visually.
+
+### Generation Prompt
+
+```
+Create a roster diagram titled "The Coordinator's Skill Roster"
+
+Style: Team roster / Card game style. Dark background.
+
+Top Card: "Recovery Coordinator"
+- Role: "Orchestrator"
+- Key Skill: "Portfolio Triage", "Delegation"
+- Icon: Conductor/Brain
+
+Branching Down to 4 Specialist Cards (The Virtual Team):
+
+1. "Burn Analyst"
+   - Skill Bundle: Soil Burn Analysis, MTBS Classification, Boundary Mapping
+   - Icon: Fire
+
+2. "Trail Assessor"
+   - Skill Bundle: Damage Classification, Closure Decision
+   - Icon: Boot
+
+3. "Cruising Assistant"
+   - Skill Bundle: Volume Estimation, Salvage Assessment
+   - Icon: Tree
+
+4. "NEPA Advisor"
+   - Skill Bundle: Pathway Decision, Compliance Timeline
+   - Icon: Document
+
+Visual: Thread connecting Coordinator to each Specialist, labeled "Delegation".
+Caption: "Specialized Intelligence, Centralized Orchestration"
+```
+

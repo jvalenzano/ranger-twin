@@ -1,0 +1,21 @@
+{
+  "description": "Regex patterns for identifying FSH (Forest Service Handbook) sections",
+  "patterns": {
+    "chapter": "^(CHAPTER|Chapter)\\s+(\\d+)\\s*[-–—]?\\s*(.+)?",
+    "section": "^(\\d+(?:\\.\\d+)*)\\s+[-–—]?\\s*([A-Z][A-Za-z\\s,]+)",
+    "exhibit": "^(EXHIBIT|Exhibit)\\s+(\\d+(?:\\.\\d+)*)\\s*[-–—]?\\s*(.+)?",
+    "subsection": "^(\\d+(?:\\.\\d+)+[a-z]?)\\s+[-–—]?\\s*(.+)"
+  },
+  "common_fsh_documents": [
+    {
+      "id": "FSH 1909.15",
+      "title": "National Environmental Policy Act Handbook",
+      "chapters": ["10", "20", "30", "40"]
+    },
+    {
+      "id": "FSH 2409.18",
+      "title": "Timber Sale Preparation Handbook",
+      "chapters": ["40", "50", "60"]
+    }
+  ]
+}

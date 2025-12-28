@@ -500,7 +500,6 @@ const CedarCreekMap: React.FC = () => {
       pitch: camera.pitch,
       maxPitch: 85,
       attributionControl: false,
-      preserveDrawingBuffer: true,
     });
 
     // Add compact attribution control to bottom-left
