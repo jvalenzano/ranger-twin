@@ -27,6 +27,7 @@
 
 | Interface | URL | Description |
 |-----------|-----|-------------|
+| **Public Demo** | [**Live Deployment**](https://ranger-console-fqd6rb7jba-uw.a.run.app) | **Cloud Run Deployment** (Accessible anywhere) |
 | **Command Console** | [localhost:5173](http://localhost:5173) | Primary UI — Chat, Maps, Briefings |
 | **ADK Web UI** | [localhost:8000](http://localhost:8000) | Agent orchestrator, tool inspection |
 | **API Docs** | [localhost:8000/docs](http://localhost:8000/docs) | FastAPI Swagger documentation |
