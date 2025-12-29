@@ -38,6 +38,9 @@ RANGER is an orchestration layer for post-fire forest recovery. **Phase 1 uses s
 - `docs/architecture/BRIEFING-UX-SPEC.md` - UI rendering spec
 - `docs/specs/SKILL-VERIFICATION-STANDARD.md` - Quality Gates (DoD, Evaluation 10)
 - `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md` - **CRITICAL:** ADK patterns & anti-patterns
+- `docs/research/RANGER_doc_framework.md` - Document framework (31 docs, 4 corpora)
+- `knowledge/manifest.yaml` - Knowledge base source of truth
+- `knowledge/README.md` - Knowledge base usage guide
 
 ## Commands
 
@@ -66,6 +69,15 @@ docker-compose up -d
 # Run tests
 pytest agents/ -v                       # Agent + skill tests (606 tests)
 pytest packages/ -v                     # Runtime package tests (43 tests)
+pytest tests/integration/test_rag_integration.py -v  # RAG integration tests (20 tests)
+
+# Knowledge base management
+cd knowledge/scripts
+python 1_download_documents.py         # Download documents (automated)
+python 2_sync_to_gcs.py                # Sync to GCS bucket
+python 3_create_corpora.py             # Create Vertex RAG corpora
+python 4_import_documents.py           # Import docs to corpora
+python 5_verify_corpora.py             # Health check all corpora
 ```
 
 ## Project Structure
@@ -74,8 +86,16 @@ pytest packages/ -v                     # Runtime package tests (43 tests)
 apps/
   command-console/     # React + Vite + Tailwind (desktop UI)
 agents/                # NEW: Skills-First agents (ADK)
+  */data/              # Agent-specific data (configs gitignored)
+  */rag_query.py       # RAG knowledge base tools (Burn/Cruising/Trail)
+  nepa_advisor/file_search.py  # NEPA RAG (migrated from File Search)
 skills/                # NEW: Domain expertise library
 mcp/                   # NEW: Model Context Protocol servers
+knowledge/             # NEW: Vertex AI RAG knowledge base
+  manifest.yaml        # Document registry (31 docs, 4 corpora)
+  local/               # Downloaded PDFs (gitignored)
+  scripts/             # Document management automation
+  templates/           # RAG tool templates
 packages/
   skill-runtime/       # Skill loading/execution utilities
   twin-core/           # Shared Python models
@@ -86,9 +106,12 @@ services/
   agents/              # LEGACY: FastAPI agent services (for reference)
 data/
   fixtures/            # Phase 1: Cedar Creek simulation data (ACTIVE)
+tests/
+  integration/         # Integration tests (includes RAG tests)
 docs/
   specs/               # NEW: Technical specifications
   architecture/        # System design specs
+  research/            # Document frameworks and research
 ```
 
 ## State Management
@@ -189,7 +212,171 @@ All agents located in `agents/<agent_name>/` with skills in `agents/<agent_name>
 **GCP Development Environment:**
 - Project ID: `ranger-twin-dev`
 - Project Number: `1058891520442`
+- Location: `europe-west3` (Vertex AI RAG), `us-central1` (ADK)
 - Billing: Enabled
+
+### Knowledge Base Infrastructure (Vertex AI RAG)
+
+RANGER uses **Vertex AI RAG Engine** to provide domain-specific regulatory and technical knowledge to agents. Each agent has access to a specialized corpus of authoritative documents.
+
+**Architecture:**
+- **31 documents** across **4 domain-specific corpora** (16 Tier 1 Essential, 15 Tier 2 High Value)
+- **Single GCS bucket**: `gs://ranger-knowledge-base/` with corpus subfolders
+- **Embedding model**: `text-embedding-005`
+- **Chunking**: 512 tokens per chunk, 100 token overlap
+- **Answer generation**: Gemini 2.0 Flash synthesizes answers from retrieved contexts
+
+#### Corpora and Agent Mapping
+
+| Corpus | Agent | Display Name | Documents | GCS Path |
+|--------|-------|--------------|-----------|----------|
+| **nepa** | NEPA Advisor | ranger-nepa-regulations | 6 docs (3 T1, 3 T2) | `nepa/` |
+| **burn_severity** | Burn Analyst | ranger-burn-severity | 11 docs (6 T1, 5 T2) | `burn_severity/` |
+| **timber_salvage** | Cruising Assistant | ranger-timber-salvage | 7 docs (3 T1, 4 T2) | `timber_salvage/` |
+| **trail_infrastructure** | Trail Assessor | ranger-trail-infrastructure | 7 docs (4 T1, 3 T2) | `trail_infrastructure/` |
+
+#### RAG Tool Functions
+
+Each agent has a RAG query function with **ADK-compatible signatures** (simple types only):
+
+**NEPA Advisor** (agents/nepa_advisor/file_search.py):
+```python
+consult_mandatory_nepa_standards(
+    topic: str,           # Regulatory query
+    max_chunks: int = 5,  # Number of chunks to retrieve
+    include_citations: bool = True
+) -> dict  # Returns: query, answer, citations, chunks_retrieved, status
+```
+
+**Burn Analyst** (agents/burn_analyst/rag_query.py):
+```python
+query_burn_severity_knowledge(
+    query: str,                # Burn severity query
+    top_k: int = 5,           # Number of chunks
+    include_answer: bool = True
+) -> dict
+```
+
+**Cruising Assistant** (agents/cruising_assistant/rag_query.py):
+```python
+query_timber_salvage_knowledge(
+    query: str,
+    top_k: int = 5,
+    include_answer: bool = True
+) -> dict
+```
+
+**Trail Assessor** (agents/trail_assessor/rag_query.py):
+```python
+query_trail_infrastructure_knowledge(
+    query: str,
+    top_k: int = 5,
+    include_answer: bool = True
+) -> dict
+```
+
+**MIGRATION NOTE**: NEPA Advisor migrated from File Search API to Vertex RAG (December 2025). Function signature and return schema preserved for backward compatibility. Legacy `.file_search_store.json` kept for 1 release.
+
+#### Knowledge Base Management
+
+```bash
+# Setup workflow (run once)
+cd knowledge/scripts
+
+# 1. Download documents (automated + manual flagging)
+python 1_download_documents.py --tier 1
+# Manually download flagged documents to knowledge/local/{corpus}/
+
+# 2. Sync to GCS
+python 2_sync_to_gcs.py
+
+# 3. Create Vertex RAG corpora
+python 3_create_corpora.py
+
+# 4. Import documents to corpora
+python 4_import_documents.py --tier 1
+python 4_import_documents.py --tier 2
+
+# 5. Verify corpus health
+python 5_verify_corpora.py
+
+# Maintenance commands
+python 2_sync_to_gcs.py --corpus nepa --dry-run  # Preview sync
+python 4_import_documents.py --corpus burn_severity  # Import single corpus
+python 5_verify_corpora.py --corpus nepa --verbose  # Detailed health check
+```
+
+#### Testing RAG Integration
+
+```bash
+# Run all RAG integration tests (20 tests)
+pytest tests/integration/test_rag_integration.py -v
+
+# Test specific agent
+pytest tests/integration/test_rag_integration.py::TestNEPAAdvisorRAG -v
+pytest tests/integration/test_rag_integration.py::TestBurnAnalystRAG -v
+
+# Test NEPA migration
+pytest tests/integration/test_rag_integration.py::TestNEPAAdvisorRAG::test_nepa_advisor_vertex_rag_migration -v
+
+# Test cross-agent relevance
+pytest tests/integration/test_rag_integration.py::TestRAGCrossAgent::test_relevance_scores -v
+```
+
+**Prerequisites for tests:**
+- Corpora created and documents imported
+- `GOOGLE_API_KEY` environment variable set
+- All 4 corpora should show HEALTHY status in verification
+
+#### Configuration Files
+
+Each agent stores its corpus resource ID in `.vertex_rag_config.json` (gitignored):
+
+```json
+{
+  "corpus_resource_id": "projects/ranger-twin-dev/locations/us-east4/ragCorpora/...",
+  "created_at": "2025-01-15T10:30:00Z",
+  "version": "1.0"
+}
+```
+
+**Location**: `agents/{agent_name}/data/.vertex_rag_config.json`
+
+**Note**: These files are auto-generated by `3_create_corpora.py` and excluded from version control.
+
+#### Document Framework
+
+Full document inventory and tier classifications available in:
+- `docs/research/RANGER_doc_framework.md` - Practitioner-grounded document framework
+- `knowledge/manifest.yaml` - Authoritative source of truth (31 documents)
+- `knowledge/README.md` - Usage guide for maintainers
+
+#### Troubleshooting
+
+**Corpus not configured:**
+```bash
+# Error: FileNotFoundError: Vertex RAG corpus not configured
+# Fix: Run corpus creation
+python knowledge/scripts/3_create_corpora.py
+```
+
+**No contexts retrieved:**
+```bash
+# Error: Query returns no results
+# Fix: Import documents
+python knowledge/scripts/4_import_documents.py
+# Verify: Check corpus health
+python knowledge/scripts/5_verify_corpora.py
+```
+
+**Low relevance scores:**
+```bash
+# Check document count in GCS
+gsutil ls gs://ranger-knowledge-base/nepa/
+
+# Re-import corpus if needed
+python knowledge/scripts/4_import_documents.py --corpus nepa
+```
 
 ### Skills Library
 

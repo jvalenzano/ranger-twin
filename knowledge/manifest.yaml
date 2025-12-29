@@ -2,9 +2,13 @@
 # Source of truth for all RAG-indexed documents
 #
 # ARCHITECTURE:
-# - Single GCS bucket: gs://ranger-knowledge-base/
+# - Region: europe-west3 (Frankfurt) - GA region for Vertex AI RAG Engine
+# - Single GCS bucket: gs://ranger-knowledge-base-eu/
 # - Corpus subfolders: nepa/, burn_severity/, timber_salvage/, trail_infrastructure/
 # - 34 documents total: 16 Tier 1 (Essential), 18 Tier 2 (High Value)
+#
+# NOTE: Migrated from us-central1 on 2025-12-28 due to allowlist restrictions.
+# See ADR-010 for migration rationale.
 #
 # Usage:
 #   1. Run: python knowledge/scripts/1_download_documents.py
@@ -15,8 +19,8 @@
 
 version: "1.0"
 project: "ranger-twin-dev"
-location: "us-central1"
-gcs_bucket: "ranger-knowledge-base"  # Single bucket for all corpora
+location: "europe-west3"
+gcs_bucket: "ranger-knowledge-base-eu"  # Single bucket for all corpora
 embedding_model: "text-embedding-005"
 last_updated: "2025-12-28"
 
