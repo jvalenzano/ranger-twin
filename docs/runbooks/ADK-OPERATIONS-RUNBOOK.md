@@ -409,8 +409,8 @@ pytest agents/burn_analyst/tests/test_agent.py -v -k "test_real_query"
 |----------|---------|----------|
 | ADR-005 | Skills-First Architecture | `docs/adr/ADR-005-skills-first-architecture.md` |
 | ADR-006 | Google-Only LLM Strategy | `docs/adr/ADR-006-google-only-llm-strategy.md` |
-| MCP Integration Plan | Implementation tasks | `docs/specs/_!_PHASE4-MCP-INTEGRATION-PLAN.md` |
-| Phase 4 Guide | Overall implementation | `docs/specs/_!_RANGER-PHASE4-IMPLEMENTATION-GUIDE-v2.md` |
+| MCP Integration Plan | Implementation tasks | `docs/archive/_!_PHASE4-MCP-INTEGRATION-PLAN.md` |
+| Phase 4 Guide | Overall implementation | `docs/archive/_!_RANGER-PHASE4-IMPLEMENTATION-GUIDE-v2.md` |
 
 ### To Look Up ADK Patterns
 

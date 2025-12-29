@@ -70,7 +70,7 @@ python 5_verify_corpora.py
 - **Python 3.10+** with dependencies: `google-cloud-aiplatform`, `google-cloud-storage`, `pyyaml`, `requests`
 - **LibreOffice** (for .doc→PDF conversion): `brew install libreoffice` (macOS)
 - **GCP Authentication**: `gcloud auth application-default login`
-- **GCP Project**: `ranger-twin-dev` in `us-east4`
+- **GCP Project**: `ranger-twin-dev` (Corpora: `europe-west3`, Models: `us-central1`)
 
 ## Troubleshooting
 
@@ -132,7 +132,7 @@ knowledge/
 ## Configuration
 
 - **GCP Project:** `ranger-twin-dev`
-- **GCP Location:** `us-east4`
+- **GCP Location:** `europe-west3` (Corpora), `us-central1` (Models)
 - **Embedding Model:** `text-embedding-005`
 - **Chunking:** 512 tokens per chunk, 100 token overlap
 
@@ -152,5 +152,4 @@ Expected output:
 ## References
 
 - **Document Framework:** `docs/research/RANGER_doc_framework.md`
-- **Implementation Plan:** `.claude/plans/witty-tinkering-knuth.md`
 - **Vertex AI RAG Docs:** https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/rag-api
