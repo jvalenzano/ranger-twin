@@ -27,6 +27,7 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 | [The MCP Abstraction Layer](developer/) | Technical | "How do we switch between Fixtures and Real Data?" | 📋 Planned |
 | [The Coordinator's Skill Roster](developer/) | Developers | "Which agent has which skills?" | 📋 Planned |
 | [AgentBriefingEvent Rendering Pipeline](developer/AgentBriefingEvent%20Rendering%20Pipeline.png) | Developers | "How do events become UI?" | ✅ Current |
+| [The Knowledge Pipeline (RAG Architecture)](developer/rag-knowledge-pipeline.png) | Developers | "How does the AI know that?" | 📋 Planned |
 
 ### Developer Deep-Dives
 
@@ -52,6 +53,7 @@ Visual explanations of RANGER's architecture, value proposition, and technical c
 | [RANGER Value Loop](stakeholder/ranger-value-loop.png) | Executives | "What's the business model?" | ✅ Current |
 | [Maria's Morning](stakeholder/marias-morning.png) | USFS | "What does a day look like?" | ✅ Current |
 | [Federal Compliance Overview](stakeholder/federal-compliance-overview.png) | Compliance | "How do we meet federal requirements?" | ✅ Current |
+| [The Federal Knowledge Base](stakeholder/federal-knowledge-base.png) | Stakeholder | "Can we trust this?" | 📋 Planned |
 
 ### [ARCHIVED] Legacy Diagrams
 

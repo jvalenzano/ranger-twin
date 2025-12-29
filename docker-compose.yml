@@ -75,7 +75,7 @@ services:
       - "8001:8001"
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
-      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-europe-west3}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
     volumes:
       - ./services/agents/burn-analyst:/app
@@ -92,7 +92,7 @@ services:
       - "8002:8002"
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
-      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-europe-west3}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
     volumes:
       - ./services/agents/trail-assessor:/app
@@ -109,7 +109,7 @@ services:
       - "8003:8003"
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
-      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-europe-west3}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
     volumes:
       - ./services/agents/cruising-assistant:/app
@@ -126,7 +126,7 @@ services:
       - "8004:8004"
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
-      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-europe-west3}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       DATABASE_URL: postgresql://cedar_creek:${POSTGRES_PASSWORD:-localdev}@postgres:5432/cedar_creek_twin
     volumes:
@@ -147,7 +147,7 @@ services:
       - "8005:8005"
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-sa-key.json
-      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-us-east4}
+      VERTEX_AI_LOCATION: ${VERTEX_AI_LOCATION:-europe-west3}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
       BURN_ANALYST_URL: http://burn-analyst:8001
       TRAIL_ASSESSOR_URL: http://trail-assessor:8002

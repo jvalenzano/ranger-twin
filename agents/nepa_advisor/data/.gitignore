@@ -1,2 +1,2 @@
-# Ignore File Search store configuration (contains API-specific IDs)
-.file_search_store.json
+# Ignore Vertex RAG configuration (contains GCP resource IDs)
+.vertex_rag_config.json

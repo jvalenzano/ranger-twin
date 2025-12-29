@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "source": "IRWIN",
+    "retrieved_at": "2025-12-30T00:00:00Z",
+    "confidence_tier": 1
+  },
+  "fire_id": "cedar-creek-2022",
+  "name": "Cedar Creek Fire",
+  "discovery_date": "2022-08-01",
+  "containment_date": "2022-10-14",
+  "acres": 127831,
+  "containment": 100,
+  "severity": "high",
+  "phase": "baer_assessment",
+  "forest": "Willamette National Forest",
+  "state": "OR",
+  "county": "Lane",
+  "region": "6",
+  "cause": "Lightning",
+  "incident_type": "Wildfire",
+  "coordinates": {
+    "latitude": 43.7523,
+    "longitude": -122.0540
+  },
+  "summary": {
+    "high_severity_acres": 53689,
+    "moderate_severity_acres": 44740,
+    "low_severity_acres": 29402,
+    "high_severity_pct": 42.0,
+    "moderate_severity_pct": 35.0,
+    "low_severity_pct": 23.0
+  },
+  "baer_status": {
+    "team_deployed": true,
+    "assessment_start": "2022-10-15",
+    "assessment_end": "2022-10-22",
+    "report_filed": true
+  },
+  "last_updated": "2025-12-25T00:00:00Z"
+}

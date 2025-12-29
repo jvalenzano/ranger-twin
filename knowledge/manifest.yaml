@@ -1,0 +1,428 @@
+# RANGER Knowledge Base Document Manifest
+# Source of truth for all RAG-indexed documents
+#
+# ARCHITECTURE:
+# - Region: europe-west3 (Frankfurt) - GA region for Vertex AI RAG Engine
+# - Single GCS bucket: gs://ranger-knowledge-base-eu/
+# - Corpus subfolders: nepa/, burn_severity/, timber_salvage/, trail_infrastructure/
+# - 34 documents total: 16 Tier 1 (Essential), 18 Tier 2 (High Value)
+#
+# NOTE: Migrated from us-central1 on 2025-12-28 due to allowlist restrictions.
+# See ADR-010 for migration rationale.
+#
+# Usage:
+#   1. Run: python knowledge/scripts/1_download_documents.py
+#   2. Run: python knowledge/scripts/2_sync_to_gcs.py
+#   3. Run: python knowledge/scripts/3_create_corpora.py
+#   4. Run: python knowledge/scripts/4_import_documents.py
+#   5. Run: python knowledge/scripts/5_verify_corpora.py
+
+version: "1.0"
+project: "ranger-twin-dev"
+location: "europe-west3"
+gcs_bucket: "ranger-knowledge-base-eu"  # Single bucket for all corpora
+embedding_model: "text-embedding-005"
+last_updated: "2025-12-28"
+
+chunking_config:
+  chunk_size: 512      # tokens
+  chunk_overlap: 100   # tokens
+
+corpora:
+  - id: "nepa"
+    display_name: "ranger-nepa-regulations"
+    description: "NEPA compliance regulations, FSM/FSH, and eCFR references"
+    agent: "nepa_advisor"
+    gcs_path: "nepa/"  # Subfolder in ranger-knowledge-base bucket
+
+  - id: "burn_severity"
+    display_name: "ranger-burn-severity"
+    description: "MTBS protocols, dNBR analysis, BAER assessment guidance"
+    agent: "burn_analyst"
+    gcs_path: "burn_severity/"  # Subfolder in ranger-knowledge-base bucket
+
+  - id: "timber_salvage"
+    display_name: "ranger-timber-salvage"
+    description: "FSVeg protocols, cruise methodology, volume estimation"
+    agent: "cruising_assistant"
+    gcs_path: "timber_salvage/"  # Subfolder in ranger-knowledge-base bucket
+
+  - id: "trail_infrastructure"
+    display_name: "ranger-trail-infrastructure"
+    description: "TRACS codes, damage classification, trail standards"
+    agent: "trail_assessor"
+    gcs_path: "trail_infrastructure/"  # Subfolder in ranger-knowledge-base bucket
+
+documents:
+  # ============================================
+  # TIER 1: ESSENTIAL DOCUMENTS (16 total)
+  # ============================================
+
+  # --- NEPA CORPUS: TIER 1 (3 docs) ---
+  - id: "cfr-7-1b"
+    title: "7 CFR Part 1b - USDA NEPA Procedures (2025)"
+    corpus: "nepa"
+    tier: 1
+    source_url: "https://www.ecfr.gov/current/title-7/subtitle-A/part-1b"
+    source_type: "ecfr"
+    download_method: "manual"
+    filename: "7-CFR-1b-USDA-NEPA.pdf"
+    description: "Consolidated USDA NEPA procedures (July 2025); replaces rescinded 36 CFR 220"
+    notes: "Federal Register 90 FR 29632. Export as PDF from eCFR portal."
+
+  - id: "fsh-1909-15-ch30"
+    title: "FSH 1909.15 Chapter 30 - Categorical Exclusions"
+    corpus: "nepa"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/im/directives/fsh/1909.15/wo_1909.15_30-Amend%202023-2.docx"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "FSH-1909.15-Ch30-Categorical-Exclusions.pdf"
+    description: "2023 amendment; critical for salvage CE determination"
+    requires_conversion: true
+
+  - id: "fsm-1950"
+    title: "FSM 1950 - Environmental Policy and Procedures"
+    corpus: "nepa"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/cgi-bin/Directives/get_dirs/fsm?1900"
+    source_type: "fs_directives"
+    download_method: "manual"
+    filename: "FSM-1950-Environmental-Policy.pdf"
+    description: "Forest Service-wide environmental policy framework"
+    notes: "Navigate portal to access FSM 1950 section"
+
+  # --- BURN SEVERITY CORPUS: TIER 1 (6 docs) ---
+  - id: "fsm-2500-baer"
+    title: "FSM 2500-2523 - Burned Area Emergency Response"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/media/234489"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "FSM-2500-2523-BAER.pdf"
+    description: "BAER team bible; assessment methodology and risk matrix"
+
+  - id: "baercat"
+    title: "BAER Treatment Catalog (BAERCAT)"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/eng/pubs/pdf/BAERCAT/lo_res/06251801L.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "BAERCAT-Treatment-Catalog.pdf"
+    description: "Treatment selection matrix for stabilization objectives"
+
+  - id: "rmrs-gtr-243"
+    title: "Field Guide for Mapping Post-Fire Soil Burn Severity"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/rm/pubs/rmrs_gtr243.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "RMRS-GTR-243-Soil-Burn-Severity.pdf"
+    description: "Rocky Mountain Research Station; standardized field indicators"
+
+  - id: "mtbs-classification"
+    title: "MTBS Burn Severity Classification Guide"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://burnseverity.cr.usgs.gov/products/mtbs"
+    source_type: "usgs_portal"
+    download_method: "manual"
+    filename: "MTBS-Classification-Guide.pdf"
+    description: "Federal standard for mapping fire extent and severity"
+    notes: "Extract documentation from USGS MTBS portal"
+
+  - id: "nrcs-210-04"
+    title: "NRCS Technical Note 210-04 - Post-Wildfire Hydrology"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://www.nrcs.usda.gov/sites/default/files/2024-10/Hydrology%20210-04,%20Hydologic%20Analyses%20of%20Post-Wildfire%20Conditions.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "NRCS-TN-210-04-PostFire-Hydrology.pdf"
+    description: "Curve number adjustments for hydrophobic soils"
+
+  - id: "usgs-debris-flow"
+    title: "USGS Post-Fire Debris-Flow Hazard Assessment Guide"
+    corpus: "burn_severity"
+    tier: 1
+    source_url: "https://pubs.usgs.gov/publication/sir20255053/full"
+    source_type: "usgs_pubs"
+    download_method: "manual"
+    filename: "USGS-PostFire-DebrisFlow-Assessment.pdf"
+    description: "Debris-flow hazard models for large fires in Western U.S."
+    notes: "Download from USGS publications portal"
+
+  # --- TIMBER SALVAGE CORPUS: TIER 1 (3 docs) ---
+  - id: "fsh-2409-12"
+    title: "FSH 2409.12 - Timber Cruising Handbook"
+    corpus: "timber_salvage"
+    tier: 1
+    source_url: "https://www.tuolumnecounty.ca.gov/DocumentCenter/View/10798/Attachment-2F?bidId="
+    source_type: "county_archive"
+    download_method: "direct"
+    filename: "FSH-2409.12-Timber-Cruising.pdf"
+    description: "Chapter 40 addresses cruise methodology"
+
+  - id: "fsh-2409-15"
+    title: "FSH 2409.15 - Timber Sale Administration Handbook"
+    corpus: "timber_salvage"
+    tier: 1
+    source_url: "https://www.fs.usda.gov/im/directives/field/r8/fsh/2409.15/2409.15,62-63.doc"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "FSH-2409.15-Timber-Sale-Admin.pdf"
+    description: "Chapters 60-63; appraisal and contract terms"
+    requires_conversion: true
+
+  - id: "cfr-36-223"
+    title: "36 CFR Part 223 Subpart B - Appraisal and Pricing"
+    corpus: "timber_salvage"
+    tier: 1
+    source_url: "https://www.ecfr.gov/current/title-36/chapter-II/part-223/subpart-B"
+    source_type: "ecfr"
+    download_method: "manual"
+    filename: "36-CFR-223-Appraisal-Pricing.pdf"
+    description: "Federal regulation establishing fair market value methodology"
+    notes: "Export as PDF from eCFR portal"
+
+  # --- TRAIL INFRASTRUCTURE CORPUS: TIER 1 (4 docs) ---
+  - id: "fstag"
+    title: "Forest Service Trail Accessibility Guidelines (FSTAG)"
+    corpus: "trail_infrastructure"
+    tier: 1
+    source_url: "https://www.belmont-ma.gov/DocumentCenter/View/4223/Forest-Service-Trail-Accessibility-Guidelines-PDF"
+    source_type: "archive"
+    download_method: "direct"
+    filename: "FSTAG-Trail-Accessibility.pdf"
+    description: "Mandatory accessibility standards"
+
+  - id: "trail-fundamentals"
+    title: "Trail Planning and Management Fundamentals (TMOs)"
+    corpus: "trail_infrastructure"
+    tier: 1
+    source_url: "https://bchmt.org/documents/tmo/TrailFundamentalsAndTrailManagementObjectives.pdf"
+    source_type: "partner_org"
+    download_method: "direct"
+    filename: "Trail-Fundamentals-TMOs.pdf"
+    description: "Trail fundamentals framework and management objectives"
+
+  - id: "aba-outdoor-standards"
+    title: "ABA Standards - Outdoor Developed Areas Accessibility"
+    corpus: "trail_infrastructure"
+    tier: 1
+    source_url: "https://www.access-board.gov/ada/guides/chapter-10-outdoor/"
+    source_type: "access_board"
+    download_method: "manual"
+    filename: "ABA-Outdoor-Accessibility-Standards.pdf"
+    description: "Federal accessibility standards that FSTAG is based upon"
+    notes: "Export chapter 10 as PDF from Access Board website"
+
+  - id: "postfire-bridge-assessment"
+    title: "Post-Fire Bridge Assessment Procedures"
+    corpus: "trail_infrastructure"
+    tier: 1
+    source_url: "https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/natural-resource-use/resource-roads/bridge-design-construction/guidelines-and-procedures/post-fire_bridge_assessment_procedures_april_2018.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "PostFire-Bridge-Assessment.pdf"
+    description: "BC Forestry; applicable methodology for bridge assessment"
+
+  # ============================================
+  # TIER 2: HIGH VALUE DOCUMENTS (18 total)
+  # ============================================
+
+  # --- NEPA CORPUS: TIER 2 (3 docs) ---
+  - id: "fsh-1909-15-ch10"
+    title: "FSH 1909.15 Chapter 10 - Environmental Analysis Procedures"
+    corpus: "nepa"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/im/directives/fsh/1909.15/1909.15_10.doc"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "FSH-1909.15-Ch10-Environmental-Analysis.pdf"
+    description: "Procedural guidance for implementing 36 CFR 220"
+    requires_conversion: true
+
+  - id: "fsh-1909-15-ch40"
+    title: "FSH 1909.15 Chapter 40 - Environmental Assessments"
+    corpus: "nepa"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/im/directives/fsh/1909.15/1909.15_40.doc"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "FSH-1909.15-Ch40-Environmental-Assessments.pdf"
+    description: "EA preparation and review procedures"
+    requires_conversion: true
+
+  - id: "ceq-memo-2025"
+    title: "CEQ NEPA Implementation Memorandum (February 2025)"
+    corpus: "nepa"
+    tier: 2
+    source_url: "https://ceq.doe.gov/docs/ceq-regulations-and-guidance/CEQ-Memo-Implementation-of-NEPA-02.19.2025.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "CEQ-NEPA-Implementation-Memo-2025.pdf"
+    description: "Post-rescission guidance; clarifies interim procedures"
+
+  # --- BURN SEVERITY CORPUS: TIER 2 (7 docs) ---
+  - id: "baer-directive-2020"
+    title: "Forest Service Directive - BAER Program (2020)"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/sites/default/files/2020-BAER-Directive.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "BAER-Directive-2020.pdf"
+    description: "Updates BAER protocols and inter-agency roles"
+
+  - id: "mtbs-methodology-2007"
+    title: "A Project for Monitoring Trends in Burn Severity (Eidenshink et al. 2007)"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.publish.csiro.au/wf/WF06088"
+    source_type: "journal"
+    download_method: "manual"
+    filename: "MTBS-Methodology-Eidenshink-2007.pdf"
+    description: "Original MTBS methodology paper; foundational reference for dNBR classification"
+
+  - id: "nps-rm18-postfire"
+    title: "NPS Reference Manual 18 - Post-Fire Programs"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.nps.gov/subjects/fire/rm-18.htm"
+    source_type: "nps_manual"
+    download_method: "manual"
+    filename: "NPS-RM18-PostFire-Programs.pdf"
+    description: "NPS post-fire rehabilitation and restoration procedures"
+
+  - id: "r5-recovery-plan"
+    title: "Pacific Southwest Region (R5) Post-Fire Recovery Plan"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/media/22042"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "R5-PostFire-Recovery-Plan-2022.pdf"
+    description: "Regional model for phased recovery"
+
+  - id: "psw-gtr-270"
+    title: "Postfire Restoration Framework for National Forests in California"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://northlab.faculty.ucdavis.edu/wp-content/uploads/sites/195/2021/02/Postfire-restoration-framework-psw_gtr270-Meyer.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "PSW-GTR-270-Restoration-Framework.pdf"
+    description: "Science-based framework for post-fire restoration"
+
+  - id: "rmrs-gtr-338"
+    title: "Field Guide for Rapid Assessment of Post-Wildfire Recovery Potential"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/rm/pubs/rmrs_gtr338.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "RMRS-GTR-338-Recovery-Potential.pdf"
+    description: "Rapid assessment scoresheet for ecosystem recovery potential"
+
+  - id: "nps-cultural-resources"
+    title: "Cultural Resources and Post-Wildland Fire Programs"
+    corpus: "burn_severity"
+    tier: 2
+    source_url: "https://www.nps.gov/articles/cr_and_post_wildland_fire-programs.htm"
+    source_type: "nps_article"
+    download_method: "manual"
+    filename: "NPS-Cultural-Resources-PostFire.pdf"
+    description: "Section 106 consultation guidance"
+    notes: "Export NPS article as PDF"
+
+  # --- TIMBER SALVAGE CORPUS: TIER 2 (5 docs) ---
+  - id: "deterioration-research"
+    title: "Deterioration of Fire-Killed Timber in Western US"
+    corpus: "timber_salvage"
+    tier: 2
+    source_url: "https://nrfirescience.org/hot-topics/post-fire-salvage-logging"
+    source_type: "research_portal"
+    download_method: "manual"
+    filename: "Fire-Killed-Timber-Deterioration.pdf"
+    description: "Species-specific deterioration curves"
+    notes: "Compile research synthesis from Northern Rockies Fire Science Network"
+
+  - id: "ssts-procedures"
+    title: "Special Salvage Timber Sale (SSTS) Program Procedures"
+    corpus: "timber_salvage"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/im/directives/fsh/2409.18/2409.18_90_clear.doc"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "SSTS-Program-Procedures.pdf"
+    description: "Expedited appraisal and sale preparation procedures"
+    requires_conversion: true
+
+  - id: "fsh-2409-18-ch80"
+    title: "FSH 2409.18 Chapter 80 - Special Forest Products"
+    corpus: "timber_salvage"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/im/directives/fsh/2409.18/wo_2409%2018_80.doc"
+    source_type: "fs_directives"
+    download_method: "fs_directive"
+    filename: "FSH-2409.18-Ch80-Special-Products.pdf"
+    description: "Special forest products procedures"
+    requires_conversion: true
+
+  - id: "timber-market-data"
+    title: "USDA Forest Service Timber Price Reports"
+    corpus: "timber_salvage"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/forestmanagement/products/sold-harvest/timber-prices.shtml"
+    source_type: "market_data"
+    download_method: "manual"
+    filename: "Timber-Market-Data.pdf"
+    description: "Current pricing data for timber species and products"
+    notes: "Compile recent pricing reports"
+
+  - id: "pnw-gtr-975"
+    title: "Post-Fire Logging Effects on Erosion and Vegetation Recovery (PNW-GTR-975)"
+    corpus: "timber_salvage"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/pnw/publications/post-fire-logging-effects"
+    source_type: "research_station"
+    download_method: "manual"
+    filename: "PNW-GTR-975-PostFire-Logging-Effects.pdf"
+    description: "PNW Research Station; erosion and recovery impacts of salvage logging"
+
+  # --- TRAIL INFRASTRUCTURE CORPUS: TIER 2 (3 docs) ---
+  - id: "fsm-2353"
+    title: "FSM 2353 - Trail Management"
+    corpus: "trail_infrastructure"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/cgi-bin/Directives/get_dirs/fsm?2353"
+    source_type: "fs_directives"
+    download_method: "manual"
+    filename: "FSM-2353-Trail-Management.pdf"
+    description: "Detailed trail policy and management directives"
+    notes: "Navigate portal to access FSM 2353 section"
+
+  - id: "trail-design-standards"
+    title: "Trail Construction and Maintenance Notebook"
+    corpus: "trail_infrastructure"
+    tier: 2
+    source_url: "https://www.fhwa.dot.gov/environment/recreational_trails/publications/fs_publications/07232806/toc.cfm"
+    source_type: "fhwa_portal"
+    download_method: "manual"
+    filename: "Trail-Construction-Maintenance-Notebook.pdf"
+    description: "FHWA/FS technical guide for trail construction standards"
+    notes: "Compile from FHWA portal"
+
+  - id: "universal-design-trails"
+    title: "Universal Design for Accessible Recreation Trails"
+    corpus: "trail_infrastructure"
+    tier: 2
+    source_url: "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf07232806/pdf07232806dpi72.pdf"
+    source_type: "direct_pdf"
+    download_method: "direct"
+    filename: "Universal-Design-Trails.pdf"
+    description: "Universal design principles for trail accessibility"

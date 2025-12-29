@@ -1,3 +1,11 @@
+```text
+    ____  ___    _   __________________         ^      
+   / __ \/   |  / | / / ____/ ____/ __ \       / \     
+  / /_/ / /| | /  |/ / / __/ __/ / /_/ /      /   \    
+ / _, _/ ___ |/ /|  / /_/ / /___/ _, _/      /_____\   
+/_/ |_/_/  |_/_/ |_/\____/_____/_/ |_|          |      
+```
+
 # RANGER: AI-Powered Forest Recovery
 
 > **Multi-agent coordination platform for post-fire forest recovery**
@@ -8,6 +16,31 @@
 [![ADK](https://img.shields.io/badge/runtime-Google%20ADK-34A853.svg)]()
 [![Gemini](https://img.shields.io/badge/model-Gemini%202.0%20Flash-4285F4.svg)]()
 [![FedRAMP](https://img.shields.io/badge/compliance-FedRAMP%20High-green.svg)]()
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Node 20+](https://img.shields.io/badge/node-20+-green.svg)](https://nodejs.org/)
+
+---
+
+## 🚀 Launch the Demo
+
+**See RANGER in action immediately:**
+
+| Interface | URL | Description |
+|-----------|-----|-------------|
+| **Public Demo** | [**Live Deployment**](https://ranger-console-fqd6rb7jba-uw.a.run.app) | **Cloud Run Deployment** (Accessible anywhere) |
+| **Command Console** | [localhost:5173](http://localhost:5173) | Primary UI — Chat, Maps, Briefings |
+| **ADK Web UI** | [localhost:8000](http://localhost:8000) | Agent orchestrator, tool inspection |
+| **API Docs** | [localhost:8000/docs](http://localhost:8000/docs) | FastAPI Swagger documentation |
+
+```bash
+# Quick start (after setup)
+cd apps/command-console && npm run dev    # → localhost:5173
+python main.py                            # → localhost:8000
+```
+
+> **First time?** See [Quick Start](#quick-start) below for full setup instructions.
+
+---
 
 ## What Is RANGER
 
@@ -27,7 +60,7 @@ RANGER is an **Agentic Operating System** for natural resource recovery. It coor
 | **Burn Analyst** | Fire severity, MTBS classification | `mtbs-classification`, `soil-burn-severity`, `boundary-mapping` | gemini-2.0-flash |
 | **Trail Assessor** | Infrastructure damage, closures | `damage-classification`, `closure-decision`, `recreation-priority` | gemini-2.0-flash |
 | **Cruising Assistant** | Timber inventory, salvage | `volume-estimation`, `salvage-assessment`, `cruise-methodology`, `csv-insight` | gemini-2.0-flash |
-| **NEPA Advisor** | Regulatory compliance, CE/EA/EIS | `pathway-decision`, `compliance-timeline`, `documentation`, `pdf-extraction` | gemini-2.5-flash |
+| **NEPA Advisor** | Regulatory compliance, CE/EA/EIS | `pathway-decision`, `compliance-timeline`, `documentation`, `pdf-extraction` | gemini-2.0-flash |
 
 **5 agents, 16 skills, 606 tests**
 
@@ -39,6 +72,14 @@ RANGER is an **Agentic Operating System** for natural resource recovery. It coor
 - Python 3.11+
 - Google Cloud account with Vertex AI access
 - `GOOGLE_API_KEY` environment variable
+
+### Verify Your Setup
+
+```bash
+./scripts/verify-environment.sh
+```
+
+This checks Python, Node, dependencies, and GCP authentication.
 
 ### Run Locally
 
@@ -80,6 +121,69 @@ cd agents && python -c "from coordinator.agent import root_agent; print(f'Agents
 pytest agents/ -v
 # Expected: 606 passed
 ```
+
+## 📦 Getting Large Assets
+
+RANGER uses **Git LFS** for diagrams and excludes knowledge base documents from the repo to keep clones fast. Here's how to get these assets when you need them.
+
+### Architecture Diagrams (~25MB)
+
+The `docs/assets/diagrams/` directory contains 21 high-resolution PNG diagrams tracked by Git LFS. After cloning, you'll have pointer files instead of actual images.
+
+```bash
+# Check if you have Git LFS installed
+git lfs version
+
+# If not installed:
+# macOS: brew install git-lfs
+# Ubuntu: sudo apt install git-lfs
+# Windows: Download from https://git-lfs.github.com/
+
+# Initialize LFS in your local repo
+git lfs install
+
+# Pull all LFS assets (diagrams)
+git lfs pull
+
+# Verify diagrams are downloaded
+ls -la docs/assets/diagrams/developer/
+# Should show ~2-3MB PNG files, not 130-byte pointer files
+```
+
+**Selective pull** (if you only need specific diagrams):
+```bash
+# Pull only stakeholder diagrams
+git lfs pull --include="docs/assets/diagrams/stakeholder/*"
+
+# Pull only developer diagrams
+git lfs pull --include="docs/assets/diagrams/developer/*"
+```
+
+### Knowledge Base Documents (~50MB)
+
+The RAG knowledge base (16 federal PDFs) is **not** stored in the repo. To build the knowledge corpora:
+
+```bash
+cd knowledge/scripts
+
+# 1. Download documents from authoritative sources
+python 1_download_documents.py
+# Some documents require manual download - check output
+
+# 2. Sync to GCS (requires GCP auth)
+python 2_sync_to_gcs.py
+
+# 3-5. Create and verify corpora (requires Vertex AI access)
+python 3_create_corpora.py
+python 4_import_documents.py
+python 5_verify_corpora.py
+```
+
+**Note:** Most developers don't need the knowledge base locally. The RAG corpora are already deployed in `europe-west3` and accessible via the agent tools.
+
+See [knowledge/README.md](knowledge/README.md) for detailed instructions.
+
+---
 
 ## Project Structure
 
@@ -256,6 +360,37 @@ Key ADRs that govern this project:
 
 See [DATA-SIMULATION-STRATEGY.md](docs/archive/phase1/DATA-SIMULATION-STRATEGY.md) for simulation boundaries.
 
+## 🖼️ Visual Documentation
+
+RANGER includes a comprehensive diagram library for onboarding, presentations, and architectural reference.
+
+### Quick Links
+
+| Purpose | Diagram | Preview |
+|---------|---------|---------|
+| **Understand the architecture** | [Skills-First Architecture](docs/assets/diagrams/stakeholder/skills-first-architecture.png) | How agents, skills, and MCP connect |
+| **Developer environment** | [Developer Port Map](docs/assets/diagrams/developer/developer-port-map.png) | Which service runs where |
+| **Event streaming** | [SSE Streaming Flow](docs/assets/diagrams/developer/sse-streaming-flow.png) | How data flows to the UI |
+| **Knowledge retrieval** | [RAG Knowledge Pipeline](docs/assets/diagrams/developer/rag-knowledge-pipeline.png) | How agents access federal docs |
+| **Trust & transparency** | [Confidence Ledger](docs/assets/diagrams/stakeholder/The%20Confidence%20Ledger%20(Trust%20Architecture).png) | How we prove AI decisions |
+
+### Diagram Library
+
+```
+docs/assets/diagrams/
+├── developer/           # 10 technical architecture diagrams
+├── stakeholder/         # 11 value proposition diagrams  
+├── legacy/              # 5 archived Phase 1-3 diagrams
+├── README.md            # Full catalog with audience guide
+└── DIAGRAM-NARRATIVES.md # Speaker notes for presentations
+```
+
+**Full catalog:** [docs/assets/diagrams/README.md](docs/assets/diagrams/README.md)
+
+> **Note:** Diagrams are tracked with Git LFS. Run `git lfs pull` to download actual images. See [Getting Large Assets](#-getting-large-assets).
+
+---
+
 ## Documentation
 
 ### Start Here
@@ -265,6 +400,7 @@ See [DATA-SIMULATION-STRATEGY.md](docs/archive/phase1/DATA-SIMULATION-STRATEGY.m
 | [`.context/CLAUDE.md`](.context/CLAUDE.md) | **Streamlined agent context** (~1000 tokens) |
 | [PRODUCT-SUMMARY.md](docs/PRODUCT-SUMMARY.md) | What RANGER is, who it's for |
 | [ADR-005](docs/adr/ADR-005-skills-first-architecture.md) | Core architectural paradigm |
+| **[Diagram Library](docs/assets/diagrams/README.md)** | **Visual architecture reference** |
 
 ### Architecture & Specs
 
@@ -274,6 +410,7 @@ See [DATA-SIMULATION-STRATEGY.md](docs/archive/phase1/DATA-SIMULATION-STRATEGY.m
 | [skill-format.md](docs/specs/skill-format.md) | How to author skills |
 | [agent-interface.md](docs/specs/agent-interface.md) | Agent communication protocol |
 | [PROOF-LAYER-DESIGN.md](docs/specs/PROOF-LAYER-DESIGN.md) | Reasoning transparency spec |
+| **[knowledge/README.md](knowledge/README.md)** | **RAG knowledge base setup** |
 
 ### For AI Agents
 

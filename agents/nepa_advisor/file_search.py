@@ -1,8 +1,11 @@
 """
-File Search Tool for NEPA Advisor Agent.
+NEPA Regulatory Knowledge Base Tool (Vertex AI RAG).
 
-Provides RAG capabilities using Google's File Search API to query
+Provides RAG capabilities using Vertex AI RAG Engine to query
 FSM/FSH regulatory documents.
+
+MIGRATION NOTE: Migrated from File Search API to Vertex AI RAG Engine (ADR-010).
+Legacy File Search configuration files have been removed.
 
 Usage:
     from file_search import consult_mandatory_nepa_standards
@@ -15,43 +18,120 @@ Usage:
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
 # Lazy import to avoid loading at module level
-_client = None
-_store_name = None
+_vertexai_initialized = False
+_corpus_resource_id = None
 
 
-def _get_client():
-    """Get or create Gemini client."""
-    global _client
-    if _client is None:
+def _get_vertexai_client():
+    """Initialize Vertex AI client (lazy)."""
+    global _vertexai_initialized
+    if not _vertexai_initialized:
         try:
-            from google import genai
-            api_key = os.environ.get("GOOGLE_API_KEY")
-            if not api_key:
-                raise ValueError("GOOGLE_API_KEY environment variable not set")
-            _client = genai.Client(api_key=api_key)
+            import vertexai
+            project = os.environ.get("GOOGLE_CLOUD_PROJECT", "ranger-twin-dev")
+            # Use us-central1 for GenerativeModel (gemini-2.0-flash available)
+            # RAG corpus is in europe-west3 but can be accessed cross-region
+            location = "us-central1"
+            vertexai.init(project=project, location=location)
+            _vertexai_initialized = True
         except ImportError:
-            raise ImportError("google-genai package not installed. Run: pip install google-genai")
-    return _client
+            raise ImportError(
+                "google-cloud-aiplatform package not installed. "
+                "Run: pip install google-cloud-aiplatform"
+            )
 
 
-def _get_store_name() -> str:
-    """Load store name from config file."""
-    global _store_name
-    if _store_name is None:
-        config_path = Path(__file__).parent / "data" / ".file_search_store.json"
+def _extract_reasoning_steps(text: str) -> list[str]:
+    """
+    Extract reasoning steps from LLM response.
+
+    Looks for REASONING: section with bullet points or numbered steps.
+
+    Args:
+        text: LLM response text
+
+    Returns:
+        List of 3-7 reasoning steps (empty list if not found)
+    """
+    # Look for REASONING: section until next section or end
+    match = re.search(r'REASONING:\s*(.+?)(?:CONFIDENCE:|$)', text, re.DOTALL | re.IGNORECASE)
+
+    if not match:
+        return []
+
+    reasoning_text = match.group(1).strip()
+
+    # Extract bullet points or numbered items
+    steps = []
+
+    # Try bullet format first (- or *)
+    bullet_steps = re.findall(r'[-*]\s*(?:Step \d+:\s*)?(.+?)(?=\n[-*]|\n\n|$)', reasoning_text, re.DOTALL)
+    if bullet_steps:
+        steps = [s.strip() for s in bullet_steps if s.strip()]
+    else:
+        # Try numbered format (1., 2., etc.)
+        numbered_steps = re.findall(r'\d+\.\s*(.+?)(?=\n\d+\.|\n\n|$)', reasoning_text, re.DOTALL)
+        if numbered_steps:
+            steps = [s.strip() for s in numbered_steps if s.strip()]
+
+    # Clean up steps: remove extra whitespace, limit length
+    cleaned_steps = []
+    for step in steps[:7]:  # Max 7 steps
+        # Remove newlines within step, collapse whitespace
+        cleaned = re.sub(r'\s+', ' ', step.strip())
+        if 10 <= len(cleaned) <= 500:  # Reasonable step length
+            cleaned_steps.append(cleaned)
+
+    return cleaned_steps
+
+
+def _extract_confidence_score(text: str) -> float:
+    """
+    Extract confidence score from LLM response.
+
+    Looks for CONFIDENCE: 0.XX format.
+
+    Args:
+        text: LLM response text
+
+    Returns:
+        Float between 0.0 and 1.0 (default 0.75 if not found)
+    """
+    match = re.search(r'CONFIDENCE:\s*(0?\.\d+|1\.0)', text, re.IGNORECASE)
+
+    if match:
+        score = float(match.group(1))
+        # Validate range
+        return max(0.0, min(1.0, score))
+
+    # Default confidence if not found
+    return 0.75
+
+
+def _get_corpus_resource_id() -> str:
+    """Load corpus resource ID from .vertex_rag_config.json."""
+    global _corpus_resource_id
+
+    if _corpus_resource_id is None:
+        config_path = Path(__file__).parent / "data" / ".vertex_rag_config.json"
+
         if not config_path.exists():
             raise FileNotFoundError(
-                f"File Search store not configured. Run: python scripts/setup_file_search.py\n"
-                f"Expected config at: {config_path}"
+                f"Vertex RAG corpus not configured at {config_path}. "
+                f"Run: python knowledge/scripts/3_create_corpora.py"
             )
+
         with open(config_path) as f:
             config = json.load(f)
-        _store_name = config["store_name"]
-    return _store_name
+
+        _corpus_resource_id = config["corpus_resource_id"]
+
+    return _corpus_resource_id
 
 
 def consult_mandatory_nepa_standards(
@@ -69,9 +149,9 @@ def consult_mandatory_nepa_standards(
     Without calling this first, you cannot know which questions to ask the user.
     Your internal training data on NEPA thresholds is DEPRECATED and unreliable.
 
-    Uses Google's File Search API to find relevant passages from the
+    Uses Vertex AI RAG Engine to find relevant passages from the
     Forest Service Handbooks (FSH) and Manuals (FSM) indexed in the
-    NEPA knowledge base.
+    NEPA knowledge base corpus.
 
     Args:
         topic: The regulatory topic to retrieve (e.g., "categorical exclusion
@@ -99,76 +179,122 @@ def consult_mandatory_nepa_standards(
         apply to projects up to 3,000 acres..."
     """
     try:
-        from google.genai import types
+        from vertexai.preview import rag
+        from vertexai.preview.rag.utils.resources import RagRetrievalConfig
 
-        client = _get_client()
-        store_name = _get_store_name()
+        # Initialize clients
+        _get_vertexai_client()
+        corpus_id = _get_corpus_resource_id()
 
-        # Build the prompt for regulatory document search
-        search_prompt = f"""Based on the Forest Service regulatory documents (FSH and FSM),
-answer the following question. Cite specific handbook/manual sections when possible.
+        # Query Vertex RAG
+        response = rag.retrieval_query(
+            rag_resources=[rag.RagResource(rag_corpus=corpus_id)],
+            text=topic,
+            rag_retrieval_config=RagRetrievalConfig(top_k=min(max_chunks, 10))
+        )
+
+        # Extract contexts and citations
+        contexts = []
+        citations = []
+
+        for ctx in response.contexts.contexts:
+            contexts.append({
+                "text": ctx.text,
+                "distance": ctx.distance,
+                "relevance": 1.0 - ctx.distance
+            })
+
+            # Extract source URI if available
+            if include_citations:
+                source_uri = getattr(ctx, 'source_uri', None)
+                if source_uri:
+                    citations.append({
+                        "source": source_uri,
+                        "text": ctx.text[:200] + "..." if len(ctx.text) > 200 else ctx.text,
+                        "relevance": 1.0 - ctx.distance
+                    })
+
+        # Generate answer using Gemini with ADC (Pattern A from spike)
+        answer = ""
+        reasoning_chain = []
+        confidence = 0.75
+
+        if contexts:
+            try:
+                from vertexai.generative_models import GenerativeModel
+
+                # Combine contexts for generation
+                context_text = "\n\n".join([
+                    f"[Context {i+1}]\n{ctx['text']}"
+                    for i, ctx in enumerate(contexts[:max_chunks])
+                ])
+
+                # Enhanced prompt for structured reasoning extraction
+                prompt = f"""You are a NEPA compliance advisor analyzing Forest Service regulatory documents.
+
+Retrieved FSM/FSH Documents:
+{context_text}
 
 Question: {topic}
 
-Provide a clear, accurate answer based only on the regulatory documents.
-If the documents don't contain relevant information, say so."""
+Format your response EXACTLY as follows:
 
-        # Query with File Search tool
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=search_prompt,
-            config=types.GenerateContentConfig(
-                tools=[
-                    types.Tool(
-                        file_search=types.FileSearch(
-                            file_search_store_names=[store_name]
-                        )
-                    )
-                ],
-                temperature=0.2,  # Lower temperature for factual accuracy
-            )
-        )
+ANSWER: [Provide a clear, accurate answer based ONLY on the regulatory documents above. Cite specific FSM/FSH sections when possible. If the documents don't contain relevant information, state this clearly.]
 
-        # Extract answer
-        answer = response.text if response.text else "No answer generated."
+REASONING:
+- Step 1: [First logical step in your analysis]
+- Step 2: [Second logical step]
+- Step 3: [Third logical step]
+[Continue with additional steps as needed, up to 7 total]
 
-        # Extract citations from grounding metadata
-        citations = []
-        if include_citations and hasattr(response, 'candidates') and response.candidates:
-            candidate = response.candidates[0]
-            if hasattr(candidate, 'grounding_metadata') and candidate.grounding_metadata:
-                metadata = candidate.grounding_metadata
-                # Extract grounding chunks if available
-                if hasattr(metadata, 'grounding_chunks'):
-                    for chunk in metadata.grounding_chunks[:max_chunks]:
-                        citation = {}
-                        if hasattr(chunk, 'retrieved_context'):
-                            ctx = chunk.retrieved_context
-                            if hasattr(ctx, 'title'):
-                                citation['source'] = ctx.title
-                            if hasattr(ctx, 'uri'):
-                                citation['uri'] = ctx.uri
-                        if hasattr(chunk, 'chunk') and hasattr(chunk.chunk, 'data'):
-                            citation['text'] = chunk.chunk.data[:200] + "..."
-                        if citation:
-                            citations.append(citation)
+CONFIDENCE: [Provide a confidence score between 0.0 and 1.0 based on the relevance and completeness of the retrieved documents]"""
 
-                # Fallback to grounding supports
-                if not citations and hasattr(metadata, 'grounding_supports'):
-                    for support in metadata.grounding_supports[:max_chunks]:
-                        citation = {}
-                        if hasattr(support, 'segment') and hasattr(support.segment, 'text'):
-                            citation['text'] = support.segment.text[:200]
-                        if hasattr(support, 'grounding_chunk_indices'):
-                            citation['chunk_indices'] = list(support.grounding_chunk_indices)
-                        if citation:
-                            citations.append(citation)
+                # Use GenerativeModel with ADC (no API key needed)
+                model = GenerativeModel("gemini-2.0-flash-001")
+
+                gen_response = model.generate_content(
+                    prompt,
+                    generation_config={
+                        "temperature": 0.2,  # Lower temperature for factual accuracy
+                        "max_output_tokens": 1024
+                    }
+                )
+
+                response_text = gen_response.text if gen_response.text else ""
+
+                # Extract ANSWER section
+                answer_match = re.search(r'ANSWER:\s*(.+?)(?=\n\nREASONING:|\nREASONING:|$)',
+                                        response_text, re.DOTALL)
+                if answer_match:
+                    answer = answer_match.group(1).strip()
+                else:
+                    answer = response_text  # Fallback to full text
+
+                # Extract reasoning steps
+                reasoning_chain = _extract_reasoning_steps(response_text)
+
+                # Extract confidence score
+                confidence = _extract_confidence_score(response_text)
+
+            except Exception as gen_error:
+                # If generation fails, return contexts without answer
+                answer = f"[Generation failed: {gen_error}. Contexts retrieved successfully.]"
+                reasoning_chain = []
+                confidence = 0.5
+
+        else:
+            answer = "No relevant regulatory documents found for this query."
+            reasoning_chain = []
+            confidence = 0.0
 
         return {
             "query": topic,
             "answer": answer,
+            "contexts": contexts,
             "citations": citations,
-            "chunks_retrieved": len(citations),
+            "chunks_retrieved": len(contexts),
+            "reasoning_chain": reasoning_chain,  # NEW: For Proof Layer
+            "confidence": confidence,  # NEW: For Proof Layer
             "status": "success"
         }
 
@@ -178,6 +304,8 @@ If the documents don't contain relevant information, say so."""
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
+            "reasoning_chain": [],
+            "confidence": 0.0,
             "status": "error",
             "error": str(e)
         }
@@ -187,6 +315,8 @@ If the documents don't contain relevant information, say so."""
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
+            "reasoning_chain": [],
+            "confidence": 0.0,
             "status": "error",
             "error": f"{type(e).__name__}: {e}"
         }
@@ -194,16 +324,19 @@ If the documents don't contain relevant information, say so."""
 
 def get_store_info() -> dict[str, Any]:
     """
-    Get information about the configured File Search store.
+    Get information about the configured Vertex RAG corpus.
+
+    MIGRATION NOTE: Returns corpus info instead of File Search store.
+    Function name preserved for backward compatibility.
 
     Returns:
-        Dictionary with store configuration details.
+        Dictionary with corpus configuration details.
     """
-    config_path = Path(__file__).parent / "data" / ".file_search_store.json"
+    config_path = Path(__file__).parent / "data" / ".vertex_rag_config.json"
     if not config_path.exists():
         return {
             "configured": False,
-            "error": "File Search store not configured. Run setup_file_search.py"
+            "error": "Vertex RAG corpus not configured. Run: python knowledge/scripts/3_create_corpora.py"
         }
 
     with open(config_path) as f:
@@ -211,25 +344,24 @@ def get_store_info() -> dict[str, Any]:
 
     return {
         "configured": True,
-        "store_name": config.get("store_name"),
+        "corpus_resource_id": config.get("corpus_resource_id"),
         "created_at": config.get("created_at"),
-        "description": config.get("description"),
-        "documents": config.get("documents", []),
-        "model_requirement": config.get("model_requirement")
+        "version": config.get("version"),
+        "backend": "vertex_rag"  # Indicate migration
     }
 
 
 def verify_store_health() -> dict[str, Any]:
     """
-    Verify File Search store is accessible and returning results.
+    Verify Vertex RAG corpus is accessible and returning results.
 
-    Tests the store with a known query to ensure it's operational.
+    Tests the corpus with a known query to ensure it's operational.
     This should be called before deployment to validate the search functionality.
 
     Returns:
         Dictionary with health status and diagnostics:
-            - healthy: True if store is operational, False otherwise
-            - store_name: Name of the configured store
+            - healthy: True if corpus is operational, False otherwise
+            - corpus_resource_id: ID of the configured corpus
             - answer_preview: Preview of search results (if healthy)
             - citations_count: Number of citations returned (if healthy)
             - error: Error message (if unhealthy)
@@ -245,21 +377,21 @@ def verify_store_health() -> dict[str, Any]:
             return {
                 "healthy": False,
                 "error": result.get("error", "Unknown error"),
-                "store_name": _get_store_name() if _store_name else "Not loaded"
+                "corpus_resource_id": _get_corpus_resource_id() if _corpus_resource_id else "Not loaded"
             }
 
         # Verify response has meaningful content
         if not result.get("answer") or len(result["answer"]) < 50:
             return {
                 "healthy": False,
-                "error": "Store returned empty or minimal response",
+                "error": "Corpus returned empty or minimal response",
                 "answer_length": len(result.get("answer", "")),
-                "store_name": _get_store_name()
+                "corpus_resource_id": _get_corpus_resource_id()
             }
 
         return {
             "healthy": True,
-            "store_name": _get_store_name(),
+            "corpus_resource_id": _get_corpus_resource_id(),
             "answer_preview": result["answer"][:200] + "...",
             "citations_count": len(result.get("citations", []))
         }
@@ -273,7 +405,7 @@ def verify_store_health() -> dict[str, Any]:
 
 # For testing
 if __name__ == "__main__":
-    print("File Search Store Info:")
+    print("Vertex RAG Corpus Info:")
     print("-" * 40)
     info = get_store_info()
     print(json.dumps(info, indent=2))

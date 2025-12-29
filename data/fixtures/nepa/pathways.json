@@ -1,0 +1,53 @@
+{
+    "project_id": "cedar-creek-recovery-2022",
+    "project_name": "Cedar Creek Fire Recovery and Salvage",
+    "regulatory_framework": "NEPA",
+    "pathways": [
+        {
+            "id": "CE-001",
+            "name": "Categorical Exclusion (36 CFR 220.6)",
+            "applicability": "Salvage projects < 250 acres",
+            "citation": "36 CFR 220.6(e)(6)",
+            "estimated_timeline_months": 2,
+            "requirements": [
+                "No extraordinary circumstances",
+                "Resource specialist review",
+                "Public notice"
+            ]
+        },
+        {
+            "id": "EA-001",
+            "name": "Environmental Assessment",
+            "applicability": "Salvage projects > 250 acres with emergency situation determination",
+            "citation": "FSM 2520.4",
+            "estimated_timeline_months": 6,
+            "requirements": [
+                "Emergency Situation Determination (ESD)",
+                "Scoping",
+                "Specialist Reports",
+                "Draft EA",
+                "Decision Notice"
+            ]
+        }
+    ],
+    "constraints": [
+        {
+            "type": "Wildlife",
+            "name": "Northern Spotted Owl",
+            "citation": "ESA Section 7",
+            "buffer_zone": "0.25 miles from activity centers",
+            "seasonal_restriction": "Feb 1 - July 15"
+        },
+        {
+            "type": "Cultural",
+            "name": "Section 106 Compliance",
+            "citation": "NHPA",
+            "requirement": "Level III Cultural Resource Survey in SW-1"
+        }
+    ],
+    "metadata": {
+        "source": "FSM/CFR",
+        "retrieved_at": "2025-12-30T00:00:00Z",
+        "confidence_tier": 1
+    }
+}

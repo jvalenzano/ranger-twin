@@ -1,0 +1,2 @@
+# Downloaded documents (local cache) - stored in GCS, not Git
+local/**/*.pdf

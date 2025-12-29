@@ -51,7 +51,7 @@ GET /status/{fire_id}
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
-VERTEX_AI_LOCATION=us-east4
+VERTEX_AI_LOCATION=us-central1
 BURN_ANALYST_URL=http://burn-analyst:8001
 TRAIL_ASSESSOR_URL=http://trail-assessor:8002
 CRUISING_ASSISTANT_URL=http://cruising-assistant:8003

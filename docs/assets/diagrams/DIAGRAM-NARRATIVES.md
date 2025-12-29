@@ -1402,3 +1402,91 @@ Visual: Thread connecting Coordinator to each Specialist, labeled "Delegation".
 Caption: "Specialized Intelligence, Centralized Orchestration"
 ```
 
+---
+
+## 9. The Knowledge Pipeline (RAG Architecture)
+
+**File:** `rag-knowledge-pipeline.png`
+
+**One-Sentence Summary:** Shows how authoritative federal documents flow through a 5-step pipeline into Vertex AI RAG Engine, enabling agents to cite specific sources in every response.
+
+### The Story This Diagram Tells
+
+This is the "how does the AI actually know federal regulations?" diagram. It directly addresses the concern that AI systems "hallucinate" or "make things up" by showing the complete provenance chain from official source to agent response.
+
+The **five-stage pipeline** traces the document journey:
+
+1. **Authoritative Sources** — Official federal publications only. FSM directives, FSH handbooks, CFR regulations, GTR research publications. No web scraping, no Wikipedia, no "AI training data." Each document has a verifiable publication date and agency attribution.
+
+2. **Local Staging** — Documents download to `knowledge/local/` organized by corpus. The `manifest.yaml` file serves as the single source of truth, tracking all 16 documents with their source URLs, download methods, and tier classifications.
+
+3. **Cloud Storage** — Documents sync to Google Cloud Storage (`gs://ranger-knowledge-base-eu/`) in the europe-west3 region. This provides persistent, versioned, auditable storage with ~$0.20/month cost.
+
+4. **Vertex AI RAG Engine** — The indexing magic happens here. Documents are chunked (512 tokens with 100 overlap), embedded using `text-embedding-005`, and stored in four isolated corpora. Semantic search enables retrieval by meaning, not just keywords.
+
+5. **Agent Response + Proof Layer** — When an agent makes a claim, it cites the specific source. The Proof Layer renders these as clickable citation chips that link directly to the original document.
+
+The **corpus-to-agent mapping** at the bottom is crucial for understanding domain isolation. The NEPA Advisor queries only NEPA regulations—it doesn't see timber cruising handbooks. This prevents cross-domain confusion and ensures each specialist stays in its lane.
+
+### Key Talking Points
+
+- **5 idempotent scripts**: The pipeline is reproducible. Run the scripts, get the same corpora.
+- **16 Tier 1 documents**: Essential federal guidance for baseline agent performance.
+- **Corpus isolation**: Each agent has its own knowledge base. No cross-contamination.
+- **FedRAMP path**: Vertex AI is FedRAMP High authorized. RAG inherits that compliance posture.
+- **Audit trail**: Every citation traces back to the original PDF with specific section reference.
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| New developers | Understanding where agent knowledge comes from |
+| Architecture reviewers | Evaluating the RAG implementation |
+| Security/compliance | Verifying document provenance |
+| Technical stakeholders | Deep-dive on the knowledge infrastructure |
+
+---
+
+## 10. The Federal Knowledge Base (Stakeholder View)
+
+**File:** `federal-knowledge-base.png`
+
+**One-Sentence Summary:** Demonstrates that RANGER's intelligence comes from authoritative federal sources with transparent citation chains, building trust with USFS leadership and procurement officers.
+
+### The Story This Diagram Tells
+
+This is the "can we trust this AI?" diagram for non-technical stakeholders. When a Forest Supervisor sees RANGER recommend a Categorical Exclusion, they need to know that recommendation is grounded in actual Forest Service policy—not AI guesswork.
+
+The **four-quadrant layout** shows domain expertise is organized and curated:
+
+- **NEPA Compliance** (purple) — The NEPA Advisor knows 7 CFR Part 1b, FSH 1909.15 Chapter 30, and FSM 1950. It can determine CE/EA/EIS pathways because it has read the actual regulations.
+
+- **Burn Severity** (orange) — The Burn Analyst knows BAER protocols, MTBS classification, soil burn severity indicators. It can interpret dNBR values because it has the RMRS-GTR-243 field guide.
+
+- **Timber Salvage** (green) — The Cruising Assistant knows FSH 2409.12 cruising methodology, 36 CFR 223 appraisal rules. It can estimate board feet because it has the federal handbooks.
+
+- **Trail Infrastructure** (blue) — The Trail Assessor knows FSTAG accessibility requirements, TRACS damage codes. It can recommend closures because it has the trail management standards.
+
+The **Trust Chain** sidebar shows how citations work in practice: Agent makes claim → Citation chip rendered → User clicks → Source PDF opens → Auditor verifies. This isn't "trust me"—it's "here's my source, check it yourself."
+
+The **three trust badges** at the bottom hit the key messages: Authoritative (official sources only), Transparent (every claim cites source), Auditable (full provenance, IG-ready).
+
+### Key Talking Points
+
+- **"RANGER doesn't make things up"**: The knowledge base is curated federal documents, not AI training data.
+- **Click to verify**: Every citation links to the original source. Stakeholders can check.
+- **Domain isolation**: Each specialist knows its domain. The Burn Analyst doesn't give NEPA advice.
+- **16 authoritative documents**: FSM, FSH, CFR, GTR publications from USFS, NRCS, USGS.
+- **FedRAMP path**: Built on Google Cloud's FedRAMP High authorized infrastructure.
+
+### When to Use This Diagram
+
+| Audience | Purpose |
+|----------|---------|
+| USFS leadership | Building trust in AI recommendations |
+| Procurement officers | Demonstrating compliance readiness |
+| Legal/compliance teams | Showing audit trail capability |
+| Demo presentations | Explaining where knowledge comes from |
+| Grant applications | Proving authoritative source methodology |
+
+

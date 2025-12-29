@@ -48,6 +48,6 @@ GET /priorities
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
-VERTEX_AI_LOCATION=us-east4
+VERTEX_AI_LOCATION=us-central1
 MODEL_WEIGHTS_PATH=./weights/trail_damage_v1.pt
 ```

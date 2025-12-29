@@ -350,7 +350,7 @@ to know:
 
 root_agent = Agent(
     name="nepa_advisor",
-    model="gemini-2.5-flash",  # Required for File Search support (advanced reasoning)
+    model="gemini-2.0-flash",  # Required for File Search support (advanced reasoning)
 
     description="NEPA compliance and environmental documentation specialist for RANGER.",
 
