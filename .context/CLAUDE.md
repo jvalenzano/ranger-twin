@@ -1,84 +1,64 @@
-# CLAUDE.md - RANGER Agent Context
-
-> **Token Budget:** ~1000 tokens | **Last Updated:** December 2025  
-> **Note:** This is the streamlined reference. See [`../CLAUDE.md`](../CLAUDE.md) for extended context, examples, and troubleshooting.
+# CLAUDE.md — Quick Reference
 
 ## What Is RANGER
+AI coordination platform for post-fire forest recovery. Google ADK + Gemini 2.0 Flash. Phase 1 = simulated Cedar Creek data.
 
-AI-powered coordination platform for post-fire forest recovery. Multi-agent system built on Google ADK + Gemini 2.0 Flash. Phase 1 uses simulated Cedar Creek Fire data.
-
-## Architecture (ADR-005: Skills-First)
-
+## Architecture
 ```
-┌─────────────────────────────────────────┐
-│  Recovery Coordinator (ADK Root Agent)  │
-├─────────────────────────────────────────┤
-│  Burn Analyst │ Trail Assessor │ NEPA   │  ← Specialist Agents
-│  Cruising Assistant                     │
-├─────────────────────────────────────────┤
-│  Skills Library (agents/*/skills/)      │  ← Domain Expertise
-├─────────────────────────────────────────┤
-│  MCP Servers (data connectivity)        │  ← IRWIN, Fixtures
-└─────────────────────────────────────────┘
+Coordinator → [Burn Analyst | Trail Assessor | NEPA Advisor | Cruising Assistant]
+     ↓                              ↓
+Skills Library              Vertex AI RAG (4 corpora)
+     ↓
+MCP Servers (data)
 ```
 
-**Key insight:** Value lives in Skills, not Agents. Skills are portable expertise packages.
+## Critical Constraints (WILL BREAK)
 
-## Critical Constraints
+| Rule | Example |
+|------|---------|
+| Agent dirs = underscores | `cruising_assistant` ✓ `cruising-assistant` ✗ |
+| Tool params = primitives | `str`, `int`, `bool` ✓ `list[dict]` ✗ |
+| Tool mode = AUTO | `mode="AUTO"` ✓ `mode="ANY"` ✗ (infinite loops) |
+| RAG auth = ADC | `GenerativeModel()` ✓ `Client(api_key=)` ✗ |
+| Docker = AMD64 | `--platform linux/amd64` (M-series Mac) |
+| Console build = app dir | `cd apps/command-console && docker build` |
 
-### ADK Naming (WILL BREAK IF VIOLATED)
-- Agent directories: **underscores** (`cruising_assistant` ✓, `cruising-assistant` ✗)
-- Tool parameters: **primitives only** (`str`, `int`, `bool`, `list[str]`)
-- Complex data: Use JSON strings, not `dict` or `list[dict]`
-
-### LLM Strategy (ADR-006)
-- **Google Gemini only** - No OpenRouter, no fallbacks
-- Single `GOOGLE_API_KEY` for all components
-
-### Data (Phase 1)
-- Fixtures only: `data/fixtures/cedar-creek/`
-- Everything else is placeholder for Phase 2+
+## Pre-Flight (ALWAYS RUN FIRST)
+```bash
+cd /Users/jvalenzano/Projects/ranger-twin && pwd
+ls Dockerfile services/mcp-fixtures/Dockerfile apps/command-console/Dockerfile
+docker info | /usr/bin/grep -q "Server Version" && echo "Docker OK"
+```
 
 ## Commands
-
 ```bash
-# Frontend
-cd apps/command-console && npm run dev
-
-# ADK Agents (local)
-source .venv/bin/activate && python main.py
-
-# ADK Web UI
-cd agents && adk web --port 8000
-
-# Tests
-pytest agents/ -v  # 606 tests
+cd apps/command-console && npm run dev     # Frontend
+source .venv/bin/activate && python main.py  # ADK local
+cd agents && adk web --port 8000           # ADK web UI
+pytest agents/ -v                          # Tests
 ```
 
-## Where to Find Things
+## Where To Find Things
 
 | Need | Location |
 |------|----------|
-| Architecture decisions | `docs/adr/` |
-| Current specs | `docs/specs/` |
-| Agent implementation | `agents/<name>/agent.py` |
-| Skills | `agents/<name>/skills/` |
+| ADRs | `docs/adr/` |
 | ADK patterns | `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md` |
-| Deployment | `docs/deployment/` |
+| Agents | `agents/<name>/agent.py` |
+| Skills | `agents/<name>/skills/` |
+| Fixtures | `data/fixtures/cedar-creek/` |
+| Terraform | `infrastructure/terraform/` |
 
-## Don't Touch Without Reading
+## Read Before Touching
+1. `docs/adr/ADR-005-skills-first-architecture.md`
+2. `docs/adr/ADR-007.1-tool-invocation-strategy.md`
+3. `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md`
 
-1. `docs/adr/ADR-005-skills-first-architecture.md` - Core paradigm
-2. `docs/adr/ADR-007.1-tool-invocation-strategy.md` - Prevents infinite loops
-3. `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md` - Common pitfalls
+## GCP
+- Project: `ranger-twin-dev`
+- Deploy: `us-west1`
+- RAG: `europe-west3`
+- Registry: `us-west1-docker.pkg.dev/ranger-twin-dev/ranger-images`
 
-## Out of Scope (Phase 1)
-
-- Real satellite imagery
-- CV/ML models
-- Real-time data ingestion
-- Production USFS integration
-
----
-
-*For extended context, see `.context/architecture.md` and `docs/` tree*
+## Shell Gotcha
+`grep` → aliased to `rg`. Use `/usr/bin/grep` for standard behavior.

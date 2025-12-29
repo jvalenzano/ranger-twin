@@ -51,14 +51,14 @@ def test_agent_uses_correct_model(agent_module):
 def test_agent_has_file_search_tool(agent_module):
     """Agent should have search_regulatory_documents tool for File Search RAG."""
     tool_names = [t.__name__ for t in agent_module.root_agent.tools]
-    assert "search_regulatory_documents" in tool_names
+    assert "consult_mandatory_nepa_standards" in tool_names
 
 
 def test_agent_has_all_required_tools(agent_module):
     """Agent should have all 5 required tools."""
     tool_names = [t.__name__ for t in agent_module.root_agent.tools]
     expected_tools = [
-        "search_regulatory_documents",
+        "consult_mandatory_nepa_standards",
         "extract_pdf_content",
         "decide_pathway",
         "generate_documentation_checklist",

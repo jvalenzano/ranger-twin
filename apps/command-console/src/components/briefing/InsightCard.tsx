@@ -27,6 +27,16 @@ import type { AgentBriefingEvent, EventType, Severity, SuggestedAction } from '@
 import { AGENT_DISPLAY_NAMES } from '@/types/briefing';
 import { ReasoningChain } from './ReasoningChain';
 import Tooltip from '@/components/ui/Tooltip';
+import { CitationChip } from './CitationChip';
+
+// Mapping of agent to skill badge text
+const AGENT_SKILLS: Record<string, string> = {
+  recovery_coordinator: 'Orchestration',
+  burn_analyst: 'Burn Analysis',
+  trail_assessor: 'Damage Assessment',
+  cruising_assistant: 'Timber Volume',
+  nepa_advisor: 'Regulatory Compliance',
+};
 
 interface InsightCardProps {
   event: AgentBriefingEvent;
@@ -137,6 +147,10 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           <span className="text-[11px] font-medium tracking-[0.1em] text-text-primary uppercase">
             {agentName}
           </span>
+          {/* Skill Badge */}
+          <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] text-text-muted font-bold uppercase tracking-wider">
+            [Skill: {AGENT_SKILLS[event.source_agent] || 'Standard'}]
+          </span>
           <span className="text-text-muted">{TYPE_ICONS[event.type]}</span>
         </div>
         {/* Confidence badge with color tier and tooltip */}
@@ -147,8 +161,8 @@ export const InsightCard: React.FC<InsightCardProps> = ({
             tip: confidencePercent >= 90
               ? 'This analysis can be used directly'
               : confidencePercent >= 70
-              ? 'Review recommended before action'
-              : 'For demonstration purposes only',
+                ? 'Review recommended before action'
+                : 'For demonstration purposes only',
           }}
         >
           <div
@@ -207,14 +221,16 @@ export const InsightCard: React.FC<InsightCardProps> = ({
                   <p className="text-[10px] uppercase tracking-wider text-text-muted mb-2">
                     Sources
                   </p>
-                  <ul className="space-y-1">
+                  <div className="flex flex-wrap gap-2">
                     {event.proof_layer.citations.map((citation, i) => (
-                      <li key={i} className="text-[11px] text-text-muted">
-                        <span className="text-text-secondary">{citation.source_type}:</span>{' '}
-                        {citation.excerpt}
-                      </li>
+                      <CitationChip
+                        key={i}
+                        sourceType={citation.source_type}
+                        sourceId={citation.id}
+                        excerpt={citation.excerpt}
+                      />
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
             </div>

@@ -71,6 +71,14 @@ const AGENT_LABELS: Record<AgentRole, string> = {
   'nepa-advisor': 'NEPA Advisor',
 };
 
+const AGENT_SKILLS: Record<AgentRole, string> = {
+  'recovery-coordinator': 'Orchestration',
+  'burn-analyst': 'Burn Analysis',
+  'trail-assessor': 'Damage Assessment',
+  'cruising-assistant': 'Timber Volume',
+  'nepa-advisor': 'Regulatory Compliance',
+};
+
 // Message bubble component
 const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
   const isUser = message.role === 'user';
@@ -79,13 +87,12 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       {/* Avatar */}
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-          isUser
+        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isUser
             ? 'bg-slate-600'
             : message.isError
-            ? 'bg-severe/20'
-            : 'bg-accent-cyan/20'
-        }`}
+              ? 'bg-severe/20'
+              : 'bg-accent-cyan/20'
+          }`}
       >
         {isUser ? (
           <User size={16} className="text-slate-300" />
@@ -104,11 +111,14 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
         {!isUser && message.agentRole && (
           <div className="flex items-center gap-2">
             <span
-              className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                AGENT_COLORS[message.agentRole]
-              } text-slate-900`}
+              className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${AGENT_COLORS[message.agentRole]
+                } text-slate-900`}
             >
               {AGENT_LABELS[message.agentRole]}
+            </span>
+            {/* Skill Badge */}
+            <span className="text-[9px] text-slate-500 font-bold opacity-60">
+              [Skill: {AGENT_SKILLS[message.agentRole]}]
             </span>
             {message.confidence !== undefined && (
               <span className="text-[10px] text-slate-500 mono">
@@ -120,13 +130,12 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
 
         {/* Message bubble */}
         <div
-          className={`px-4 py-2.5 rounded-2xl ${
-            isUser
+          className={`px-4 py-2.5 rounded-2xl ${isUser
               ? 'bg-accent-cyan text-slate-900 rounded-br-sm'
               : message.isError
-              ? 'bg-severe/10 border border-severe/30 text-severe rounded-bl-sm'
-              : 'bg-slate-700/50 text-slate-200 rounded-bl-sm'
-          }`}
+                ? 'bg-severe/10 border border-severe/30 text-severe rounded-bl-sm'
+                : 'bg-slate-700/50 text-slate-200 rounded-bl-sm'
+            }`}
         >
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content}
@@ -309,15 +318,14 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose, onMinimize }) => {
           {/* ADK Mode Badge with connection status */}
           <button
             onClick={toggleADKMode}
-            className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider transition-colors ${
-              isADKMode
+            className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider transition-colors ${isADKMode
                 ? connectionStatus === 'connected'
                   ? 'bg-safe/20 text-safe hover:bg-safe/30'
                   : connectionStatus === 'reconnecting'
-                  ? 'bg-warning/20 text-warning hover:bg-warning/30'
-                  : 'bg-accent-cyan/20 text-accent-cyan hover:bg-accent-cyan/30'
+                    ? 'bg-warning/20 text-warning hover:bg-warning/30'
+                    : 'bg-accent-cyan/20 text-accent-cyan hover:bg-accent-cyan/30'
                 : 'bg-slate-600/50 text-slate-400 hover:bg-slate-500/50'
-            }`}
+              }`}
             title={`Mode: ${isADKMode ? 'ADK Multi-Agent' : 'Legacy'}${isADKMode ? ` (${connectionStatus})` : ''}. Click to toggle.`}
           >
             {isADKMode ? <Zap size={10} /> : <Cpu size={10} />}
@@ -325,13 +333,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onClose, onMinimize }) => {
             {/* Connection indicator dot */}
             {isADKMode && (
               <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  connectionStatus === 'connected'
+                className={`w-1.5 h-1.5 rounded-full ${connectionStatus === 'connected'
                     ? 'bg-safe'
                     : connectionStatus === 'reconnecting'
-                    ? 'bg-warning animate-pulse'
-                    : 'bg-slate-500'
-                }`}
+                      ? 'bg-warning animate-pulse'
+                      : 'bg-slate-500'
+                  }`}
               />
             )}
           </button>

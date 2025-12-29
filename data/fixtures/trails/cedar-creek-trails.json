@@ -1,0 +1,317 @@
+{
+  "metadata": {
+    "source": "TRACS",
+    "retrieved_at": "2025-12-30T00:00:00Z",
+    "confidence_tier": 1
+  },
+  "fire_id": "cedar-creek-2022",
+  "assessment_date": "2022-10-25",
+  "assessor": "SIMULATION",
+  "source": "field_capture_simulation",
+  "trails": [
+    {
+      "trail_id": "waldo-lake-3536",
+      "trail_name": "Waldo Lake Trail #3536",
+      "trail_class": "3",
+      "total_miles": 21.8,
+      "jurisdiction": "Willamette NF - Middle Fork RD",
+      "current_status": "CLOSED",
+      "damage_points": [
+        {
+          "damage_id": "WL-001",
+          "milepost": 2.3,
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Complete loss of 40ft timber bridge crossing North Fork. Abutments intact but charred. Requires full replacement.",
+          "coords": [
+            -122.0412,
+            43.7234
+          ],
+          "photo_ref": "wl_bridge_001.jpg",
+          "estimated_cost": 85000,
+          "work_type": "REPLACEMENT",
+          "crew_days": 21
+        },
+        {
+          "damage_id": "WL-002",
+          "milepost": 4.7,
+          "type": "DEBRIS_FLOW",
+          "severity": 4,
+          "description": "Major debris accumulation from post-fire erosion. Trail obliterated for 200 meters. Requires reroute assessment.",
+          "coords": [
+            -122.0289,
+            43.7456
+          ],
+          "photo_ref": "wl_debris_002.jpg",
+          "estimated_cost": 32000,
+          "work_type": "REROUTE",
+          "crew_days": 14
+        },
+        {
+          "damage_id": "WL-003",
+          "milepost": 7.2,
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Corridor of standing dead timber. Approximately 45 hazard trees within 50ft of trail.",
+          "coords": [
+            -122.0156,
+            43.7623
+          ],
+          "photo_ref": "wl_hazard_003.jpg",
+          "estimated_cost": 12000,
+          "work_type": "CLEARING",
+          "crew_days": 5
+        },
+        {
+          "damage_id": "WL-004",
+          "milepost": 12.8,
+          "type": "TREAD_EROSION",
+          "severity": 2,
+          "description": "Minor rill erosion on south-facing slope. Needs water bars and tread repair.",
+          "coords": [
+            -121.9834,
+            43.7891
+          ],
+          "photo_ref": "wl_erosion_004.jpg",
+          "estimated_cost": 4500,
+          "work_type": "REPAIR",
+          "crew_days": 3
+        }
+      ],
+      "total_estimated_cost": 133500,
+      "priority_rank": 1,
+      "priority_rationale": "Primary recreation access to Waldo Lake. High visitor use. Critical for 2024 season reopening."
+    },
+    {
+      "trail_id": "bobby-lake-3526",
+      "trail_name": "Bobby Lake Trail #3526",
+      "trail_class": "2",
+      "total_miles": 4.2,
+      "jurisdiction": "Willamette NF - Middle Fork RD",
+      "current_status": "CLOSED",
+      "damage_points": [
+        {
+          "damage_id": "BL-001",
+          "milepost": 0.8,
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Puncheon bridge completely destroyed. Creek crossing now impassable during high water.",
+          "coords": [
+            -121.9345,
+            43.7123
+          ],
+          "photo_ref": "bl_bridge_001.jpg",
+          "estimated_cost": 28000,
+          "work_type": "REPLACEMENT",
+          "crew_days": 8
+        },
+        {
+          "damage_id": "BL-002",
+          "milepost": 2.1,
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Dense stand of fire-killed lodgepole pine. Over 100 hazard trees identified.",
+          "coords": [
+            -121.9278,
+            43.7234
+          ],
+          "photo_ref": "bl_hazard_002.jpg",
+          "estimated_cost": 24000,
+          "work_type": "CLEARING",
+          "crew_days": 10
+        },
+        {
+          "damage_id": "BL-003",
+          "milepost": 3.6,
+          "type": "DEBRIS_FLOW",
+          "severity": 3,
+          "description": "Moderate debris deposit. Trail passable but requires clearing and drainage restoration.",
+          "coords": [
+            -121.9189,
+            43.7345
+          ],
+          "photo_ref": "bl_debris_003.jpg",
+          "estimated_cost": 8000,
+          "work_type": "CLEARING",
+          "crew_days": 4
+        }
+      ],
+      "total_estimated_cost": 60000,
+      "priority_rank": 3,
+      "priority_rationale": "Popular day hike. Lower use than Waldo Lake but important for dispersed camping access."
+    },
+    {
+      "trail_id": "charlton-lake-3578",
+      "trail_name": "Charlton Lake Trail #3578",
+      "trail_class": "2",
+      "total_miles": 3.8,
+      "jurisdiction": "Willamette NF - Middle Fork RD",
+      "current_status": "CLOSED",
+      "damage_points": [
+        {
+          "damage_id": "CL-001",
+          "milepost": 1.2,
+          "type": "HAZARD_TREES",
+          "severity": 3,
+          "description": "Mixed conifer mortality. 30 hazard trees identified along corridor.",
+          "coords": [
+            -121.9012,
+            43.7689
+          ],
+          "photo_ref": "cl_hazard_001.jpg",
+          "estimated_cost": 9000,
+          "work_type": "CLEARING",
+          "crew_days": 4
+        },
+        {
+          "damage_id": "CL-002",
+          "milepost": 2.9,
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Trailhead sign and two wayfinding markers destroyed. Posts remain.",
+          "coords": [
+            -121.8923,
+            43.7756
+          ],
+          "photo_ref": "cl_sign_002.jpg",
+          "estimated_cost": 1500,
+          "work_type": "REPLACEMENT",
+          "crew_days": 1
+        }
+      ],
+      "total_estimated_cost": 10500,
+      "priority_rank": 4,
+      "priority_rationale": "Moderate use. Can be reopened quickly with minimal investment."
+    },
+    {
+      "trail_id": "hills-creek-3510",
+      "trail_name": "Hills Creek Trail #3510",
+      "trail_class": "3",
+      "total_miles": 8.4,
+      "jurisdiction": "Willamette NF - Middle Fork RD",
+      "current_status": "CLOSED",
+      "damage_points": [
+        {
+          "damage_id": "HC-001",
+          "milepost": 0.5,
+          "type": "BRIDGE_FAILURE",
+          "severity": 5,
+          "description": "Primary bridge over Hills Creek destroyed. Critical access point.",
+          "coords": [
+            -122.1234,
+            43.6567
+          ],
+          "photo_ref": "hc_bridge_001.jpg",
+          "estimated_cost": 120000,
+          "work_type": "REPLACEMENT",
+          "crew_days": 35
+        },
+        {
+          "damage_id": "HC-002",
+          "milepost": 3.2,
+          "type": "DEBRIS_FLOW",
+          "severity": 5,
+          "description": "Massive debris flow from steep slopes. Trail completely buried for 400 meters.",
+          "coords": [
+            -122.1089,
+            43.6678
+          ],
+          "photo_ref": "hc_debris_002.jpg",
+          "estimated_cost": 65000,
+          "work_type": "RECONSTRUCTION",
+          "crew_days": 25
+        },
+        {
+          "damage_id": "HC-003",
+          "milepost": 5.8,
+          "type": "HAZARD_TREES",
+          "severity": 4,
+          "description": "Large diameter Douglas-fir mortality. High value timber, also high risk.",
+          "coords": [
+            -122.0945,
+            43.6789
+          ],
+          "photo_ref": "hc_hazard_003.jpg",
+          "estimated_cost": 35000,
+          "work_type": "CLEARING",
+          "crew_days": 12
+        },
+        {
+          "damage_id": "HC-004",
+          "milepost": 7.1,
+          "type": "TREAD_EROSION",
+          "severity": 3,
+          "description": "Significant gully formation on steep section. Drainage structures needed.",
+          "coords": [
+            -122.0823,
+            43.6856
+          ],
+          "photo_ref": "hc_erosion_004.jpg",
+          "estimated_cost": 18000,
+          "work_type": "REPAIR",
+          "crew_days": 8
+        }
+      ],
+      "total_estimated_cost": 238000,
+      "priority_rank": 2,
+      "priority_rationale": "Access route for timber salvage operations. Needed for economic recovery."
+    },
+    {
+      "trail_id": "timpanogas-3527",
+      "trail_name": "Timpanogas Lake Trail #3527",
+      "trail_class": "2",
+      "total_miles": 2.1,
+      "jurisdiction": "Willamette NF - Middle Fork RD",
+      "current_status": "RESTRICTED",
+      "damage_points": [
+        {
+          "damage_id": "TL-001",
+          "milepost": 0.3,
+          "type": "HAZARD_TREES",
+          "severity": 2,
+          "description": "Scattered hazard trees. Low density, manageable with hand crews.",
+          "coords": [
+            -122.1345,
+            43.5923
+          ],
+          "photo_ref": "tl_hazard_001.jpg",
+          "estimated_cost": 4000,
+          "work_type": "CLEARING",
+          "crew_days": 2
+        },
+        {
+          "damage_id": "TL-002",
+          "milepost": 1.8,
+          "type": "SIGNAGE",
+          "severity": 1,
+          "description": "Lake overlook interpretive sign damaged. Frame salvageable.",
+          "coords": [
+            -122.1267,
+            43.5989
+          ],
+          "photo_ref": "tl_sign_002.jpg",
+          "estimated_cost": 800,
+          "work_type": "REPAIR",
+          "crew_days": 1
+        }
+      ],
+      "total_estimated_cost": 4800,
+      "priority_rank": 5,
+      "priority_rationale": "Minimal damage. Low priority but quick win for reopening."
+    }
+  ],
+  "summary": {
+    "total_trails_assessed": 5,
+    "total_damage_points": 16,
+    "total_estimated_cost": 446800,
+    "total_crew_days": 153,
+    "bridges_destroyed": 3,
+    "trails_requiring_reroute": 1,
+    "severity_breakdown": {
+      "critical": 4,
+      "major": 4,
+      "moderate": 5,
+      "minor": 3
+    }
+  }
+}

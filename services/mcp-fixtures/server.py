@@ -11,19 +11,24 @@ Tools:
 - get_timber_plots: Timber cruise plot data
 
 Transport: stdio (for local development and ADK integration)
+HTTP health endpoint for Cloud Run deployment
 Run locally: python services/mcp-fixtures/server.py
 """
 
 import json
 import sys
+import os
 from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
 from mcp.types import Tool, TextContent
+from starlette.applications import Starlette
+from starlette.routing import Route
+from starlette.responses import JSONResponse
 
-# Path to fixture data
-FIXTURES_DIR = Path(__file__).parent.parent.parent / "data" / "fixtures" / "cedar-creek"
+# Path to fixture data (adjust based on container structure)
+FIXTURES_DIR = Path("/app/data/fixtures/cedar-creek")
 
 
 def load_fixture(filename: str) -> dict[str, Any]:
@@ -226,7 +231,27 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         return [TextContent(type="text", text=json.dumps({"error": f"Unknown tool: {name}"}))]
 
 
-# Main entry point for stdio transport
+# Health check endpoint for Cloud Run
+async def health(request):
+    """Health check endpoint."""
+    return JSONResponse({
+        "status": "healthy",
+        "service": "ranger-mcp-fixtures",
+        "loaded_fires": ["cedar-creek"],
+        "tools": ["get_fire_context", "mtbs_classify", "assess_trails", "get_timber_plots"]
+    })
+
+
+# Create Starlette app - minimal HTTP interface for Cloud Run health checks
+# TODO: Add MCP SSE transport endpoints for full integration
+app = Starlette(
+    routes=[
+        Route("/health", health),
+    ]
+)
+
+
+# Main entry point for stdio transport (local development)
 if __name__ == "__main__":
     import asyncio
     import logging

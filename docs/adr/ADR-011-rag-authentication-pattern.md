@@ -92,9 +92,15 @@ response = model.generate_content(prompt, generation_config={...})
 
 - [Technical Spike Results](../../../agents/nepa_advisor/spike/spike_results.json) (deleted post-implementation)
 - [Vertex AI RAG Documentation](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/rag-api)
+- [ADR-006: Google-Only LLM Strategy](./ADR-006-google-only-llm-strategy.md) - Reinforces decision to use Gemini models
 - [ADR-010: Vertex RAG Migration](./ADR-010-vertex-rag-migration.md) - Migration from File Search to Vertex RAG
 - [Proof Layer Design Spec](../specs/PROOF-LAYER-DESIGN.md) - Reasoning transparency requirements
 - [CLAUDE.md Knowledge Base Section](../../CLAUDE.md#knowledge-base-infrastructure-vertex-ai-rag) - RAG usage guide
+- **Corpus IDs**:
+    - NEPA: 2305843009213693952
+    - Burn: 4611686018427387904
+    - Timber: 1152921504606846976
+    - Trail: 8070450532247928832
 
 ---
 

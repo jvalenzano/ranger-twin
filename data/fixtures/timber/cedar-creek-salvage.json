@@ -1,0 +1,538 @@
+{
+  "metadata": {
+    "source": "FSVeg",
+    "retrieved_at": "2025-12-30T00:00:00Z",
+    "confidence_tier": 1
+  },
+  "fire_id": "cedar-creek-2022",
+  "cruise_id": "cedar-creek-salvage-2022-01",
+  "cruise_date": "2022-11-15",
+  "cruiser": "SIMULATION",
+  "source": "field_capture_simulation",
+  "methodology": "Variable Radius Plot - BAF 20",
+  "plots": [
+    {
+      "plot_id": "47-ALPHA",
+      "sector": "SW-1",
+      "coords": [
+        -122.1156,
+        43.6567
+      ],
+      "elevation": 3400,
+      "slope_pct": 42,
+      "aspect": "SW",
+      "stand_type": "Douglas-fir/Western Hemlock",
+      "pre_fire_density": "Dense",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 28.5,
+          "height": 145,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 15,
+          "salvage_value": 485
+        },
+        {
+          "tag": 2,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 24.2,
+          "height": 132,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 25,
+          "salvage_value": 312
+        },
+        {
+          "tag": 3,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 32.1,
+          "height": 158,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 10,
+          "salvage_value": 623
+        },
+        {
+          "tag": 4,
+          "species": "TSHE",
+          "species_name": "Western Hemlock",
+          "dbh": 18.4,
+          "height": 98,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 35,
+          "salvage_value": 89
+        },
+        {
+          "tag": 5,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 26.8,
+          "height": 140,
+          "mortality_pct": 85,
+          "grade": "2S",
+          "defect_pct": 20,
+          "salvage_value": 398
+        },
+        {
+          "tag": 6,
+          "species": "THPL",
+          "species_name": "Western Redcedar",
+          "dbh": 22.3,
+          "height": 112,
+          "mortality_pct": 60,
+          "grade": "2S",
+          "defect_pct": 15,
+          "salvage_value": 267
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 180,
+        "trees_per_acre": 145,
+        "mbf_per_acre": 32.4,
+        "salvage_value_per_acre": 2174,
+        "avg_mortality": 91
+      },
+      "access_notes": "Road 1934 provides access. Bridge at MP 2.3 intact. Equipment staging possible at junction.",
+      "priority": "HIGH",
+      "time_sensitivity": "Extract within 18 months to prevent blue stain degradation"
+    },
+    {
+      "plot_id": "47-BRAVO",
+      "sector": "SW-1",
+      "coords": [
+        -122.1089,
+        43.6623
+      ],
+      "elevation": 3650,
+      "slope_pct": 48,
+      "aspect": "S",
+      "stand_type": "Douglas-fir",
+      "pre_fire_density": "Dense",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 34.2,
+          "height": 162,
+          "mortality_pct": 100,
+          "grade": "1S",
+          "defect_pct": 5,
+          "salvage_value": 892
+        },
+        {
+          "tag": 2,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 30.8,
+          "height": 155,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 12,
+          "salvage_value": 587
+        },
+        {
+          "tag": 3,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 29.4,
+          "height": 148,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 18,
+          "salvage_value": 512
+        },
+        {
+          "tag": 4,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 26.1,
+          "height": 138,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 22,
+          "salvage_value": 378
+        },
+        {
+          "tag": 5,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 31.5,
+          "height": 152,
+          "mortality_pct": 95,
+          "grade": "2S",
+          "defect_pct": 15,
+          "salvage_value": 545
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 220,
+        "trees_per_acre": 125,
+        "mbf_per_acre": 42.8,
+        "salvage_value_per_acre": 2914,
+        "avg_mortality": 99
+      },
+      "access_notes": "Steep access. Cable yarding required. Existing landing at GPS -122.1134, 43.6589.",
+      "priority": "HIGH",
+      "time_sensitivity": "Premium sawlog quality. Prioritize for Q1 2023 harvest."
+    },
+    {
+      "plot_id": "23-CHARLIE",
+      "sector": "NW-1",
+      "coords": [
+        -122.0523,
+        43.7678
+      ],
+      "elevation": 5200,
+      "slope_pct": 28,
+      "aspect": "W",
+      "stand_type": "Mountain Hemlock/Subalpine Fir",
+      "pre_fire_density": "Moderate",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "TSME",
+          "species_name": "Mountain Hemlock",
+          "dbh": 16.8,
+          "height": 72,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 40,
+          "salvage_value": 45
+        },
+        {
+          "tag": 2,
+          "species": "ABLA",
+          "species_name": "Subalpine Fir",
+          "dbh": 14.2,
+          "height": 58,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 55,
+          "salvage_value": 18
+        },
+        {
+          "tag": 3,
+          "species": "TSME",
+          "species_name": "Mountain Hemlock",
+          "dbh": 18.9,
+          "height": 78,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 35,
+          "salvage_value": 67
+        },
+        {
+          "tag": 4,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 12.4,
+          "height": 65,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 45,
+          "salvage_value": 22
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 95,
+        "trees_per_acre": 180,
+        "mbf_per_acre": 8.2,
+        "salvage_value_per_acre": 152,
+        "avg_mortality": 100
+      },
+      "access_notes": "No road access. Helicopter logging only. High elevation limits operating season.",
+      "priority": "LOW",
+      "time_sensitivity": "Low commercial value. Consider for wildlife habitat retention."
+    },
+    {
+      "plot_id": "31-DELTA",
+      "sector": "CORE-1",
+      "coords": [
+        -122.0478,
+        43.6589
+      ],
+      "elevation": 4800,
+      "slope_pct": 35,
+      "aspect": "NW",
+      "stand_type": "Mixed Conifer",
+      "pre_fire_density": "Dense",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 22.4,
+          "height": 118,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 30,
+          "salvage_value": 245
+        },
+        {
+          "tag": 2,
+          "species": "ABGR",
+          "species_name": "Grand Fir",
+          "dbh": 19.8,
+          "height": 95,
+          "mortality_pct": 100,
+          "grade": "3S",
+          "defect_pct": 42,
+          "salvage_value": 112
+        },
+        {
+          "tag": 3,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 25.6,
+          "height": 128,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 25,
+          "salvage_value": 334
+        },
+        {
+          "tag": 4,
+          "species": "PIPO",
+          "species_name": "Ponderosa Pine",
+          "dbh": 28.2,
+          "height": 108,
+          "mortality_pct": 80,
+          "grade": "2S",
+          "defect_pct": 20,
+          "salvage_value": 412
+        },
+        {
+          "tag": 5,
+          "species": "ABGR",
+          "species_name": "Grand Fir",
+          "dbh": 17.4,
+          "height": 82,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 50,
+          "salvage_value": 56
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 160,
+        "trees_per_acre": 155,
+        "mbf_per_acre": 24.6,
+        "salvage_value_per_acre": 1159,
+        "avg_mortality": 96
+      },
+      "access_notes": "Fire origin area. Road 1934-350 spur needs repair. Ground conditions suitable for ground-based harvest.",
+      "priority": "MEDIUM",
+      "time_sensitivity": "Mixed quality. Secondary priority after SW-1 plots."
+    },
+    {
+      "plot_id": "15-ECHO",
+      "sector": "NE-1",
+      "coords": [
+        -121.9234,
+        43.7745
+      ],
+      "elevation": 5400,
+      "slope_pct": 18,
+      "aspect": "E",
+      "stand_type": "Lodgepole Pine",
+      "pre_fire_density": "Dense",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 10.2,
+          "height": 62,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 35,
+          "salvage_value": 28
+        },
+        {
+          "tag": 2,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 11.8,
+          "height": 68,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 30,
+          "salvage_value": 35
+        },
+        {
+          "tag": 3,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 9.6,
+          "height": 58,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 40,
+          "salvage_value": 22
+        },
+        {
+          "tag": 4,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 12.4,
+          "height": 72,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 28,
+          "salvage_value": 42
+        },
+        {
+          "tag": 5,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 10.8,
+          "height": 64,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 32,
+          "salvage_value": 30
+        },
+        {
+          "tag": 6,
+          "species": "PICO",
+          "species_name": "Lodgepole Pine",
+          "dbh": 11.2,
+          "height": 66,
+          "mortality_pct": 100,
+          "grade": "4S",
+          "defect_pct": 35,
+          "salvage_value": 32
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 75,
+        "trees_per_acre": 320,
+        "mbf_per_acre": 6.4,
+        "salvage_value_per_acre": 189,
+        "avg_mortality": 100
+      },
+      "access_notes": "Good road access via FR 5897. Flat terrain suitable for mechanized harvest.",
+      "priority": "LOW",
+      "time_sensitivity": "Small diameter, low value. Consider biomass utilization or leave for natural regeneration."
+    },
+    {
+      "plot_id": "52-FOXTROT",
+      "sector": "SW-1",
+      "coords": [
+        -122.1278,
+        43.6478
+      ],
+      "elevation": 3200,
+      "slope_pct": 52,
+      "aspect": "SW",
+      "stand_type": "Douglas-fir/Western Redcedar",
+      "pre_fire_density": "Dense",
+      "trees": [
+        {
+          "tag": 1,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 36.8,
+          "height": 172,
+          "mortality_pct": 100,
+          "grade": "1S",
+          "defect_pct": 8,
+          "salvage_value": 1045
+        },
+        {
+          "tag": 2,
+          "species": "THPL",
+          "species_name": "Western Redcedar",
+          "dbh": 28.4,
+          "height": 125,
+          "mortality_pct": 75,
+          "grade": "2S",
+          "defect_pct": 12,
+          "salvage_value": 534
+        },
+        {
+          "tag": 3,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 32.6,
+          "height": 165,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 15,
+          "salvage_value": 678
+        },
+        {
+          "tag": 4,
+          "species": "PSME",
+          "species_name": "Douglas-fir",
+          "dbh": 29.2,
+          "height": 152,
+          "mortality_pct": 100,
+          "grade": "2S",
+          "defect_pct": 18,
+          "salvage_value": 523
+        },
+        {
+          "tag": 5,
+          "species": "THPL",
+          "species_name": "Western Redcedar",
+          "dbh": 24.6,
+          "height": 118,
+          "mortality_pct": 50,
+          "grade": "2S",
+          "defect_pct": 10,
+          "salvage_value": 445
+        }
+      ],
+      "plot_summary": {
+        "basal_area": 245,
+        "trees_per_acre": 110,
+        "mbf_per_acre": 48.2,
+        "salvage_value_per_acre": 3225,
+        "avg_mortality": 85
+      },
+      "access_notes": "Highest value stand identified. Road 1934-340 access. Steep but cable system feasible. Priority haul route.",
+      "priority": "HIGHEST",
+      "time_sensitivity": "Premium large diameter timber. Extract immediately to preserve grade."
+    }
+  ],
+  "summary": {
+    "total_plots": 6,
+    "total_trees_sampled": 32,
+    "avg_mbf_per_acre": 27.1,
+    "avg_salvage_value_per_acre": 1635,
+    "estimated_salvage_area_acres": 8500,
+    "estimated_total_mbf": 230350,
+    "estimated_total_value": 13897500,
+    "priority_breakdown": {
+      "highest": 1,
+      "high": 2,
+      "medium": 1,
+      "low": 2
+    },
+    "species_distribution": {
+      "PSME": 45,
+      "THPL": 12,
+      "PICO": 22,
+      "TSHE": 3,
+      "TSME": 6,
+      "ABLA": 3,
+      "ABGR": 6,
+      "PIPO": 3
+    }
+  },
+  "recommendations": [
+    "Prioritize SW-1 sector for immediate salvage operations - highest value timber with best access",
+    "Establish cable yarding systems for plots 47-BRAVO and 52-FOXTROT",
+    "Consider helicopter logging waiver for plot 23-CHARLIE only if market conditions improve",
+    "Coordinate with trail crew on Hills Creek access for salvage haul route",
+    "Monitor blue stain progression - recommend monthly checks on high-value Douglas-fir"
+  ]
+}
