@@ -18,12 +18,12 @@ Usage:
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
 # Lazy import to avoid loading at module level
 _vertexai_initialized = False
-_genai_client = None
 _corpus_resource_id = None
 
 
@@ -34,7 +34,9 @@ def _get_vertexai_client():
         try:
             import vertexai
             project = os.environ.get("GOOGLE_CLOUD_PROJECT", "ranger-twin-dev")
-            location = os.environ.get("GOOGLE_CLOUD_LOCATION", "europe-west3")
+            # Use us-central1 for GenerativeModel (gemini-2.0-flash available)
+            # RAG corpus is in europe-west3 but can be accessed cross-region
+            location = "us-central1"
             vertexai.init(project=project, location=location)
             _vertexai_initialized = True
         except ImportError:
@@ -44,22 +46,71 @@ def _get_vertexai_client():
             )
 
 
-def _get_genai_client():
-    """Get or create Gemini client."""
-    global _genai_client
-    if _genai_client is None:
-        try:
-            from google import genai
-            api_key = os.environ.get("GOOGLE_API_KEY")
-            if not api_key:
-                raise ValueError(
-                    "GOOGLE_API_KEY environment variable not set. "
-                    "Required for Gemini generation."
-                )
-            _genai_client = genai.Client(api_key=api_key)
-        except ImportError:
-            raise ImportError("google-genai package not installed. Run: pip install google-genai")
-    return _genai_client
+def _extract_reasoning_steps(text: str) -> list[str]:
+    """
+    Extract reasoning steps from LLM response.
+
+    Looks for REASONING: section with bullet points or numbered steps.
+
+    Args:
+        text: LLM response text
+
+    Returns:
+        List of 3-7 reasoning steps (empty list if not found)
+    """
+    # Look for REASONING: section until next section or end
+    match = re.search(r'REASONING:\s*(.+?)(?:CONFIDENCE:|$)', text, re.DOTALL | re.IGNORECASE)
+
+    if not match:
+        return []
+
+    reasoning_text = match.group(1).strip()
+
+    # Extract bullet points or numbered items
+    steps = []
+
+    # Try bullet format first (- or *)
+    bullet_steps = re.findall(r'[-*]\s*(?:Step \d+:\s*)?(.+?)(?=\n[-*]|\n\n|$)', reasoning_text, re.DOTALL)
+    if bullet_steps:
+        steps = [s.strip() for s in bullet_steps if s.strip()]
+    else:
+        # Try numbered format (1., 2., etc.)
+        numbered_steps = re.findall(r'\d+\.\s*(.+?)(?=\n\d+\.|\n\n|$)', reasoning_text, re.DOTALL)
+        if numbered_steps:
+            steps = [s.strip() for s in numbered_steps if s.strip()]
+
+    # Clean up steps: remove extra whitespace, limit length
+    cleaned_steps = []
+    for step in steps[:7]:  # Max 7 steps
+        # Remove newlines within step, collapse whitespace
+        cleaned = re.sub(r'\s+', ' ', step.strip())
+        if 10 <= len(cleaned) <= 500:  # Reasonable step length
+            cleaned_steps.append(cleaned)
+
+    return cleaned_steps
+
+
+def _extract_confidence_score(text: str) -> float:
+    """
+    Extract confidence score from LLM response.
+
+    Looks for CONFIDENCE: 0.XX format.
+
+    Args:
+        text: LLM response text
+
+    Returns:
+        Float between 0.0 and 1.0 (default 0.75 if not found)
+    """
+    match = re.search(r'CONFIDENCE:\s*(0?\.\d+|1\.0)', text, re.IGNORECASE)
+
+    if match:
+        score = float(match.group(1))
+        # Validate range
+        return max(0.0, min(1.0, score))
+
+    # Default confidence if not found
+    return 0.75
 
 
 def _get_corpus_resource_id() -> str:
@@ -130,7 +181,6 @@ def consult_mandatory_nepa_standards(
     try:
         from vertexai.preview import rag
         from vertexai.preview.rag.utils.resources import RagRetrievalConfig
-        from google.genai import types
 
         # Initialize clients
         _get_vertexai_client()
@@ -164,11 +214,14 @@ def consult_mandatory_nepa_standards(
                         "relevance": 1.0 - ctx.distance
                     })
 
-        # Generate answer using Gemini (RAG doesn't auto-generate like File Search)
+        # Generate answer using Gemini with ADC (Pattern A from spike)
         answer = ""
+        reasoning_chain = []
+        confidence = 0.75
+
         if contexts:
             try:
-                client = _get_genai_client()
+                from vertexai.generative_models import GenerativeModel
 
                 # Combine contexts for generation
                 context_text = "\n\n".join([
@@ -176,36 +229,63 @@ def consult_mandatory_nepa_standards(
                     for i, ctx in enumerate(contexts[:max_chunks])
                 ])
 
-                # Build prompt for regulatory answer
-                prompt = f"""Based on the Forest Service regulatory documents (FSH and FSM),
-answer the following question. Cite specific handbook/manual sections when possible.
+                # Enhanced prompt for structured reasoning extraction
+                prompt = f"""You are a NEPA compliance advisor analyzing Forest Service regulatory documents.
 
-Context from Regulatory Documents:
+Retrieved FSM/FSH Documents:
 {context_text}
 
 Question: {topic}
 
-Provide a clear, accurate answer based only on the regulatory documents above.
-If the documents don't contain relevant information, say so."""
+Format your response EXACTLY as follows:
 
-                # Generate answer
-                gen_response = client.models.generate_content(
-                    model="gemini-2.0-flash-001",
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=0.2,  # Lower temperature for factual accuracy
-                        max_output_tokens=1024
-                    )
+ANSWER: [Provide a clear, accurate answer based ONLY on the regulatory documents above. Cite specific FSM/FSH sections when possible. If the documents don't contain relevant information, state this clearly.]
+
+REASONING:
+- Step 1: [First logical step in your analysis]
+- Step 2: [Second logical step]
+- Step 3: [Third logical step]
+[Continue with additional steps as needed, up to 7 total]
+
+CONFIDENCE: [Provide a confidence score between 0.0 and 1.0 based on the relevance and completeness of the retrieved documents]"""
+
+                # Use GenerativeModel with ADC (no API key needed)
+                model = GenerativeModel("gemini-2.0-flash-001")
+
+                gen_response = model.generate_content(
+                    prompt,
+                    generation_config={
+                        "temperature": 0.2,  # Lower temperature for factual accuracy
+                        "max_output_tokens": 1024
+                    }
                 )
 
-                answer = gen_response.text if gen_response.text else "No answer generated."
+                response_text = gen_response.text if gen_response.text else ""
+
+                # Extract ANSWER section
+                answer_match = re.search(r'ANSWER:\s*(.+?)(?=\n\nREASONING:|\nREASONING:|$)',
+                                        response_text, re.DOTALL)
+                if answer_match:
+                    answer = answer_match.group(1).strip()
+                else:
+                    answer = response_text  # Fallback to full text
+
+                # Extract reasoning steps
+                reasoning_chain = _extract_reasoning_steps(response_text)
+
+                # Extract confidence score
+                confidence = _extract_confidence_score(response_text)
 
             except Exception as gen_error:
                 # If generation fails, return contexts without answer
                 answer = f"[Generation failed: {gen_error}. Contexts retrieved successfully.]"
+                reasoning_chain = []
+                confidence = 0.5
 
         else:
             answer = "No relevant regulatory documents found for this query."
+            reasoning_chain = []
+            confidence = 0.0
 
         return {
             "query": topic,
@@ -213,6 +293,8 @@ If the documents don't contain relevant information, say so."""
             "contexts": contexts,
             "citations": citations,
             "chunks_retrieved": len(contexts),
+            "reasoning_chain": reasoning_chain,  # NEW: For Proof Layer
+            "confidence": confidence,  # NEW: For Proof Layer
             "status": "success"
         }
 
@@ -222,6 +304,8 @@ If the documents don't contain relevant information, say so."""
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
+            "reasoning_chain": [],
+            "confidence": 0.0,
             "status": "error",
             "error": str(e)
         }
@@ -231,6 +315,8 @@ If the documents don't contain relevant information, say so."""
             "answer": "",
             "citations": [],
             "chunks_retrieved": 0,
+            "reasoning_chain": [],
+            "confidence": 0.0,
             "status": "error",
             "error": f"{type(e).__name__}: {e}"
         }

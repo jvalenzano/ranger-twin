@@ -15,12 +15,12 @@ Usage:
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
 # Lazy initialization
 _vertexai_initialized = False
-_genai_client = None
 _corpus_resource_id = None
 
 
@@ -31,7 +31,9 @@ def _get_vertexai_client():
         try:
             import vertexai
             project = os.environ.get("GOOGLE_CLOUD_PROJECT", "ranger-twin-dev")
-            location = os.environ.get("GOOGLE_CLOUD_LOCATION", "europe-west3")
+            # Use us-central1 for GenerativeModel (gemini-2.0-flash available)
+            # RAG corpus is in europe-west3 but can be accessed cross-region
+            location = "us-central1"
             vertexai.init(project=project, location=location)
             _vertexai_initialized = True
         except ImportError:
@@ -41,22 +43,39 @@ def _get_vertexai_client():
             )
 
 
-def _get_genai_client():
-    """Get or create Gemini client."""
-    global _genai_client
-    if _genai_client is None:
-        try:
-            from google import genai
-            api_key = os.environ.get("GOOGLE_API_KEY")
-            if not api_key:
-                raise ValueError(
-                    "GOOGLE_API_KEY environment variable not set. "
-                    "Required for Gemini generation."
-                )
-            _genai_client = genai.Client(api_key=api_key)
-        except ImportError:
-            raise ImportError("google-genai package not installed. Run: pip install google-genai")
-    return _genai_client
+def _extract_reasoning_steps(text: str) -> list[str]:
+    """Extract reasoning steps from LLM response."""
+    match = re.search(r'REASONING:\s*(.+?)(?:CONFIDENCE:|$)', text, re.DOTALL | re.IGNORECASE)
+    if not match:
+        return []
+
+    reasoning_text = match.group(1).strip()
+    steps = []
+
+    bullet_steps = re.findall(r'[-*]\s*(?:Step \d+:\s*)?(.+?)(?=\n[-*]|\n\n|$)', reasoning_text, re.DOTALL)
+    if bullet_steps:
+        steps = [s.strip() for s in bullet_steps if s.strip()]
+    else:
+        numbered_steps = re.findall(r'\d+\.\s*(.+?)(?=\n\d+\.|\n\n|$)', reasoning_text, re.DOTALL)
+        if numbered_steps:
+            steps = [s.strip() for s in numbered_steps if s.strip()]
+
+    cleaned_steps = []
+    for step in steps[:7]:
+        cleaned = re.sub(r'\s+', ' ', step.strip())
+        if 10 <= len(cleaned) <= 500:
+            cleaned_steps.append(cleaned)
+
+    return cleaned_steps
+
+
+def _extract_confidence_score(text: str) -> float:
+    """Extract confidence score from LLM response."""
+    match = re.search(r'CONFIDENCE:\s*(0?\.\d+|1\.0)', text, re.IGNORECASE)
+    if match:
+        score = float(match.group(1))
+        return max(0.0, min(1.0, score))
+    return 0.75
 
 
 def _get_corpus_resource_id() -> str:
@@ -116,7 +135,6 @@ def query_burn_severity_knowledge(
     try:
         from vertexai.preview import rag
         from vertexai.preview.rag.utils.resources import RagRetrievalConfig
-        from google.genai import types
 
         # Initialize clients
         _get_vertexai_client()
@@ -147,42 +165,71 @@ def query_burn_severity_knowledge(
                     "relevance": 1.0 - ctx.distance
                 })
 
-        # Generate answer using Gemini
+        # Generate answer using Gemini with ADC (Pattern A)
         answer = ""
+        reasoning_chain = []
+        confidence = 0.75
+
         if include_answer and contexts:
             try:
-                client = _get_genai_client()
+                from vertexai.generative_models import GenerativeModel
 
                 context_text = "\n\n".join([
                     f"[Context {i+1}]\n{ctx['text']}"
                     for i, ctx in enumerate(contexts[:top_k])
                 ])
 
-                prompt = f"""Based on burn severity assessment technical documents (MTBS, BAER, soil burn severity protocols),
-answer the following question. Cite specific thresholds, classifications, or protocols when possible.
+                prompt = f"""You are a burn severity assessment specialist analyzing MTBS, BAER, and soil burn severity protocols.
 
-Context:
+Retrieved Technical Documents:
 {context_text}
 
 Question: {query}
 
-Provide a clear, technical answer based on the protocols and standards in the context."""
+Format your response EXACTLY as follows:
 
-                gen_response = client.models.generate_content(
-                    model="gemini-2.0-flash-001",
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=0.2,
-                        max_output_tokens=1024
-                    )
+ANSWER: [Provide a clear, technical answer based on the protocols and standards above. Cite specific thresholds, classifications, or protocols when possible.]
+
+REASONING:
+- Step 1: [First logical step in your analysis]
+- Step 2: [Second logical step]
+- Step 3: [Third logical step]
+[Continue with additional steps as needed, up to 7 total]
+
+CONFIDENCE: [Provide a confidence score between 0.0 and 1.0 based on the relevance and completeness of the retrieved documents]"""
+
+                model = GenerativeModel("gemini-2.0-flash-001")
+
+                gen_response = model.generate_content(
+                    prompt,
+                    generation_config={
+                        "temperature": 0.2,
+                        "max_output_tokens": 1024
+                    }
                 )
 
-                answer = gen_response.text if gen_response.text else "No answer generated."
+                response_text = gen_response.text if gen_response.text else ""
+
+                # Extract ANSWER section
+                answer_match = re.search(r'ANSWER:\s*(.+?)(?=\n\nREASONING:|\nREASONING:|$)',
+                                        response_text, re.DOTALL)
+                if answer_match:
+                    answer = answer_match.group(1).strip()
+                else:
+                    answer = response_text
+
+                # Extract reasoning and confidence
+                reasoning_chain = _extract_reasoning_steps(response_text)
+                confidence = _extract_confidence_score(response_text)
 
             except Exception as gen_error:
                 answer = f"[Generation failed: {gen_error}. Contexts retrieved successfully.]"
+                reasoning_chain = []
+                confidence = 0.5
         else:
             answer = "No relevant burn severity documents found for this query."
+            reasoning_chain = []
+            confidence = 0.0
 
         return {
             "query": query,
@@ -190,6 +237,8 @@ Provide a clear, technical answer based on the protocols and standards in the co
             "contexts": contexts,
             "citations": citations,
             "chunks_retrieved": len(contexts),
+            "reasoning_chain": reasoning_chain,  # NEW: For Proof Layer
+            "confidence": confidence,  # NEW: For Proof Layer
             "status": "success"
         }
 
@@ -200,6 +249,8 @@ Provide a clear, technical answer based on the protocols and standards in the co
             "contexts": [],
             "citations": [],
             "chunks_retrieved": 0,
+            "reasoning_chain": [],
+            "confidence": 0.0,
             "status": "error",
             "error": f"{type(e).__name__}: {str(e)}"
         }
