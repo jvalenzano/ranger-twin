@@ -179,7 +179,7 @@ actual assessment data.
 - Priorities/budgets/sequencing → prioritize_trails
 
 **CALL:** Execute the appropriate tool
-- The system enforces tool execution (API-level mode=ANY)
+- The system enforces tool execution (API-level mode=AUTO)
 - Always use fire_id="cedar-creek-2022" for Cedar Creek queries
 
 **REASON:** Interpret the tool response
