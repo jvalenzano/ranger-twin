@@ -23,6 +23,7 @@ import yaml
 try:
     import vertexai
     from vertexai.preview import rag
+    from vertexai.preview.rag.utils.resources import RagRetrievalConfig
 except ImportError:
     print("❌ ERROR: google-cloud-aiplatform not installed")
     print("   Install: pip install google-cloud-aiplatform")
@@ -98,9 +99,14 @@ def get_corpus_info(corpus_resource_id: str) -> dict:
     """
     try:
         # List corpora and find matching one
-        corpora = rag.list_corpora()
+        # NOTE: corpus_resource_id may use project number, corpus.name uses project ID
+        # Extract corpus numeric ID and compare that instead
+        target_corpus_id = corpus_resource_id.split("/")[-1]
+
+        corpora = list(rag.list_corpora())
         for corpus in corpora:
-            if corpus.name == corpus_resource_id:
+            corpus_id = corpus.name.split("/")[-1]
+            if corpus_id == target_corpus_id:
                 return {
                     "status": "found",
                     "name": corpus.display_name,
@@ -137,12 +143,12 @@ def run_test_query(corpus_resource_id: str, query: str, top_k: int = 3) -> dict:
         response = rag.retrieval_query(
             rag_resources=[rag.RagResource(rag_corpus=corpus_resource_id)],
             text=query,
-            similarity_top_k=top_k
+            rag_retrieval_config=RagRetrievalConfig(top_k=top_k)
         )
 
         # Extract contexts
         contexts = []
-        for ctx in response.contexts:
+        for ctx in response.contexts.contexts:
             contexts.append({
                 "text": ctx.text[:200] + "..." if len(ctx.text) > 200 else ctx.text,
                 "distance": ctx.distance,

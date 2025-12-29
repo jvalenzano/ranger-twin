@@ -107,7 +107,7 @@ pytest tests/
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
-VERTEX_AI_LOCATION=us-east4
+VERTEX_AI_LOCATION=us-central1
 WHISPER_MODEL_PATH=./weights/whisper-medium.pt
 SPECIES_MODEL_PATH=./weights/species_pnw_v1.pt
 ```

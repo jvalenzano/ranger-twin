@@ -11,6 +11,7 @@
 > **⚠️ Superseded Notice**
 >
 > This ADR has been superseded by **ADR-006: Google-Only LLM Strategy**.
+> **Supersedes:** Partially superseded by ADR-006
 >
 > **Reason:** OpenRouter was introduced to address Google API rate limits during development. However, since ADK agents require the Google Gemini API anyway (for the runtime), and Managed RAG/File Search is Google-only, maintaining a second LLM provider added complexity without clear Phase 1 value.
 >

@@ -2,11 +2,11 @@
 """
 Sync downloaded documents from local cache to GCS.
 
-Uses SINGLE GCS bucket (ranger-knowledge-base) with corpus subfolders:
-- gs://ranger-knowledge-base/nepa/
-- gs://ranger-knowledge-base/burn_severity/
-- gs://ranger-knowledge-base/timber_salvage/
-- gs://ranger-knowledge-base/trail_infrastructure/
+Uses SINGLE GCS bucket (ranger-knowledge-base-eu) with corpus subfolders:
+- gs://ranger-knowledge-base-eu/nepa/
+- gs://ranger-knowledge-base-eu/burn_severity/
+- gs://ranger-knowledge-base-eu/timber_salvage/
+- gs://ranger-knowledge-base-eu/trail_infrastructure/
 
 Usage:
     python 2_sync_to_gcs.py                 # Sync all corpora
@@ -126,7 +126,7 @@ def sync_corpus_to_gcs(
 
     Args:
         corpus_id: Corpus identifier (e.g., 'nepa')
-        gcs_bucket: GCS bucket name (e.g., 'ranger-knowledge-base')
+        gcs_bucket: GCS bucket name (e.g., 'ranger-knowledge-base-eu')
         gcs_path: Subfolder path in bucket (e.g., 'nepa/')
         local_dir: Local directory containing corpus files
         dry_run: If True, preview sync without uploading

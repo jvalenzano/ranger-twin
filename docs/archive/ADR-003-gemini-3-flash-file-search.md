@@ -1,9 +1,12 @@
 # ADR-003: Gemini 3 Flash and File Search Tool for RAG
 
-**Status:** Accepted
+**Status:** ⚠️ SUPERSEDED by [ADR-010](../adr/ADR-010-vertex-rag-migration.md)
 **Date:** 2025-12-22
 **Decision Makers:** TechTrend Federal - Digital Twin Team
 **Category:** AI/ML Architecture (Technical)
+
+> [!WARNING]
+> **This ADR is archived and superseded.** The File Search API approach was replaced by Vertex AI RAG Engine in ADR-010. The model has also been updated to Gemini 2.0 Flash (not 3 Flash). This document is retained for historical reference only.
 
 ---
 

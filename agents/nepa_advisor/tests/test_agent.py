@@ -44,8 +44,8 @@ def test_agent_has_instruction(agent_module):
 
 
 def test_agent_uses_correct_model(agent_module):
-    """Agent should use gemini-2.5-flash model (required for File Search)."""
-    assert agent_module.root_agent.model == "gemini-2.5-flash"
+    """Agent should use gemini-2.0-flash model (required for File Search)."""
+    assert agent_module.root_agent.model == "gemini-2.0-flash"
 
 
 def test_agent_has_file_search_tool(agent_module):

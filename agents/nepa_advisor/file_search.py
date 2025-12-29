@@ -129,6 +129,7 @@ def consult_mandatory_nepa_standards(
     """
     try:
         from vertexai.preview import rag
+        from vertexai.preview.rag.utils.resources import RagRetrievalConfig
         from google.genai import types
 
         # Initialize clients
@@ -139,14 +140,14 @@ def consult_mandatory_nepa_standards(
         response = rag.retrieval_query(
             rag_resources=[rag.RagResource(rag_corpus=corpus_id)],
             text=topic,
-            similarity_top_k=min(max_chunks, 10)  # Max 10
+            rag_retrieval_config=RagRetrievalConfig(top_k=min(max_chunks, 10))
         )
 
         # Extract contexts and citations
         contexts = []
         citations = []
 
-        for ctx in response.contexts:
+        for ctx in response.contexts.contexts:
             contexts.append({
                 "text": ctx.text,
                 "distance": ctx.distance,
@@ -209,6 +210,7 @@ If the documents don't contain relevant information, say so."""
         return {
             "query": topic,
             "answer": answer,
+            "contexts": contexts,
             "citations": citations,
             "chunks_retrieved": len(contexts),
             "status": "success"

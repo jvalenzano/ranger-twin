@@ -2,7 +2,7 @@
 
 **Status:** Active  
 **Created:** 2025-12-22  
-**Last Updated:** 2025-12-27  
+**Last Updated:** 2025-12-28  
 **Author:** RANGER Team  
 **Purpose:** Document the actual deployed Cloud Run architecture
 
@@ -10,6 +10,9 @@
 
 > [!IMPORTANT]
 > **Current State:** RANGER is deployed as **2 Cloud Run services** (not 7). The Recovery Coordinator hosts all agents in a single process using the AgentTool pattern. This document reflects the actual deployed architecture.
+
+> [!NOTE]
+> **Regional Split (2025-12-28):** Cloud Run services remain in `us-central1`. Vertex AI RAG Engine corpora have migrated to `europe-west3` due to Google's allowlist restrictions on us-central1 for new RAG projects. See [ADR-010](../adr/ADR-010-vertex-rag-migration.md) for details.
 
 ---
 

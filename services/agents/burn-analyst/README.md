@@ -41,7 +41,7 @@ GET /statistics/{fire_id}
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
-VERTEX_AI_LOCATION=us-east4
+VERTEX_AI_LOCATION=us-central1
 GCP_PROJECT_ID=ranger-twin
 CEDAR_CREEK_FIRE_ID=cedar-creek-2022
 ```

@@ -185,3 +185,9 @@ Thumbs.db
 # RANGER - Runtime generated configs
 **/.nepa_store_config.json
 .adk/
+
+# Vertex AI RAG configurations (contains GCP resource IDs)
+agents/*/data/.vertex_rag_config.json
+
+# Knowledge base local cache
+knowledge/local/

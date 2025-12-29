@@ -50,20 +50,30 @@ def check_agent_import() -> bool:
         return False
 
 
-def check_api_key() -> bool:
-    """Check if GOOGLE_API_KEY is set."""
-    api_key = os.environ.get("GOOGLE_API_KEY")
-    if api_key:
-        # Mask the key for security
-        masked = api_key[:8] + "..." + api_key[-4:] if len(api_key) > 12 else "***"
-        print(f"GOOGLE_API_KEY: {masked}")
-        print("  OK: API key is set")
-        return True
-    else:
-        print("GOOGLE_API_KEY: NOT SET")
-        print("  WARNING: Set GOOGLE_API_KEY to run agents")
-        print("  Get a key at: https://aistudio.google.com/app/apikey")
+def check_vertex_env() -> bool:
+    """Check if Vertex AI environment variables are set."""
+    project = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    location = os.environ.get("GOOGLE_CLOUD_LOCATION")
+    use_vertex = os.environ.get("GOOGLE_GENAI_USE_VERTEXAI")
+
+    missing = []
+    if not project:
+        missing.append("GOOGLE_CLOUD_PROJECT")
+    if not location:
+        missing.append("GOOGLE_CLOUD_LOCATION")
+    
+    if missing:
+        print(f"Vertex AI Env: MISSING {', '.join(missing)}")
+        print("  WARNING: Set these variables for Vertex AI")
         return False
+
+    print(f"Vertex AI Env: configured")
+    print(f"  Project: {project}")
+    print(f"  Location: {location}")
+    if use_vertex:
+        print(f"  Use Vertex: {use_vertex}")
+    
+    return True
 
 
 def check_agent_structure(agent_name: str) -> bool:
@@ -184,10 +194,10 @@ def main() -> int:
     results.append(("Agent import", check_agent_import()))
     print()
 
-    # Check 4: API key
-    print("4. API Key Configuration")
+    # Check 4: Vertex AI Env
+    print("4. Vertex AI Configuration")
     print("-" * 40)
-    results.append(("API key", check_api_key()))
+    results.append(("Vertex AI Env", check_vertex_env()))
     print()
 
     # Check 5: Agent structure
@@ -229,7 +239,7 @@ def main() -> int:
     if passed == total:
         print("\nPhase 0 setup complete!")
         print("Next steps:")
-        print("  1. Set GOOGLE_API_KEY environment variable")
+        print("  1. Ensure you have run: gcloud auth application-default login")
         print("  2. Run: cd agents && adk run coordinator")
         return 0
     else:

@@ -24,27 +24,28 @@ This dual-provider approach was introduced in ADR-004 to address Google API rate
 
 ## Decision
 
-**Simplify to Google Gemini as the sole LLM provider for Phase 1.**
+**Standardize on Vertex AI (ADC) as the sole authentication method for Phase 1.**
 
-All LLM calls now route through the Google Gemini API:
+All LLM calls now route through the Google Vertex AI API using Application Default Credentials (ADC):
 - ADK Agents (Coordinator, Burn Analyst, Trail Assessor, etc.)
 - Frontend Site Analysis and Chat
 - NEPA Managed RAG / File Search
+
+**`GOOGLE_API_KEY` is deprecated and removed from the codebase.**
 
 ---
 
 ## Rationale
 
-| Factor | Dual-Provider (Before) | Google-Only (After) |
-|--------|------------------------|---------------------|
-| **API Keys** | 2 (Google + OpenRouter) | 1 (Google) |
-| **Billing** | 2 vendor relationships | 1 vendor relationship |
-| **Routing Logic** | Complex fallback chains | Simple direct calls |
-| **ADK Compatibility** | OpenRouter not usable | Native support |
-| **Managed RAG** | Google-only anyway | Native support |
-| **Rate Limits** | OpenRouter more generous | Sufficient for Phase 1 |
+| Factor | Dual-Provider (Before) | Google-Only (After) | Vertex AI Standard (Now) |
+|--------|------------------------|---------------------|--------------------------|
+| **API Keys** | 2 (Google + OpenRouter) | 1 (Google) | **0 (ADC)** |
+| **Billing** | 2 vendor relationships | 1 vendor relationship | **Project-based** |
+| **Security** | Keys in env vars | Key in env var | **IAM / Service Account** |
+| **ADK Compatibility** | No | Native | **Native** |
+| **Managed RAG** | No | Native | **Native** |
 
-**Key Insight:** Since ADK and Managed RAG both require Google API, adding OpenRouter only helped for frontend chat—a minor use case that doesn't justify the added complexity.
+**Key Insight:** Moving to ADC aligns with Google Cloud best practices, eliminates the risk of leaking API keys, and standardizes authentication across all components (agents, frontend, backend).
 
 ---
 
@@ -54,13 +55,18 @@ All LLM calls now route through the Google Gemini API:
 
 **Root `.env` (shared across all agents):**
 ```bash
-GOOGLE_API_KEY=AIzaSy...
+# Vertex AI Configuration (uses Application Default Credentials)
+GOOGLE_CLOUD_PROJECT=ranger-twin-dev
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_GENAI_USE_VERTEXAI=TRUE
+# GOOGLE_API_KEY is NO LONGER REQUIRED
 ```
 
 **Frontend `.env.local`:**
 ```bash
-VITE_GEMINI_API_KEY=AIzaSy...
-VITE_MAPTILER_API_KEY=lxf...
+# Frontend may still use a proxy or specific setup, but backend defaults to ADC
+GOOGLE_CLOUD_PROJECT=ranger-twin-dev
+GOOGLE_CLOUD_LOCATION=us-central1
 ```
 
 ### Code Changes

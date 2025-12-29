@@ -115,6 +115,7 @@ def query_burn_severity_knowledge(
     """
     try:
         from vertexai.preview import rag
+        from vertexai.preview.rag.utils.resources import RagRetrievalConfig
         from google.genai import types
 
         # Initialize clients
@@ -125,14 +126,14 @@ def query_burn_severity_knowledge(
         response = rag.retrieval_query(
             rag_resources=[rag.RagResource(rag_corpus=corpus_id)],
             text=query,
-            similarity_top_k=min(top_k, 10)
+            rag_retrieval_config=RagRetrievalConfig(top_k=min(top_k, 10))
         )
 
         # Extract contexts and citations
         contexts = []
         citations = []
 
-        for ctx in response.contexts:
+        for ctx in response.contexts.contexts:
             contexts.append({
                 "text": ctx.text,
                 "distance": ctx.distance,

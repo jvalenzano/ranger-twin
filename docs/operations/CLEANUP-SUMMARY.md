@@ -1,7 +1,35 @@
 # Documentation Cleanup Summary
 
-**Date:** December 27, 2025  
+**Date:** December 27-28, 2025  
 **Action:** Consolidated scattered planning/warmup/handoff documents into single operational document
+
+---
+
+## Update: December 28, 2025 - RAG Documentation Cleanup
+
+**Actions Taken:**
+
+1. **ADR-003 marked as SUPERSEDED** → `docs/archive/ADR-003-gemini-3-flash-file-search.md`
+   - Added warning banner clarifying it's superseded by ADR-010
+   - File Search API approach replaced by Vertex AI RAG Engine
+
+2. **ADR-010 date inconsistency fixed** → `docs/adr/ADR-010-vertex-rag-migration.md`
+   - Corrected "2025-01-28" to "2025-12-28" in migration section
+
+3. **GCP-DEPLOYMENT.md updated** → `docs/architecture/GCP-DEPLOYMENT.md`
+   - Added regional split note: Cloud Run in us-central1, Vertex RAG in europe-west3
+   - Updated last modified date
+
+4. **knowledge/manifest.yaml header updated**
+   - Corrected bucket reference from `ranger-knowledge-base` to `ranger-knowledge-base-eu`
+   - Added europe-west3 region documentation
+   - Added ADR-010 reference for migration rationale
+
+5. **Pending Deletion: Legacy GCS Bucket**
+   - **Bucket:** `gs://ranger-knowledge-base/` (us-central1)
+   - **Status:** Awaiting RAG validation in europe-west3
+   - **Delete after:** Claude Code confirms all 4 corpora operational
+   - **Command:** `gsutil rm -r gs://ranger-knowledge-base/`
 
 ---
 
