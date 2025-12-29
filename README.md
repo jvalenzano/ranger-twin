@@ -1,3 +1,11 @@
+```text
+    ____  ___    _   __________________ 
+   / __ \/   |  / | / / ____/ ____/ __ \
+  / /_/ / /| | /  |/ / / __/ __/ / /_/ /
+ / _, _/ ___ |/ /|  / /_/ / /___/ _, _/ 
+/_/ |_/_/  |_/_/ |_/\____/_____/_/ |_|  
+```
+
 # RANGER: AI-Powered Forest Recovery
 
 > **Multi-agent coordination platform for post-fire forest recovery**
