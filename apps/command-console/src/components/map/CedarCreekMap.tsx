@@ -271,6 +271,7 @@ const CedarCreekMap: React.FC = () => {
       // Trail damage markers as triangles (warm palette, pointing down = warning)
       // Accessibility: Triangle shape provides secondary visual cue beyond color
       // Size scales 16-32px based on severity (0.5-1.0 of 32px icon)
+      // NOTE: icon-size is a layout property - feature-state NOT supported in layout
       mapInstance.addLayer({
         id: 'trail-damage-points',
         type: 'symbol',
@@ -278,14 +279,8 @@ const CedarCreekMap: React.FC = () => {
         layout: {
           'icon-image': 'triangle-damage',
           // Scale based on severity (0.5 to 1.0 of 32px = 16px to 32px)
-          'icon-size': [
-            'case',
-            ['boolean', ['feature-state', 'hover'], false],
-            // Hovered: +0.15 to base size for clear interaction feedback
-            ['+', 0.15, ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0]],
-            // Default
-            ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0],
-          ],
+          // Hover effect achieved via icon-halo in paint properties (not size)
+          'icon-size': ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0],
           'icon-allow-overlap': true,
           'icon-anchor': 'center',
         },
@@ -301,7 +296,7 @@ const CedarCreekMap: React.FC = () => {
             'SIGNAGE', DAMAGE_COLORS.SIGNAGE,
             '#888888',
           ],
-          // Hover highlight via halo
+          // Hover highlight via halo (feature-state works in paint properties)
           'icon-halo-color': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
@@ -311,7 +306,7 @@ const CedarCreekMap: React.FC = () => {
           'icon-halo-width': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            3, // hovered
+            4, // hovered - more prominent
             1.5, // default
           ],
           'icon-opacity': 0.95,
