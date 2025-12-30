@@ -4,37 +4,7 @@ import { useActiveLayer, useLegendExpanded, useLegendMode, useMapStore } from '@
 import { useLifecycleStore } from '@/stores/lifecycleStore';
 import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent } from '@/config/tooltipContent';
-
-// Severity color palette (normal view)
-const SEVERITY_COLORS = {
-    HIGH: '#EF4444',    // Red
-    MODERATE: '#F59E0B', // Amber
-    LOW: '#10B981',      // Green
-};
-
-// IR/Thermal color palette (heat signature style)
-const IR_SEVERITY_COLORS = {
-    HIGH: '#EF4444',     // Red
-    MODERATE: '#F59E0B', // Amber
-    LOW: '#10B981',      // Green
-};
-
-// Trail damage type colors
-const DAMAGE_COLORS = {
-    BRIDGE_FAILURE: '#EF4444',
-    DEBRIS_FLOW: '#F97316',
-    HAZARD_TREES: '#EAB308',
-    TREAD_EROSION: '#F59E0B', // Amber
-    SIGNAGE: '#22C55E',
-};
-
-// Timber priority colors
-const PRIORITY_COLORS = {
-    HIGHEST: '#EF4444',
-    HIGH: '#F97316',
-    MEDIUM: '#EAB308',
-    LOW: '#22C55E',
-};
+import { SEVERITY_COLORS, IR_SEVERITY_COLORS, DAMAGE_COLORS, PRIORITY_COLORS } from '@/constants/mapColors';
 
 interface SidebarLegendProps {
     isExpanded: boolean;

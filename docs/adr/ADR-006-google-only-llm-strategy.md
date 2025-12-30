@@ -8,6 +8,27 @@
 
 ---
 
+## Authentication Method Update (2025-12-29)
+
+**Production Authentication:** Uses **Vertex AI with Application Default Credentials (ADC)**
+
+- Cloud Run services authenticate via **IAM service account roles** (no API keys)
+- Development uses `gcloud auth application-default login`
+- All components (ADK agents, frontend proxies, RAG) use ADC
+
+**Historical Context:** This ADR originally described moving from dual providers (OpenRouter + Google) to single provider (Google). The authentication method has evolved from API keys to ADC for better security, FedRAMP compliance, and GCP best practices.
+
+**Environment Variables:**
+```bash
+# Vertex AI Configuration (uses Application Default Credentials)
+GOOGLE_CLOUD_PROJECT=ranger-twin-dev
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_GENAI_USE_VERTEXAI=TRUE
+# NO API KEYS REQUIRED - ADC handles authentication
+```
+
+---
+
 ## Context
 
 RANGER initially adopted a hybrid LLM strategy with two providers:
@@ -24,56 +45,84 @@ This dual-provider approach was introduced in ADR-004 to address Google API rate
 
 ## Decision
 
-**Standardize on Vertex AI (ADC) as the sole authentication method for Phase 1.**
+**Standardize on Vertex AI with Application Default Credentials (ADC) as the sole authentication method for Phase 1.**
 
-All LLM calls now route through the Google Vertex AI API using Application Default Credentials (ADC):
-- ADK Agents (Coordinator, Burn Analyst, Trail Assessor, etc.)
-- Frontend Site Analysis and Chat
-- NEPA Managed RAG / File Search
+All LLM calls now route through the Google Vertex AI API using IAM-based authentication:
+- **ADK Agents** (Coordinator, Burn Analyst, Trail Assessor, etc.) — Use ADC from Cloud Run service account
+- **Frontend Site Analysis and Chat** — Proxy requests through backend (ADC)
+- **NEPA Managed RAG / File Search** — Direct Vertex AI access via ADC
 
-**`GOOGLE_API_KEY` is deprecated and removed from the codebase.**
+**API keys are not used in production environments.** This eliminates secret management overhead and aligns with federal security requirements.
 
 ---
 
 ## Rationale
 
-| Factor | Dual-Provider (Before) | Google-Only (After) | Vertex AI Standard (Now) |
-|--------|------------------------|---------------------|--------------------------|
-| **API Keys** | 2 (Google + OpenRouter) | 1 (Google) | **0 (ADC)** |
+| Factor | Dual-Provider (Before) | Google API Key (Intermediate) | **Vertex AI + ADC (Now)** |
+|--------|------------------------|-------------------------------|---------------------------|
+| **API Keys** | 2 (Google + OpenRouter) | 1 (Google) | **0 (IAM-based)** |
 | **Billing** | 2 vendor relationships | 1 vendor relationship | **Project-based** |
 | **Security** | Keys in env vars | Key in env var | **IAM / Service Account** |
 | **ADK Compatibility** | No | Native | **Native** |
 | **Managed RAG** | No | Native | **Native** |
+| **FedRAMP Compliance** | Unclear | API key risk | **IAM audit trail** |
 
-**Key Insight:** Moving to ADC aligns with Google Cloud best practices, eliminates the risk of leaking API keys, and standardizes authentication across all components (agents, frontend, backend).
+**Key Insights:**
+1. Moving to ADC aligns with Google Cloud best practices and federal security requirements
+2. Eliminates risk of API key leakage (no secrets in environment variables)
+3. Standardizes authentication across all components (agents, frontend, backend)
+4. Enables fine-grained IAM permissions for audit compliance
 
 ---
 
 ## Implementation
 
-### Environment Configuration
+### Authentication Flow
 
-**Root `.env` (shared across all agents):**
+**Development:**
 ```bash
-# Vertex AI Configuration (uses Application Default Credentials)
-GOOGLE_CLOUD_PROJECT=ranger-twin-dev
-GOOGLE_CLOUD_LOCATION=us-central1
-GOOGLE_GENAI_USE_VERTEXAI=TRUE
-# GOOGLE_API_KEY is NO LONGER REQUIRED
+# Developers authenticate once locally
+gcloud auth application-default login
+
+# ADK agents automatically pick up credentials
+export GOOGLE_CLOUD_PROJECT=ranger-twin-dev
+export GOOGLE_CLOUD_LOCATION=us-central1
+export GOOGLE_GENAI_USE_VERTEXAI=TRUE
 ```
 
-**Frontend `.env.local`:**
-```bash
-# Frontend may still use a proxy or specific setup, but backend defaults to ADC
-GOOGLE_CLOUD_PROJECT=ranger-twin-dev
-GOOGLE_CLOUD_LOCATION=us-central1
+**Production (Cloud Run):**
+```yaml
+# Cloud Run service configuration
+service:
+  name: ranger-coordinator
+  serviceAccount: ranger-adk-sa@ranger-twin-prod.iam.gserviceaccount.com
+  
+# IAM bindings
+bindings:
+  - role: roles/aiplatform.user
+    members: ["serviceAccount:ranger-adk-sa@ranger-twin-prod.iam.gserviceaccount.com"]
 ```
 
-### Code Changes
+**Frontend Proxy Pattern:**
+```typescript
+// Frontend never calls Vertex AI directly
+// Requests proxy through backend with ADC
+const response = await fetch('/api/chat', {
+  method: 'POST',
+  body: JSON.stringify({ message: userQuery })
+});
 
-1. **`aiBriefingService.ts`** — Removed OpenRouter fallback chain; all queries route to Google Gemini API directly.
-2. **`.env.example` files** — Simplified to Google-only configuration.
-3. **`verify-openrouter.js`** — Removed (no longer needed).
+// Backend handler (ADK) uses ADC automatically
+```
+
+### Migration Steps from API Keys
+
+1. ✅ **Removed** `GOOGLE_API_KEY` from all `.env` files
+2. ✅ **Removed** `OPENROUTER_API_KEY` from all configurations
+3. ✅ **Added** `GOOGLE_GENAI_USE_VERTEXAI=TRUE` flag
+4. ✅ **Updated** `aiBriefingService.ts` to proxy through backend
+5. ✅ **Removed** `verify-openrouter.js` validation script
+6. ✅ **Configured** Cloud Run service accounts with Vertex AI permissions
 
 ---
 
@@ -81,24 +130,29 @@ GOOGLE_CLOUD_LOCATION=us-central1
 
 ### Positive
 
-1. **Reduced Complexity** — One provider, one API key, one billing relationship
-2. **Consistent Behavior** — All LLM calls use the same backend
-3. **Easier Onboarding** — New developers configure one key
-4. **Lower Cognitive Load** — No routing decisions or fallback chains
+1. **Enhanced Security** — No API keys to leak, rotate, or manage
+2. **Reduced Complexity** — One provider, zero secrets, IAM-based permissions
+3. **Consistent Behavior** — All LLM calls use the same Vertex AI backend
+4. **Easier Onboarding** — New developers run `gcloud auth` once
+5. **Lower Cognitive Load** — No routing decisions or fallback chains
+6. **FedRAMP Compliance** — IAM audit trails for all LLM API calls
+7. **Cost Transparency** — All usage appears in single GCP project billing
 
 ### Negative
 
 1. **Single Point of Failure** — No provider fallback if Google has issues
 2. **Less Model Flexibility** — Cannot easily switch to Claude/GPT-4 for specific tasks
 3. **Rate Limits** — Google's limits apply to all traffic
+4. **GCP Lock-in** — Tighter coupling to Google Cloud infrastructure
 
 ### Mitigations
 
 | Risk | Mitigation |
 |------|------------|
 | Google outage | Simulation mode fallback exists in frontend |
-| Rate limits | Sufficient for Phase 1 demo scale; upgrade to paid tier if needed |
+| Rate limits | Sufficient for Phase 1 demo scale; production tier supports higher QPS |
 | Model quality issues | Gemini 2.0 Flash is capable; revisit in Phase 2 if needed |
+| GCP lock-in | Skills-First architecture (ADR-005) keeps agent logic portable |
 
 ---
 
@@ -110,7 +164,9 @@ OpenRouter (or multi-provider routing) may be reconsidered in Phase 2+ if:
 - Google reliability becomes an issue at scale
 - Cost optimization across providers becomes important
 
-For now, simplicity wins.
+**However:** Any multi-provider strategy must maintain ADC-equivalent security (no API keys in production).
+
+For now, simplicity and security win.
 
 ---
 
@@ -118,6 +174,8 @@ For now, simplicity wins.
 
 - [ADR-004: Site Analysis & OpenRouter](./ADR-004-site-analysis-openrouter.md) — Superseded (OpenRouter parts only)
 - [ADR-005: Skills-First Architecture](./ADR-005-skills-first-architecture.md) — ADK dependency on Gemini
+- [Google Vertex AI Authentication](https://cloud.google.com/vertex-ai/docs/authentication) — ADC documentation
+- [Google ADK Documentation](https://google.github.io/adk-docs/) — Agent Development Kit
 - [Google File Search Blog](https://blog.google/technology/developers/file-search-gemini-api/) — Managed RAG feature
 
 ---
@@ -128,3 +186,4 @@ For now, simplicity wins.
 |------|----------|-----------|
 | 2025-12-26 | Google-only strategy accepted | Simplification; ADK/RAG require Gemini anyway |
 | 2025-12-26 | ADR-004 marked superseded | OpenRouter integration removed; Site Analysis feature preserved |
+| 2025-12-29 | Clarified ADC authentication method | Document now reflects production IAM-based auth (not API keys) |

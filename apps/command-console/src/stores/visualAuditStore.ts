@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { ProofLayer, SourceAgent } from '@/types/briefing';
 
 export type VisualAuditStatus = 'idle' | 'selecting' | 'refining' | 'capturing' | 'analyzing' | 'complete' | 'error';
 
@@ -12,6 +13,14 @@ export interface FeatureMetadata {
     featureName: string;
     properties: Record<string, unknown>;
     coordinates: [number, number]; // [lng, lat]
+}
+
+// ADK response with Proof Layer (Phase 1)
+export interface ADKAnalysisResult {
+    summary: string;
+    sourceAgent: SourceAgent;
+    proofLayer: ProofLayer;
+    processingTimeMs?: number;
 }
 
 interface VisualAuditState {
@@ -36,6 +45,9 @@ interface VisualAuditState {
     result: string | null;
     error: string | null;
 
+    // ADK Proof Layer result (Phase 1)
+    adkResult: ADKAnalysisResult | null;
+
     // Actions
     setStatus: (status: VisualAuditStatus) => void;
     setCapturedImage: (image: string | null) => void;
@@ -43,6 +55,7 @@ interface VisualAuditState {
     setMetadata: (metadata: VisualAuditState['metadata']) => void;
     setResult: (result: string | null) => void;
     setError: (error: string | null) => void;
+    setADKResult: (adkResult: ADKAnalysisResult | null) => void;
     reset: () => void;
 
     // Area selection entry (existing)
@@ -69,6 +82,7 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
     selectedChipIds: [],
     result: null,
     error: null,
+    adkResult: null,
 
     setStatus: (status) => set({ status }),
     setCapturedImage: (capturedImage) => set({ capturedImage }),
@@ -76,6 +90,7 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
     setMetadata: (metadata) => set({ metadata }),
     setResult: (result) => set({ result }),
     setError: (error) => set({ error }),
+    setADKResult: (adkResult) => set({ adkResult }),
 
     reset: () => set({
         status: 'idle',
@@ -87,6 +102,7 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
         selectedChipIds: [],
         result: null,
         error: null,
+        adkResult: null,
     }),
 
     // Existing: Area selection from toolbar
@@ -95,6 +111,7 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
         entryMode: 'area',
         result: null,
         error: null,
+        adkResult: null,
         userQuery: '',
         metadata: null,
         featureMetadata: null,
@@ -108,6 +125,7 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
         featureMetadata,
         result: null,
         error: null,
+        adkResult: null,
         userQuery: '',
         selectedChipIds: [],
         metadata: null,
@@ -136,5 +154,6 @@ export const useVisualAuditStore = create<VisualAuditState>((set) => ({
         metadata: null,
         featureMetadata: null,
         selectedChipIds: [],
+        adkResult: null,
     }),
 }));

@@ -29,36 +29,7 @@ import {
 } from '@/stores/mapStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
 import Tooltip from '@/components/ui/Tooltip';
-
-// Severity color palette (normal view)
-const SEVERITY_COLORS = {
-  HIGH: '#EF4444',
-  MODERATE: '#F59E0B',
-  LOW: '#10B981',
-};
-
-// IR/Thermal color palette
-const IR_SEVERITY_COLORS = {
-  HIGH: '#EF4444',
-  MODERATE: '#F59E0B',
-  LOW: '#10B981',
-};
-
-// Trail damage type colors
-const DAMAGE_COLORS = {
-  BRIDGE_FAILURE: '#EF4444',
-  DEBRIS_FLOW: '#F97316',
-  HAZARD_TREES: '#EAB308',
-  TREAD_EROSION: '#F59E0B',
-};
-
-// Timber priority colors
-const PRIORITY_COLORS = {
-  HIGHEST: '#EF4444',
-  HIGH: '#F97316',
-  MEDIUM: '#EAB308',
-  LOW: '#22C55E',
-};
+import { SEVERITY_COLORS, IR_SEVERITY_COLORS, DAMAGE_COLORS, PRIORITY_COLORS } from '@/constants/mapColors';
 
 const FloatingLegend: React.FC = () => {
   const activeLayer = useActiveLayer();

@@ -3,10 +3,13 @@ import { useVisualAuditStore } from '@/stores/visualAuditStore';
 import { useMapStore } from '@/stores/mapStore';
 import { useActiveFire } from '@/stores/fireContextStore';
 import { useAnalysisHistoryStore, downloadAnalysisAsMarkdown, type SavedAnalysis } from '@/stores/analysisHistoryStore';
-import { Maximize, X, Search, Map, Trees, Flame, AlertTriangle, Download, Save, Check } from 'lucide-react';
+import { useBriefingStore } from '@/stores/briefingStore';
+import { Maximize, X, Search, Map, Trees, Flame, AlertTriangle, Download, Save, Check, Shield, BookOpen, Brain } from 'lucide-react';
 import { QuickQueryChips } from './QuickQueryChips';
 import { buildQueryFromChips } from '@/config/siteAnalysisChips';
 import ReactMarkdown from 'react-markdown';
+import { adkChatService } from '@/services/adkChatService';
+import { AGENT_DISPLAY_NAMES } from '@/types/briefing';
 
 // Feature type icon component
 const FeatureTypeIcon: React.FC<{ type: string }> = ({ type }) => {
@@ -92,6 +95,111 @@ const SaveAnalysisButton: React.FC = () => {
     );
 };
 
+// Proof Layer Panel Component (Phase 1 - Transparency)
+const ProofLayerPanel: React.FC = () => {
+    const adkResult = useVisualAuditStore((state) => state.adkResult);
+    const [expanded, setExpanded] = useState(false);
+
+    if (!adkResult?.proofLayer) return null;
+
+    const { confidence, citations, reasoning_chain } = adkResult.proofLayer;
+    const confidencePercent = Math.round(confidence * 100);
+    const confidenceColor = confidencePercent >= 85 ? 'text-emerald-400' : confidencePercent >= 70 ? 'text-amber-400' : 'text-red-400';
+
+    return (
+        <div className="bg-black/40 border border-white/10 rounded-xl overflow-hidden">
+            {/* Collapsed Header */}
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-accent-cyan/20 rounded-lg">
+                        <Shield className="w-4 h-4 text-accent-cyan" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-accent-cyan">
+                        Proof Layer
+                    </span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className={`text-sm font-bold ${confidenceColor}`}>
+                        {confidencePercent}%
+                    </span>
+                    <span className="text-[9px] text-text-muted">
+                        {expanded ? '▼' : '▶'}
+                    </span>
+                </div>
+            </button>
+
+            {/* Expanded Content */}
+            {expanded && (
+                <div className="px-4 pb-4 space-y-4 border-t border-white/5">
+                    {/* Confidence Score */}
+                    <div className="pt-3">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">Confidence</span>
+                            <span className={`text-xs font-bold ${confidenceColor}`}>{confidencePercent}%</span>
+                        </div>
+                        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full ${confidencePercent >= 85 ? 'bg-emerald-500' : confidencePercent >= 70 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                style={{ width: `${confidencePercent}%` }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Reasoning Chain */}
+                    {reasoning_chain.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Brain className="w-3 h-3 text-accent-cyan" />
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">Reasoning Chain</span>
+                            </div>
+                            <ol className="space-y-1.5 pl-4">
+                                {reasoning_chain.slice(0, 5).map((step, idx) => (
+                                    <li key={idx} className="text-[10px] text-text-secondary list-decimal">
+                                        {step}
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+
+                    {/* Citations */}
+                    {citations.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <BookOpen className="w-3 h-3 text-accent-cyan" />
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted">Data Sources</span>
+                            </div>
+                            <div className="space-y-1.5">
+                                {citations.map((citation, idx) => (
+                                    <div key={idx} className="flex items-start gap-2 text-[10px]">
+                                        <span className="text-accent-cyan font-bold shrink-0">[{idx + 1}]</span>
+                                        <div>
+                                            <span className="text-white font-medium">{citation.source_type}</span>
+                                            <span className="text-text-muted"> — {citation.excerpt}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Source Agent */}
+                    {adkResult.sourceAgent && (
+                        <div className="pt-2 border-t border-white/5">
+                            <span className="text-[9px] text-text-muted">
+                                Analysis by: <span className="text-white font-medium">{AGENT_DISPLAY_NAMES[adkResult.sourceAgent]}</span>
+                            </span>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 // Download Analysis Button Component
 const DownloadAnalysisButton: React.FC = () => {
     const { featureMetadata, selectedChipIds, userQuery, result } = useVisualAuditStore();
@@ -147,94 +255,90 @@ export const VisualAuditOverlay: React.FC = () => {
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Real AI analysis via Gemini
+    // ADK-powered analysis with Proof Layer (Phase 1)
     useEffect(() => {
         if (status === 'analyzing' && entryMode === 'feature' && featureMetadata) {
-            const runAnalysis = async () => {
-                const startTime = Date.now();
-                const MINIMUM_DISPLAY_TIME = 1500; // Show spinner for at least 1.5s
+            const startTime = Date.now();
+            const MINIMUM_DISPLAY_TIME = 1500; // Show spinner for at least 1.5s
 
-                try {
-                    const chipQuery = buildQueryFromChips(selectedChipIds, featureMetadata.properties);
-                    const fullQuery = chipQuery + (userQuery ? `\n\nAdditional question: ${userQuery}` : '');
+            const chipQuery = buildQueryFromChips(selectedChipIds, featureMetadata.properties);
+            const fullQuery = chipQuery + (userQuery ? `\n\nAdditional question: ${userQuery}` : '');
 
-                    // Add context about the feature being analyzed
-                    const contextualQuery = `
-You are analyzing a specific feature from the Cedar Creek Fire recovery effort.
+            // Build contextual query for ADK
+            const contextualQuery = `Analyze this ${getFeatureTypeLabel(featureMetadata.featureType)} feature from the Cedar Creek Fire:
 
 **Feature:** ${featureMetadata.featureName}
-**Type:** ${getFeatureTypeLabel(featureMetadata.featureType)}
 **Coordinates:** ${featureMetadata.coordinates[1].toFixed(4)}°N, ${Math.abs(featureMetadata.coordinates[0]).toFixed(4)}°W
-**Feature Properties:** ${JSON.stringify(featureMetadata.properties, null, 2)}
+**Properties:** ${JSON.stringify(featureMetadata.properties, null, 2)}
 
-**User Queries:**
-${fullQuery || 'General site assessment requested'}
+**Questions:**
+${fullQuery || 'Provide a comprehensive site assessment'}`;
 
-Please provide a detailed analysis addressing EACH of the user queries above specifically. Format your response with markdown headers for each query topic. Be specific to the feature mentioned.`;
+            console.log('[SiteAnalysis] Streaming via ADK:', contextualQuery.slice(0, 150) + '...');
 
-                    console.log('[SiteAnalysis] Calling Gemini with query:', contextualQuery.slice(0, 200) + '...');
+            // Track responses for aggregation
+            let lastResponse = { summary: '', reasoning: [] as string[], confidence: 0, agentRole: 'recovery-coordinator' };
 
-                    // Dynamic import to avoid circular deps
-                    const { default: aiBriefingService } = await import('@/services/aiBriefingService');
+            adkChatService.streamQuery(
+                contextualQuery,
+                activeFire.fire_id || 'cedar-creek',
+                {
+                    onEvent: (response) => {
+                        lastResponse = {
+                            summary: response.summary,
+                            reasoning: response.reasoning,
+                            confidence: response.confidence,
+                            agentRole: response.agentRole,
+                        };
+                    },
+                    onError: async (error) => {
+                        console.error('[SiteAnalysis] ADK streaming error:', error);
+                        const elapsed = Date.now() - startTime;
+                        if (elapsed < MINIMUM_DISPLAY_TIME) {
+                            await new Promise(resolve => setTimeout(resolve, MINIMUM_DISPLAY_TIME - elapsed));
+                        }
+                        useVisualAuditStore.getState().setResult(`## Analysis Error\n\n${error}\n\nPlease try again.`);
+                        setStatus('complete');
+                    },
+                    onComplete: async () => {
+                        const elapsed = Date.now() - startTime;
+                        if (elapsed < MINIMUM_DISPLAY_TIME) {
+                            await new Promise(resolve => setTimeout(resolve, MINIMUM_DISPLAY_TIME - elapsed));
+                        }
 
-                    const response = await aiBriefingService.query(
-                        contextualQuery,
-                        `site-analysis-${featureMetadata.featureId}`,
-                        activeFire
-                    );
+                        // Get the latest event from briefingStore for full proof layer
+                        const latestEvents = useBriefingStore.getState().events;
+                        const latestEvent = latestEvents[0];
 
-                    // Ensure minimum display time for loading state
-                    const elapsed = Date.now() - startTime;
-                    if (elapsed < MINIMUM_DISPLAY_TIME) {
-                        await new Promise(resolve => setTimeout(resolve, MINIMUM_DISPLAY_TIME - elapsed));
-                    }
+                        // Store ADK result with proof layer
+                        if (latestEvent) {
+                            useVisualAuditStore.getState().setADKResult({
+                                summary: lastResponse.summary || latestEvent.content.summary,
+                                sourceAgent: latestEvent.source_agent,
+                                proofLayer: latestEvent.proof_layer,
+                                processingTimeMs: Date.now() - startTime,
+                            });
+                        }
 
-                    if (response.success && response.response) {
+                        // Build markdown result for display
                         const result = `## Site Analysis Report: ${featureMetadata.featureName}
 
 **Analysis Date:** ${new Date().toLocaleDateString()}
 **Feature Type:** ${getFeatureTypeLabel(featureMetadata.featureType)}
 **Fire Context:** ${activeFire.name}
-**Processing Time:** ${response.processingTimeMs}ms
-
----
-
-### Queries Addressed
-
-${fullQuery || 'General site assessment'}
+**Processing Time:** ${Date.now() - startTime}ms
 
 ---
 
 ### Analysis
 
-${response.response.summary}
-
----
-
-*Analysis provided by RANGER Recovery Coordinator via Gemini*`;
+${lastResponse.summary || 'Analysis completed. See Proof Layer for details.'}`;
 
                         useVisualAuditStore.getState().setResult(result);
-                    } else {
-                        useVisualAuditStore.getState().setResult(`## Analysis Error
-
-Unable to complete analysis: ${response.error || 'Unknown error occurred'}
-
-Please try again or contact support.`);
-                    }
-
-                    setStatus('complete');
-                } catch (error) {
-                    console.error('[SiteAnalysis] Analysis failed:', error);
-                    useVisualAuditStore.getState().setResult(`## Analysis Error
-
-An error occurred during analysis: ${error instanceof Error ? error.message : 'Unknown error'}
-
-Please try again.`);
-                    setStatus('complete');
+                        setStatus('complete');
+                    },
                 }
-            };
-
-            runAnalysis();
+            );
         }
     }, [status, entryMode, featureMetadata, selectedChipIds, userQuery, activeFire, setStatus]);
 
@@ -639,12 +743,15 @@ Please try again.`);
                         </div>
 
                         {/* Results */}
-                        <div className="flex-1 overflow-y-auto p-6">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-4">
                             <div className="prose prose-invert prose-sm max-w-none prose-headings:text-white prose-headings:uppercase prose-headings:tracking-widest prose-headings:font-black prose-p:text-text-secondary prose-li:text-text-secondary prose-strong:text-white prose-blockquote:border-accent-cyan prose-blockquote:bg-accent-cyan/10 prose-blockquote:rounded prose-blockquote:px-4 prose-blockquote:py-2">
                                 <ReactMarkdown>
                                     {useVisualAuditStore.getState().result || ''}
                                 </ReactMarkdown>
                             </div>
+
+                            {/* Proof Layer Panel (Phase 1 - Transparency) */}
+                            <ProofLayerPanel />
                         </div>
 
                         {/* Footer */}

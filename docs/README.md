@@ -2,12 +2,26 @@
 
 > **"Recovery at the speed of insight."**
 
+## ⚠️ CRITICAL: Development Protocols
+
+**All AI coding agents MUST read before implementation:**
+
+| Protocol | Purpose | Document |
+|----------|---------|----------|
+| **Pre-Flight Validation** | Prevent false-start implementation by validating runtime assumptions | [protocols/PRE-FLIGHT-VALIDATION-PROTOCOL.md](./protocols/PRE-FLIGHT-VALIDATION-PROTOCOL.md) |
+| **Quick Reference** | Desktop/printable validation checklist | [protocols/PRE-FLIGHT-VALIDATION-QUICK-REFERENCE.md](./protocols/PRE-FLIGHT-VALIDATION-QUICK-REFERENCE.md) |
+
+**Violations = work stoppage. No exceptions.**
+
+---
+
 ## Start Here
 
 | Document | Description |
 |----------|-------------|
 | [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | **Start here.** Single rallying document for the product team — vision, architecture, current focus, operational reality |
 | [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) | **Implementation North Star.** 13-week phased plan to MVP ($704K) |
+| [protocols/README.md](./protocols/README.md) | **Development protocols** — mandatory compliance for all contributors |
 | [GLOSSARY.md](./GLOSSARY.md) | 100+ acronyms and domain terms (BAER, NEPA, FSM/FSH, etc.) |
 
 ## Quick Navigation
@@ -34,6 +48,8 @@
  
  | Document | Description |
  |----------|-------------|
+ | [architecture/RUNTIME-ARCHITECTURE.md](./architecture/RUNTIME-ARCHITECTURE.md) | **Runtime deep-dive:** Request lifecycle, LLM call patterns, cost model |
+ | [PROMPT-ENGINEERING-RUNBOOK.md](./PROMPT-ENGINEERING-RUNBOOK.md) | **Prompt reference:** All agent prompts, pricing, troubleshooting |
  | [architecture/AGENTIC-ARCHITECTURE.md](./architecture/AGENTIC-ARCHITECTURE.md) | Google ADK agent system design, Recovery Coordinator pattern |
  | [adr/ADR-005-skills-first-architecture.md](./adr/ADR-005-skills-first-architecture.md) | **Core Standard:** Skills-First Multi-Agent Architecture |
  | [architecture/GCP-DEPLOYMENT.md](./architecture/GCP-DEPLOYMENT.md) | GCP deployment guide (Supersedes GCP-ARCHITECTURE.md) |
@@ -182,4 +198,4 @@ See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for full context and the "8-minut
 
 ---
 
-*Last updated: December 27, 2025*
+*Last updated: December 30, 2025*

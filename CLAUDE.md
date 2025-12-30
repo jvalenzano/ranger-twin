@@ -2,6 +2,23 @@
 
 > **Token-optimized version:** See [`.context/CLAUDE.md`](.context/CLAUDE.md) for quick reference (~100 lines).
 
+## ⚠️ CRITICAL: Pre-Flight Validation Protocol
+
+**Before implementing ANY plan with >2 hour effort or multiple components:**
+
+1. **List your assumptions** about runtime state (services running, configs, data)
+2. **Test those assumptions** empirically (no code changes, just verification)
+3. **Report findings** in `/docs/investigation/pre-session-N-validation.md`
+4. **Wait for CTO approval** before writing implementation code
+
+**Why:** AI agents excel at code analysis but can't distinguish between aspirational documentation and actual runtime state. Validation prevents 6-10 hours of false-start implementation.
+
+📖 **Full protocol:** [`docs/protocols/PRE-FLIGHT-VALIDATION-PROTOCOL.md`](docs/protocols/PRE-FLIGHT-VALIDATION-PROTOCOL.md)
+
+**Violations = work stoppage.** No exceptions.
+
+---
+
 ## What Is RANGER
 
 RANGER is an AI-powered coordination platform for post-fire forest recovery. Multi-agent system built on Google ADK + Gemini 2.0 Flash. **Phase 1 uses simulated Cedar Creek Fire data** to prove multi-agent coordination and reasoning transparency.
