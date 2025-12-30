@@ -246,21 +246,50 @@ const CedarCreekMap: React.FC = () => {
         data: data.trailDamage,
       });
 
+      // Load triangle icon for trail damage markers (pointing down = warning)
+      // Uses SDF (Signed Distance Field) for dynamic coloring
+      await new Promise<void>((resolve) => {
+        const triangleIcon = new Image(32, 32);
+        triangleIcon.onload = () => {
+          if (!mapInstance.hasImage('triangle-damage')) {
+            mapInstance.addImage('triangle-damage', triangleIcon, { sdf: true });
+          }
+          resolve();
+        };
+        triangleIcon.onerror = () => {
+          console.warn('[CedarCreekMap] Failed to load triangle icon, falling back to circle');
+          resolve();
+        };
+        // Triangle pointing down (warning symbol)
+        triangleIcon.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+          <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="16,28 2,6 30,6" fill="#FFFFFF" stroke="#000000" stroke-width="1"/>
+          </svg>
+        `);
+      });
+
+      // Trail damage markers as triangles (symbol layer with SDF icon)
       mapInstance.addLayer({
         id: 'trail-damage-points',
-        type: 'circle',
+        type: 'symbol',
         source: 'trail-damage',
-        paint: {
-          // Scale based on severity, with additional hover boost
-          'circle-radius': [
+        layout: {
+          'icon-image': 'triangle-damage',
+          // Scale based on severity (0.5 to 1.0)
+          'icon-size': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            // Hovered: +2 to base radius
-            ['+', 2, ['interpolate', ['linear'], ['get', 'severity'], 1, 6, 5, 12]],
+            // Hovered: +0.15 to base size
+            ['+', 0.15, ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0]],
             // Default
-            ['interpolate', ['linear'], ['get', 'severity'], 1, 6, 5, 12],
+            ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0],
           ],
-          'circle-color': [
+          'icon-allow-overlap': true,
+          'icon-anchor': 'center',
+        },
+        paint: {
+          // Color by damage type (SDF allows dynamic coloring)
+          'icon-color': [
             'match',
             ['get', 'type'],
             'BRIDGE_FAILURE', DAMAGE_COLORS.BRIDGE_FAILURE,
@@ -270,20 +299,20 @@ const CedarCreekMap: React.FC = () => {
             'SIGNAGE', DAMAGE_COLORS.SIGNAGE,
             '#888888',
           ],
-          // Thicker stroke on hover
-          'circle-stroke-width': [
+          // Hover highlight via halo
+          'icon-halo-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#00D9FF', // cyan halo on hover
+            '#FFFFFF', // subtle white halo
+          ],
+          'icon-halo-width': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
             3, // hovered
-            2, // default
+            1.5, // default
           ],
-          'circle-stroke-color': [
-            'case',
-            ['boolean', ['feature-state', 'hover'], false],
-            '#00D9FF', // cyan stroke on hover for contrast
-            '#FFFFFF', // default white stroke
-          ],
-          'circle-opacity': 0.9,
+          'icon-opacity': 0.95,
         },
       });
 
@@ -915,12 +944,24 @@ const CedarCreekMap: React.FC = () => {
           dataLayers.trailDamage.visible ? 'visible' : 'none'
         );
       }
+      // In IR mode, use brighter halo for better visibility
       if (isIR) {
-        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-color', '#00FFFF');
-        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-width', 3);
+        mapInstance.setPaintProperty('trail-damage-points', 'icon-halo-color', '#00FFFF');
+        mapInstance.setPaintProperty('trail-damage-points', 'icon-halo-width', 3);
       } else {
-        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-color', '#FFFFFF');
-        mapInstance.setPaintProperty('trail-damage-points', 'circle-stroke-width', 2);
+        // Reset to default halo (hover-based, defined in layer paint)
+        mapInstance.setPaintProperty('trail-damage-points', 'icon-halo-color', [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          '#00D9FF',
+          '#FFFFFF',
+        ]);
+        mapInstance.setPaintProperty('trail-damage-points', 'icon-halo-width', [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          3,
+          1.5,
+        ]);
       }
     }
 
