@@ -10,18 +10,6 @@ This directory contains containerized services that can be deployed to Cloud Run
 
 ```
 services/
-├── agents/                # Agent service containers (Cloud Run)
-│   ├── recovery-coordinator/
-│   ├── burn-analyst/
-│   ├── trail-assessor/
-│   ├── cruising-assistant/
-│   └── nepa-advisor/
-│
-├── api-gateway/           # FastAPI gateway service
-│   ├── app/               #   Application code
-│   ├── tests/             #   API tests
-│   └── pyproject.toml     #   Python dependencies
-│
 └── mcp-fixtures/          # MCP Fixtures server (implemented)
     ├── server.py          #   MCP server implementation
     ├── Dockerfile         #   Container definition
@@ -30,24 +18,17 @@ services/
 
 ## Service Descriptions
 
-### `agents/`
-
-Individual agent containers for microservice deployment. Each agent can be deployed independently to Cloud Run for horizontal scaling.
-
-**Current Status:** Scaffolded for Phase 2 deployment. Phase 1 uses monolithic orchestrator (`main.py`).
-
-### `api-gateway/`
-
-FastAPI-based API gateway providing:
-- REST endpoints for frontend communication
-- SSE streaming for real-time agent updates
-- Session management and routing
-
 ### `mcp-fixtures/`
 
 Model Context Protocol server for fixture data access. Allows agents to query simulated data through the standard MCP interface.
 
 **Status:** Implemented. See `mcp/fixtures/README.md` for specification.
+
+## Note on Agent Backend
+
+The canonical agent backend is the root `main.py` (Google ADK orchestrator), NOT a separate service in this directory. Per ADR-005/008, all agents run as a single ADK service deployed via the root Dockerfile.
+
+For agent code, see: `/agents/`
 
 ## Deployment
 

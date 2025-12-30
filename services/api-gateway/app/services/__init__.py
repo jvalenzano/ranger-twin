@@ -1,3 +1,0 @@
-"""
-RANGER API Gateway - Services
-"""
