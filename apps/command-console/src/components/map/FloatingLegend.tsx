@@ -118,7 +118,7 @@ const FloatingLegend: React.FC = () => {
         />
       ) : (
         <div
-          className={`w-2.5 h-2.5 ${shape === 'circle' ? 'rounded-full' : 'rounded-sm'} border border-white/20`}
+          className={`w-2.5 h-2.5 ${shape === 'circle' ? 'rounded-full border border-white/70' : 'rounded-sm border border-white/20'}`}
           style={{ backgroundColor: color }}
         />
       )}

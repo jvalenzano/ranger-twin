@@ -296,18 +296,18 @@ const CedarCreekMap: React.FC = () => {
             'SIGNAGE', DAMAGE_COLORS.SIGNAGE,
             '#888888',
           ],
-          // Hover highlight via halo (feature-state works in paint properties)
+          // White halo outline for visibility, cyan on hover
           'icon-halo-color': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
             '#00D9FF', // cyan halo on hover
-            '#FFFFFF', // subtle white halo
+            '#FFFFFF', // white halo default
           ],
           'icon-halo-width': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
             4, // hovered - more prominent
-            1.5, // default
+            2, // default - visible white outline
           ],
           'icon-opacity': 0.95,
         },
@@ -359,18 +359,18 @@ const CedarCreekMap: React.FC = () => {
             'LOW', PRIORITY_COLORS.LOW,
             '#888888',
           ],
-          // Thicker stroke on hover
+          // White stroke for visibility against all backgrounds
           'circle-stroke-width': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
             4, // hovered
-            3, // default
+            2, // default
           ],
           'circle-stroke-color': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            '#FFFFFF', // white stroke on hover
-            '#1E293B', // default dark stroke
+            '#00D9FF', // cyan stroke on hover
+            '#FFFFFF', // white stroke default
           ],
           'circle-opacity': 0.9,
         },

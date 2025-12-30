@@ -188,7 +188,7 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                                 ].map((item) => (
                                     <div key={item.label} className="flex items-center gap-2">
                                         <div
-                                            className="w-2.5 h-2.5 rounded-full border-2 border-slate-900 shadow-sm"
+                                            className="w-2.5 h-2.5 rounded-full border border-white/70"
                                             style={{ backgroundColor: item.color }}
                                         />
                                         <span className="text-[11px] text-slate-300">{item.label}</span>
