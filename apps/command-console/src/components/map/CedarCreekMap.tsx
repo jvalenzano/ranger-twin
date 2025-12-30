@@ -268,18 +268,20 @@ const CedarCreekMap: React.FC = () => {
         `);
       });
 
-      // Trail damage markers as triangles (symbol layer with SDF icon)
+      // Trail damage markers as triangles (warm palette, pointing down = warning)
+      // Accessibility: Triangle shape provides secondary visual cue beyond color
+      // Size scales 16-32px based on severity (0.5-1.0 of 32px icon)
       mapInstance.addLayer({
         id: 'trail-damage-points',
         type: 'symbol',
         source: 'trail-damage',
         layout: {
           'icon-image': 'triangle-damage',
-          // Scale based on severity (0.5 to 1.0)
+          // Scale based on severity (0.5 to 1.0 of 32px = 16px to 32px)
           'icon-size': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            // Hovered: +0.15 to base size
+            // Hovered: +0.15 to base size for clear interaction feedback
             ['+', 0.15, ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0]],
             // Default
             ['interpolate', ['linear'], ['get', 'severity'], 1, 0.5, 5, 1.0],
@@ -339,17 +341,19 @@ const CedarCreekMap: React.FC = () => {
         data: data.timberPlots,
       });
 
+      // Timber plot markers as circles (cool color palette)
+      // Accessibility: 24px diameter meets WCAG 2.1 target size recommendations for desktop
       mapInstance.addLayer({
         id: 'timber-plots-points',
         type: 'circle',
         source: 'timber-plots',
         paint: {
-          // Scale up on hover (1.2x effect)
+          // Scale up on hover for clear interaction feedback
           'circle-radius': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            12, // hovered
-            10, // default
+            14, // hovered (28px diameter)
+            12, // default (24px diameter)
           ],
           'circle-color': [
             'match',

@@ -1,6 +1,18 @@
 /**
  * Shared color constants for map markers and legends.
  * Single source of truth to prevent color drift between components.
+ *
+ * ACCESSIBILITY NOTES:
+ * - All colors are high-saturation for visibility against satellite/terrain backgrounds
+ * - Shape differentiation (triangles vs circles) ensures color is not the sole differentiator
+ * - Trail Damage uses warm palette (reds/oranges) with triangles
+ * - Timber Plots uses cool palette (blues/teals) with circles
+ * - Both color palettes use Tailwind CSS 500-level colors for consistency
+ *
+ * WCAG 2.1 AA Compliance:
+ * - Color contrast against dark satellite backgrounds: generally ≥4.5:1
+ * - Shape differentiation provides secondary visual cue
+ * - Hover states use cyan (#00D9FF) for clear interaction feedback
  */
 
 // Burn severity color palette (normal view)
