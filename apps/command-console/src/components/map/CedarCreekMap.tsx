@@ -377,6 +377,54 @@ const CedarCreekMap: React.FC = () => {
         },
       });
 
+      // Load tree icon for timber plots (appears at high zoom)
+      await new Promise<void>((resolve) => {
+        const treeIcon = new Image(16, 16);
+        treeIcon.onload = () => {
+          if (!mapInstance.hasImage('tree-icon')) {
+            mapInstance.addImage('tree-icon', treeIcon, { sdf: true });
+          }
+          resolve();
+        };
+        treeIcon.onerror = () => {
+          console.warn('[CedarCreekMap] Failed to load tree icon');
+          resolve();
+        };
+        // Simple tree silhouette
+        treeIcon.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+          <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 1L12 7H9.5L12.5 12H3.5L6.5 7H4L8 1Z" fill="#FFFFFF"/>
+            <rect x="7" y="12" width="2" height="3" fill="#FFFFFF"/>
+          </svg>
+        `);
+      });
+
+      // Add tree icon overlay for timber plots (visible at zoom >= 12)
+      mapInstance.addLayer({
+        id: 'timber-plots-icons',
+        type: 'symbol',
+        source: 'timber-plots',
+        minzoom: 12,
+        layout: {
+          'icon-image': 'tree-icon',
+          'icon-size': [
+            'interpolate', ['linear'], ['zoom'],
+            12, 0.6,
+            14, 0.9,
+          ],
+          'icon-allow-overlap': true,
+          'icon-anchor': 'center',
+        },
+        paint: {
+          'icon-color': '#FFFFFF',
+          'icon-opacity': [
+            'interpolate', ['linear'], ['zoom'],
+            12, 0.7,
+            13, 0.9,
+          ],
+        },
+      });
+
       // Add timber plot labels
       mapInstance.addLayer({
         id: 'timber-plots-labels',
@@ -965,8 +1013,8 @@ const CedarCreekMap: React.FC = () => {
       }
     }
 
-    // Timber plots
-    ['timber-plots-points', 'timber-plots-labels'].forEach((layerId) => {
+    // Timber plots (including icons layer for high zoom)
+    ['timber-plots-points', 'timber-plots-icons', 'timber-plots-labels'].forEach((layerId) => {
       if (mapInstance.getLayer(layerId)) {
         mapInstance.setLayoutProperty(
           layerId,
