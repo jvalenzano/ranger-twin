@@ -104,30 +104,46 @@ const FloatingLegend: React.FC = () => {
   }
 
   // Legend item renderer
-  const LegendItem: React.FC<{ label: string; color: string; shape?: 'square' | 'circle' }> = ({
+  const LegendItem: React.FC<{ label: string; color: string; shape?: 'square' | 'circle' | 'triangle' }> = ({
     label,
     color,
     shape = 'square',
   }) => (
     <div className="flex items-center gap-2">
-      <div
-        className={`w-2.5 h-2.5 ${shape === 'circle' ? 'rounded-full' : 'rounded-sm'} border border-white/20`}
-        style={{ backgroundColor: color }}
-      />
+      {shape === 'triangle' ? (
+        // Triangle shape (pointing down = warning) matching map markers
+        <div
+          className="w-0 h-0 border-l-[5px] border-r-[5px] border-t-[9px] border-l-transparent border-r-transparent"
+          style={{ borderTopColor: color }}
+        />
+      ) : (
+        <div
+          className={`w-2.5 h-2.5 ${shape === 'circle' ? 'rounded-full' : 'rounded-sm'} border border-white/20`}
+          style={{ backgroundColor: color }}
+        />
+      )}
       {!legendCompact && <span className="text-[11px] text-slate-300">{label}</span>}
     </div>
   );
 
-  // Compact summary dots
-  const CompactDots: React.FC<{ colors: string[] }> = ({ colors }) => (
-    <div className="flex gap-1">
-      {colors.map((color, i) => (
-        <div
-          key={i}
-          className="w-2 h-2 rounded-full border border-white/20"
-          style={{ backgroundColor: color }}
-        />
-      ))}
+  // Compact summary shapes (dots for circles, tiny triangles for damage)
+  const CompactDots: React.FC<{ colors: string[]; shape?: 'circle' | 'triangle' }> = ({ colors, shape = 'circle' }) => (
+    <div className="flex gap-1 items-center">
+      {colors.map((color, i) =>
+        shape === 'triangle' ? (
+          <div
+            key={i}
+            className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[5px] border-l-transparent border-r-transparent"
+            style={{ borderTopColor: color }}
+          />
+        ) : (
+          <div
+            key={i}
+            className="w-2 h-2 rounded-full border border-white/20"
+            style={{ backgroundColor: color }}
+          />
+        )
+      )}
     </div>
   );
 
@@ -247,13 +263,14 @@ const FloatingLegend: React.FC = () => {
                     DAMAGE_COLORS.HAZARD_TREES,
                     DAMAGE_COLORS.TREAD_EROSION,
                   ]}
+                  shape="triangle"
                 />
               ) : (
                 <div className="grid grid-cols-1 gap-1">
-                  <LegendItem label="Bridge Failure" color={DAMAGE_COLORS.BRIDGE_FAILURE} shape="circle" />
-                  <LegendItem label="Debris Flow" color={DAMAGE_COLORS.DEBRIS_FLOW} shape="circle" />
-                  <LegendItem label="Hazard Trees" color={DAMAGE_COLORS.HAZARD_TREES} shape="circle" />
-                  <LegendItem label="Tread/Erosion" color={DAMAGE_COLORS.TREAD_EROSION} shape="circle" />
+                  <LegendItem label="Bridge Failure" color={DAMAGE_COLORS.BRIDGE_FAILURE} shape="triangle" />
+                  <LegendItem label="Debris Flow" color={DAMAGE_COLORS.DEBRIS_FLOW} shape="triangle" />
+                  <LegendItem label="Hazard Trees" color={DAMAGE_COLORS.HAZARD_TREES} shape="triangle" />
+                  <LegendItem label="Tread/Erosion" color={DAMAGE_COLORS.TREAD_EROSION} shape="triangle" />
                 </div>
               )}
             </div>

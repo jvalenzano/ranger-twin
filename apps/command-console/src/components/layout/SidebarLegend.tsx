@@ -161,9 +161,10 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
                                     { label: 'Tread/Erosion', color: DAMAGE_COLORS.TREAD_EROSION },
                                 ].map((item) => (
                                     <div key={item.label} className="flex items-center gap-2">
+                                        {/* Triangle shape (pointing down = warning) matching map markers */}
                                         <div
-                                            className="w-2.5 h-2.5 rounded-full border border-white/20"
-                                            style={{ backgroundColor: item.color }}
+                                            className="w-0 h-0 border-l-[5px] border-r-[5px] border-t-[9px] border-l-transparent border-r-transparent"
+                                            style={{ borderTopColor: item.color }}
                                         />
                                         <span className="text-[11px] text-slate-300">{item.label}</span>
                                     </div>
