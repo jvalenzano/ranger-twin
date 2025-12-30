@@ -183,6 +183,10 @@ function inferSeverity(event: ADKEvent): Severity {
 
 /**
  * Extract confidence from tool output or estimate from text
+ *
+ * Handles multiple formats:
+ * - JSON: {"confidence": 0.90}
+ * - Text: "Confidence: 90%", "90% confidence", "confidence: 0.90"
  */
 function extractConfidence(event: ADKEvent): number {
   const text = event.content?.parts?.[0]?.text || '';
@@ -197,11 +201,22 @@ function extractConfidence(event: ADKEvent): number {
     // Not JSON, continue with text analysis
   }
 
-  // Look for confidence mentions in text
-  const match = text.match(/(\d{1,3})%?\s*confiden/i);
-  if (match && match[1]) {
-    const value = parseInt(match[1], 10);
-    return value > 1 ? value / 100 : value;
+  // Pattern 1: "Confidence: 90%" or "**Confidence:** 90%" (specialist format)
+  const confidenceColonMatch = text.match(/\*{0,2}confidence\*{0,2}:\*{0,2}\s*(\d{1,3})%/i);
+  if (confidenceColonMatch && confidenceColonMatch[1]) {
+    return parseInt(confidenceColonMatch[1], 10) / 100;
+  }
+
+  // Pattern 2: "90% confidence" (alternative format)
+  const percentConfidenceMatch = text.match(/(\d{1,3})%\s*confiden/i);
+  if (percentConfidenceMatch && percentConfidenceMatch[1]) {
+    return parseInt(percentConfidenceMatch[1], 10) / 100;
+  }
+
+  // Pattern 3: "confidence: 0.90" or "confidence 0.85" (decimal format)
+  const decimalMatch = text.match(/confidence[:\s]+([01]?\.\d+)/i);
+  if (decimalMatch && decimalMatch[1]) {
+    return parseFloat(decimalMatch[1]);
   }
 
   // Default confidence based on event type
