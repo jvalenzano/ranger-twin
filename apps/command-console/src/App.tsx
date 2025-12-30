@@ -19,7 +19,7 @@ import {
   useTransitionState,
 } from '@/stores/missionStore';
 import { useFireContextStore } from '@/stores/fireContextStore';
-import { TacticalView, MissionControlView } from '@/views';
+import { TacticalView, MissionControlView, SplashView } from '@/views';
 
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
@@ -98,6 +98,11 @@ const App: React.FC = () => {
     );
   }
 
+  // Public splash at root (no auth required)
+  if (currentPath === '/') {
+    return <SplashView />;
+  }
+
   // Lab Route (isolated)
   if (currentPath === '/lab/forensic-insight') {
     const ForensicInsightLab = lazy(() => import('@/prototypes/ForensicInsightLab'));
@@ -108,6 +113,7 @@ const App: React.FC = () => {
     );
   }
 
+  // Protected console at /console (Basic Auth required)
   // View orchestration based on mission store state
   return (
     <ErrorBoundary>
