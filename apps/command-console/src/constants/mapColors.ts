@@ -38,12 +38,13 @@ export const DAMAGE_COLORS = {
   SIGNAGE: '#22C55E',         // Green
 } as const;
 
-// Timber priority colors (cool palette - distinct from trail damage warm colors)
+// Timber priority colors (cool palette with dark-to-light urgency gradient)
+// Darker = more urgent, lighter = lower priority
 export const PRIORITY_COLORS = {
-  HIGHEST: '#0EA5E9',  // Sky blue (Tailwind sky-500)
-  HIGH: '#06B6D4',     // Cyan (Tailwind cyan-500)
-  MEDIUM: '#14B8A6',   // Teal (Tailwind teal-500)
-  LOW: '#10B981',      // Emerald (Tailwind emerald-500)
+  HIGHEST: '#1E3A8A',  // Dark navy (Tailwind blue-800) - urgent, stands out
+  HIGH: '#2563EB',     // Medium blue (Tailwind blue-600)
+  MEDIUM: '#06B6D4',   // Cyan (Tailwind cyan-500)
+  LOW: '#34D399',      // Light green (Tailwind emerald-400) - clearly low priority
 } as const;
 
 // Type exports for type safety
