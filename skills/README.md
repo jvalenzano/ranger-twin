@@ -109,6 +109,20 @@ Skills provide:
 
 ## References
 
-- **ADR-005:** Skills-First Architecture
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
 - **Skill Format:** `docs/specs/skill-format.md`
 - **Example Skill:** `skills/foundation/greeting/`
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **BAER** | Burned Area Emergency Response | USFS post-fire emergency program |
+| **LLM** | Large Language Model | AI model trained on text (e.g., Gemini) |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **USFS** | United States Forest Service | Federal agency managing national forests |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

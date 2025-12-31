@@ -48,4 +48,18 @@ Add a skill directly to an agent's `skills/` folder when:
 
 - **Template:** `skills/foundation/_template/`
 - **Skill Format:** `docs/specs/skill-format.md`
-- **Architecture:** ADR-005 (Skills-First Architecture)
+- [ADR-005](../../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **BAER** | Burned Area Emergency Response | USFS post-fire emergency program |
+| **FSA** | Farm Service Agency | USDA agency for farm programs |
+| **NRCS** | Natural Resources Conservation Service | USDA conservation agency |
+| **USDA** | United States Department of Agriculture | Federal agriculture department |
+| **USFS** | United States Forest Service | Federal agency managing national forests |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

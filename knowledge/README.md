@@ -153,3 +153,22 @@ Expected output:
 
 - **Document Framework:** `docs/research/RANGER_doc_framework.md`
 - **Vertex AI RAG Docs:** https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/rag-api
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **BAER** | Burned Area Emergency Response | USFS post-fire emergency program |
+| **CEQ** | Council on Environmental Quality | Federal agency overseeing NEPA |
+| **CFR** | Code of Federal Regulations | Federal regulatory compilation |
+| **FSH** | Forest Service Handbook | USFS detailed procedures |
+| **FSTAG** | Forest Service Trail Accessibility Guidelines | Trail accessibility standards |
+| **GCS** | Google Cloud Storage | Cloud object storage service |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **PDF** | Portable Document Format | Document file format |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **TMO** | Trail Management Objective | Trail design standards |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

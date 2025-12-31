@@ -238,3 +238,23 @@ Proprietary - TechTrend Federal
 - [ADR-006: Google-Only LLM Strategy](../docs/adr/ADR-006-google-only-llm-strategy.md)
 - [PRODUCT-SUMMARY.md](../docs/___PRODUCT-SUMMARY.md)
 - [Google ADK Documentation](https://google.github.io/adk-docs/)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **CMEK** | Customer-Managed Encryption Key | User-controlled encryption keys |
+| **FedRAMP** | Federal Risk and Authorization Management | Federal cloud security authorization |
+| **GCP** | Google Cloud Platform | Google's cloud computing services |
+| **GCS** | Google Cloud Storage | Cloud object storage service |
+| **IAM** | Identity and Access Management | Access control system |
+| **IaC** | Infrastructure as Code | Managing infrastructure via code |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **SA** | Service Account | Identity for automated processes |
+| **VPC** | Virtual Private Cloud | Isolated cloud network |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

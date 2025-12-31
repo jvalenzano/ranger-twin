@@ -44,5 +44,16 @@ The `prototypes/` subdirectory contains experimental scripts and proof-of-concep
 
 ## References
 
-- **Runbooks:** `docs/runbooks/` for operational procedures
+- **Runbooks:** `docs/guides/` for operational procedures
 - **Testing:** `docs/testing/` for test documentation
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **CI/CD** | Continuous Integration/Deployment | Automated build and deploy pipeline |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

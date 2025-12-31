@@ -160,3 +160,18 @@ docs/diagrams/
 **Document Owner:** RANGER Product Team  
 **Last Updated:** December 28, 2025  
 **Version:** 2.0
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **FedRAMP** | Federal Risk and Authorization Management | Federal cloud security authorization |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+| **USFS** | United States Forest Service | Federal agency managing national forests |
+
+→ **[Full Glossary](../GLOSSARY.md)**

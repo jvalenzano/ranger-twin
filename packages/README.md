@@ -92,4 +92,16 @@ package-name/
 ## References
 
 - **Monorepo Config:** `pnpm-workspace.yaml`
-- **Architecture:** ADR-005 (Skills-First)
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **API** | Application Programming Interface | Protocol for software component interaction |
+| **UI** | User Interface | Visual elements for user interaction |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

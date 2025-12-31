@@ -34,5 +34,16 @@ pytest agents/_shared/tests/ -v
 
 ## References
 
-- **Architecture:** ADR-005 (Skills-First)
-- **Audit Bridge:** `AUDIT_BRIDGE_DELIVERY.md`
+- [ADR-005](../../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+- [Audit Bridge Delivery](./AUDIT_BRIDGE_DELIVERY.md)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **MCP** | Model Context Protocol | Protocol for data connectivity between agents |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

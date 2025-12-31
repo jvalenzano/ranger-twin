@@ -99,3 +99,19 @@ VITE_MAPTILER_API_KEY=lxf...        # MapTiler for maps
 VITE_RANGER_API_URL=http://localhost:8000
 VITE_USE_RANGER_API=true
 ```
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **API** | Application Programming Interface | Protocol for software component interaction |
+| **CSS** | Cascading Style Sheets | Styling language for web pages |
+| **HUD** | Heads-Up Display | Transparent display for real-time information |
+| **SSE** | Server-Sent Events | HTTP-based real-time data streaming protocol |
+| **UI** | User Interface | Visual elements for user interaction |
+| **UX** | User Experience | Overall experience when using a product |
+| **WebGL** | Web Graphics Library | JavaScript API for rendering 3D graphics |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

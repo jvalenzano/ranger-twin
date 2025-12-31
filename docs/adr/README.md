@@ -47,3 +47,18 @@
 | **Amended** | Partially active, but modified by a later ADR (check notes). |
 | **Superseded** | **DO NOT USE**. Replaced by a newer decision. Kept for history. |
 | **Proposed** | Under discussion. Not yet binding. |
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADC** | Application Default Credentials | GCP authentication mechanism |
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **SDK** | Software Development Kit | Tools for building software |
+
+→ **[Full Glossary](../GLOSSARY.md)**

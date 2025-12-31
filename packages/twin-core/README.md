@@ -135,3 +135,16 @@ pytest
 black twin_core/
 ruff check twin_core/
 ```
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **COG** | Cloud Optimized GeoTIFF | GeoTIFF optimized for cloud storage |
+| **dNBR** | Differenced Normalized Burn Ratio | Burn severity index |
+| **GCP** | Google Cloud Platform | Google's cloud computing services |
+| **KPI** | Key Performance Indicator | Measurable value for success |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

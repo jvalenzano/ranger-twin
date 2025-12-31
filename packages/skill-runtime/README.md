@@ -66,5 +66,15 @@ skill_runtime/
 
 ## References
 
-- `docs/specs/skill-format.md` - Skill format specification
-- ADR-005: Skills-First Multi-Agent Architecture
+- `docs/specs/skill-format.md` — Skill format specification
+- [ADR-005](../../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

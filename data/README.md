@@ -86,4 +86,20 @@ Phase 1 fixtures are designed to match production data schemas:
 
 - **Fixture Formats:** `docs/architecture/FIXTURE-DATA-FORMATS.md`
 - **Simulation Strategy:** `docs/archive/phase1/DATA-SIMULATION-STRATEGY.md`
-- **Architecture:** ADR-009 (Fixture-First Development)
+- [ADR-009](../docs/adr/ADR-009-fixture-first-development.md) — Fixture-First Development
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **dNBR** | Differenced Normalized Burn Ratio | Remote sensing burn severity index |
+| **FSVeg** | Forest Service Vegetation | USFS vegetation inventory system |
+| **GIS** | Geographic Information System | Framework for spatial data analysis |
+| **IRWIN** | Integrated Reporting of Wildland-Fire Information | Federal fire incident system |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **RAVG** | Rapid Assessment of Vegetation Condition | Post-fire satellite assessment |
+| **TRACS** | Trail Assessment and Condition Survey | USFS trail inventory system |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

@@ -32,3 +32,19 @@ In production, raster data would be:
 - Tiled and cached via MapTiler or similar
 
 This folder is for local development and offline analysis only.
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **3DEP** | 3D Elevation Program | USGS high-resolution topographic data |
+| **COG** | Cloud Optimized GeoTIFF | GeoTIFF optimized for cloud storage |
+| **DEM** | Digital Elevation Model | 3D terrain representation |
+| **dNBR** | Differenced Normalized Burn Ratio | Burn severity index |
+| **MODIS** | Moderate Resolution Imaging Spectroradiometer | NASA satellite instrument |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **VIIRS** | Visible Infrared Imaging Radiometer Suite | Satellite thermal sensor |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

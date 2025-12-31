@@ -92,3 +92,18 @@ import briefingEvents from '@/data/fixtures/cedar-creek/briefing-events.json';
 
 **Last Updated:** 2025-12-22  
 **Architecture Alignment:** Verified against AGENTIC-ARCHITECTURE.md v1.1.0
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **FSVeg** | Forest Service Vegetation | USFS vegetation inventory system |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **NF** | National Forest | USFS-managed forest land |
+| **RAVG** | Rapid Assessment of Vegetation Condition | Post-fire satellite assessment |
+| **TRACS** | Trail Assessment and Condition Survey | USFS trail inventory system |
+| **USFS** | United States Forest Service | Federal agency managing national forests |
+
+→ **[Full Glossary](../../../docs/GLOSSARY.md)**

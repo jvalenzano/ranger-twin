@@ -59,4 +59,16 @@ The MCP server exposes the following tools to agents:
 - **Implementation:** `services/mcp-fixtures/server.py`
 - **Fixture Data:** `data/fixtures/`
 - **Data Formats:** `docs/architecture/FIXTURE-DATA-FORMATS.md`
-- **Architecture:** ADR-005 (Skills-First), ADR-009 (Fixture-First Development)
+- [ADR-005](../../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+- [ADR-009](../../docs/adr/ADR-009-fixture-first-development.md) — Fixture-First Development
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **NF** | National Forest | USFS-managed forest land |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

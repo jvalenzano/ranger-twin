@@ -219,3 +219,23 @@ Test queries are defined in fixtures:
 - **Trail Infrastructure**: FSTAG standards, damage classification, TRACS codes
 
 These queries are designed to validate corpus coverage and relevance scoring.
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **BAER** | Burned Area Emergency Response | USFS post-fire emergency program |
+| **CE** | Categorical Exclusion | NEPA category for minimal-impact actions |
+| **CI** | Continuous Integration | Automated code testing and build |
+| **dNBR** | Differenced Normalized Burn Ratio | Burn severity index from satellite imagery |
+| **EA** | Environmental Assessment | NEPA environmental review document |
+| **EIS** | Environmental Impact Statement | Full NEPA environmental analysis |
+| **FSTAG** | Forest Service Trail Accessibility Guidelines | Trail accessibility standards |
+| **GCS** | Google Cloud Storage | Cloud object storage service |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **TRACS** | Trail Assessment and Condition Survey | USFS trail inventory system |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

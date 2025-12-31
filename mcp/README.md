@@ -66,4 +66,17 @@ Will provide access to NIFC fire incident data and perimeters.
 
 - **Protocol:** [Model Context Protocol](https://modelcontextprotocol.io/)
 - **Registry Spec:** `docs/specs/MCP-REGISTRY-STANDARD.md`
-- **Architecture:** ADR-005 (Skills-First, MCP connectivity layer)
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture (MCP connectivity layer)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **NIFC** | National Interagency Fire Center | Coordination center for wildfire response |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

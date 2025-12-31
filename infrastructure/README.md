@@ -82,5 +82,19 @@ See `NAMING-CONVENTIONS.md` for resource naming standards.
 ## References
 
 - **Deployment Runbook:** `docs/deployment/`
-- **Architecture:** ADR-005 (Skills-First)
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
 - **Security:** `docs/specs/SECURITY-BASELINE.md`
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **CI/CD** | Continuous Integration/Deployment | Automated build and deploy pipeline |
+| **FedRAMP** | Federal Risk and Authorization Management | Federal cloud security authorization |
+| **GCP** | Google Cloud Platform | Google's cloud computing services |
+| **IaC** | Infrastructure as Code | Managing infrastructure via code |
+| **USDA** | United States Department of Agriculture | Federal department overseeing USFS |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

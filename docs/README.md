@@ -201,3 +201,25 @@ See [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) for full context and the "8-minut
 ---
 
 *Last updated: December 30, 2025*
+
+---
+
+## Glossary
+
+Key acronyms used in RANGER documentation:
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **BAER** | Burned Area Emergency Response | USFS post-fire emergency program |
+| **EA** | Environmental Assessment | NEPA document for environmental review |
+| **EIS** | Environmental Impact Statement | Full NEPA environmental analysis |
+| **FSH** | Forest Service Handbook | USFS detailed procedures and instructions |
+| **FSM** | Forest Service Manual | USFS agency-wide policy chapters |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+
+→ **[Full Glossary](./GLOSSARY.md)** — Complete definitions for all 100+ RANGER terms.

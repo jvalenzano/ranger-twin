@@ -141,3 +141,15 @@ pnpm build
 # Test
 pnpm test
 ```
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **CSS** | Cascading Style Sheets | Styling language for web pages |
+| **KPI** | Key Performance Indicator | Measurable value for success |
+| **UI** | User Interface | Visual elements for user interaction |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

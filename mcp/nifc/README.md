@@ -45,4 +45,18 @@ Refactor from existing frontend service:
 ## References
 
 - **Protocol:** [Model Context Protocol](https://modelcontextprotocol.io/)
-- **Architecture:** ADR-005 (Skills-First), MCP-REGISTRY-STANDARD.md
+- [ADR-005](../../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+- **Registry Spec:** `MCP-REGISTRY-STANDARD.md`
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **API** | Application Programming Interface | Protocol for software interaction |
+| **IRWIN** | Integrated Reporting of Wildland-Fire Information | Federal fire incident system |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **NIFC** | National Interagency Fire Center | Coordination center for wildfire response |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

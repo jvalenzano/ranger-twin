@@ -243,3 +243,23 @@ Cost: ~$100-200/month (off-season), ~$800-1200/month (fire season)
 **Last Updated:** 2025-12-30  
 **Maintained By:** RANGER Architecture Team  
 **Questions?** See `CLAUDE.md` for development workflow guidance
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADC** | Application Default Credentials | GCP authentication mechanism |
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **CDS** | Common Data Schema | RANGER's normalized internal data models |
+| **FedRAMP** | Federal Risk and Authorization Management | Federal cloud security authorization |
+| **GCS** | Google Cloud Storage | Cloud object storage service |
+| **LLM** | Large Language Model | AI model trained on text (e.g., Gemini) |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **PWA** | Progressive Web App | Web app with native app capabilities |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+
+→ **[Full Glossary](../GLOSSARY.md)**

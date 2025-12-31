@@ -36,3 +36,17 @@ In production, this data would be served from:
 - USFS data APIs
 
 This folder is for local development and testing only.
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **dNBR** | Differenced Normalized Burn Ratio | Burn severity index from satellite imagery |
+| **FSVeg** | Forest Service Vegetation | USFS vegetation inventory system |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **NIFC** | National Interagency Fire Center | Coordination center for wildfire response |
+| **RAVG** | Rapid Assessment of Vegetation Condition | Post-fire satellite assessment |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

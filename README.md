@@ -38,24 +38,24 @@ RANGER is an **Agentic Operating System** for post-fire forest recovery that coo
 4. **Federal-Ready**: Built for FedRAMP compliance, audit trails, and transparency
 
 ## Quick Start
+
 ```bash
 # Clone repository
 git clone https://github.com/TechTrend-Federal/ranger-twin.git
 cd ranger-twin
-
-# See agent-specific README files
-cat agents/recovery-coordinator/README.md
-cat agents/burn-analyst/README.md
 
 # Development setup
 python -m venv .venv
 source .venv/bin/activate  # or `.venv/Scripts/activate` on Windows
 pip install -r requirements.txt
 
-# Run an agent locally
-cd agents/recovery-coordinator
-python agent.py
+# Run agents locally (ADK Web Interface)
+cd agents
+adk web --port 8000
+# → http://localhost:8000
 ```
+
+**Agent Documentation:** See [agents/README.md](agents/README.md) for the full agent roster and development guide.
 
 ## Documentation
 
@@ -65,6 +65,7 @@ python agent.py
 | [ADR-006](docs/adr/ADR-006-google-only-llm-strategy.md) | Google-only LLM strategy |
 | [PROOF-LAYER-DESIGN](docs/specs/PROOF-LAYER-DESIGN.md) | AI transparency specification |
 | [PROTOCOL-AGENT-COMMUNICATION](docs/specs/PROTOCOL-AGENT-COMMUNICATION.md) | Agent messaging standard |
+| [GLOSSARY](docs/GLOSSARY.md) | 100+ acronyms and domain terms |
 | [CHANGELOG](CHANGELOG.md) | Release history |
 
 ## Production Endpoints
@@ -73,6 +74,25 @@ python agent.py
 |---------|-----|
 | Orchestrator | `https://ranger-orchestrator-1058891520442.us-west1.run.app` |
 | Frontend | `https://ranger-frontend-1058891520442.us-west1.run.app` |
+
+---
+
+## Glossary
+
+Key acronyms used in this document:
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **FedRAMP** | Federal Risk and Authorization Management Program | Cloud security authorization for federal agencies |
+| **MCP** | Model Context Protocol | Protocol for data connectivity between agents |
+| **MTBS** | Monitoring Trends in Burn Severity | USGS/USFS program mapping fire severity |
+| **NEPA** | National Environmental Policy Act | Federal environmental impact assessment law |
+
+→ **[Full Glossary](docs/GLOSSARY.md)** — Complete definitions for all RANGER terms and acronyms.
+
+---
 
 ## License
 

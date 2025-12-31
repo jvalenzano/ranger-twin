@@ -164,3 +164,18 @@ Next audit recommended after Phase 4 deployment completion.
 ---
 
 *Maintained by TechTrend Federal — Digital Twin Initiative*
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+
+→ **[Full Glossary](../../GLOSSARY.md)**

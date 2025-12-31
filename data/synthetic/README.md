@@ -39,3 +39,15 @@ Synthetic data allows us to:
 ## Notes
 
 Synthetic data should be clearly labeled and never mixed with real data in production.
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **LLM** | Large Language Model | AI model trained on text (e.g., Gemini) |
+| **ML** | Machine Learning | Algorithms that learn from data |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

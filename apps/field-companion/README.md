@@ -65,6 +65,24 @@ pnpm build
 
 ---
 
-**Status:** Conceptual Scaffolding (Phase 1 Simulation)
-**Primary Developer:** TBD
+**Status:** Conceptual Scaffolding (Phase 1 Simulation)  
+**Primary Developer:** TBD  
 **Strategy Doc:** [FIELD-AI-STRATEGY.md](../../docs/architecture/FIELD-AI-STRATEGY.md)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **AR** | Augmented Reality | Overlaying digital content on real-world view |
+| **DBH** | Diameter at Breast Height | Standard forestry tree measurement (4.5 ft) |
+| **FSVeg** | Forest Service Vegetation | USFS vegetation inventory data system |
+| **GPS** | Global Positioning System | Satellite-based geolocation system |
+| **GCS** | Google Cloud Storage | Cloud object storage service |
+| **IMU** | Inertial Measurement Unit | Sensor for orientation/acceleration |
+| **JSON** | JavaScript Object Notation | Lightweight data interchange format |
+| **PWA** | Progressive Web App | Web app with native app capabilities |
+| **SQLite** | SQL Lite | Embedded relational database |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

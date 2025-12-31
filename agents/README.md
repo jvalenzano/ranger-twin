@@ -55,12 +55,16 @@ adk run coordinator
 
 ### FastAPI Orchestrator
 
+Run from **project root**:
+
 ```bash
 python main.py
 # → http://localhost:8000
 ```
 
 ## Testing
+
+Run from **project root**:
 
 ```bash
 # All agent tests
@@ -106,7 +110,26 @@ agent = Agent(
 
 ## References
 
-- **ADR-005:** Skills-First Architecture
-- **ADR-007.1:** Tool Invocation Strategy
-- **ADR-008:** AgentTool Pattern
-- **Runbook:** `docs/runbooks/ADK-OPERATIONS-RUNBOOK.md`
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+- [ADR-007.1](../docs/adr/ADR-007.1-tool-invocation-strategy.md) — Tool Invocation Strategy
+- [ADR-008](../docs/adr/ADR-008-agent-tool-pattern.md) — AgentTool Pattern
+- [ADK Operations Runbook](../docs/guides/ADK-OPERATIONS-RUNBOOK.md)
+
+---
+
+## Glossary
+
+Acronyms used in this document:
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's orchestration framework for multi-agent AI systems |
+| **ADR** | Architecture Decision Record | Documented technical decisions with context and rationale |
+| **CE** | Categorical Exclusion | NEPA category for actions with no significant environmental impact |
+| **EA** | Environmental Assessment | NEPA document for actions that may affect the environment |
+| **EIS** | Environmental Impact Statement | Full NEPA analysis for actions with significant impacts |
+| **MCP** | Model Context Protocol | Protocol for data connectivity between agents and external sources |
+| **MTBS** | Monitoring Trends in Burn Severity | USGS/USFS program mapping fire severity from satellite imagery |
+| **NEPA** | National Environmental Policy Act | Federal law requiring environmental impact assessment |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)** — Complete definitions for all RANGER terms and acronyms.

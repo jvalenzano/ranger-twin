@@ -87,4 +87,15 @@ Protocols are versioned documents:
 
 - **CLAUDE.md** - Main AI agent reference (protocols referenced at top)
 - **docs/adr/** - Architecture Decision Records (protocols inform ADRs)
-- **docs/runbooks/** - Operational procedures (protocols prerequisite for deployment)
+- **docs/guides/** - Operational procedures (protocols prerequisite for deployment)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **AI** | Artificial Intelligence | Machine learning systems |
+
+→ **[Full Glossary](../GLOSSARY.md)**

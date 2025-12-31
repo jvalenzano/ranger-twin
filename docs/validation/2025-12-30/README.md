@@ -190,3 +190,22 @@ All critical functionality validated:
 **Test Report Created**: 2025-12-30  
 **Tested by**: Claude Code (Automated)  
 **Contact**: RANGER Engineering Team
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **API** | Application Programming Interface | Protocol for software interaction |
+| **CFR** | Code of Federal Regulations | Federal regulatory compilation |
+| **E2E** | End-to-End | Testing complete user workflows |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **NEPA** | National Environmental Policy Act | Federal environmental assessment law |
+| **QA** | Quality Assurance | Testing and validation |
+| **RAG** | Retrieval-Augmented Generation | AI pattern combining retrieval + LLM |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+
+→ **[Full Glossary](../../GLOSSARY.md)**

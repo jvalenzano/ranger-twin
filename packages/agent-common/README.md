@@ -153,3 +153,15 @@ pytest
 black agent_common/
 ruff check agent_common/
 ```
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **API** | Application Programming Interface | Protocol for software interaction |
+| **dNBR** | Differenced Normalized Burn Ratio | Burn severity index |
+
+→ **[Full Glossary](../../docs/GLOSSARY.md)**

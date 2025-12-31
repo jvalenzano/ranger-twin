@@ -65,4 +65,17 @@ gcloud run deploy mcp-fixtures \
 - **Agent Code:** `agents/`
 - **MCP Specifications:** `mcp/`
 - **Deployment:** `docs/deployment/`
-- **Architecture:** ADR-005 (Skills-First)
+- [ADR-005](../docs/adr/ADR-005-skills-first-architecture.md) — Skills-First Architecture
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADK** | Agent Development Kit | Google's framework for multi-agent AI systems |
+| **IaC** | Infrastructure as Code | Managing infrastructure via code |
+| **MCP** | Model Context Protocol | Protocol for data connectivity |
+| **SSE** | Server-Sent Events | HTTP-based real-time streaming |
+
+→ **[Full Glossary](../docs/GLOSSARY.md)**

@@ -24,5 +24,16 @@ As RANGER evolves toward a production-ready system, we maintain "Single Sources 
 
 ---
 
-**Last Updated:** December 25, 2025
+**Last Updated:** December 25, 2025  
 **Maintainer:** RANGER Team
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **ADR** | Architecture Decision Record | Documented technical decisions with rationale |
+| **UX** | User Experience | Overall experience when using a product |
+
+→ **[Full Glossary](../GLOSSARY.md)**

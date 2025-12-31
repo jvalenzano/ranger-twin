@@ -54,5 +54,18 @@ See `data/fixtures/cedar-creek/README.md` for detailed schema documentation.
 
 ---
 
-**Last Updated:** 2025-12-28
-**Architecture Alignment:** ADR-005 (Skills-First), ADR-009 (Fixture-First)
+**Last Updated:** 2025-12-28  
+**Architecture Alignment:** [ADR-005](../../../docs/adr/ADR-005-skills-first-architecture.md), [ADR-009](../../../docs/adr/ADR-009-fixture-first-development.md)
+
+---
+
+## Glossary
+
+| Acronym | Full Name | Description |
+|---------|-----------|-------------|
+| **FSVeg** | Forest Service Vegetation | USFS vegetation inventory system |
+| **MTBS** | Monitoring Trends in Burn Severity | Fire severity mapping program |
+| **NF** | National Forest | USFS-managed forest land |
+| **TRACS** | Trail Assessment and Condition Survey | USFS trail inventory system |
+
+→ **[Full Glossary](../../../docs/GLOSSARY.md)**
