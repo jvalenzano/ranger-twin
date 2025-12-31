@@ -7,11 +7,13 @@
 > - Vertex AI + ADC authentication working
 > - 5 agents, 16+ tools, 645 tests passing
 > - RAG infrastructure: 16 documents across 4 corpora
+> - Stress testing: 89% pass rate (25/28 tests)
 >
 > **Phase 5: Production Hardening — 🔄 IN PROGRESS**
 > - ✅ Fire ID normalization
 > - ✅ Runtime architecture documentation
 > - ✅ Prompt engineering runbook created
+> - ✅ Stress test harness (`scripts/agent_stress_test.py`)
 > - 🔲 Suggested Actions API endpoints ([BACKLOG](backlog/BACKLOG-suggested-actions-system.md))
 > - 🔲 Demo preparation
 >
@@ -23,16 +25,27 @@
 > **Known Issues:**
 > - Suggested Actions buttons fail when backend unavailable ([BACKLOG](backlog/BACKLOG-suggested-actions-system.md))
 
-**Version:** 2.2
-**Date:** December 25, 2025 (Updated December 30, 2025)
-**Status:** Active — Single Source of Truth
+**Version:** 2.3
+**Date:** December 30, 2025
+**Status:** Active — Technical Execution Guide
 **Supersedes:** All previous sprint plans, phase documents, and feature backlogs
+
+---
+
+> [!IMPORTANT]
+> **Strategic Context:** This document is the **technical execution guide** for RANGER implementation.
+> For product strategy, feature prioritization, and the "why" behind our roadmap, see:
+> **[STRATEGIC-ROADMAP.md](./STRATEGIC-ROADMAP.md)** — Single Source of Product Strategy Truth
+>
+> The relationship:
+> - `STRATEGIC-ROADMAP.md` → What to build and why (PM/PO/Leadership)
+> - `_!_IMPLEMENTATION-ROADMAP.md` → How to build it (Technical Leads/Developers)
 
 ---
 
 ## Executive Summary
 
-This document is the **north star** for RANGER implementation. It consolidates strategic decisions, architectural choices, and tactical execution into a single, actionable plan.
+This document is the **technical execution guide** for RANGER implementation. It consolidates architectural choices, implementation phases, and tactical execution into a single, actionable plan.
 
 **The Goal:** Build RANGER as a production-ready AI nerve center for USDA Forest Service post-fire recovery, using a Skills-First architecture that can scale to other USDA agencies.
 

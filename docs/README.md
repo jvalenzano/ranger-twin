@@ -17,12 +17,13 @@
 
 ## Start Here
 
-| Document | Description |
-|----------|-------------|
-| [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | **Start here.** Single rallying document for the product team — vision, architecture, current focus, operational reality |
-| [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) | **Implementation North Star.** 13-week phased plan to MVP ($704K) |
-| [protocols/README.md](./protocols/README.md) | **Development protocols** — mandatory compliance for all contributors |
-| [GLOSSARY.md](./GLOSSARY.md) | 100+ acronyms and domain terms (BAER, NEPA, FSM/FSH, etc.) |
+| Document | Audience | Description |
+|----------|----------|-------------|
+| **[STRATEGIC-ROADMAP.md](./STRATEGIC-ROADMAP.md)** | PM / PO / Leadership | **Product strategy** — what to build, why, and in what sequence |
+| [_!_IMPLEMENTATION-ROADMAP.md](./_!_IMPLEMENTATION-ROADMAP.md) | Tech Leads / Developers | **Technical execution** — how to build it, phases, architecture |
+| [_!_PRODUCT-SUMMARY.md](./_!_PRODUCT-SUMMARY.md) | Everyone | **Vision & context** — the problem, solution, and positioning |
+| [protocols/README.md](./protocols/README.md) | Developers | **Development protocols** — mandatory compliance for all contributors |
+| [GLOSSARY.md](./GLOSSARY.md) | Everyone | 100+ acronyms and domain terms (BAER, NEPA, FSM/FSH, etc.) |
 
 ## Quick Navigation
 
@@ -30,8 +31,9 @@
 
 | Document | Description |
 |----------|-------------|
-| [PRODUCT-SUMMARY.md](./PRODUCT-SUMMARY.md) | Comprehensive product overview — what, why, how, and current priorities |
-| [IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md) | 13-week phased plan to MVP (Supersedes all previous sprint plans) |
+| **[STRATEGIC-ROADMAP.md](./STRATEGIC-ROADMAP.md)** | **START HERE: Product strategy, feature prioritization, and the "why" — for PM/PO/Leadership** |
+| [_!_IMPLEMENTATION-ROADMAP.md](./_!_IMPLEMENTATION-ROADMAP.md) | Technical execution guide — how to build it (Technical Leads/Developers) |
+| [_!_PRODUCT-SUMMARY.md](./_!_PRODUCT-SUMMARY.md) | Comprehensive product overview — what, why, how, and current priorities |
 | [PROJECT-BRIEF.md](./PROJECT-BRIEF.md) | Original vision document with agent specifications and UX concepts |
 | [STRATEGIC-REFRAME.md](./STRATEGIC-REFRAME.md) | Architectural clarity: "one console, multiple views" insight |
 | [INTEGRATION-ROADMAP.md](./INTEGRATION-ROADMAP.md) | Phase 1→2 transition plan for external data sources (NIFC, FIRMS, MTBS) |
