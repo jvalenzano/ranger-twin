@@ -17,6 +17,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapStore, useActiveLayer, useMapCamera, useTerrainExaggeration, useTerrainEnabled, useDataLayers, type MapFeatureId } from '@/stores/mapStore';
 import { useActiveFire, useActiveFireId } from '@/stores/fireContextStore';
 import { SEVERITY_COLORS, IR_SEVERITY_COLORS, DAMAGE_COLORS, PRIORITY_COLORS } from '@/constants/mapColors';
+import { BurnSeverityLayer } from './BurnSeverityLayer';
 
 // MapTiler tile URLs
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
@@ -1138,11 +1139,23 @@ const CedarCreekMap: React.FC = () => {
   }, [activeFireId, activeFire.centroid, activeFire.name, mapReady, setCamera]);
 
   return (
-    <div
-      ref={mapContainer}
-      className="absolute inset-0 w-full h-full"
-      style={{ background: '#0f172a' }}
-    />
+    <>
+      <div
+        ref={mapContainer}
+        className="absolute inset-0 w-full h-full"
+        style={{ background: '#0f172a' }}
+      />
+      {/* TiTiler Burn Severity Raster Layer (ADR-013) */}
+      {map.current && mapReady && (
+        <BurnSeverityLayer
+          map={map.current}
+          visible={dataLayers.burnSeverity.visible && activeLayer !== 'IR'}
+          opacity={0.7}
+          onLoad={() => console.log('[CedarCreekMap] TiTiler burn severity layer loaded')}
+          onError={(error) => console.error('[CedarCreekMap] TiTiler layer failed:', error)}
+        />
+      )}
+    </>
   );
 };
 

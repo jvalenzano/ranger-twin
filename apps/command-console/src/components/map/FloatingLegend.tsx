@@ -18,6 +18,8 @@ import {
   PanelLeftClose,
   Minimize2,
   Maximize2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import {
   useActiveLayer,
@@ -25,6 +27,7 @@ import {
   useLegendPosition,
   useLegendCompact,
   useLegendMode,
+  useDataLayers,
   useMapStore,
 } from '@/stores/mapStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
@@ -37,11 +40,16 @@ const FloatingLegend: React.FC = () => {
   const legendPosition = useLegendPosition();
   const legendCompact = useLegendCompact();
   const legendMode = useLegendMode();
+  const dataLayers = useDataLayers();
   const setLegendExpanded = useMapStore((state) => state.setLegendExpanded);
   const setLegendPosition = useMapStore((state) => state.setLegendPosition);
   const setLegendCompact = useMapStore((state) => state.setLegendCompact);
+  const toggleDataLayer = useMapStore((state) => state.toggleDataLayer);
   const dockLegend = useMapStore((state) => state.dockLegend);
   const { activePhase } = useLifecycleStore();
+
+  // Layer visibility from store
+  const isBurnSeverityVisible = dataLayers.burnSeverity.visible;
 
   const isIR = activeLayer === 'IR';
   const containerRef = useRef<HTMLDivElement>(null);
@@ -216,34 +224,52 @@ const FloatingLegend: React.FC = () => {
           {showBurnSeverity && (
             <div className="space-y-1.5">
               {!legendCompact && (
-                <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                  Burn Severity {isIR && '(Thermal)'}
-                </h4>
-              )}
-              {legendCompact ? (
-                <CompactDots
-                  colors={[
-                    isIR ? IR_SEVERITY_COLORS.HIGH : SEVERITY_COLORS.HIGH,
-                    isIR ? IR_SEVERITY_COLORS.MODERATE : SEVERITY_COLORS.MODERATE,
-                    isIR ? IR_SEVERITY_COLORS.LOW : SEVERITY_COLORS.LOW,
-                  ]}
-                />
-              ) : (
-                <div className="grid grid-cols-1 gap-1">
-                  <LegendItem
-                    label="High"
-                    color={isIR ? IR_SEVERITY_COLORS.HIGH : SEVERITY_COLORS.HIGH}
-                  />
-                  <LegendItem
-                    label="Moderate"
-                    color={isIR ? IR_SEVERITY_COLORS.MODERATE : SEVERITY_COLORS.MODERATE}
-                  />
-                  <LegendItem
-                    label="Low"
-                    color={isIR ? IR_SEVERITY_COLORS.LOW : SEVERITY_COLORS.LOW}
-                  />
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                    Burn Severity {isIR && '(Thermal)'}
+                  </h4>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleDataLayer('burnSeverity');
+                    }}
+                    className="p-1 rounded hover:bg-white/10 transition-colors"
+                    title={isBurnSeverityVisible ? 'Hide burn severity layer' : 'Show burn severity layer'}
+                  >
+                    {isBurnSeverityVisible ? (
+                      <Eye size={12} className="text-accent-cyan" />
+                    ) : (
+                      <EyeOff size={12} className="text-slate-500" />
+                    )}
+                  </button>
                 </div>
               )}
+              <div className={`transition-opacity ${isBurnSeverityVisible ? '' : 'opacity-40'}`}>
+                {legendCompact ? (
+                  <CompactDots
+                    colors={[
+                      isIR ? IR_SEVERITY_COLORS.HIGH : SEVERITY_COLORS.HIGH,
+                      isIR ? IR_SEVERITY_COLORS.MODERATE : SEVERITY_COLORS.MODERATE,
+                      isIR ? IR_SEVERITY_COLORS.LOW : SEVERITY_COLORS.LOW,
+                    ]}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 gap-1">
+                    <LegendItem
+                      label="High"
+                      color={isIR ? IR_SEVERITY_COLORS.HIGH : SEVERITY_COLORS.HIGH}
+                    />
+                    <LegendItem
+                      label="Moderate"
+                      color={isIR ? IR_SEVERITY_COLORS.MODERATE : SEVERITY_COLORS.MODERATE}
+                    />
+                    <LegendItem
+                      label="Low"
+                      color={isIR ? IR_SEVERITY_COLORS.LOW : SEVERITY_COLORS.LOW}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
