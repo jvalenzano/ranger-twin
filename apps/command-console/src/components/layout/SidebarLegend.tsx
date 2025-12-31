@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layers, ChevronRight, ChevronDown, PanelRightOpen } from 'lucide-react';
-import { useActiveLayer, useLegendExpanded, useLegendMode, useMapStore } from '@/stores/mapStore';
+import { Layers, ChevronRight, ChevronDown, PanelRightOpen, Eye, EyeOff } from 'lucide-react';
+import { useActiveLayer, useLegendExpanded, useLegendMode, useDataLayers, useMapStore } from '@/stores/mapStore';
 import { useLifecycleStore } from '@/stores/lifecycleStore';
 import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent } from '@/config/tooltipContent';
@@ -15,10 +15,13 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
     const activeLayer = useActiveLayer();
     const legendExpanded = useLegendExpanded();
     const legendMode = useLegendMode();
+    const dataLayers = useDataLayers();
     const setLegendExpanded = useMapStore((state) => state.setLegendExpanded);
     const detachLegend = useMapStore((state) => state.detachLegend);
+    const toggleDataLayer = useMapStore((state) => state.toggleDataLayer);
     const { activePhase } = useLifecycleStore();
     const isIR = activeLayer === 'IR';
+    const isBurnSeverityVisible = dataLayers.burnSeverity.visible;
 
     const toggleLegend = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -127,10 +130,26 @@ const SidebarLegend: React.FC<SidebarLegendProps> = ({ isExpanded, onExpandSideb
 
                     {/* Burn Severity Section */}
                     <div className="space-y-2">
-                        <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                            Burn Severity {isIR && '(Thermal)'}
-                        </h4>
-                        <div className="grid grid-cols-1 gap-1.5">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                                Burn Severity {isIR && '(Thermal)'}
+                            </h4>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleDataLayer('burnSeverity');
+                                }}
+                                className="p-1 rounded hover:bg-white/10 transition-colors"
+                                title={isBurnSeverityVisible ? 'Hide burn severity layer' : 'Show burn severity layer'}
+                            >
+                                {isBurnSeverityVisible ? (
+                                    <Eye size={12} className="text-accent-cyan" />
+                                ) : (
+                                    <EyeOff size={12} className="text-slate-500" />
+                                )}
+                            </button>
+                        </div>
+                        <div className={`grid grid-cols-1 gap-1.5 transition-opacity ${isBurnSeverityVisible ? '' : 'opacity-40'}`}>
                             {[
                                 { label: 'High', color: isIR ? IR_SEVERITY_COLORS.HIGH : SEVERITY_COLORS.HIGH },
                                 { label: 'Moderate', color: isIR ? IR_SEVERITY_COLORS.MODERATE : SEVERITY_COLORS.MODERATE },
