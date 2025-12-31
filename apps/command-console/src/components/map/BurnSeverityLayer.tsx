@@ -13,7 +13,6 @@
  */
 
 import { useEffect, useCallback } from 'react';
-import { useMap } from 'react-map-gl/maplibre';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 
 // Environment configuration
@@ -30,6 +29,8 @@ const GEOSPATIAL_BUCKET = import.meta.env.VITE_GEOSPATIAL_BUCKET || 'ranger-geos
 const SEVERITY_COLORMAP = 'rdylgn_r'; // Red-Yellow-Green reversed
 
 export interface BurnSeverityLayerProps {
+  /** MapLibre map instance */
+  map: MapLibreMap | null;
   /** GCS path to the COG file (relative to bucket) */
   cogPath?: string;
   /** Whether the layer is visible */
@@ -56,12 +57,12 @@ const DEFAULT_COG_PATH = 'mtbs/cedar_creek_severity_cog.tif';
  * @returns TiTiler tile URL template
  */
 function buildTileUrl(cogPath: string): string {
-  // Full GCS URL for the COG
-  const cogUrl = `gs://${GEOSPATIAL_BUCKET}/${cogPath}`;
+  // Full GCS URL for the COG (use https for public bucket access)
+  const cogUrl = `https://storage.googleapis.com/${GEOSPATIAL_BUCKET}/${cogPath}`;
 
   // TiTiler tile endpoint with colormap
   // Using rdylgn_r (reversed red-yellow-green) for severity visualization
-  return `${TITILER_URL}/cog/tiles/{z}/{x}/{y}?url=${encodeURIComponent(cogUrl)}&colormap_name=${SEVERITY_COLORMAP}`;
+  return `${TITILER_URL}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(cogUrl)}&colormap_name=${SEVERITY_COLORMAP}`;
 }
 
 /**
@@ -71,6 +72,7 @@ function buildTileUrl(cogPath: string): string {
  * The layer automatically updates when visibility or opacity changes.
  */
 export function BurnSeverityLayer({
+  map,
   cogPath = DEFAULT_COG_PATH,
   visible = true,
   opacity = 0.7,
@@ -79,8 +81,6 @@ export function BurnSeverityLayer({
   onLoad,
   onError,
 }: BurnSeverityLayerProps) {
-  const { current: mapRef } = useMap();
-
   // Derive COG path from fireId if provided
   const effectiveCogPath = fireId
     ? `mtbs/${fireId}_severity_cog.tif`
@@ -136,9 +136,7 @@ export function BurnSeverityLayer({
 
   // Initialize layer when map is ready
   useEffect(() => {
-    if (!mapRef) return;
-
-    const map = mapRef.getMap();
+    if (!map) return;
 
     // Add layer when style is loaded
     if (map.isStyleLoaded()) {
@@ -160,13 +158,12 @@ export function BurnSeverityLayer({
         // Map may already be destroyed
       }
     };
-  }, [mapRef, addLayer]);
+  }, [map, addLayer]);
 
   // Update visibility when prop changes
   useEffect(() => {
-    if (!mapRef) return;
+    if (!map) return;
 
-    const map = mapRef.getMap();
     if (map.getLayer(layerId)) {
       map.setLayoutProperty(
         layerId,
@@ -174,17 +171,16 @@ export function BurnSeverityLayer({
         visible ? 'visible' : 'none'
       );
     }
-  }, [mapRef, visible]);
+  }, [map, visible]);
 
   // Update opacity when prop changes
   useEffect(() => {
-    if (!mapRef) return;
+    if (!map) return;
 
-    const map = mapRef.getMap();
     if (map.getLayer(layerId)) {
       map.setPaintProperty(layerId, 'raster-opacity', opacity);
     }
-  }, [mapRef, opacity]);
+  }, [map, opacity]);
 
   // This is a map layer, not a DOM element
   return null;

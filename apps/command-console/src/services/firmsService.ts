@@ -169,7 +169,7 @@ function parseCSV(csv: string): FirmsDetection[] {
  * Creates realistic-looking hotspots near known fire locations
  */
 function generateMockHotspots(): FirmsDetection[] {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0] ?? '';
   const mockHotspots: FirmsDetection[] = [];
 
   // Cedar Creek Fire area (Oregon) - 43.726°N, 122.167°W
