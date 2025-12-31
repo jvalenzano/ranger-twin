@@ -70,8 +70,11 @@ const InsightPanel: React.FC = () => {
   // Get the most recent event (top of the list)
   const latestEvent: AgentBriefingEvent | undefined = events[0];
 
+  // Check if we're in demo mode (skip backend API calls)
+  const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+
   // Handle suggested action click
-  const handleActionClick = (action: any) => {
+  const handleActionClick = async (action: any) => {
     const { target_agent: targetAgent, action_id: actionId, label } = action;
 
     // 1. Handle Exports (Immediate)
@@ -113,18 +116,31 @@ const InsightPanel: React.FC = () => {
       success(`Triggered ${label}`);
     }
 
-    // 3. Trigger real backend action (Fire-and-forget in demo)
-    if (targetAgent === 'burn_analyst') {
-      briefingService.triggerBurnAnalysis('Sector NW-4');
-    } else if (targetAgent === 'trail_assessor') {
-      briefingService.triggerTrailAssessment('Waldo Lake Trail');
-    } else if (targetAgent === 'cruising_assistant') {
-      briefingService.triggerTimberCruise('Plot 47-Alpha');
-    } else if (targetAgent === 'nepa_advisor') {
-      briefingService.triggerNepaReview('Cedar Creek Recovery');
+    console.log(`[InsightPanel] Action clicked: trigger ${targetAgent} (${actionId})`);
+
+    // 3. Trigger real backend action (graceful degradation for demos)
+    // Skip backend calls entirely in demo mode
+    if (isDemoMode) {
+      console.log('[InsightPanel] Demo mode - skipping backend API call');
+      return;
     }
 
-    console.log(`[InsightPanel] Action clicked: trigger ${targetAgent} (${actionId})`);
+    // Attempt backend call with graceful error handling
+    try {
+      if (targetAgent === 'burn_analyst') {
+        await briefingService.triggerBurnAnalysis('Sector NW-4');
+      } else if (targetAgent === 'trail_assessor') {
+        await briefingService.triggerTrailAssessment('Waldo Lake Trail');
+      } else if (targetAgent === 'cruising_assistant') {
+        await briefingService.triggerTimberCruise('Plot 47-Alpha');
+      } else if (targetAgent === 'nepa_advisor') {
+        await briefingService.triggerNepaReview('Cedar Creek Recovery');
+      }
+    } catch (error) {
+      // Graceful degradation: Log warning but don't show error to user
+      // The optimistic UI update via mockBriefingService already succeeded
+      console.warn('[InsightPanel] Backend unavailable, using mock cascade:', error);
+    }
   };
 
   // If no event, don't show anything - sidebar provides guidance

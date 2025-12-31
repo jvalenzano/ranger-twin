@@ -1,0 +1,248 @@
+# RANGER Agent Stress Test Matrix
+# Based on ADR-005 Skills-First Architecture diagnostic requirements
+
+config:
+  api_base_url: "http://localhost:8001"
+  default_timeout_seconds: 60
+  user_id: "stress_test_user"
+  
+test_suites:
+  # ============================================
+  # PHASE A: Single-Agent Direct (Baseline)
+  # ============================================
+  - name: "Phase A: Single-Agent Direct"
+    description: "Bypass Coordinator—test specialists in isolation"
+    tests:
+      - id: SA-01
+        agent: burn_analyst
+        query: "What burn severity classifications exist in MTBS data?"
+        expected:
+          contains_any: ["Unburned", "Low", "Moderate", "High", "Increased Greenness"]
+          has_citations: true
+          max_response_time_seconds: 30
+          
+      - id: SA-02
+        agent: burn_analyst
+        query: "Explain soil burn severity indicators for high-severity areas"
+        expected:
+          contains_any: ["hydrophobic", "ash", "organic matter", "white layer"]
+          has_citations: true
+          
+      - id: SA-03
+        agent: trail_assessor
+        query: "What factors determine trail closure decisions post-fire?"
+        expected:
+          contains_any: ["safety", "erosion", "hazard", "structural"]
+          has_citations: true
+          
+      - id: SA-04
+        agent: trail_assessor
+        query: "How are trail damage classes categorized?"
+        expected:
+          contains_any: ["Class", "Type", "damage", "repair"]
+          has_citations: true
+          
+      - id: SA-05
+        agent: cruising_assistant
+        query: "What cruise methods apply to fire-damaged timber stands?"
+        expected:
+          contains_any: ["variable", "fixed", "plot", "tally", "point sampling"]
+          has_citations: true
+          
+      - id: SA-06
+        agent: cruising_assistant
+        query: "Explain the general methodology for calculating merchantable timber volume in salvage sales."
+        expected:
+          contains_any: ["board feet", "volume", "defect", "taper", "Scribner", "methodology", "log rule"]
+          has_citations: true
+          
+      - id: SA-07
+        agent: nepa_advisor
+        query: "When can a Categorical Exclusion be used for post-fire trail repair?"
+        expected:
+          contains_any: ["CE", "Categorical Exclusion", "36 CFR", "extraordinary circumstances"]
+          has_citations: true
+          citation_pattern: "FSM|FSH|CFR"
+          
+      - id: SA-08
+        agent: nepa_advisor
+        query: "What triggers an EA versus EIS for salvage logging?"
+        expected:
+          contains_any: ["significance", "Environmental Assessment", "Environmental Impact Statement", "cumulative"]
+          has_citations: true
+
+  # ============================================
+  # PHASE B: Tool Invocation
+  # ============================================
+  - name: "Phase B: Tool Invocation"
+    description: "Verify function_call → function_response pairs"
+    tests:
+      - id: ST-01
+        agent: burn_analyst
+        query: "Show me burn severity data for the Cedar Creek Fire perimeter"
+        expected:
+          has_tool_calls: true
+          max_response_time_seconds: 45
+          
+      - id: ST-02
+        agent: trail_assessor
+        query: "List damaged trails requiring closure in the fire area"
+        expected:
+          has_tool_calls: true
+          
+      - id: ST-03
+        agent: cruising_assistant
+        query: "What's the estimated salvage volume for Unit 7?"
+        expected:
+          has_tool_calls: true
+          max_response_time_seconds: 45
+          
+      - id: ST-04
+        agent: nepa_advisor
+        query: "Search regulations for emergency consultation requirements under ESA Section 7"
+        expected:
+          has_tool_calls: true
+          contains_any: ["consultation", "emergency", "Section 7"]
+
+  # ============================================
+  # PHASE C: Multi-Agent Sequential
+  # ============================================
+  - name: "Phase C: Multi-Agent Sequential"
+    description: "Test Coordinator → Specialist delegation"
+    tests:
+      - id: MS-01
+        agent: coordinator
+        query: "What's the burn severity status for Cedar Creek?"
+        expected:
+          delegation_to: ["burn_analyst"]
+          has_proof_layer: true
+          max_response_time_seconds: 60
+          
+      - id: MS-02
+        agent: coordinator
+        query: "Are any trails currently unsafe for public access?"
+        expected:
+          delegation_to: ["trail_assessor"]
+          has_proof_layer: true
+          
+      - id: MS-03
+        agent: coordinator
+        query: "Can we proceed with emergency salvage logging without full NEPA review?"
+        expected:
+          delegation_to: ["nepa_advisor"]
+          has_proof_layer: true
+          contains_any: ["CE", "EA", "Categorical Exclusion", "emergency"]
+          
+      - id: MS-04
+        agent: coordinator
+        query: "Estimate the timber loss from the Cedar Creek fire"
+        expected:
+          delegation_to: ["cruising_assistant"]
+          has_proof_layer: true
+
+  # ============================================
+  # PHASE D: Cross-Domain Integration
+  # ============================================
+  - name: "Phase D: Cross-Domain Integration"
+    description: "8-minute briefing scenarios—where failures manifest"
+    tests:
+      - id: MC-01
+        agent: coordinator
+        query: "Give me a complete recovery briefing for Cedar Creek including burn analysis, trail status, timber assessment, and NEPA requirements"
+        expected:
+          delegation_to: ["burn_analyst", "trail_assessor", "cruising_assistant", "nepa_advisor"]
+          has_proof_layer: true
+          max_response_time_seconds: 120
+          
+      - id: MC-02
+        agent: coordinator
+        query: "How does the current burn severity affect our trail repair priorities?"
+        expected:
+          delegation_to: ["burn_analyst", "trail_assessor"]
+          has_proof_layer: true
+          max_response_time_seconds: 90
+          
+      - id: MC-03
+        agent: coordinator
+        query: "What's currently blocking us from starting timber salvage operations?"
+        expected:
+          delegation_to: ["nepa_advisor", "cruising_assistant"]
+          has_proof_layer: true
+          
+      - id: MC-04
+        agent: coordinator
+        query: "Which areas need immediate attention in the next 72 hours?"
+        expected:
+          delegation_to: ["burn_analyst", "trail_assessor"]
+          has_proof_layer: true
+          contains_any: ["priority", "immediate", "critical", "urgent"]
+          
+      - id: MC-05
+        agent: coordinator
+        query: "Prepare an executive briefing for the Regional Forester on Cedar Creek recovery status"
+        expected:
+          delegation_to: ["burn_analyst", "trail_assessor", "cruising_assistant", "nepa_advisor"]
+          has_proof_layer: true
+          max_response_time_seconds: 120
+
+  # ============================================
+  # PHASE E: Edge Cases
+  # ============================================
+  - name: "Phase E: Edge Cases"
+    description: "Graceful degradation and clarification"
+    tests:
+      - id: EC-01
+        agent: coordinator
+        query: "What about the fire?"
+        expected:
+          is_clarification_request: true
+          contains_any: ["which fire", "specify", "clarify", "Cedar Creek"]
+          
+      - id: EC-02
+        agent: coordinator
+        query: "Fix the trail"
+        expected:
+          is_clarification_request: true
+          contains_any: ["which trail", "specify", "damage", "location"]
+          
+      - id: EC-03
+        agent: coordinator
+        query: "Is it legal?"
+        expected:
+          is_clarification_request: true
+          contains_any: ["what action", "specify", "context", "clarify"]
+          
+      - id: EC-04
+        agent: coordinator
+        query: "What's the status?"
+        expected:
+          response_not_empty: true
+          
+      - id: EC-05
+        agent: burn_analyst
+        query: "Calculate burn severity for the Phantom Ridge Fire"
+        expected:
+          graceful_failure: true
+          contains_any: ["no data", "not found", "don't have", "available fires", "Cedar Creek"]
+
+  # ============================================
+  # PHASE F: Session State & RAG Quality
+  # ============================================
+  - name: "Phase F: Session & RAG"
+    description: "Context retention and retrieval quality"
+    tests:
+      - id: RAG-01
+        agent: nepa_advisor
+        query: "What does FSM 1950 say about emergency actions?"
+        expected:
+          has_citations: true
+          citation_pattern: "FSM.*1950|1950"
+          no_hallucinated_citations: true
+          
+      - id: RAG-02
+        agent: nepa_advisor
+        query: "Show me the Categorical Exclusion checklist from FSH 1909.15"
+        expected:
+          has_citations: true
+          citation_pattern: "FSH.*1909|1909.15"
+          contains_any: ["checklist", "documentation", "extraordinary circumstances"]

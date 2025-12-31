@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from google.adk.agents import Agent
 from google.genai import types
 
-# Add project root to path for agents.shared imports
+# Add project root to path for agents._shared imports
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -154,7 +154,7 @@ def prioritize_trails(fire_id: str, budget: float = 0.0, include_quick_wins: boo
 
 # Import shared configuration with mode="AUTO" (eliminates infinite loop)
 # Previously used mode="ANY" which caused infinite loops (ADR-007.1)
-from agents.shared.config import GENERATE_CONTENT_CONFIG
+from agents._shared.config import GENERATE_CONTENT_CONFIG
 
 
 # =============================================================================
@@ -336,7 +336,7 @@ the affected area.
 
 # Import shared audit callbacks that integrate with AuditEventBridge
 # Replaces manual logging-only callbacks with proof layer integration
-from agents.shared.callbacks import create_audit_callbacks
+from agents._shared.callbacks import create_audit_callbacks
 
 # Create callbacks for this agent
 before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("trail_assessor")

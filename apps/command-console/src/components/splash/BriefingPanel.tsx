@@ -36,13 +36,13 @@ const BriefingPanel: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full p-8 flex flex-col gap-6 bg-slate-800/30 backdrop-blur-3xl border border-slate-300/10 rounded-2xl overflow-hidden relative shadow-2xl">
+    <div className="w-full h-full p-4 sm:p-6 lg:p-8 flex flex-col gap-4 sm:gap-6 bg-slate-800/30 backdrop-blur-3xl border border-slate-300/10 rounded-2xl overflow-y-auto relative shadow-2xl max-h-[80vh] lg:max-h-none">
       {/* Briefing Header */}
       <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-bold font-mono tracking-tight text-white">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-mono tracking-tight text-white">
           0600 · CEDAR CREEK FIRE · RECOVERY BRIEFING
         </h2>
-        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+        <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-widest">
           127,000 ACRES · DISTRICT RANGER: SARAH M. · WILLAMETTE NATIONAL FOREST
         </p>
       </div>
@@ -53,30 +53,26 @@ const BriefingPanel: React.FC = () => {
         {!showBriefing && (
           <div className="absolute inset-0 flex flex-col gap-2 font-mono text-[11px] text-teal-400/70 p-4 bg-slate-900/40 rounded-lg border border-slate-700/50">
             <div
-              className={`transition-opacity duration-300 ${
-                bootStep >= 1 ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`transition-opacity duration-300 ${bootStep >= 1 ? 'opacity-100' : 'opacity-0'
+                }`}
             >
               [0.5s] RANGER System Online...
             </div>
             <div
-              className={`transition-opacity duration-300 ${
-                bootStep >= 2 ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`transition-opacity duration-300 ${bootStep >= 2 ? 'opacity-100' : 'opacity-0'
+                }`}
             >
               [1.0s] Connecting to Cedar Creek data sources...
             </div>
             <div
-              className={`transition-opacity duration-300 ${
-                bootStep >= 3 ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`transition-opacity duration-300 ${bootStep >= 3 ? 'opacity-100' : 'opacity-0'
+                }`}
             >
               [1.5s] Contextualizing 14 cross-agency feeds...
             </div>
             <div
-              className={`transition-opacity duration-300 ${
-                bootStep >= 4 ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`transition-opacity duration-300 ${bootStep >= 4 ? 'opacity-100' : 'opacity-0'
+                }`}
             >
               [2.0s] Briefing generated. Finalizing reasoning chain.
             </div>
@@ -93,16 +89,15 @@ const BriefingPanel: React.FC = () => {
         <button
           onClick={handleEnterConsole}
           disabled={!showBriefing}
-          className={`group relative w-full py-3 px-5 font-mono font-bold text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-wider overflow-hidden ${
-            showBriefing
-              ? 'bg-gradient-to-r from-teal-700 via-teal-600 to-teal-700 text-white cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.4),inset_0_-1px_0_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] border border-teal-500/60 hover:shadow-[0_6px_20px_rgba(45,212,191,0.4),0_0_40px_rgba(45,212,191,0.2),inset_0_-1px_0_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-teal-400 hover:translate-y-[-1px] active:translate-y-[1px] active:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)]'
-              : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
-          }`}
+          className={`group relative w-full py-3 px-5 font-mono font-bold text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-wider overflow-hidden ${showBriefing
+            ? 'bg-gradient-to-r from-teal-700 via-teal-600 to-teal-700 text-white cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.4),inset_0_-1px_0_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] border border-teal-500/60 hover:shadow-[0_6px_20px_rgba(45,212,191,0.4),0_0_40px_rgba(45,212,191,0.2),inset_0_-1px_0_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-teal-400 hover:translate-y-[-1px] active:translate-y-[1px] active:shadow-[0_2px_8px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(0,0,0,0.3)]'
+            : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
+            }`}
         >
           {/* Shimmer effect on hover */}
           {showBriefing && (
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-[shimmer_2s_ease-in-out_infinite]"
-                 style={{ backgroundSize: '200% 100%' }} />
+              style={{ backgroundSize: '200% 100%' }} />
           )}
 
           <span className="relative z-10 flex items-center gap-2">

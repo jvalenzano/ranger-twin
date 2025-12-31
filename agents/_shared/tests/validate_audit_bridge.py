@@ -10,7 +10,7 @@ Reference: docs/architecture/SSE-PROOF-LAYER-SPIKE.md
 """
 
 import json
-from agents.shared.audit_bridge import (
+from agents._shared.audit_bridge import (
     get_audit_bridge,
     ToolInvocationEvent,
     ToolResponseEvent,

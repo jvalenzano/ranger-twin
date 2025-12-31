@@ -1,0 +1,147 @@
+{
+    "categorical_exclusion_checklists": {
+        "source": "FSH 1909.15 Chapter 30",
+        "last_updated": "2025-12-30",
+        "checklists": {
+            "36_cfr_220.6_d": {
+                "title": "Categories Not Requiring Documentation (36 CFR 220.6(d))",
+                "description": "Actions that do not individually or cumulatively have significant effect on the human environment and for which neither an EA nor an EIS is required.",
+                "documentation_required": false,
+                "categories": [
+                    {
+                        "id": "d_1",
+                        "citation": "36 CFR 220.6(d)(1)",
+                        "description": "Policy development, planning, and implementation which relate to routine activities",
+                        "examples": [
+                            "Regulations",
+                            "Instructions",
+                            "Directives",
+                            "Regional guides"
+                        ]
+                    },
+                    {
+                        "id": "d_2",
+                        "citation": "36 CFR 220.6(d)(2)",
+                        "description": "Activities that are educational, informational, or advisory",
+                        "examples": [
+                            "Interpretive programs",
+                            "Environmental education",
+                            "Public information"
+                        ]
+                    },
+                    {
+                        "id": "d_4",
+                        "citation": "36 CFR 220.6(d)(4)",
+                        "description": "Repair and maintenance of administrative sites, trails, and recreation facilities",
+                        "examples": [
+                            "Trail maintenance",
+                            "Culvert cleaning",
+                            "Surface grading",
+                            "Vegetation pruning"
+                        ]
+                    }
+                ]
+            },
+            "36_cfr_220.6_e": {
+                "title": "Categories Requiring Documentation (36 CFR 220.6(e))",
+                "description": "Categories of actions for which a project or case file and decision memo are required.",
+                "documentation_required": true,
+                "decision_memo_template": {
+                    "required_sections": [
+                        "Background",
+                        "Purpose and Need",
+                        "Proposed Action",
+                        "Extraordinary Circumstances Review",
+                        "Conclusion",
+                        "Contact Person"
+                    ]
+                },
+                "categories": [
+                    {
+                        "id": "e_1",
+                        "citation": "36 CFR 220.6(e)(1)",
+                        "description": "Construction and reconstruction of trails",
+                        "limit": null,
+                        "post_fire_applicable": true
+                    },
+                    {
+                        "id": "e_6",
+                        "citation": "36 CFR 220.6(e)(6)",
+                        "description": "Timber stand and/or wildlife habitat improvement activities",
+                        "limit": "Up to 4,200 acres",
+                        "post_fire_applicable": true
+                    },
+                    {
+                        "id": "e_11",
+                        "citation": "36 CFR 220.6(e)(11)",
+                        "description": "Post-fire rehabilitation activities not to exceed 4,200 acres",
+                        "limit": "4,200 acres",
+                        "post_fire_applicable": true,
+                        "notes": "May be restricted per Sierra Club v. Bosworth"
+                    },
+                    {
+                        "id": "e_13",
+                        "citation": "36 CFR 220.6(e)(13)",
+                        "description": "Salvage of dead and/or dying trees not to exceed 250 acres",
+                        "limit": "250 acres + 1/2 mile temporary road",
+                        "post_fire_applicable": true
+                    },
+                    {
+                        "id": "e_20",
+                        "citation": "36 CFR 220.6(e)(20)",
+                        "description": "Activities to restore, rehabilitate, or stabilize lands occupied by roads, trails, or recreation sites",
+                        "limit": null,
+                        "post_fire_applicable": true,
+                        "excludes": [
+                            "National Recreation Trails",
+                            "National Scenic Trails",
+                            "Wilderness trails"
+                        ]
+                    }
+                ]
+            },
+            "extraordinary_circumstances": {
+                "title": "Extraordinary Circumstances Checklist",
+                "citation": "36 CFR 220.6(b)",
+                "description": "Resource conditions that must be reviewed before applying any CE",
+                "items": [
+                    {
+                        "id": "ec_1",
+                        "resource": "Federally listed threatened or endangered species",
+                        "consideration": "Potential effect on species or critical habitat"
+                    },
+                    {
+                        "id": "ec_2",
+                        "resource": "Flood plains, wetlands, or municipal watersheds",
+                        "consideration": "Potential to affect hydrological conditions"
+                    },
+                    {
+                        "id": "ec_3",
+                        "resource": "Congressionally designated areas",
+                        "consideration": "Wilderness, Wild & Scenic Rivers, National Recreation Areas"
+                    },
+                    {
+                        "id": "ec_4",
+                        "resource": "Inventoried roadless areas",
+                        "consideration": "Consistency with Roadless Area Conservation Rule"
+                    },
+                    {
+                        "id": "ec_5",
+                        "resource": "Research Natural Areas",
+                        "consideration": "Potential to affect research values"
+                    },
+                    {
+                        "id": "ec_6",
+                        "resource": "Archaeological sites, historic properties",
+                        "consideration": "NHPA Section 106 compliance"
+                    },
+                    {
+                        "id": "ec_7",
+                        "resource": "Scientific controversy",
+                        "consideration": "Substantial scientific controversy about effects"
+                    }
+                ]
+            }
+        }
+    }
+}

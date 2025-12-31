@@ -31,7 +31,7 @@ const SLIDES: CarouselSlide[] = [
               Acres Burned · 2022
             </div>
             <div className="text-xs text-slate-500 italic mt-4 max-w-md">
-              "Assessment took 2 weeks. Recovery planning took another 3 weeks. <br/>
+              "Assessment took 2 weeks. Recovery planning took another 3 weeks. <br />
               We needed faster answers."
             </div>
           </div>
@@ -69,7 +69,7 @@ const SLIDES: CarouselSlide[] = [
               Disconnected Workflows
             </div>
             <div className="text-xs text-slate-500 italic mt-3 max-w-md">
-              "Burn severity, trails, timber, compliance — all separate.<br/>
+              "Burn severity, trails, timber, compliance — all separate.<br />
               2+ hours every morning just checking status."
             </div>
           </div>
@@ -105,7 +105,7 @@ const SLIDES: CarouselSlide[] = [
           <div className="text-center space-y-2 mt-2">
             <div className="text-4xl font-bold text-teal-400 font-mono">2h → 5min</div>
             <div className="text-xs text-slate-500 italic mt-3 max-w-md">
-              "Each agent has domain expertise through Skills.<br/>
+              "Each agent has domain expertise through Skills.<br />
               The Recovery Coordinator synthesizes all insights into one briefing."
             </div>
           </div>
@@ -148,7 +148,7 @@ const SLIDES: CarouselSlide[] = [
             </div>
           </div>
           <div className="text-xs text-slate-500 italic mt-1 max-w-md text-center">
-            "AI-assisted analysis with full audit trails.<br/>You validate, you decide."
+            "AI-assisted analysis with full audit trails.<br />You validate, you decide."
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@ const SLIDES: CarouselSlide[] = [
             </div>
           </div>
           <div className="text-xs text-slate-500 italic mt-2 max-w-md text-center">
-            "Draft BAER assessments in 48 hours vs. 2 weeks.<br/>
+            "Draft BAER assessments in 48 hours vs. 2 weeks.<br />
             Your teams focus on decisions, not data entry."
           </div>
         </div>
@@ -216,13 +216,12 @@ const PreviewCarousel: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-full min-h-[600px] relative group rounded-2xl overflow-hidden border border-teal-400/20 shadow-[0_0_20px_rgba(45,212,191,0.1)] bg-slate-900/30">
+    <div className="w-full h-full min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] relative group rounded-2xl overflow-hidden border border-teal-400/20 shadow-[0_0_20px_rgba(45,212,191,0.1)] bg-slate-900/30">
       {SLIDES.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex flex-col ${
-            index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex flex-col ${index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
         >
           {/* Gradient Background */}
           <div

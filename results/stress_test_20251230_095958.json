@@ -1,0 +1,489 @@
+{
+  "timestamp": "20251230_095958",
+  "summary": {
+    "total_passed": 23,
+    "total_tests": 28,
+    "pass_rate": 0.8214285714285714
+  },
+  "suite_summaries": [
+    {
+      "name": "Phase A: Single-Agent Direct",
+      "passed": 7,
+      "total": 8
+    },
+    {
+      "name": "Phase B: Tool Invocation",
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "name": "Phase C: Multi-Agent Sequential",
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "name": "Phase D: Cross-Domain Integration",
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "name": "Phase E: Edge Cases",
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "name": "Phase F: Session & RAG",
+      "passed": 1,
+      "total": 2
+    }
+  ],
+  "results": [
+    {
+      "test_id": "SA-01",
+      "agent": "burn_analyst",
+      "query": "What burn severity classifications exist in MTBS data?",
+      "passed": true,
+      "duration_seconds": 4.499303,
+      "failures": [],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "burn_analyst"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "**Cedar Creek MTBS Classification**\n\nThe Cedar Creek fire was classified using the MTBS protocol, revealing a range of burn severity classes across the fire perimeter. The dominant class was High Severity, covering 42% of the total area.\n\n**Details**\n- **Class 1**: Unburned/Unchanged (dNBR < 0.1) - Not explicitly listed in the output, but is a valid MTBS classification.\n- **Class 2**: Low Severity (0.1 \u2264 dNBR < 0.27): 29,402 acres (23%) - SW-2 sector\n- **Class 3**: Moderate Severity (0.27 \u2264 dNBR",
+      "error": null
+    },
+    {
+      "test_id": "SA-02",
+      "agent": "burn_analyst",
+      "query": "Explain soil burn severity indicators for high-severity areas",
+      "passed": false,
+      "duration_seconds": 4.884941,
+      "failures": [
+        "Missing expected terms (need any of): ['hydrophobic', 'ash', 'organic matter', 'white layer']"
+      ],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "burn_analyst"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "### 1. Summary\nIn high-severity areas, the Cedar Creek Fire shows indicators such as deep char, complete canopy loss, and a dNBR greater than or equal to 0.66. These areas often have critical erosion risk, especially on steep slopes.\n\n### 2. Details\nThe `assess_severity` tool output shows the following characteristics for high-severity areas, based on a dNBR threshold of >= 0.66:\n\n-   **Acres:** 53,689 acres were classified as high severity, representing 42% of the total burned area.\n-   **Secto",
+      "error": null
+    },
+    {
+      "test_id": "SA-03",
+      "agent": "trail_assessor",
+      "query": "What factors determine trail closure decisions post-fire?",
+      "passed": true,
+      "duration_seconds": 3.979101,
+      "failures": [],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "trail_assessor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "### 1. Summary\nTrail closure decisions after the Cedar Creek fire are based on a risk assessment considering hazard trees, bridge failure, debris accumulation, and the severity of damage. Trails with a risk score of 75 or higher are classified as CLOSED, while those between 25 and 50 are OPEN_CAUTION.\n\n### 2. Details\nThe closure decisions for the evaluated trails are:\n- Bobby Lake Trail #3526: CLOSED, risk score 90.9, primary concerns include hazard trees and bridge failure.\n- Hills Creek Trail ",
+      "error": null
+    },
+    {
+      "test_id": "SA-04",
+      "agent": "trail_assessor",
+      "query": "How are trail damage classes categorized?",
+      "passed": true,
+      "duration_seconds": 1.2925,
+      "failures": [],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "trail_assessor"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "Trail damage is classified into USFS Type I-IV categories:\n\n- **TYPE I (Minor)**: Severity 1-2, passable with caution\n- **TYPE II (Moderate)**: Severity 3, significant erosion/damage\n- **TYPE III (Major)**: Severity 4, structural failure\n- **TYPE IV (Severe)**: Severity 5, complete destruction\n",
+      "error": null
+    },
+    {
+      "test_id": "SA-05",
+      "agent": "cruising_assistant",
+      "query": "What cruise methods apply to fire-damaged timber stands?",
+      "passed": true,
+      "duration_seconds": 6.936253,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "cruising_assistant"
+      ],
+      "tool_calls_count": 3,
+      "final_text_preview": "### 1. Summary\nFor the Cedar Creek fire area, given a Douglas-fir/Western Hemlock stand type and a salvage objective, a variable radius plot method is recommended. A BAF of 20 is suggested, with a sampling intensity of 12.5%, translating to 10 plots for a 1,000-acre area.\n\n### 2. Details\n- **Recommended Method:** Variable Radius Plot\n- **BAF:** 20\n- **Sampling Intensity:** 12.5%\n- **Number of Plots:** 10\n\n### 3. Species Analysis\nThe recommendation is based on a mixed stand of Douglas-fir and Wes",
+      "error": null
+    },
+    {
+      "test_id": "SA-06",
+      "agent": "cruising_assistant",
+      "query": "Explain the general methodology for calculating merchantable timber volume in salvage sales.",
+      "passed": true,
+      "duration_seconds": 7.323432,
+      "failures": [],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "cruising_assistant"
+      ],
+      "tool_calls_count": 2,
+      "final_text_preview": "### 1. Summary\nThe estimation of merchantable timber volume in salvage sales involves plot-level analysis and expansion to per-acre estimates. The Cedar Creek dataset includes volume estimates for six plots, with a total volume of 162.6 MBF.\n\n### 2. Details\n**Cruise Design (based on similar scenarios):**\nGiven the error with the `recommend_methodology` tool, I will describe a typical cruise design for salvage sales based on my knowledge. A variable radius cruise (prism cruise) is often used, esp",
+      "error": null
+    },
+    {
+      "test_id": "SA-07",
+      "agent": "nepa_advisor",
+      "query": "When can a Categorical Exclusion be used for post-fire trail repair?",
+      "passed": true,
+      "duration_seconds": 8.026776,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "nepa_advisor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "A Categorical Exclusion (CE) can be used for post-fire trail repair under the following circumstances, according to 36 CFR 220.6:\n\n*   **36 CFR 220.6(d)(4):** Repair and maintenance of trails. Examples include pruning vegetation and cleaning culverts along a trail, and grooming the surface of the trail.\n*   **36 CFR 220.6(e)(1):** Construction and reconstruction of trails.\n*   **36 CFR 220.6(e)(20):** Activities that restore, rehabilitate, or stabilize lands occupied by trails (excluding Nationa",
+      "error": null
+    },
+    {
+      "test_id": "SA-08",
+      "agent": "nepa_advisor",
+      "query": "What triggers an EA versus EIS for salvage logging?",
+      "passed": true,
+      "duration_seconds": 7.098954,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "nepa_advisor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "An Environmental Assessment (EA) is prepared when a proposed action does not have a reasonably foreseeable significant impact on the quality of the human environment, or if the significance of such effect is unknown (7 CFR 1b.5(a)). An Environmental Impact Statement (EIS) is prepared if the responsible official determines, based on scoping, that the proposed action may have a significant environmental effect (36 CFR 220.6(c)).\n\nSalvage logging of dead and/or dying trees not to exceed 250 acres, ",
+      "error": null
+    },
+    {
+      "test_id": "ST-01",
+      "agent": "burn_analyst",
+      "query": "Show me burn severity data for the Cedar Creek Fire perimeter",
+      "passed": true,
+      "duration_seconds": 4.214833,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "burn_analyst"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "### 1. Summary\nThe Cedar Creek Fire resulted in a varied burn severity across its perimeter, with high severity impacting 42% of the total area. The fire origin (CORE-1), Hills Creek Drainage (SW-1), and Waldo Lake areas (NW-1 and NW-2) are identified as priority sectors due to high severity and associated risks.\n\n### 2. Details\n- **HIGH:** 53,689 acres (42%) across 4 sectors\n- **MODERATE:** 44,740 acres (35%) across 3 sectors\n- **LOW:** 29,402 acres (23%) across 1 sector\n\n### 3. Priority Areas\n",
+      "error": null
+    },
+    {
+      "test_id": "ST-02",
+      "agent": "trail_assessor",
+      "query": "List damaged trails requiring closure in the fire area",
+      "passed": true,
+      "duration_seconds": 3.776813,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "trail_assessor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "### 1. Summary\nBased on the risk assessment, three trails require closure due to high risk scores: Bobby Lake Trail #3526, Hills Creek Trail #3510 and Waldo Lake Trail #3536. These trails have risk scores exceeding 75, indicating unsafe conditions primarily due to hazard trees and bridge failure.\n\n### 2. Details\nThe closure decisions are as follows:\n- **Bobby Lake Trail #3526:** CLOSED, Risk Score: 90.9, Primary Concerns: Hazard trees, Bridge failure, Multiple high-severity damage\n- **Hills Cree",
+      "error": null
+    },
+    {
+      "test_id": "ST-03",
+      "agent": "cruising_assistant",
+      "query": "What's the estimated salvage volume for Unit 7?",
+      "passed": false,
+      "duration_seconds": 1.248843,
+      "failures": [
+        "Expected tool calls but none found"
+      ],
+      "warnings": [],
+      "agents_involved": [
+        "cruising_assistant"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "The dataset does not contain information for a unit named \"Unit 7.\" To proceed, I need a valid `fire_id` and `plot_id` from the available data. Could you please provide those?\n",
+      "error": null
+    },
+    {
+      "test_id": "ST-04",
+      "agent": "nepa_advisor",
+      "query": "Search regulations for emergency consultation requirements under ESA Section 7",
+      "passed": true,
+      "duration_seconds": 5.635712,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "nepa_advisor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "The provided documents do not contain specific information regarding emergency consultation requirements under Section 7 of the Endangered Species Act (ESA). However, 7 CFR 1b.7(h)(5)(ii) mentions that analysis completed for the Endangered Species Act may be relied on to inform discussions of significance in the environmental impact statement.\n\n**Regulatory Basis:** 7 CFR 1b.7(h)(5)(ii)\n**Confidence:** Low (20%) - Indirect reference, no specific emergency guidance found.\n",
+      "error": null
+    },
+    {
+      "test_id": "MS-01",
+      "agent": "coordinator",
+      "query": "What's the burn severity status for Cedar Creek?",
+      "passed": true,
+      "duration_seconds": 6.873133,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "Cedar Creek fire burned with a mix of severities, with high severity impacting 42% of the total area. The fire origin (CORE-1) and drainages (SW-1, NW-1) show the highest severity and erosion risk.\n\nHIGH: 53,689 acres (42%) across 4 sectors\nMODERATE: 44,740 acres (35%) across 3 sectors\nLOW: 29,402 acres (23%) across 1 sector\n\nPriority Areas:\n- CORE-1 (Central Fire Origin): High severity, complete stand replacement\n- SW-1 (Hills Creek Drainage): High severity, commercial timber value\n- NW-1 (Wald",
+      "error": null
+    },
+    {
+      "test_id": "MS-02",
+      "agent": "coordinator",
+      "query": "Are any trails currently unsafe for public access?",
+      "passed": true,
+      "duration_seconds": 5.375587,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "Bobby Lake Trail #3526, Hills Creek Trail #3510, and Waldo Lake Trail #3536 are currently classified as unsafe and should remain closed. Confidence: 88%\n",
+      "error": null
+    },
+    {
+      "test_id": "MS-03",
+      "agent": "coordinator",
+      "query": "Can we proceed with emergency salvage logging without full NEPA review?",
+      "passed": true,
+      "duration_seconds": 9.737129,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "Emergency salvage logging NEPA requirements are not explicitly detailed as a specific category. However, salvage of dead and/or dying trees, not to exceed 250 acres, requiring no more than 1/2 mile of temporary road construction (36 CFR 220.6(e)(13)) might be applicable. Also, post-fire rehabilitation activities, not to exceed 4,200 acres (36 CFR 220.6(e)(11)), could be used, but this category may be restricted due to the Sierra Club v. Bosworth ruling. Confidence: 70%\n",
+      "error": null
+    },
+    {
+      "test_id": "MS-04",
+      "agent": "coordinator",
+      "query": "Estimate the timber loss from the Cedar Creek fire",
+      "passed": true,
+      "duration_seconds": 8.349053,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "The estimated timber loss for the Cedar Creek fire is 162.6 MBF (thousand board feet) across the six analyzed plots. The highest volume per acre was found in plot 52-FOXTROT (Douglas-fir/Western Redcedar) at 48.2 MBF, while the lowest was in plot 15-ECHO (Lodgepole Pine) at 6.4 MBF. The species breakdown is: Douglas-fir (45.2%), Lodgepole pine (22.6%), Western redcedar (9.7%), Grand fir (6.5%), Mountain hemlock (6.5%), Subalpine fir (3.2%), Ponderosa pine (3.2%), and Western hemlock (3.2%). Salv",
+      "error": null
+    },
+    {
+      "test_id": "MC-01",
+      "agent": "coordinator",
+      "query": "Give me a complete recovery briefing for Cedar Creek including burn analysis, trail status, timber assessment, and NEPA requirements",
+      "passed": true,
+      "duration_seconds": 11.341616,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 4,
+      "final_text_preview": "Okay, I have the outputs from the burn analyst, trail assessor, cruising assistant, and NEPA advisor. Let's synthesize a recovery briefing for Cedar Creek.\n\n**Fire Severity:** The Cedar Creek Fire burned with a range of severities, with 42% (53,689 acres) classified as high severity. Key areas of concern are the central fire origin (CORE-1) and drainages in the southwest (SW-1) and northwest (NW-1, NW-2) sectors (Confidence: 92%).\n\n**Infrastructure Damage:** The trail assessor requires more spec",
+      "error": null
+    },
+    {
+      "test_id": "MC-02",
+      "agent": "coordinator",
+      "query": "How does the current burn severity affect our trail repair priorities?",
+      "passed": true,
+      "duration_seconds": 8.438808,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 2,
+      "final_text_preview": "The burn severity directly impacts trail repair priorities. The Burn Analyst identifies the NW-1 sector (Waldo Lake North) as a critical watershed protection area with high erosion risk due to steep slopes and complete canopy loss, and the NW-2 sector (Waldo Lake South) as adjacent to the Waldo Lake Wilderness. The Trail Assessor identifies Waldo Lake Trail #3536 as the highest priority for repair due to its high usage and critical access to Waldo Lake. Given the high burn severity in the Waldo ",
+      "error": null
+    },
+    {
+      "test_id": "MC-03",
+      "agent": "coordinator",
+      "query": "What's currently blocking us from starting timber salvage operations?",
+      "passed": true,
+      "duration_seconds": 9.4182,
+      "failures": [],
+      "warnings": [
+        "No obvious proof layer indicators in response"
+      ],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 2,
+      "final_text_preview": "I need to know which fire you are asking about to proceed with the cruising assistant. Please provide the fire name (e.g., cedar-creek-2022). The NEPA advisor indicates that the acreage and road construction are key factors, and I'll need those details to assess compliance.\n",
+      "error": null
+    },
+    {
+      "test_id": "MC-04",
+      "agent": "coordinator",
+      "query": "Which areas need immediate attention in the next 72 hours?",
+      "passed": false,
+      "duration_seconds": 1.933208,
+      "failures": [
+        "Missing delegations to: {'trail_assessor', 'burn_analyst'} (tool calls: [])"
+      ],
+      "warnings": [
+        "No obvious proof layer indicators in response"
+      ],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "To determine which areas need immediate attention, I need to assess all active fires and calculate a triage score for each. Please provide a JSON array of fire objects, including their ID, name, severity, acres, and phase. For example:\n\n```json\n[\n  {\"id\": \"cedar-creek\", \"name\": \"Cedar Creek Fire\", \"severity\": \"high\", \"acres\": 12000, \"phase\": \"baer_assessment\"},\n  {\"id\": \"elk-complex\", \"name\": \"Elk Complex Fire\", \"severity\": \"moderate\", \"acres\": 8000, \"phase\": \"active\"}\n]\n```\nOnce I have this dat",
+      "error": null
+    },
+    {
+      "test_id": "MC-05",
+      "agent": "coordinator",
+      "query": "Prepare an executive briefing for the Regional Forester on Cedar Creek recovery status",
+      "passed": true,
+      "duration_seconds": 24.932737,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 8,
+      "final_text_preview": "Now I can synthesize the information into an executive briefing.\n\n**Executive Briefing: Cedar Creek Fire Recovery Status**\n\n**Fire Severity:** The Cedar Creek Fire impacted 127,831 acres with varying severity. High severity burn covered 53,689 acres (42%), concentrated in CORE-1 (Central Fire Origin), SW-1 (Hills Creek Drainage), NW-1 (Waldo Lake North), and NW-2 (Waldo Lake South) sectors. Moderate severity burn affected 44,740 acres (35%), and low severity burn covered 29,402 acres (23%). *Sou",
+      "error": null
+    },
+    {
+      "test_id": "EC-01",
+      "agent": "coordinator",
+      "query": "What about the fire?",
+      "passed": true,
+      "duration_seconds": 1.075426,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "Could you please provide me with more context? Which fire are you asking about? I need a fire name or ID to proceed with a recovery briefing.\n",
+      "error": null
+    },
+    {
+      "test_id": "EC-02",
+      "agent": "coordinator",
+      "query": "Fix the trail",
+      "passed": true,
+      "duration_seconds": 1.10079,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "Which trail are you referring to? I need a fire name or trail ID to assess the damage and provide recommendations.\n",
+      "error": null
+    },
+    {
+      "test_id": "EC-03",
+      "agent": "coordinator",
+      "query": "Is it legal?",
+      "passed": false,
+      "duration_seconds": 1.115073,
+      "failures": [
+        "Missing expected terms (need any of): ['what action', 'specify', 'context', 'clarify']",
+        "Expected clarification request but response appears definitive"
+      ],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 0,
+      "final_text_preview": "I am designed to provide information and assist with tasks related to post-fire forest recovery. I do not provide legal advice. If you have a legal question, please consult with a qualified legal professional.\n",
+      "error": null
+    },
+    {
+      "test_id": "EC-04",
+      "agent": "coordinator",
+      "query": "What's the status?",
+      "passed": true,
+      "duration_seconds": 4.474462,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "coordinator"
+      ],
+      "tool_calls_count": 4,
+      "final_text_preview": "Okay, I have received responses from all four specialists. It seems they are all awaiting specific instructions related to a particular fire. To provide a comprehensive status update, I need to know which fire you are interested in. Could you please provide the fire name or ID?\n",
+      "error": null
+    },
+    {
+      "test_id": "EC-05",
+      "agent": "burn_analyst",
+      "query": "Calculate burn severity for the Phantom Ridge Fire",
+      "passed": true,
+      "duration_seconds": 2.028344,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "burn_analyst"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "I am unable to calculate burn severity for the Phantom Ridge Fire as there is no data available for that fire ID. Did you mean to specify a different fire?\n",
+      "error": null
+    },
+    {
+      "test_id": "RAG-01",
+      "agent": "nepa_advisor",
+      "query": "What does FSM 1950 say about emergency actions?",
+      "passed": true,
+      "duration_seconds": 6.291086,
+      "failures": [],
+      "warnings": [],
+      "agents_involved": [
+        "nepa_advisor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "FSM 1950 addresses emergency actions in the context of NEPA compliance. Specifically, FSM 1950.41a states that the Chief, and the Associate Chief, may grant emergency alternative arrangements for NEPA compliance for categorical exclusions, environmental assessments, and findings of no significant impact under 36 CFR 220.4(b)(2). FSM 1950.41c indicates that the Director of Ecosystem Management Coordination, Washington Office, is responsible for liaison with the CEQ and consults on emergencies (40",
+      "error": null
+    },
+    {
+      "test_id": "RAG-02",
+      "agent": "nepa_advisor",
+      "query": "Show me the Categorical Exclusion checklist from FSH 1909.15",
+      "passed": false,
+      "duration_seconds": 2.157179,
+      "failures": [
+        "Missing citation matching pattern: FSH.*1909|1909.15"
+      ],
+      "warnings": [
+        "No obvious citations found in response"
+      ],
+      "agents_involved": [
+        "nepa_advisor"
+      ],
+      "tool_calls_count": 1,
+      "final_text_preview": "I am sorry, I am unable to extract the checklist at this time. Please try again later.\n",
+      "error": null
+    }
+  ]
+}

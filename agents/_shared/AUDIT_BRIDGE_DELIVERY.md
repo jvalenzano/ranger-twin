@@ -171,7 +171,7 @@ agents/shared/tests/test_audit_bridge.py::TestEventTypeClassification::test_even
 ## Usage Example
 
 ```python
-from agents.shared.audit_bridge import (
+from agents._shared.audit_bridge import (
     get_audit_bridge,
     ToolInvocationEvent,
     ToolResponseEvent,

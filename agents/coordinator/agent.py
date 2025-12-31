@@ -21,7 +21,7 @@ from pathlib import Path
 from google.adk.agents import Agent
 from google.adk.tools import AgentTool
 
-# Add project root to path for agents.shared imports
+# Add project root to path for agents._shared imports
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -89,7 +89,7 @@ def portfolio_triage(fires_json: str, top_n: int = 0) -> dict:
 # =============================================================================
 
 # Import shared configuration with mode="AUTO" (eliminates infinite loop)
-from agents.shared.config import GENERATE_CONTENT_CONFIG
+from agents._shared.config import GENERATE_CONTENT_CONFIG
 
 
 # =============================================================================
@@ -98,7 +98,7 @@ from agents.shared.config import GENERATE_CONTENT_CONFIG
 
 # Import shared audit callbacks for transparency (optional for coordinator)
 # Coordinator does NOT use validation layer - routing flexibility is intentional
-from agents.shared.callbacks import create_audit_callbacks
+from agents._shared.callbacks import create_audit_callbacks
 
 # Create callbacks for audit trail visibility
 before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("coordinator")

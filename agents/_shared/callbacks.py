@@ -15,7 +15,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, Callable, Tuple
 
-from agents.shared.audit_bridge import (
+from agents._shared.audit_bridge import (
     get_audit_bridge,
     ToolInvocationEvent,
     ToolResponseEvent,

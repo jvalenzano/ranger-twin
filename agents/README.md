@@ -30,14 +30,10 @@ agents/
 ├── cruising_assistant/    # Timber specialist
 ├── nepa_advisor/          # Compliance specialist
 │
-├── shared/                # Shared utilities across agents
+├── _shared/               # Shared utilities across agents
 │   ├── audit_bridge.py    #   Audit trail handling
 │   ├── callbacks.py       #   ADK callbacks
 │   └── mcp_client.py      #   MCP connectivity
-│
-├── docs/                  # Agent-specific documentation
-│
-└── validation_spike/      # Validation testing (experimental)
 ```
 
 ## Running Agents
@@ -74,7 +70,7 @@ pytest agents/ -v
 pytest agents/coordinator/ -v
 
 # Shared utilities
-pytest agents/shared/ -v
+pytest agents/_shared/ -v
 ```
 
 ## Agent Pattern (ADR-008)

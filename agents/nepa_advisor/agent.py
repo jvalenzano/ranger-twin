@@ -20,7 +20,7 @@ from pathlib import Path
 
 from google.adk.agents import Agent
 
-# Add project root to path for agents.shared imports
+# Add project root to path for agents._shared imports
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -55,6 +55,13 @@ if TIMELINE_PATH.exists():
 PDF_EXTRACTION_PATH = SKILLS_DIR / "pdf-extraction" / "scripts"
 if PDF_EXTRACTION_PATH.exists():
     sys.path.insert(0, str(PDF_EXTRACTION_PATH))
+
+# Template Lookup skill (Template-First with RAG Fallback pattern)
+from skills.template_lookup import (
+    lookup_ce_checklist,
+    get_decision_memo_template,
+    get_extraordinary_circumstances_checklist
+)
 
 
 def decide_pathway(fire_id: str, action_type: str, acres: float, project_context: str = "{}") -> dict:
@@ -200,7 +207,7 @@ def extract_pdf_content(
 # =============================================================================
 
 # Import shared configuration with mode="AUTO" (eliminates infinite loop)
-from agents.shared.config import GENERATE_CONTENT_CONFIG
+from agents._shared.config import GENERATE_CONTENT_CONFIG
 
 
 # =============================================================================
@@ -208,7 +215,7 @@ from agents.shared.config import GENERATE_CONTENT_CONFIG
 # =============================================================================
 
 # Import shared audit callbacks that integrate with AuditEventBridge
-from agents.shared.callbacks import create_audit_callbacks
+from agents._shared.callbacks import create_audit_callbacks
 
 # Create callbacks for this agent
 before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("nepa_advisor")
@@ -258,15 +265,21 @@ and return data-driven regulatory guidance with citations.
 
 ## Tool Usage Protocol
 
-### consult_mandatory_nepa_standards (ALWAYS CALL FIRST)
+### consult_mandatory_nepa_standards (ALWAYS CALL FIRST for non-CE queries)
 
-This is your PRIMARY tool. Call it BEFORE any other action for ANY question about:
+This is your PRIMARY tool for general NEPA queries. Call it BEFORE any other action for ANY question about:
 - NEPA pathways (CE/EA/EIS)
-- Categorical exclusions
 - Acreage thresholds
-- Extraordinary circumstances
 - Timber salvage regulations
 - Environmental compliance
+
+### lookup_ce_checklist (FIRST for Categorical Exclusion queries)
+
+For questions specifically about CE checklists, 36 CFR 220.6, or FSH 1909.15 Chapter 30:
+1. FIRST: Call `lookup_ce_checklist` to check structured templates
+2. ONLY IF it returns "not_found": Fall back to `consult_mandatory_nepa_standards`
+
+This ensures fast, reliable responses for CE queries. Always cite "FSH 1909.15 Chapter 30".
 
 **Example:**
 ```
@@ -359,7 +372,10 @@ root_agent = Agent(
 
     # Skill tools
     tools=[
-        consult_mandatory_nepa_standards,  # File Search RAG - MANDATORY FIRST STEP
+        lookup_ce_checklist,  # Template-first for CE queries (FSH 1909.15)
+        get_decision_memo_template,  # CE decision memo structure
+        get_extraordinary_circumstances_checklist,  # EC review checklist
+        consult_mandatory_nepa_standards,  # File Search RAG for general queries
         extract_pdf_content,  # PDF extraction for documents not in File Search
         decide_pathway,
         generate_documentation_checklist,

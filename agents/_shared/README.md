@@ -20,16 +20,16 @@ This module provides shared functionality that all agents need, avoiding code du
 ## Usage
 
 ```python
-from agents.shared.config import get_model_config
-from agents.shared.callbacks import create_audit_callback
-from agents.shared.fire_utils import parse_fire_id
-from agents.shared.mcp_client import MCPClient
+from agents._shared.config import get_model_config
+from agents._shared.callbacks import create_audit_callback
+from agents._shared.fire_utils import parse_fire_id
+from agents._shared.mcp_client import MCPClient
 ```
 
 ## Testing
 
 ```bash
-pytest agents/shared/tests/ -v
+pytest agents/_shared/tests/ -v
 ```
 
 ## References

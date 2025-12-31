@@ -15,7 +15,7 @@ import logging
 from typing import Any, Optional
 from datetime import datetime, timezone
 
-from agents.shared.audit_bridge import get_audit_bridge
+from agents._shared.audit_bridge import get_audit_bridge
 
 
 logger = logging.getLogger("ranger.validation")

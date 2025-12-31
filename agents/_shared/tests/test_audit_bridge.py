@@ -17,7 +17,7 @@ import threading
 import time
 from datetime import datetime, timezone
 
-from agents.shared.audit_bridge import (
+from agents._shared.audit_bridge import (
     AuditEventBridge,
     ToolInvocationEvent,
     ToolResponseEvent,

@@ -15,7 +15,7 @@ from pathlib import Path
 
 from google.adk.agents import Agent
 
-# Add project root to path for agents.shared imports
+# Add project root to path for agents._shared imports
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -154,7 +154,7 @@ def validate_boundary(fire_id: str, sectors_json: str = "[]", tolerance: float =
 # =============================================================================
 
 # Import shared configuration with mode="AUTO" (eliminates infinite loop)
-from agents.shared.config import GENERATE_CONTENT_CONFIG
+from agents._shared.config import GENERATE_CONTENT_CONFIG
 
 
 # =============================================================================
@@ -162,7 +162,7 @@ from agents.shared.config import GENERATE_CONTENT_CONFIG
 # =============================================================================
 
 # Import shared audit callbacks that integrate with AuditEventBridge
-from agents.shared.callbacks import create_audit_callbacks
+from agents._shared.callbacks import create_audit_callbacks
 
 # Create callbacks for this agent
 before_tool_audit, after_tool_audit, on_tool_error_audit = create_audit_callbacks("burn_analyst")
