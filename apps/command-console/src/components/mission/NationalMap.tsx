@@ -27,11 +27,16 @@ import {
   useStackView,
   useWatchlist,
   useNationalCamera,
+  useShowHotspots,
+  useHotspotConfidence,
 } from '@/stores/missionStore';
 import { nationalFireService } from '@/services/nationalFireService';
+import { fetchFireDetections, type FirmsDetection } from '@/services/firmsService';
 import { PHASE_COLORS, PHASE_DISPLAY, type NationalFire } from '@/types/mission';
+import { hotspotsToGeoJSON, confidenceToNumeric } from '@/utils/hotspotFilter';
 import { FireInfoPopup } from './FireInfoPopup';
 import { getFireTooltipHTML } from './FireTooltip';
+import { HotspotLayerControl } from './HotspotLayerControl';
 
 // MapTiler API key from environment
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_API_KEY || 'get_your_own_key';
@@ -49,6 +54,10 @@ const FIRES_SELECTED_LAYER = 'fires-selected-layer';
 const FIRES_HOVER_LAYER = 'fires-hover-layer';
 const FIRES_NEW_GLOW_LAYER = 'fires-new-glow-layer';
 const FIRES_LABELS_LAYER = 'fires-labels-layer';
+
+// Layer IDs - VIIRS Hotspots
+const HOTSPOTS_SOURCE = 'hotspots-source';
+const HOTSPOTS_LAYER = 'hotspots-layer';
 
 /**
  * Check if a fire started within the last 24 hours
@@ -105,12 +114,19 @@ export function NationalMap() {
   const selectedFireId = useSelectedFireId();
   const hoveredFireId = useHoveredFireId();
   const nationalCamera = useNationalCamera();
+  const showHotspots = useShowHotspots();
+  const hotspotConfidence = useHotspotConfidence();
 
   const { selectFire, hoverFire, enterTacticalView, setNationalCamera } = useMissionStore();
 
   const [fires, setFires] = useState<NationalFire[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
   const [newFireCount, setNewFireCount] = useState(0);
+
+  // Hotspot state
+  const [hotspots, setHotspots] = useState<FirmsDetection[]>([]);
+  const [isLoadingHotspots, setIsLoadingHotspots] = useState(false);
+  const [filteredHotspotCount, setFilteredHotspotCount] = useState(0);
 
   // Initialize fires
   useEffect(() => {
@@ -361,6 +377,53 @@ export function NationalMap() {
         },
       });
 
+      // =========================================================================
+      // VIIRS Hotspot Layer (below fire markers)
+      // =========================================================================
+      map.current.addSource(HOTSPOTS_SOURCE, {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      });
+
+      // Hotspot circles - small, colored by confidence
+      // Added before FIRES_NEW_GLOW_LAYER so hotspots appear below fire markers
+      map.current.addLayer(
+        {
+          id: HOTSPOTS_LAYER,
+          type: 'circle',
+          source: HOTSPOTS_SOURCE,
+          paint: {
+            // Small circles (4-6px based on FRP - fire radiative power)
+            'circle-radius': [
+              'interpolate',
+              ['linear'],
+              ['get', 'frp'],
+              0, 3,
+              50, 5,
+              200, 7,
+            ] as maplibregl.ExpressionSpecification,
+            // Color by confidence: red (high) → orange (nominal) → yellow (low)
+            'circle-color': [
+              'match',
+              ['get', 'confidenceCategory'],
+              'h', '#ef4444', // Red - high confidence
+              'n', '#f97316', // Orange - nominal
+              'l', '#fbbf24', // Yellow - low confidence
+              '#f97316', // default
+            ] as maplibregl.ExpressionSpecification,
+            'circle-opacity': 0.7,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-opacity': 0.3,
+          },
+          // Initially hidden - shown when toggle is enabled
+          layout: {
+            visibility: 'none',
+          },
+        },
+        FIRES_NEW_GLOW_LAYER // Insert before this layer (so hotspots are below fires)
+      );
+
       setIsMapReady(true);
     });
 
@@ -523,6 +586,63 @@ export function NationalMap() {
     }
   }, [selectedFireId, fires, openPopup, closePopup]);
 
+  // Fetch hotspots when toggle is enabled
+  useEffect(() => {
+    if (!showHotspots) {
+      // When hotspots are disabled, clear the data
+      setHotspots([]);
+      setFilteredHotspotCount(0);
+      return;
+    }
+
+    async function loadHotspots() {
+      setIsLoadingHotspots(true);
+      try {
+        const detections = await fetchFireDetections();
+        setHotspots(detections);
+        console.log(`[NationalFireService] Fetched ${detections.length} hotspots`);
+      } catch (error) {
+        console.error('[NationalFireService] Error fetching hotspots:', error);
+        setHotspots([]);
+      } finally {
+        setIsLoadingHotspots(false);
+      }
+    }
+
+    loadHotspots();
+  }, [showHotspots]);
+
+  // Update hotspot layer visibility and data
+  useEffect(() => {
+    if (!isMapReady || !map.current) return;
+
+    // Toggle layer visibility
+    map.current.setLayoutProperty(
+      HOTSPOTS_LAYER,
+      'visibility',
+      showHotspots ? 'visible' : 'none'
+    );
+
+    if (!showHotspots) return;
+
+    // Filter hotspots by confidence and update source
+    const filteredHotspots = hotspots.filter((h) => {
+      const numericConfidence = confidenceToNumeric(h.confidence);
+      return numericConfidence >= hotspotConfidence;
+    });
+
+    const geojson = hotspotsToGeoJSON(filteredHotspots);
+    const source = map.current.getSource(HOTSPOTS_SOURCE) as maplibregl.GeoJSONSource;
+    if (source) {
+      source.setData(geojson);
+    }
+
+    setFilteredHotspotCount(filteredHotspots.length);
+    console.log(
+      `[NationalFireService] Displaying ${filteredHotspots.length} hotspots (confidence >= ${hotspotConfidence})`
+    );
+  }, [showHotspots, hotspots, hotspotConfidence, isMapReady]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -537,6 +657,12 @@ export function NationalMap() {
 
       {/* Map controls overlay */}
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+        {/* Hotspot layer control */}
+        <HotspotLayerControl
+          hotspotCount={filteredHotspotCount}
+          isLoading={isLoadingHotspots}
+        />
+
         {/* Reset view */}
         <button
           onClick={() => {

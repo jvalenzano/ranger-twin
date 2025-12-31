@@ -17,3 +17,4 @@ export { TopEscalations } from './TopEscalations';
 export { SeverityBar, SeverityBadge } from './SeverityBar';
 export { FireInfoPopup } from './FireInfoPopup';
 export { FireTooltip, getFireTooltipHTML, createTooltipElement } from './FireTooltip';
+export { HotspotLayerControl } from './HotspotLayerControl';

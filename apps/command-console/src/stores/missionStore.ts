@@ -22,11 +22,13 @@ import type {
   FirePhase,
   USFSRegion,
   SortOption,
+  HotspotSettings,
 } from '@/types/mission';
 
 import {
   DEFAULT_MISSION_FILTERS,
   DEFAULT_NATIONAL_CAMERA,
+  DEFAULT_HOTSPOT_SETTINGS,
 } from '@/types/mission';
 
 interface MissionState {
@@ -47,6 +49,9 @@ interface MissionState {
 
   // National camera (separate from tactical mapStore)
   nationalCamera: NationalCamera;
+
+  // Hotspot layer settings
+  hotspotSettings: HotspotSettings;
 
   // Actions - View
   setViewMode: (mode: ViewMode) => void;
@@ -76,6 +81,11 @@ interface MissionState {
   setNationalCamera: (camera: Partial<NationalCamera>) => void;
   resetNationalCamera: () => void;
 
+  // Actions - Hotspots
+  setShowHotspots: (show: boolean) => void;
+  toggleHotspots: () => void;
+  setHotspotConfidence: (threshold: number) => void;
+
   // Actions - Transitions
   enterTacticalView: (fireId: string) => void;
   returnToNational: () => void;
@@ -94,6 +104,7 @@ export const useMissionStore = create<MissionState>()(
         filters: { ...DEFAULT_MISSION_FILTERS },
         watchlist: [],
         nationalCamera: { ...DEFAULT_NATIONAL_CAMERA },
+        hotspotSettings: { ...DEFAULT_HOTSPOT_SETTINGS },
 
         // View actions
         setViewMode: (mode) => set({ viewMode: mode }),
@@ -190,6 +201,28 @@ export const useMissionStore = create<MissionState>()(
 
         resetNationalCamera: () =>
           set({ nationalCamera: { ...DEFAULT_NATIONAL_CAMERA } }),
+
+        // Hotspot actions
+        setShowHotspots: (show) =>
+          set((state) => ({
+            hotspotSettings: { ...state.hotspotSettings, showHotspots: show },
+          })),
+
+        toggleHotspots: () =>
+          set((state) => ({
+            hotspotSettings: {
+              ...state.hotspotSettings,
+              showHotspots: !state.hotspotSettings.showHotspots,
+            },
+          })),
+
+        setHotspotConfidence: (threshold) =>
+          set((state) => ({
+            hotspotSettings: {
+              ...state.hotspotSettings,
+              confidenceThreshold: Math.max(0, Math.min(100, threshold)),
+            },
+          })),
 
         // Transition actions
         enterTacticalView: (fireId) => {
@@ -333,3 +366,15 @@ export const useIsTacticalView = () =>
  */
 export const useIsTransitioning = () =>
   useMissionStore((state) => state.transitionState !== 'idle');
+
+/**
+ * Hotspot settings selectors
+ */
+export const useHotspotSettings = () =>
+  useMissionStore((state) => state.hotspotSettings);
+
+export const useShowHotspots = () =>
+  useMissionStore((state) => state.hotspotSettings.showHotspots);
+
+export const useHotspotConfidence = () =>
+  useMissionStore((state) => state.hotspotSettings.confidenceThreshold);

@@ -140,6 +140,27 @@ export interface NationalCamera {
 }
 
 /**
+ * Hotspot layer settings for VIIRS thermal detections
+ */
+export interface HotspotSettings {
+  /** Whether hotspot layer is visible */
+  showHotspots: boolean;
+
+  /** Minimum confidence threshold (0-100) */
+  confidenceThreshold: number;
+}
+
+/**
+ * Default hotspot settings
+ * - Hotspots OFF by default (can be noisy)
+ * - Confidence threshold at 80 (high confidence only)
+ */
+export const DEFAULT_HOTSPOT_SETTINGS: HotspotSettings = {
+  showHotspots: false,
+  confidenceThreshold: 80,
+};
+
+/**
  * Camera transition state during view switches
  */
 export type TransitionState = 'idle' | 'swooping_in' | 'swooping_out';
