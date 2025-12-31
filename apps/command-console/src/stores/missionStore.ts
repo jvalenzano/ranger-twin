@@ -85,6 +85,7 @@ interface MissionState {
   setShowHotspots: (show: boolean) => void;
   toggleHotspots: () => void;
   setHotspotConfidence: (threshold: number) => void;
+  setHotspotDayRange: (days: 1 | 3 | 7) => void;
 
   // Actions - Transitions
   enterTacticalView: (fireId: string) => void;
@@ -221,6 +222,14 @@ export const useMissionStore = create<MissionState>()(
             hotspotSettings: {
               ...state.hotspotSettings,
               confidenceThreshold: Math.max(0, Math.min(100, threshold)),
+            },
+          })),
+
+        setHotspotDayRange: (days) =>
+          set((state) => ({
+            hotspotSettings: {
+              ...state.hotspotSettings,
+              dayRange: days,
             },
           })),
 
@@ -378,3 +387,6 @@ export const useShowHotspots = () =>
 
 export const useHotspotConfidence = () =>
   useMissionStore((state) => state.hotspotSettings.confidenceThreshold);
+
+export const useHotspotDayRange = () =>
+  useMissionStore((state) => state.hotspotSettings.dayRange);

@@ -29,6 +29,7 @@ import {
   useNationalCamera,
   useShowHotspots,
   useHotspotConfidence,
+  useHotspotDayRange,
 } from '@/stores/missionStore';
 import { nationalFireService } from '@/services/nationalFireService';
 import { fetchFireDetections, type FirmsDetection } from '@/services/firmsService';
@@ -116,6 +117,7 @@ export function NationalMap() {
   const nationalCamera = useNationalCamera();
   const showHotspots = useShowHotspots();
   const hotspotConfidence = useHotspotConfidence();
+  const hotspotDayRange = useHotspotDayRange();
 
   const { selectFire, hoverFire, enterTacticalView, setNationalCamera } = useMissionStore();
 
@@ -504,12 +506,103 @@ export function NationalMap() {
       closeTooltip();
     });
 
+    // Click on hotspot marker - show detection details popup
+    map.current.on('click', HOTSPOTS_LAYER, (e) => {
+      if (!map.current) return;
+
+      const feature = e.features?.[0];
+      if (!feature || feature.geometry.type !== 'Point') return;
+
+      const props = feature.properties;
+      const coords = feature.geometry.coordinates as [number, number];
+
+      // Close any existing popups
+      closePopup();
+      closeTooltip();
+
+      // Create popup with hotspot details
+      const popup = new maplibregl.Popup({
+        className: 'hotspot-popup',
+        closeButton: true,
+        closeOnClick: true,
+        maxWidth: '280px',
+        anchor: 'bottom',
+        offset: 10,
+      })
+        .setLngLat(coords)
+        .setHTML(`
+          <div class="p-2 text-xs">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-2 h-2 rounded-full ${
+                props.confidenceCategory === 'h' ? 'bg-red-500' :
+                props.confidenceCategory === 'n' ? 'bg-orange-500' : 'bg-yellow-500'
+              }"></span>
+              <span class="font-semibold text-white">Thermal Detection</span>
+            </div>
+            <div class="space-y-1 text-slate-300">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Time:</span>
+                <span>${props.acq_datetime || 'Unknown'}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Confidence:</span>
+                <span class="${
+                  props.confidenceCategory === 'h' ? 'text-red-400' :
+                  props.confidenceCategory === 'n' ? 'text-orange-400' : 'text-yellow-400'
+                }">${
+                  props.confidenceCategory === 'h' ? 'High' :
+                  props.confidenceCategory === 'n' ? 'Nominal' : 'Low'
+                } (${props.confidenceNumeric}%)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">FRP:</span>
+                <span>${props.frp?.toFixed(1) || '0'} MW</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Detection:</span>
+                <span>${props.daynight || 'Day'}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Satellite:</span>
+                <span>${props.satellite || 'VIIRS'}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Location:</span>
+                <span>${coords[1].toFixed(4)}°, ${coords[0].toFixed(4)}°</span>
+              </div>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-600 text-[10px] text-slate-500">
+              Source: NASA FIRMS VIIRS
+            </div>
+          </div>
+        `)
+        .addTo(map.current);
+
+      popupRef.current = popup;
+
+      // Prevent event from propagating to the map click handler
+      e.originalEvent.stopPropagation();
+    });
+
+    // Hover cursor for hotspots
+    map.current.on('mouseenter', HOTSPOTS_LAYER, () => {
+      if (map.current) {
+        map.current.getCanvas().style.cursor = 'pointer';
+      }
+    });
+
+    map.current.on('mouseleave', HOTSPOTS_LAYER, () => {
+      if (map.current) {
+        map.current.getCanvas().style.cursor = '';
+      }
+    });
+
     // Click on empty map area (deselect)
     map.current.on('click', (e) => {
       if (!map.current) return;
 
       const features = map.current.queryRenderedFeatures(e.point, {
-        layers: [FIRES_LAYER],
+        layers: [FIRES_LAYER, HOTSPOTS_LAYER],
       });
 
       if (features.length === 0) {
@@ -586,7 +679,7 @@ export function NationalMap() {
     }
   }, [selectedFireId, fires, openPopup, closePopup]);
 
-  // Fetch hotspots when toggle is enabled
+  // Fetch hotspots when toggle is enabled or day range changes
   useEffect(() => {
     if (!showHotspots) {
       // When hotspots are disabled, clear the data
@@ -598,11 +691,11 @@ export function NationalMap() {
     async function loadHotspots() {
       setIsLoadingHotspots(true);
       try {
-        const detections = await fetchFireDetections();
+        const detections = await fetchFireDetections({ dayRange: hotspotDayRange });
         setHotspots(detections);
-        console.log(`[NationalFireService] Fetched ${detections.length} hotspots`);
+        console.log(`[NationalMap] Fetched ${detections.length} hotspots for ${hotspotDayRange} day(s)`);
       } catch (error) {
-        console.error('[NationalFireService] Error fetching hotspots:', error);
+        console.error('[NationalMap] Error fetching hotspots:', error);
         setHotspots([]);
       } finally {
         setIsLoadingHotspots(false);
@@ -610,7 +703,7 @@ export function NationalMap() {
     }
 
     loadHotspots();
-  }, [showHotspots]);
+  }, [showHotspots, hotspotDayRange]);
 
   // Update hotspot layer visibility and data
   useEffect(() => {
@@ -655,8 +748,8 @@ export function NationalMap() {
     <div className="w-full h-full relative">
       <div ref={mapContainer} className="w-full h-full" />
 
-      {/* Map controls overlay */}
-      <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+      {/* Map controls overlay - positioned to left of IncidentRail (320px + padding) */}
+      <div className="absolute bottom-4 right-[336px] flex flex-col gap-2 z-10">
         {/* Hotspot layer control */}
         <HotspotLayerControl
           hotspotCount={filteredHotspotCount}
@@ -681,7 +774,7 @@ export function NationalMap() {
       </div>
 
       {/* Legend - Bottom Left */}
-      <div className="absolute bottom-4 left-4 p-3 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10">
+      <div className="absolute bottom-4 left-4 p-3 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10 z-10">
         <h4 className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Fire Phase</h4>
         <div className="space-y-1">
           {(['active', 'baer_assessment', 'baer_implementation', 'in_restoration'] as const).map((phase) => (

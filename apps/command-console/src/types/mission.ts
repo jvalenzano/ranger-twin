@@ -148,16 +148,21 @@ export interface HotspotSettings {
 
   /** Minimum confidence threshold (0-100) */
   confidenceThreshold: number;
+
+  /** Number of days of data to fetch (1, 3, or 7) */
+  dayRange: 1 | 3 | 7;
 }
 
 /**
  * Default hotspot settings
  * - Hotspots OFF by default (can be noisy)
  * - Confidence threshold at 80 (high confidence only)
+ * - 7 days of data by default (ensures data availability)
  */
 export const DEFAULT_HOTSPOT_SETTINGS: HotspotSettings = {
   showHotspots: false,
   confidenceThreshold: 80,
+  dayRange: 7,
 };
 
 /**

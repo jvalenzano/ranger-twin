@@ -662,3 +662,35 @@
     display: none;
   }
 }
+
+/* ============================================
+   VIIRS Hotspot Popup Styles
+   ============================================ */
+
+.hotspot-popup .maplibregl-popup-content {
+  background: rgba(15, 17, 26, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  padding: 0;
+  overflow: hidden;
+}
+
+.hotspot-popup .maplibregl-popup-tip {
+  border-top-color: rgba(15, 17, 26, 0.95);
+}
+
+.hotspot-popup .maplibregl-popup-close-button {
+  color: #94a3b8;
+  font-size: 18px;
+  padding: 6px 10px;
+  transition: color 0.15s ease;
+}
+
+.hotspot-popup .maplibregl-popup-close-button:hover {
+  color: white;
+}

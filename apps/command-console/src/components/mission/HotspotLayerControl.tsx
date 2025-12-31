@@ -4,16 +4,18 @@
  * Features:
  * - Toggle switch to show/hide hotspots
  * - Confidence slider (0-100, default 80)
+ * - Time range presets (24h, 3d, 7d)
  * - Hotspot count display
- * - Compact UI that fits in map overlay
+ * - Informative tooltip about the data source
  */
 
-import { Flame, ChevronDown, ChevronUp } from 'lucide-react';
+import { Flame, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { useState } from 'react';
 import {
   useMissionStore,
   useShowHotspots,
   useHotspotConfidence,
+  useHotspotDayRange,
 } from '@/stores/missionStore';
 import { getConfidenceLevelFromThreshold } from '@/utils/hotspotFilter';
 
@@ -24,15 +26,23 @@ interface HotspotLayerControlProps {
   isLoading?: boolean;
 }
 
+const TIME_PRESETS = [
+  { value: 1 as const, label: '24h' },
+  { value: 3 as const, label: '3d' },
+  { value: 7 as const, label: '7d' },
+];
+
 export function HotspotLayerControl({
   hotspotCount,
   isLoading = false,
 }: HotspotLayerControlProps) {
   const showHotspots = useShowHotspots();
   const confidenceThreshold = useHotspotConfidence();
-  const { toggleHotspots, setHotspotConfidence } = useMissionStore();
+  const dayRange = useHotspotDayRange();
+  const { toggleHotspots, setHotspotConfidence, setHotspotDayRange } = useMissionStore();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const confidenceLabel = getConfidenceLevelFromThreshold(confidenceThreshold);
 
@@ -57,6 +67,52 @@ export function HotspotLayerControl({
             className={showHotspots ? 'text-orange-400' : 'text-slate-500'}
           />
           <span className="text-[11px] text-slate-300">Thermal Hotspots</span>
+
+          {/* Info icon with tooltip */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltip(!showTooltip);
+            }}
+          >
+            <Info size={12} className="text-slate-500 hover:text-slate-400 cursor-help" />
+
+            {/* Tooltip */}
+            {showTooltip && (
+              <div
+                className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-800 border border-white/10 rounded-lg shadow-xl z-50"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p className="text-[11px] text-slate-300 leading-relaxed mb-2">
+                  <strong className="text-orange-400">VIIRS Thermal Detection</strong>
+                </p>
+                <p className="text-[10px] text-slate-400 leading-relaxed mb-2">
+                  Real-time fire hotspots from NASA satellites (Suomi NPP & NOAA-20)
+                  with 375m resolution. Updated every 12 hours.
+                </p>
+                <div className="text-[10px] text-slate-500 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500" />
+                    <span>High confidence (~90%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-orange-500" />
+                    <span>Nominal confidence (~50%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                    <span>Low confidence (~20%)</span>
+                  </div>
+                </div>
+                <p className="text-[9px] text-slate-600 mt-2">
+                  Source: NASA FIRMS
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -93,6 +149,30 @@ export function HotspotLayerControl({
       {/* Expanded settings (only when hotspots are on and expanded) */}
       {showHotspots && isExpanded && (
         <div className="px-3 pb-3 pt-1 border-t border-white/5">
+          {/* Time range presets */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] text-slate-500">Time Range</span>
+            </div>
+            <div className="flex gap-1">
+              {TIME_PRESETS.map((preset) => (
+                <button
+                  key={preset.value}
+                  onClick={() => setHotspotDayRange(preset.value)}
+                  className={`
+                    flex-1 px-2 py-1 text-[10px] font-medium rounded transition-colors
+                    ${dayRange === preset.value
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-slate-300'
+                    }
+                  `}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Confidence slider */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
