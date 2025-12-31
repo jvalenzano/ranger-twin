@@ -269,7 +269,7 @@ class ADKChatService {
       agentRole: SOURCE_TO_ROLE[event.source_agent] || 'recovery-coordinator',
       summary: event.content.summary,
       reasoning: event.proof_layer.reasoning_chain,
-      confidence: Math.round(event.proof_layer.confidence * 100),
+      confidence: event.proof_layer.confidence, // Keep as decimal (0-1), UI handles percentage display
     };
   }
 }
