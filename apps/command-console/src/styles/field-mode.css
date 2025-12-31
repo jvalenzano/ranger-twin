@@ -1,0 +1,32 @@
+/**
+ * Field Mode CSS Variables
+ *
+ * Provides high-contrast variants for outdoor/field use.
+ * Applied via .field-mode class on container element.
+ */
+
+:root {
+  /* Default panel styling */
+  --panel-bg: rgba(0, 0, 0, 0.7);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --touch-target: 44px;
+
+  /* Glass panel defaults */
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-blur: 12px;
+}
+
+.field-mode {
+  /* High-contrast overrides for outdoor visibility */
+  --panel-bg: rgba(0, 0, 0, 0.95);
+  --panel-border: rgba(255, 255, 255, 0.2);
+  --text-primary: #FFFFFF;
+  --text-secondary: #D1D5DB;
+  --touch-target: 52px;
+
+  /* Disable glassmorphism for better legibility */
+  --glass-bg: rgba(0, 0, 0, 0.95);
+  --glass-blur: 0px;
+}
