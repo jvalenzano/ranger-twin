@@ -13,6 +13,7 @@ import { Flame, BarChart3, Trees, Clock, ClipboardCopy, Check, Loader2 } from 'l
 
 import { useFireStatistics, useDataFreshness } from '@/hooks';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { FieldModeToggle } from './FieldModeToggle';
 import type { FirePhase } from '@/types/mission';
 
 interface BriefingStripProps {
@@ -158,32 +159,38 @@ export function BriefingStrip({ onCopyBriefing, className = '' }: BriefingStripP
         />
       </div>
 
-      {/* Right: Copy Briefing Button */}
-      <button
-        onClick={handleCopyBriefing}
-        disabled={isCopying || isLoading}
-        className={`
-          flex items-center gap-1.5 px-3 py-1.5 rounded-md
-          text-[11px] font-medium transition-all
-          ${copySuccess
-            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-            : 'bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 hover:text-white'
-          }
-          disabled:opacity-50 disabled:cursor-not-allowed
-        `}
-        aria-label={copySuccess ? 'Briefing copied successfully' : 'Copy briefing summary to clipboard'}
-      >
-        {isCopying ? (
-          <Loader2 size={12} className="animate-spin" />
-        ) : copySuccess ? (
-          <Check size={12} />
-        ) : (
-          <ClipboardCopy size={12} />
-        )}
-        <span className="hidden sm:inline">
-          {copySuccess ? 'Copied!' : 'Copy Briefing'}
-        </span>
-      </button>
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2">
+        {/* Field Mode Toggle */}
+        <FieldModeToggle />
+
+        {/* Copy Briefing Button */}
+        <button
+          onClick={handleCopyBriefing}
+          disabled={isCopying || isLoading}
+          className={`
+            flex items-center gap-1.5 px-3 py-1.5 rounded-md
+            text-[11px] font-medium transition-all
+            ${copySuccess
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              : 'bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 hover:text-white'
+            }
+            disabled:opacity-50 disabled:cursor-not-allowed
+          `}
+          aria-label={copySuccess ? 'Briefing copied successfully' : 'Copy briefing summary to clipboard'}
+        >
+          {isCopying ? (
+            <Loader2 size={12} className="animate-spin" />
+          ) : copySuccess ? (
+            <Check size={12} />
+          ) : (
+            <ClipboardCopy size={12} />
+          )}
+          <span className="hidden sm:inline">
+            {copySuccess ? 'Copied!' : 'Copy Briefing'}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
