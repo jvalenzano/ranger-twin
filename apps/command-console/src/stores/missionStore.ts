@@ -23,12 +23,14 @@ import type {
   USFSRegion,
   SortOption,
   HotspotSettings,
+  BurnSeveritySettings,
 } from '@/types/mission';
 
 import {
   DEFAULT_MISSION_FILTERS,
   DEFAULT_NATIONAL_CAMERA,
   DEFAULT_HOTSPOT_SETTINGS,
+  DEFAULT_BURN_SEVERITY_SETTINGS,
 } from '@/types/mission';
 
 interface MissionState {
@@ -52,6 +54,9 @@ interface MissionState {
 
   // Hotspot layer settings
   hotspotSettings: HotspotSettings;
+
+  // Burn severity layer settings (ADR-013)
+  burnSeveritySettings: BurnSeveritySettings;
 
   // Actions - View
   setViewMode: (mode: ViewMode) => void;
@@ -87,6 +92,11 @@ interface MissionState {
   setHotspotConfidence: (threshold: number) => void;
   setHotspotDayRange: (days: 1 | 3 | 7) => void;
 
+  // Actions - Burn Severity (ADR-013)
+  setShowBurnSeverity: (show: boolean) => void;
+  toggleBurnSeverity: () => void;
+  setBurnSeverityOpacity: (opacity: number) => void;
+
   // Actions - Transitions
   enterTacticalView: (fireId: string) => void;
   returnToNational: () => void;
@@ -106,6 +116,7 @@ export const useMissionStore = create<MissionState>()(
         watchlist: [],
         nationalCamera: { ...DEFAULT_NATIONAL_CAMERA },
         hotspotSettings: { ...DEFAULT_HOTSPOT_SETTINGS },
+        burnSeveritySettings: { ...DEFAULT_BURN_SEVERITY_SETTINGS },
 
         // View actions
         setViewMode: (mode) => set({ viewMode: mode }),
@@ -230,6 +241,28 @@ export const useMissionStore = create<MissionState>()(
             hotspotSettings: {
               ...state.hotspotSettings,
               dayRange: days,
+            },
+          })),
+
+        // Burn severity actions (ADR-013)
+        setShowBurnSeverity: (show) =>
+          set((state) => ({
+            burnSeveritySettings: { ...state.burnSeveritySettings, showBurnSeverity: show },
+          })),
+
+        toggleBurnSeverity: () =>
+          set((state) => ({
+            burnSeveritySettings: {
+              ...state.burnSeveritySettings,
+              showBurnSeverity: !state.burnSeveritySettings.showBurnSeverity,
+            },
+          })),
+
+        setBurnSeverityOpacity: (opacity) =>
+          set((state) => ({
+            burnSeveritySettings: {
+              ...state.burnSeveritySettings,
+              opacity: Math.max(0, Math.min(1, opacity)),
             },
           })),
 
@@ -390,3 +423,13 @@ export const useHotspotConfidence = () =>
 
 export const useHotspotDayRange = () =>
   useMissionStore((state) => state.hotspotSettings.dayRange);
+
+// Burn Severity selectors (ADR-013)
+export const useBurnSeveritySettings = () =>
+  useMissionStore((state) => state.burnSeveritySettings);
+
+export const useShowBurnSeverity = () =>
+  useMissionStore((state) => state.burnSeveritySettings.showBurnSeverity);
+
+export const useBurnSeverityOpacity = () =>
+  useMissionStore((state) => state.burnSeveritySettings.opacity);

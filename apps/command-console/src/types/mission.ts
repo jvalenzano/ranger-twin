@@ -166,6 +166,25 @@ export const DEFAULT_HOTSPOT_SETTINGS: HotspotSettings = {
 };
 
 /**
+ * Burn severity layer settings (ADR-013)
+ */
+export interface BurnSeveritySettings {
+  /** Whether burn severity layer is visible */
+  showBurnSeverity: boolean;
+
+  /** Layer opacity (0-1) */
+  opacity: number;
+
+  /** COG path override (defaults to Cedar Creek) */
+  cogPath?: string;
+}
+
+export const DEFAULT_BURN_SEVERITY_SETTINGS: BurnSeveritySettings = {
+  showBurnSeverity: false,
+  opacity: 0.7,
+};
+
+/**
  * Camera transition state during view switches
  */
 export type TransitionState = 'idle' | 'swooping_in' | 'swooping_out';

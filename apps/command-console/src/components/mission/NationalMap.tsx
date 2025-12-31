@@ -30,6 +30,8 @@ import {
   useShowHotspots,
   useHotspotConfidence,
   useHotspotDayRange,
+  useShowBurnSeverity,
+  useBurnSeverityOpacity,
 } from '@/stores/missionStore';
 import { nationalFireService } from '@/services/nationalFireService';
 import { fetchFireDetections, type FirmsDetection } from '@/services/firmsService';
@@ -59,6 +61,15 @@ const FIRES_LABELS_LAYER = 'fires-labels-layer';
 // Layer IDs - VIIRS Hotspots
 const HOTSPOTS_SOURCE = 'hotspots-source';
 const HOTSPOTS_LAYER = 'hotspots-layer';
+
+// Layer IDs - Burn Severity (ADR-013)
+const BURN_SEVERITY_SOURCE = 'burn-severity-source';
+const BURN_SEVERITY_LAYER = 'burn-severity-layer';
+
+// TiTiler configuration
+const TITILER_URL = import.meta.env.VITE_TITILER_URL || 'http://localhost:8080';
+const GEOSPATIAL_BUCKET = import.meta.env.VITE_GEOSPATIAL_BUCKET || 'ranger-geospatial-dev';
+const DEFAULT_COG_PATH = 'mtbs/cedar_creek_severity_cog.tif';
 
 /**
  * Check if a fire started within the last 24 hours
@@ -118,8 +129,10 @@ export function NationalMap() {
   const showHotspots = useShowHotspots();
   const hotspotConfidence = useHotspotConfidence();
   const hotspotDayRange = useHotspotDayRange();
+  const showBurnSeverity = useShowBurnSeverity();
+  const burnSeverityOpacity = useBurnSeverityOpacity();
 
-  const { selectFire, hoverFire, enterTacticalView, setNationalCamera } = useMissionStore();
+  const { selectFire, hoverFire, enterTacticalView, setNationalCamera, toggleBurnSeverity } = useMissionStore();
 
   const [fires, setFires] = useState<NationalFire[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -376,6 +389,32 @@ export function NationalMap() {
           'text-halo-color': '#000000',
           'text-halo-width': 1.5,
           'text-opacity': 0.9,
+        },
+      });
+
+      // =========================================================================
+      // Burn Severity Layer (ADR-013) - at bottom of layer stack
+      // =========================================================================
+      const cogUrl = `https://storage.googleapis.com/${GEOSPATIAL_BUCKET}/${DEFAULT_COG_PATH}`;
+      const tileUrl = `${TITILER_URL}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(cogUrl)}&colormap_name=rdylgn_r`;
+
+      map.current.addSource(BURN_SEVERITY_SOURCE, {
+        type: 'raster',
+        tiles: [tileUrl],
+        tileSize: 256,
+        attribution: '© <a href="https://www.mtbs.gov/">MTBS</a>',
+      });
+
+      map.current.addLayer({
+        id: BURN_SEVERITY_LAYER,
+        type: 'raster',
+        source: BURN_SEVERITY_SOURCE,
+        paint: {
+          'raster-opacity': 0.7,
+          'raster-resampling': 'nearest',
+        },
+        layout: {
+          visibility: 'none', // Initially hidden
         },
       });
 
@@ -736,6 +775,23 @@ export function NationalMap() {
     );
   }, [showHotspots, hotspots, hotspotConfidence, isMapReady]);
 
+  // Update burn severity layer visibility and opacity (ADR-013)
+  useEffect(() => {
+    if (!isMapReady || !map.current) return;
+
+    // Toggle layer visibility
+    map.current.setLayoutProperty(
+      BURN_SEVERITY_LAYER,
+      'visibility',
+      showBurnSeverity ? 'visible' : 'none'
+    );
+
+    // Update opacity
+    if (showBurnSeverity) {
+      map.current.setPaintProperty(BURN_SEVERITY_LAYER, 'raster-opacity', burnSeverityOpacity);
+    }
+  }, [showBurnSeverity, burnSeverityOpacity, isMapReady]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -750,6 +806,25 @@ export function NationalMap() {
 
       {/* Map controls overlay - positioned to left of IncidentRail (320px + padding) */}
       <div className="absolute bottom-4 right-[336px] flex flex-col gap-2 z-10">
+        {/* Burn Severity layer toggle (ADR-013) */}
+        <button
+          onClick={toggleBurnSeverity}
+          className={`px-3 py-1.5 rounded backdrop-blur-sm text-xs transition-colors border ${
+            showBurnSeverity
+              ? 'bg-amber-600/80 text-white border-amber-500/50 hover:bg-amber-500/80'
+              : 'bg-slate-800/80 text-slate-300 border-white/10 hover:text-white hover:bg-slate-700/80'
+          }`}
+          title="Toggle burn severity overlay"
+        >
+          <span className="flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+            </svg>
+            Burn Severity {showBurnSeverity ? 'ON' : 'OFF'}
+          </span>
+        </button>
+
         {/* Hotspot layer control */}
         <HotspotLayerControl
           hotspotCount={filteredHotspotCount}
