@@ -395,14 +395,14 @@ export function NationalMap() {
           type: 'circle',
           source: HOTSPOTS_SOURCE,
           paint: {
-            // Small circles (4-6px based on FRP - fire radiative power)
+            // Circles sized by FRP (fire radiative power) - larger for better click detection
             'circle-radius': [
               'interpolate',
               ['linear'],
               ['get', 'frp'],
-              0, 3,
-              50, 5,
-              200, 7,
+              0, 5,
+              50, 8,
+              200, 12,
             ] as maplibregl.ExpressionSpecification,
             // Color by confidence: red (high) → orange (nominal) → yellow (low)
             'circle-color': [
