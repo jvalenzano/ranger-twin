@@ -20,8 +20,9 @@ import {
   MapPin,
 } from 'lucide-react';
 
-import { useMissionStore, useStackView, useWatchlistCount, usePhaseFilter } from '@/stores/missionStore';
-import { PHASE_DISPLAY, type FirePhase, type MissionStackView } from '@/types/mission';
+import { useMissionStore, useStackView, useWatchlistCount } from '@/stores/missionStore';
+import { PhaseFilterChips } from './PhaseFilterChips';
+import { type MissionStackView } from '@/types/mission';
 
 // Width constants - match Tactical Sidebar
 const EXPANDED_WIDTH = 200;
@@ -36,14 +37,11 @@ const VIEW_OPTIONS: { view: MissionStackView; icon: typeof Globe; label: string;
   { view: 'watchlist', icon: Star, label: 'Watchlist', description: 'Starred fires' },
 ];
 
-const PHASE_ORDER: FirePhase[] = ['active', 'baer_assessment', 'baer_implementation', 'in_restoration'];
-
 export function CommandSidebar({ onWidthChange }: CommandSidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const stackView = useStackView();
   const watchlistCount = useWatchlistCount();
-  const phaseFilter = usePhaseFilter();
-  const { setStackView, togglePhaseFilter } = useMissionStore();
+  const { setStackView } = useMissionStore();
 
   // Notify parent of width changes
   useEffect(() => {
@@ -179,53 +177,8 @@ export function CommandSidebar({ onWidthChange }: CommandSidebarProps) {
         {/* Divider */}
         <div className="mx-1 my-3 border-t border-white/10" />
 
-        {/* Phase Filters */}
-        {isExpanded && (
-          <div className="px-1 mb-1">
-            <span className="text-[9px] uppercase tracking-wider text-slate-500 font-medium">
-              Phase Filter
-            </span>
-          </div>
-        )}
-        {PHASE_ORDER.map((phase) => {
-          const isActive = phaseFilter.includes(phase);
-          const display = PHASE_DISPLAY[phase];
-
-          return (
-            <button
-              key={phase}
-              onClick={() => togglePhaseFilter(phase)}
-              className={`
-                group relative w-full flex items-center rounded-r-lg transition-all duration-200
-                ${isExpanded ? 'py-2 px-3 gap-3' : 'py-1.5 px-2 gap-0.5 justify-center flex-col'}
-                ${isActive ? 'bg-white/[0.04]' : 'opacity-50 hover:opacity-75 hover:bg-white/[0.02]'}
-              `}
-              style={{
-                borderLeft: `3px solid ${isActive ? display.color : 'transparent'}`,
-              }}
-            >
-              <span
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: isActive ? display.color : '#64748b' }}
-              />
-              {isExpanded ? (
-                <span
-                  className="text-[11px] font-medium transition-colors"
-                  style={{ color: isActive ? display.color : '#94a3b8' }}
-                >
-                  {display.label}
-                </span>
-              ) : (
-                <span
-                  className="text-[7px] font-bold tracking-wider uppercase"
-                  style={{ color: isActive ? display.color : '#64748b' }}
-                >
-                  {display.abbrev}
-                </span>
-              )}
-            </button>
-          );
-        })}
+        {/* Phase Filters - Enhanced with counts and toast warnings */}
+        <PhaseFilterChips collapsed={!isExpanded} />
       </div>
 
       {/* Footer - Command label */}

@@ -1,0 +1,173 @@
+/**
+ * Field Mode CSS Variables
+ *
+ * Provides high-contrast variants for outdoor/field use.
+ * Applied via .field-mode class on document root element.
+ *
+ * Week 4: Component-specific overrides for ProofLayerPanel,
+ * AgentChat, CitationChip, and BriefingStrip.
+ */
+
+:root {
+  /* Default panel styling */
+  --panel-bg: rgba(0, 0, 0, 0.7);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --touch-target: 44px;
+
+  /* Glass panel defaults */
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-blur: 12px;
+
+  /* Status colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+}
+
+.field-mode {
+  /* High-contrast overrides for outdoor visibility */
+  --panel-bg: rgba(0, 0, 0, 0.95);
+  --panel-border: rgba(255, 255, 255, 0.25);
+  --text-primary: #FFFFFF;
+  --text-secondary: #D1D5DB;
+  --touch-target: 52px;
+
+  /* Disable glassmorphism for better legibility */
+  --glass-bg: rgba(0, 0, 0, 0.95);
+  --glass-blur: 0px;
+
+  /* Brighter status colors for outdoor visibility */
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
+}
+
+/* ============================================
+   Component-Specific Field Mode Overrides
+   ============================================ */
+
+/* BriefingStrip - Higher contrast metrics */
+.field-mode .briefing-strip {
+  background: rgba(0, 0, 0, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+/* AgentChat - Larger touch targets, higher contrast */
+.field-mode .agent-chat {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.field-mode .agent-chat button {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+}
+
+.field-mode .agent-chat input {
+  font-size: 1rem;
+  font-weight: 500;
+  min-height: var(--touch-target);
+}
+
+/* Message bubbles - Higher contrast borders */
+.field-mode .message-bubble-user {
+  background: rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(6, 182, 212, 0.5);
+}
+
+.field-mode .message-bubble-agent {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ProofLayerPanel - High contrast drawer */
+.field-mode .proof-layer-panel {
+  background: rgba(0, 0, 0, 0.98);
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+
+.field-mode .proof-layer-panel .section-header {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Confidence bar - Brighter colors */
+.field-mode .confidence-bar-high {
+  background: var(--color-success);
+}
+
+.field-mode .confidence-bar-medium {
+  background: var(--color-warning);
+}
+
+.field-mode .confidence-bar-low {
+  background: var(--color-error);
+}
+
+/* CitationChip - Larger, more visible */
+.field-mode .citation-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 0.625rem;
+  border-width: 2px;
+}
+
+/* CitationPopup - High contrast popup */
+.field-mode .citation-popup {
+  background: rgba(0, 0, 0, 0.98);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* IncidentRail - Larger cards, higher contrast */
+.field-mode .incident-card {
+  min-height: 80px;
+  border-width: 2px;
+}
+
+.field-mode .incident-card:hover {
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+/* PhaseFilterChips - Larger touch targets */
+.field-mode .phase-filter-chip {
+  min-height: var(--touch-target);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Map canvas - Increased contrast */
+.field-mode .maplibregl-canvas {
+  filter: contrast(1.15) brightness(1.05);
+}
+
+/* Buttons - Larger, bolder */
+.field-mode button {
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Focus states - More visible */
+.field-mode *:focus-visible {
+  outline: 3px solid rgba(6, 182, 212, 0.8);
+  outline-offset: 2px;
+}
+
+/* Scrollbars - More visible */
+.field-mode ::-webkit-scrollbar {
+  width: 12px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.field-mode ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.field-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

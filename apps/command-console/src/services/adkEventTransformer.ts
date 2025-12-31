@@ -195,7 +195,8 @@ function extractConfidence(event: ADKEvent): number {
   try {
     const data = JSON.parse(text);
     if (typeof data.confidence === 'number') {
-      return data.confidence;
+      // Normalize: if > 1, assume it's a percentage and convert to decimal
+      return data.confidence > 1 ? data.confidence / 100 : data.confidence;
     }
   } catch {
     // Not JSON, continue with text analysis

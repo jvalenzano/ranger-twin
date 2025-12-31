@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Field mode variables for high-contrast outdoor use */
+@import './styles/field-mode.css';
+
 /* ============================================
    RANGER Command Console - Tactical Futurism
    ============================================ */

@@ -5,6 +5,7 @@
  * - Full-screen map background
  * - Left sidebar with RANGER branding
  * - Top header with filters
+ * - Briefing strip with portfolio metrics
  * - Right rail with incident list
  */
 
@@ -12,6 +13,7 @@ import { useState } from 'react';
 
 import { CommandSidebar } from '@/components/mission/CommandSidebar';
 import { CommandHeader } from '@/components/mission/CommandHeader';
+import { BriefingStrip } from '@/components/mission/BriefingStrip';
 import { NationalMap } from '@/components/mission/NationalMap';
 import { IncidentRail } from '@/components/mission/IncidentRail';
 
@@ -33,6 +35,14 @@ export function MissionControlView() {
       >
         <CommandHeader />
       </header>
+
+      {/* Briefing Strip - Portfolio metrics bar below header */}
+      <div
+        className="absolute top-[48px] right-[320px] h-[48px] z-25 transition-[left] duration-300 ease-out"
+        style={{ left: sidebarWidth }}
+      >
+        <BriefingStrip />
+      </div>
 
       {/* Incident Rail - Right side (matches InsightPanel position in Tactical) */}
       <aside
