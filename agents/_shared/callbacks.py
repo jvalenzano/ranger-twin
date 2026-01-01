@@ -74,23 +74,21 @@ def create_audit_callbacks(
 
         Note:
             Uses session_id as the correlation key for ToolInvocationValidator.
-            The validator passes session_id to InMemoryRunner, which sets it
-            on tool_context. This enables audit event correlation.
+            The validator passes session_id to InMemoryRunner.run_async(),
+            which propagates it to tool_context for callback correlation.
         """
         tool_name = tool.name if hasattr(tool, "name") else str(tool)
         session_id = getattr(tool_context, "session_id", "unknown")
         adk_invocation_id = getattr(tool_context, "invocation_id", None)
 
-        # Use session_id as the storage key for validator correlation
-        # (validator queries by session_id, audit bridge stores by invocation_id)
-        correlation_id = session_id if session_id != "unknown" else adk_invocation_id
-
-        # Record to audit bridge for SSE streaming
+        # Record to audit bridge for SSE streaming and validator correlation
+        # Note: ADK InMemoryRunner doesn't propagate session_id, so events are
+        # stored under "unknown". The validator clears/queries this key.
         event = ToolInvocationEvent(
             agent=agent_name,
             tool=tool_name,
             parameters=args,
-            invocation_id=correlation_id,  # Use session_id for validator correlation
+            invocation_id=session_id,  # Used by validator for correlation
             session_id=session_id,
             enforcement="API-level mode=AUTO",  # ADR-007.1 Tier 1
         )
@@ -105,7 +103,7 @@ def create_audit_callbacks(
                 "tool": tool_name,
                 "parameters": args,
                 "session_id": session_id,
-                "correlation_id": correlation_id,
+                "adk_invocation_id": adk_invocation_id,
             },
         )
 
@@ -129,10 +127,6 @@ def create_audit_callbacks(
         """
         tool_name = tool.name if hasattr(tool, "name") else str(tool)
         session_id = getattr(tool_context, "session_id", "unknown")
-        adk_invocation_id = getattr(tool_context, "invocation_id", None)
-
-        # Use session_id as the storage key for validator correlation
-        correlation_id = session_id if session_id != "unknown" else adk_invocation_id
 
         # Extract proof layer data defensively
         # All RANGER skills return these fields, but defensive extraction
@@ -158,7 +152,8 @@ def create_audit_callbacks(
             else "success"
         )
 
-        # Record to audit bridge for SSE streaming
+        # Record to audit bridge for SSE streaming and validator correlation
+        # Use session_id as the key since we control it (validator sets it)
         event = ToolResponseEvent(
             agent=agent_name,
             tool=tool_name,
@@ -166,7 +161,7 @@ def create_audit_callbacks(
             confidence=confidence,
             data_sources=data_sources,
             reasoning_chain=reasoning_chain,
-            invocation_id=correlation_id,  # Use session_id for validator correlation
+            invocation_id=session_id,  # Used by validator for correlation
         )
         bridge.record_tool_response(event)
 
@@ -180,7 +175,7 @@ def create_audit_callbacks(
                 "status": status,
                 "confidence": confidence,
                 "data_sources": data_sources,
-                "correlation_id": correlation_id,
+                "session_id": session_id,
             },
         )
 
@@ -204,19 +199,16 @@ def create_audit_callbacks(
         """
         tool_name = tool.name if hasattr(tool, "name") else str(tool)
         session_id = getattr(tool_context, "session_id", "unknown")
-        adk_invocation_id = getattr(tool_context, "invocation_id", None)
 
-        # Use session_id as the storage key for validator correlation
-        correlation_id = session_id if session_id != "unknown" else adk_invocation_id
-
-        # Record to audit bridge for SSE streaming
+        # Record to audit bridge for SSE streaming and validator correlation
+        # Use session_id as the key since we control it (validator sets it)
         event = ToolErrorEvent(
             agent=agent_name,
             tool=tool_name,
             parameters=args,
             error_type=type(error).__name__,
             error_message=str(error),
-            invocation_id=correlation_id,  # Use session_id for validator correlation
+            invocation_id=session_id,  # Used by validator for correlation
         )
         bridge.record_tool_error(event)
 
@@ -230,7 +222,7 @@ def create_audit_callbacks(
                 "parameters": args,
                 "error_type": type(error).__name__,
                 "error_message": str(error),
-                "correlation_id": correlation_id,
+                "session_id": session_id,
             },
         )
 

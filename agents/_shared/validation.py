@@ -93,11 +93,17 @@ class ToolInvocationValidator:
             >>> if result["validation_outcome"] == "ESCALATED":
             ...     notify_human_reviewer(result["escalation_reason"])
         """
-        # Use session_id for all audit correlation
-        # (session_id is passed to InMemoryRunner and used by callbacks)
-        session_id = session_id or str(uuid.uuid4())
+        # Generate a unique correlation_id for audit trail
+        correlation_id = session_id or str(uuid.uuid4())
+
+        # Note: ADK InMemoryRunner does NOT propagate session_id to tool_context,
+        # so callbacks store events under "unknown". We clear before each attempt
+        # and query "unknown" after to get events from this invocation only.
+        audit_key = "unknown"
 
         for attempt in range(1, self.max_retries + 2):  # +1 for initial attempt
+            # Clear stale events before each attempt
+            self.bridge.clear_invocation(audit_key)
             # Construct query with enforcement reminder for retries
             if attempt == 1:
                 effective_query = query
@@ -110,7 +116,7 @@ class ToolInvocationValidator:
 
             # Invoke agent via InMemoryRunner
             try:
-                response = await self._invoke_agent(effective_query, session_id)
+                response = await self._invoke_agent(effective_query, correlation_id)
             except Exception as e:
                 logger.error(f"Agent invocation failed: {e}")
                 return {
@@ -123,8 +129,9 @@ class ToolInvocationValidator:
                     "escalation_reason": f"Agent invocation exception: {type(e).__name__}",
                 }
 
-            # Validate tool invocation via audit_bridge (keyed by session_id)
-            audit_trail = self.bridge.get_audit_trail(session_id)
+            # Validate tool invocation via audit_bridge
+            # ADK stores under "unknown" since it doesn't propagate session_id
+            audit_trail = self.bridge.get_audit_trail(audit_key)
             tools_invoked = [
                 event["tool"]
                 for event in audit_trail
@@ -143,7 +150,7 @@ class ToolInvocationValidator:
                 )
 
                 # Cleanup audit events
-                self.bridge.clear_invocation(session_id)
+                self.bridge.clear_invocation(audit_key)
 
                 return {
                     "success": True,
@@ -175,7 +182,7 @@ class ToolInvocationValidator:
         logger.error(f"ESCALATION: {escalation_reason}")
 
         # Cleanup audit events
-        self.bridge.clear_invocation(session_id)
+        self.bridge.clear_invocation(audit_key)
 
         return {
             "success": False,
@@ -215,16 +222,17 @@ class ToolInvocationValidator:
             # Specific validation: all required tools must be invoked
             return all(tool in tools_invoked for tool in required_tools)
 
-    async def _invoke_agent(self, query: str, session_id: str) -> str:
+    async def _invoke_agent(self, query: str, correlation_id: str) -> str:
         """
         Invoke the wrapped agent using ADK InMemoryRunner.
 
         Uses Google ADK's InMemoryRunner pattern for programmatic agent invocation.
-        The session_id is passed to the runner to enable audit event correlation.
+        The session_id (derived from correlation_id) is used by callbacks to key
+        audit events, enabling the validator to correlate events after completion.
 
         Args:
             query: Query to send to agent
-            session_id: Session ID for audit correlation (passed to runner)
+            correlation_id: Correlation ID for audit trail (used in session_id)
 
         Returns:
             Agent response text
@@ -233,34 +241,42 @@ class ToolInvocationValidator:
             https://google.github.io/adk-docs/get-started/python/
         """
         from google.adk.runners import InMemoryRunner
-        from google.adk.sessions import InMemorySessionService
         from google.genai import types
 
-        # Create session service for this invocation
-        session_service = InMemorySessionService()
-
         # Create runner wrapping the agent
-        runner = InMemoryRunner(
-            agent=self.agent,
-            session_service=session_service,
+        runner = InMemoryRunner(agent=self.agent)
+
+        # Create a session before running (required by InMemoryRunner)
+        # The session_id becomes tool_context.session_id in callbacks,
+        # which is used as the key for audit event storage/retrieval
+        user_id = "validation_layer"
+        session_id = f"validation-{correlation_id}"
+        await runner.session_service.create_session(
+            app_name=runner.app_name,
+            user_id=user_id,
+            session_id=session_id,
         )
 
         # Collect response text from the event stream
         response_text = ""
 
-        async for event in runner.run_async(
-            user_id="validation_layer",
-            session_id=session_id,  # Used for audit correlation
-            new_message=types.Content(
-                role="user",
-                parts=[types.Part(text=query)]
-            ),
-        ):
-            # Extract text from content events
-            if hasattr(event, "content") and event.content:
-                for part in event.content.parts:
-                    if hasattr(part, "text") and part.text:
-                        response_text = part.text
+        try:
+            async for event in runner.run_async(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=types.Content(
+                    role="user",
+                    parts=[types.Part(text=query)]
+                ),
+            ):
+                # Extract text from content events
+                if hasattr(event, "content") and event.content:
+                    for part in event.content.parts:
+                        if hasattr(part, "text") and part.text:
+                            response_text = part.text
+        finally:
+            # Clean up runner resources
+            await runner.close()
 
         return response_text
 

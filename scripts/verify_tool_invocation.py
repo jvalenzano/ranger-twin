@@ -25,6 +25,13 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+# Load environment variables from .env (required for GCP credentials)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(PROJECT_ROOT / ".env")
+except ImportError:
+    print("Warning: python-dotenv not installed, using system environment only")
+
 
 # Test queries designed to trigger tool invocation
 TEST_QUERIES = {
