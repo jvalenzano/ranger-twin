@@ -131,6 +131,11 @@ const CedarCreekMap: React.FC = () => {
         },
       });
 
+      // TODO: TD-001 - Remove GeoJSON burn severity polygons before pilot
+      // See: docs/technical-debt/BURN-SEVERITY-CONSOLIDATION.md
+      // TiTiler raster layer (BurnSeverityLayer.tsx) should be sole source
+      // This synthetic data creates Proof Layer citation ambiguity
+
       // Add burn severity source and layers
       mapInstance.addSource('burn-severity', {
         type: 'geojson',

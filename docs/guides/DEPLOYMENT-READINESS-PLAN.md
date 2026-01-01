@@ -222,6 +222,14 @@ print('tool_config valid:', config.tool_config is not None)
 
 ---
 
+## Data Layer Consolidation
+
+Pre-deployment checklist for data layer technical debt:
+
+- [ ] TD-001: Burn severity layers consolidated to TiTiler-only
+
+---
+
 ## Related Documents
 
 | Document | Status | Purpose |
