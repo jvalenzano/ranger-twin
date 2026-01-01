@@ -28,5 +28,38 @@ GENERATE_CONTENT_CONFIG = types.GenerateContentConfig(
 )
 
 
+# =============================================================================
+# AGENT TOOL REQUIREMENTS (Tier 3 Validation)
+# =============================================================================
+#
+# Maps agent names to the tools that must be invoked for domain queries.
+# Used by ToolInvocationValidator to verify tool invocation compliance.
+#
+# COUPLING NOTE: Tool names here must match the function names defined in each
+# agent's tools. If tool function names change, update this configuration.
+# Consider deriving tool names programmatically from agent definitions in Phase 2.
+#
+# Reference: docs/adr/ADR-007.1-tool-invocation-strategy.md § Tier 3
+# =============================================================================
+
+AGENT_TOOL_REQUIREMENTS: dict[str, list[str] | None] = {
+    # Trail Assessor: damage classification, closure decisions, prioritization
+    "trail_assessor": ["classify_damage", "evaluate_closure", "prioritize_trails"],
+
+    # Burn Analyst: severity assessment, MTBS classification, boundary validation
+    "burn_analyst": ["assess_severity", "classify_mtbs", "validate_boundary"],
+
+    # Cruising Assistant: methodology, volume estimation, salvage assessment
+    "cruising_assistant": ["recommend_methodology", "estimate_volume", "assess_salvage"],
+
+    # NEPA Advisor: regulatory consultation, pathway decisions
+    "nepa_advisor": ["consult_mandatory_nepa_standards", "decide_pathway"],
+
+    # Coordinator: routing flexibility, no tool invocation requirement
+    # (Coordinator routes to specialists, doesn't require specific tools)
+    "coordinator": None,
+}
+
+
 # Exported configurations
-__all__ = ["TOOL_CONFIG", "GENERATE_CONTENT_CONFIG"]
+__all__ = ["TOOL_CONFIG", "GENERATE_CONTENT_CONFIG", "AGENT_TOOL_REQUIREMENTS"]

@@ -93,8 +93,9 @@ class ToolInvocationValidator:
             >>> if result["validation_outcome"] == "ESCALATED":
             ...     notify_human_reviewer(result["escalation_reason"])
         """
+        # Use session_id for all audit correlation
+        # (session_id is passed to InMemoryRunner and used by callbacks)
         session_id = session_id or str(uuid.uuid4())
-        invocation_id = str(uuid.uuid4())
 
         for attempt in range(1, self.max_retries + 2):  # +1 for initial attempt
             # Construct query with enforcement reminder for retries
@@ -107,12 +108,9 @@ class ToolInvocationValidator:
                     f"This is attempt {attempt}/{self.max_retries + 1}.]"
                 )
 
-            # Invoke agent
+            # Invoke agent via InMemoryRunner
             try:
-                # Note: Actual invocation depends on ADK agent API
-                # This is a placeholder for the async agent.run() or agent.send_message()
-                # Implementation will vary based on specific agent type
-                response = await self._invoke_agent(effective_query, invocation_id)
+                response = await self._invoke_agent(effective_query, session_id)
             except Exception as e:
                 logger.error(f"Agent invocation failed: {e}")
                 return {
@@ -125,8 +123,8 @@ class ToolInvocationValidator:
                     "escalation_reason": f"Agent invocation exception: {type(e).__name__}",
                 }
 
-            # Validate tool invocation via audit_bridge
-            audit_trail = self.bridge.get_audit_trail(invocation_id)
+            # Validate tool invocation via audit_bridge (keyed by session_id)
+            audit_trail = self.bridge.get_audit_trail(session_id)
             tools_invoked = [
                 event["tool"]
                 for event in audit_trail
@@ -145,7 +143,7 @@ class ToolInvocationValidator:
                 )
 
                 # Cleanup audit events
-                self.bridge.clear_invocation(invocation_id)
+                self.bridge.clear_invocation(session_id)
 
                 return {
                     "success": True,
@@ -177,7 +175,7 @@ class ToolInvocationValidator:
         logger.error(f"ESCALATION: {escalation_reason}")
 
         # Cleanup audit events
-        self.bridge.clear_invocation(invocation_id)
+        self.bridge.clear_invocation(session_id)
 
         return {
             "success": False,
@@ -217,36 +215,157 @@ class ToolInvocationValidator:
             # Specific validation: all required tools must be invoked
             return all(tool in tools_invoked for tool in required_tools)
 
-    async def _invoke_agent(self, query: str, invocation_id: str) -> str:
+    async def _invoke_agent(self, query: str, session_id: str) -> str:
         """
-        Invoke the wrapped agent and return response text.
+        Invoke the wrapped agent using ADK InMemoryRunner.
 
-        This is a placeholder for actual agent invocation. Implementation depends
-        on the specific agent API (LlmAgent.run(), Agent.send_message(), etc.)
+        Uses Google ADK's InMemoryRunner pattern for programmatic agent invocation.
+        The session_id is passed to the runner to enable audit event correlation.
 
         Args:
             query: Query to send to agent
-            invocation_id: Invocation ID for tracking
+            session_id: Session ID for audit correlation (passed to runner)
 
         Returns:
             Agent response text
 
-        Note:
-            This method should be overridden or enhanced based on the actual
-            agent type and API. The current implementation assumes a simple
-            send_message() interface.
+        Reference:
+            https://google.github.io/adk-docs/get-started/python/
         """
-        # Placeholder - actual implementation depends on agent API
-        # Example for LlmAgent:
-        # response = await self.agent.run_async(query)
-        # return response.text
+        from google.adk.runners import InMemoryRunner
+        from google.adk.sessions import InMemorySessionService
+        from google.genai import types
 
-        # For now, return a placeholder
-        raise NotImplementedError(
-            "Agent invocation not yet implemented. "
-            "Override _invoke_agent() with agent-specific invocation logic."
+        # Create session service for this invocation
+        session_service = InMemorySessionService()
+
+        # Create runner wrapping the agent
+        runner = InMemoryRunner(
+            agent=self.agent,
+            session_service=session_service,
+        )
+
+        # Collect response text from the event stream
+        response_text = ""
+
+        async for event in runner.run_async(
+            user_id="validation_layer",
+            session_id=session_id,  # Used for audit correlation
+            new_message=types.Content(
+                role="user",
+                parts=[types.Part(text=query)]
+            ),
+        ):
+            # Extract text from content events
+            if hasattr(event, "content") and event.content:
+                for part in event.content.parts:
+                    if hasattr(part, "text") and part.text:
+                        response_text = part.text
+
+        return response_text
+
+
+class ValidatedAgentWrapper:
+    """
+    Wrapper that invokes an agent with Tier 3 validation enforcement.
+
+    Provides a clean API for invoking agents with guaranteed tool invocation
+    or explicit escalation. Uses composition pattern to wrap any ADK Agent.
+
+    Usage:
+        >>> from agents.trail_assessor.agent import root_agent
+        >>> validated = ValidatedAgentWrapper(
+        ...     agent=root_agent,
+        ...     required_tools=["classify_damage"],
+        ...     max_retries=2
+        ... )
+        >>> result = await validated.invoke("What's the trail damage?")
+        >>> print(result["validation_outcome"])  # "PASSED" | "RETRY_SUCCEEDED" | "ESCALATED"
+
+    Attributes:
+        validator: The underlying ToolInvocationValidator
+        required_tools: List of tool names that must be invoked, or None for any tool
+
+    Note:
+        This is a composition wrapper, not a subclass. The wrapped agent's
+        structure is not modified.
+    """
+
+    def __init__(
+        self,
+        agent,
+        required_tools: Optional[list[str]] = None,
+        max_retries: int = 2,
+    ):
+        """
+        Initialize the validated agent wrapper.
+
+        Args:
+            agent: The ADK Agent to wrap with validation
+            required_tools: List of tool names that must be invoked, or None to
+                require any tool invocation
+            max_retries: Maximum retry attempts if tool invocation is skipped (default: 2)
+        """
+        self.validator = ToolInvocationValidator(agent, max_retries)
+        self.required_tools = required_tools
+
+    async def invoke(
+        self,
+        query: str,
+        session_id: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """
+        Invoke the agent with validation enforcement.
+
+        Args:
+            query: User query to send to agent
+            session_id: Session ID for tracking (optional, generates UUID if not provided)
+
+        Returns:
+            Dictionary with validation result (see ToolInvocationValidator.invoke_with_enforcement)
+        """
+        return await self.validator.invoke_with_enforcement(
+            query=query,
+            required_tools=self.required_tools,
+            session_id=session_id,
         )
 
 
-# Exported class
-__all__ = ["ToolInvocationValidator"]
+def create_validated_agent(
+    agent,
+    required_tools: Optional[list[str]] = None,
+    max_retries: int = 2,
+) -> ValidatedAgentWrapper:
+    """
+    Factory function for creating validated agent wrappers.
+
+    Convenience function that wraps an agent with Tier 3 validation enforcement.
+
+    Args:
+        agent: The ADK Agent to wrap with validation
+        required_tools: List of tool names that must be invoked, or None to
+            require any tool invocation
+        max_retries: Maximum retry attempts if tool invocation is skipped (default: 2)
+
+    Returns:
+        ValidatedAgentWrapper instance
+
+    Example:
+        >>> from agents.trail_assessor.agent import root_agent
+        >>> from agents._shared.config import AGENT_TOOL_REQUIREMENTS
+        >>>
+        >>> validated = create_validated_agent(
+        ...     agent=root_agent,
+        ...     required_tools=AGENT_TOOL_REQUIREMENTS.get("trail_assessor")
+        ... )
+        >>> result = await validated.invoke("Assess trail damage for Cedar Creek")
+    """
+    return ValidatedAgentWrapper(agent, required_tools, max_retries)
+
+
+# Exported classes and functions
+__all__ = [
+    "ToolInvocationValidator",
+    "ValidatedAgentWrapper",
+    "create_validated_agent",
+]
