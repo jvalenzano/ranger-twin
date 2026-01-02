@@ -19,6 +19,10 @@ import re
 from pathlib import Path
 from typing import Any
 
+from agents._shared.rag_client import is_rag_available
+from agents.trail_assessor.skills.template_lookup import lookup_template
+
+
 # Lazy initialization
 _vertexai_initialized = False
 _corpus_resource_id = None
@@ -135,6 +139,30 @@ def query_trail_infrastructure_knowledge(
     try:
         from vertexai.preview import rag
         from vertexai.preview.rag.utils.resources import RagRetrievalConfig
+
+        # 1. Check for RAG availability
+        if not is_rag_available():
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info("[RAG-OFFLINE] Defaulting to embedded templates for Trail Assessor")
+            
+            # Fallback to embedded knowledge
+            fallback_result = lookup_template(query)
+            
+            return {
+                "query": query,
+                "answer": fallback_result.get("content", ""),
+                "contexts": [],
+                "citations": fallback_result.get("citations", []),
+                "chunks_retrieved": 0,
+                "reasoning_chain": [
+                    "RAG system is offline (Demo Phase)",
+                    "Retrieved USFS TRACS/FSTAG standards from embedded knowledge"
+                ],
+                "confidence": 0.85,
+                "status": "success",
+                "source": "embedded_knowledge"
+            }
 
         # Initialize clients
         _get_vertexai_client()
