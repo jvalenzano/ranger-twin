@@ -176,3 +176,52 @@ def get_extraordinary_circumstances_checklist() -> dict:
         dict with EC checklist items per 36 CFR 220.6(b)
     """
     return lookup_ce_checklist(checklist_type="extraordinary_circumstances")
+
+
+def lookup_template(query: str) -> dict:
+    """
+    Standardized template lookup for NEPA Advisor.
+    
+    Args:
+        query: Search query for regulatory knowledge.
+        
+    Returns:
+        dict: {
+            "content": str,
+            "citations": list[dict],  # Must include source, citation_key
+            "template_id": str
+        }
+    """
+    # For NEPA, we primarily fall back to the CE checklist for general regulatory queries
+    # since that's our structured domain.
+    checklist_result = lookup_ce_checklist()
+    
+    # Map the checklist structure to the standardized output
+    if checklist_result.get("status") == "success":
+        data = checklist_result.get("data", {})
+        source = checklist_result.get("source", "FSH 1909.15")
+        
+        # Build content summary
+        content = "NEPA Regulatory Guidance (Embedded Knowledge):\n\n"
+        if isinstance(data, dict):
+            for key, val in data.items():
+                if isinstance(val, dict) and "title" in val:
+                    content += f"- {val['title']}\n"
+        
+        return {
+            "content": content,
+            "citations": [
+                {
+                    "source": source,
+                    "citation_key": "FSH-1909.15-CH30",
+                    "retrieval_method": "embedded_template"
+                }
+            ],
+            "template_id": "nepa-fsh-1909.15"
+        }
+        
+    return {
+        "content": "No specific NEPA template found for this query.",
+        "citations": [],
+        "template_id": "none"
+    }
