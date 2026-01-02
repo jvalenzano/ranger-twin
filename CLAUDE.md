@@ -145,9 +145,24 @@ pytest tests/integration/ -v   # RAG integration tests
 |----------|-------|
 | Project ID | `ranger-twin-dev` |
 | Deployment Region | `us-west1` |
-| RAG Corpora Region | `europe-west3` |
-| Artifact Registry | `us-west1-docker.pkg.dev/ranger-twin-dev/ranger-images` |
-| Knowledge Bucket | `gs://ranger-knowledge-base/` |
+| RAG Corpora Region | N/A (Phase 1) | Disabled to avoid Spanner costs |
+| Artifact Registry | us-west1-docker.pkg.dev/ranger-twin-dev/ranger-images |
+| Knowledge Bucket | gs://ranger-knowledge-base-usw1/ |
+
+### RAG Strategy (Phase 1)
+
+Vertex AI RAG Engine auto-provisions Cloud Spanner (~$7/month per region). For demo phase, we use embedded fixtures from `data/templates/` and `data/fixtures/` to avoid standing infrastructure costs.
+
+**Agents are RAG-resilient:** They check corpus availability at startup and gracefully fall back to embedded knowledge. Citations and Proof Layer functionality work in both modes.
+
+**Phase Progression:**
+| Phase | RAG Backend | Billing | Data Source |
+|-------|-------------|---------|-------------|
+| Phase 1 (Demo) | Embedded Fixtures | $0 | `data/templates/`, `data/fixtures/` |
+| Phase 2 (Pilot) | Vertex AI Search | Pay-per-query | GCS Bucket |
+| Phase 3 (Prod) | Vertex AI RAG | ~$28/month | FS Directives API |
+
+To enable RAG for Phase 2: `python scripts/enable_rag.py --project ranger-twin-dev --location us-west1`
 
 ## Agent Roster
 
