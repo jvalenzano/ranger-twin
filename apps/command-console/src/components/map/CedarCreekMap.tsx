@@ -612,8 +612,10 @@ const CedarCreekMap: React.FC = () => {
       // Build content based on feature type
       let headerHtml = '';
       let detailsHtml = '';
+      let featureName = '';
 
       if (layerId === 'trail-damage-points') {
+        featureName = props.trail_name || 'Unknown Trail';
         headerHtml = `
           <div class="font-bold text-sm">${props.trail_name}</div>
           <div class="text-xs text-amber-400">${(props.type || '').replace('_', ' ')}</div>
@@ -623,6 +625,7 @@ const CedarCreekMap: React.FC = () => {
           <div class="text-xs mt-1 text-red-400">Severity: ${props.severity}/5</div>
         `;
       } else if (layerId === 'timber-plots-points') {
+        featureName = `Plot ${props.plot_id}`;
         const priorityColor = props.priority === 'HIGHEST' ? PRIORITY_COLORS.HIGHEST :
           props.priority === 'HIGH' ? PRIORITY_COLORS.HIGH :
             props.priority === 'MEDIUM' ? PRIORITY_COLORS.MEDIUM :
@@ -637,6 +640,7 @@ const CedarCreekMap: React.FC = () => {
           <div class="text-xs mt-1 font-medium" style="color: ${priorityColor}">Priority: ${props.priority}</div>
         `;
       } else if (layerId === 'burn-severity-fill') {
+        featureName = props.name || 'Burn Zone';
         const severityColor = props.severity === 'HIGH' ? SEVERITY_COLORS.HIGH :
           props.severity === 'MODERATE' ? SEVERITY_COLORS.MODERATE :
             SEVERITY_COLORS.LOW;
@@ -650,11 +654,46 @@ const CedarCreekMap: React.FC = () => {
         `;
       }
 
-      // Assemble popup HTML (Site Analysis removed)
+      // Assemble popup HTML with Site Analysis button
       popupContent.innerHTML = `
         ${headerHtml}
         ${detailsHtml}
+        <button class="site-analysis-btn mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-accent-cyan/20 hover:bg-accent-cyan/30 border border-accent-cyan/40 hover:border-accent-cyan/60 text-accent-cyan rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Analyze Site
+        </button>
+        <div class="text-[9px] text-center text-text-muted mt-1">Cross-reference with USFS records</div>
       `;
+
+      // Attach click handler to button
+      const analyzeBtn = popupContent.querySelector('.site-analysis-btn');
+      analyzeBtn?.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+
+        // Get coordinates from feature geometry
+        const coords = feature.geometry.type === 'Point'
+          ? feature.geometry.coordinates as [number, number]
+          : e.lngLat.toArray() as [number, number];
+
+        // Import store action dynamically to avoid hook issues
+        import('@/stores/visualAuditStore').then(({ useVisualAuditStore }) => {
+          useVisualAuditStore.getState().startFeatureAnalysis({
+            featureId: props.damage_id || props.plot_id || props.zone_id || String(feature.id),
+            featureType: layerId,
+            featureName,
+            properties: { ...props },
+            coordinates: coords,
+          });
+        });
+
+        // Close popup
+        if (activePopup.current) {
+          activePopup.current.remove();
+          activePopup.current = null;
+        }
+      });
 
       // Create and show popup using setDOMContent
       const popup = new maplibregl.Popup({ className: 'ranger-popup' })

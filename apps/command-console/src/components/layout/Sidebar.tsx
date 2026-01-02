@@ -23,6 +23,7 @@ import {
   Compass,
   Settings,
   Pin,
+  Maximize,
   Globe,
   type LucideIcon,
 } from 'lucide-react';
@@ -41,6 +42,7 @@ import SidebarLegend from './SidebarLegend';
 import Tooltip from '@/components/ui/Tooltip';
 import { tooltipContent, type TooltipContent } from '@/config/tooltipContent';
 import { useToolbarStore, TOOLBAR_TOOLS, type ToolId } from '@/stores/toolbarStore';
+import { useVisualAuditStore } from '@/stores/visualAuditStore';
 import { useMissionStore } from '@/stores/missionStore';
 
 interface LifecycleStep {
@@ -444,6 +446,9 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
   const togglePin = useToolbarStore((state) => state.togglePin);
   const resetToDefaults = useToolbarStore((state) => state.resetToDefaults);
 
+  const visualAuditStatus = useVisualAuditStore((state) => state.status);
+  const startVisualAudit = useVisualAuditStore((state) => state.startSelection);
+  const cancelVisualAudit = useVisualAuditStore((state) => state.cancel);
 
   // Close customize panel when clicking outside
   useEffect(() => {
@@ -456,6 +461,18 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleAuditClick = () => {
+    // Blur active element to dismiss any tooltips
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    if (visualAuditStatus === 'selecting') {
+      cancelVisualAudit();
+    } else {
+      startVisualAudit();
+    }
+  };
 
   // Tool action handlers
   const toolActions: Record<ToolId, () => void> = {
@@ -465,6 +482,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
     'zoom-in': zoomIn,
     'zoom-out': zoomOut,
     'reset-north': resetBearing,
+    'visual-audit': handleAuditClick,
     'layer-switch': () => { }, // Placeholder for layer switching UI
   };
 
@@ -474,6 +492,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'layer-sat': return activeLayer === 'SAT';
       case 'layer-ter': return activeLayer === 'TER';
       case 'layer-ir': return activeLayer === 'IR';
+      case 'visual-audit': return visualAuditStatus === 'selecting';
       default: return false;
     }
   };
@@ -488,6 +507,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       case 'zoom-in': return <Plus size={size} />;
       case 'zoom-out': return <Minus size={size} />;
       case 'reset-north': return <Compass size={size} />;
+      case 'visual-audit': return <Maximize size={size} />;
     }
   };
 
@@ -500,6 +520,7 @@ const MapControlsSection: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) =
       'zoom-in': tooltipContent.mapControls.zoomIn,
       'zoom-out': tooltipContent.mapControls.zoomOut,
       'reset-north': tooltipContent.mapControls.resetNorth,
+      'visual-audit': tooltipContent.mapControls.visualAudit,
     };
     return tooltipMap[toolId] || null;
   };

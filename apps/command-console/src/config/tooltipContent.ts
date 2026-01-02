@@ -77,6 +77,12 @@ export const tooltipContent: TooltipContentConfig = {
             description: 'Calculate areas on the map. Click to create polygon vertices, double-click to close shape. Requires minimum 3 points.',
             shortcut: 'A',
         },
+        visualAudit: {
+            title: 'Area Analysis',
+            description: 'Select an area for AI-powered assessment. Cross-reference map data against USFS records.',
+            tip: 'Draw a box on the map. For single features, click them directly to use Site Analysis.',
+            shortcut: 'F',
+        },
         zoomIn: {
             title: 'Zoom In',
             description: 'Increase map magnification to see more detail.',
