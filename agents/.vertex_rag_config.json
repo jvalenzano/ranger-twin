@@ -1,0 +1,14 @@
+{
+    "enabled": false,
+    "healthy": false,
+    "location": "us-west1",
+    "project": "ranger-twin-dev",
+    "corpora": {
+        "nepa_regulations": null,
+        "burn_severity": null,
+        "timber_salvage": null,
+        "trail_infrastructure": null
+    },
+    "phase": "demo",
+    "notes": "RAG disabled for Phase 1 demo to avoid Spanner costs. Set enabled=true and populate corpora IDs for Phase 2 pilot."
+}
