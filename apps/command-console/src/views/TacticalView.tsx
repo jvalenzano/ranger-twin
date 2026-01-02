@@ -21,8 +21,6 @@ import ChatFAB from '@/components/chat/ChatFAB';
 import MapLoadingSkeleton from '@/components/common/MapLoadingSkeleton';
 import BriefingObserver from '@/components/briefing/BriefingObserver';
 import { ToastContainer } from '@/components/ui/ToastContainer';
-import { VisualAuditOverlay } from '@/components/map/VisualAuditOverlay';
-import { ForensicReportModal } from '@/components/modals/ForensicReportModal';
 import { AnalysisHistoryPanel } from '@/components/map/AnalysisHistoryPanel';
 import { useAnalysisHistoryStore } from '@/stores/analysisHistoryStore';
 import { FireOnboardingWizard } from '@/components/fire';
@@ -93,9 +91,7 @@ export function TacticalView() {
         {/* Chat FAB - When minimized */}
         {chatMode === 'minimized' && <ChatFAB onClick={handleOpenChat} />}
 
-        {/* Forensic Engine - Integrated Overlays */}
-        <VisualAuditOverlay />
-        <ForensicReportModal />
+        {/* Forensic Engine - Integrated Overlays removed */}
         <AnalysisHistoryPanel isOpen={historyOpen} onClose={() => setHistoryOpen(false)} />
 
         {/* Analysis History FAB - Shows when there are saved analyses */}
