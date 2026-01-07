@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Internal"}
 authors = [
-    {name = "TechTrend Federal", email = "team@techtrend.federal"}
+    {name = "jvalenzano", email = "team@techtrend.federal"}
 ]
 keywords = ["digital-twin", "forestry", "ai", "geospatial", "usfs"]
 

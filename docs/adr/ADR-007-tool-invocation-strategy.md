@@ -7,7 +7,7 @@
 
 **Status:** ⚠️ SUPERSEDED by [ADR-007.1](./ADR-007.1-tool-invocation-strategy.md)  
 **Date:** 2025-12-27  
-**Decision Makers:** CTO, TechTrend Federal - Digital Twin Team  
+**Decision Makers:** CTO, jvalenzano - Digital Twin Team
 **Category:** AI Reliability & Federal Compliance  
 
 ---

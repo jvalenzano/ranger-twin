@@ -2,7 +2,7 @@
 
 **Status:** Proposed | Accepted | Deprecated | Superseded
 **Date:** YYYY-MM-DD
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** [Architecture | Infrastructure | AI/ML | Security | Process]
 **Supersedes:** [ADR-XXX if applicable]
 

@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2025-12-19
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** Brand & Communications (Strategic)
 
 ---

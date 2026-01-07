@@ -3,7 +3,7 @@
 **Status:** Superseded (see ADR-006)
 **Date:** 2025-12-24
 **Superseded:** 2025-12-26
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** Feature Architecture & API Infrastructure
 
 ---

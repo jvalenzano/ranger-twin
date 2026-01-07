@@ -51,7 +51,7 @@ The Recovery Coordinator synthesizes their findings into a unified briefing—wi
 
 We're piloting RANGER with select regional offices in Q1 2026. If you have a fire recovery incident that could benefit from coordinated AI analysis, we'd like to demonstrate RANGER using your data.
 
-**Contact:** TechTrend Federal — Digital Twin Initiative  
+**Contact:** jvalenzano — Digital Twin Initiative  
 **Timeline:** 30-minute demo, no commitment required
 
 ---

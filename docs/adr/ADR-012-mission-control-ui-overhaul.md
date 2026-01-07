@@ -3,7 +3,7 @@
 **Status:** Accepted  
 **Date:** 2025-12-30  
 **Accepted:** 2025-12-30  
-**Decision Makers:** TechTrend Federal - Digital Twin Team  
+**Decision Makers:** jvalenzano - Digital Twin Team  
 **Category:** UI/UX Architecture & Geospatial Infrastructure  
 **Related ADRs:** ADR-005 (Skills-First), ADR-006 (Google-Only LLM)
 

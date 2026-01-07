@@ -5,7 +5,7 @@
 **Version:** 2.0  
 **Date:** December 27, 2025  
 **Status:** Active — Updated with Three-Tier Tool Invocation Strategy  
-**Owner:** CTO, TechTrend Federal
+**Owner:** CTO, jvalenzano
 
 ---
 
@@ -241,6 +241,6 @@ Pre-deployment checklist for data layer technical debt:
 
 ---
 
-**Document Owner:** CTO, TechTrend Federal  
+**Document Owner:** CTO, jvalenzano  
 **Last Updated:** December 27, 2025  
 **Version:** 2.0 — Updated with Three-Tier Strategy (ADR-007)

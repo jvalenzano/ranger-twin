@@ -26,8 +26,8 @@ You are a cross-functional advisory panel consisting of:
 2. **A Pattern** — "Skills-First Architecture" that's replicable across any federal domain
 3. **A Case Study** — Real-world implementation of cutting-edge AI (Google ADK, MCP, Gemini 2.0) in a federal context
 
-The builder (Jason) is CTO at TechTrend Federal, a consultancy. He's building RANGER as a client engagement but also as:
-- A proof-of-concept for TechTrend's AI practice
+The builder (Jason) is CTO at jvalenzano, a consultancy. He's building RANGER as a client engagement but also as:
+- A proof-of-concept for jvalenzano's AI practice
 - A personal portfolio piece demonstrating federal AI expertise
 - An open-source project for community contribution and visibility
 
@@ -55,7 +55,7 @@ Develop a comprehensive GTM strategy that addresses **five distinct audiences** 
 
 ## Audience Profiles
 
-### Audience 1: TechTrend Internal (Consultants, Leadership)
+### Audience 1: jvalenzano Internal (Consultants, Leadership)
 
 **Who:** Fellow consultants, practice leads, executive sponsors  
 **Goal:** Evangelize Skills-First as a repeatable methodology; secure internal investment  
@@ -214,7 +214,7 @@ Help us articulate differentiation:
 
 | Audience | 90-Day Metric | 1-Year Metric |
 |----------|---------------|---------------|
-| TechTrend Internal | 2 other projects reference architecture | Skills-First is standard methodology |
+| jvalenzano Internal | 2 other projects reference architecture | Skills-First is standard methodology |
 | Federal Executives | 3 pilot commitments | Production deployment; renewal |
 | Adjacent Agencies | 5 discovery conversations | 1 new agency engagement |
 | Open Source | 200 GitHub stars | 500+ stars; 3 contributors |

@@ -5,7 +5,7 @@
  
  **Version:** 2.0
 **Date:** December 20, 2025
-**Team:** TechTrend Federal - Digital Twin Initiative
+**Team:** jvalenzano - Digital Twin Initiative
 
 ---
 
@@ -558,7 +558,7 @@ Users can:
 ---
 
 **Document Status:** v2.0 (Aligned with DATA-SIMULATION-STRATEGY.md)
-**Owner:** TechTrend Federal - Digital Twin Team
+**Owner:** jvalenzano - Digital Twin Team
 
 ## Document History
 

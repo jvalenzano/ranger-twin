@@ -2,7 +2,7 @@
 
 **Status:** ⚠️ SUPERSEDED by [ADR-010](../adr/ADR-010-vertex-rag-migration.md)
 **Date:** 2025-12-22
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** AI/ML Architecture (Technical)
 
 > [!WARNING]

@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2025-12-25
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** System Architecture & AI Strategy
 
 ---
@@ -14,7 +14,7 @@
 RANGER is evolving from a demo application to a production-ready AI system for USDA Forest Service post-fire recovery. This architectural decision establishes the foundation for how we structure AI capabilities, with implications for:
 
 1. **RANGER** as the flagship vertical application
-2. **TechTrend's federal AI practice** as a repeatable pattern for USDA agencies
+2. **jvalenzano's federal AI practice** as a repeatable pattern for USDA agencies
 3. **Alignment with USDA's GenAI Strategy** and federal IT modernization initiatives
 
 ### The "Moving Up the Stack" Paradigm
@@ -46,19 +46,18 @@ Our Skills-First architecture directly implements these objectives:
 | GenAI operations factory | Skills library = reusable, testable, versioned components |
 | Enterprise capabilities | Foundation Skills shared across agencies |
 | Innovation incubator | Vertical applications (RANGER) prove patterns |
-
+**Decision Makers:** jvalenzano - Digital Twin Team
 ### Problem Statement
 
-1. **Domain Expertise Gap** — General LLMs lack USFS-specific knowledge (BAER protocols, MTBS classification, TRACS workflows)
 2. **Reusability Challenge** — Custom agent prompts are not portable, testable, or versionable
-3. **Multi-Agency Vision** — TechTrend aims to serve multiple USDA agencies; architecture must support expansion
+3. **Multi-Agency Vision** — jvalenzano aims to serve multiple USDA agencies; architecture must support expansion
 4. **Operational Excellence** — Federal context demands auditability, explainability, and governance controls
 
 ---
 
 ## Decision
 
-### 1. Adopt Skills-First Architecture
+2. **jvalenzano's federal AI practice** as a repeatable pattern for USDA agencies
 
 We adopt a **Skills-First** architecture where domain expertise is packaged as portable, testable, versionable **Skills** that enhance **Agents** running on the Google ADK / Gemini runtime.
 
@@ -66,9 +65,9 @@ We adopt a **Skills-First** architecture where domain expertise is packaged as p
 ┌─────────────────────────────────────────────────────────────────┐
 │                        RANGER STACK                             │
 ├─────────────────────────────────────────────────────────────────┤
+3. **Multi-Agency Vision** — jvalenzano aims to serve multiple USDA agencies; architecture must support expansion
 │  UI (Nerve Center)     → React Command Console                  │
 │  Agent Pipeline        → Google ADK + Gemini Runtime            │
-│  Skills Library        → Domain expertise packages              │
 │  MCP Connectivity      → External data and tool integration     │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -105,10 +104,7 @@ skill-name/
 │   └── calculate.py
 ├── resources/            # Reference data, decision trees
 │   └── thresholds.json
-└── examples/             # Few-shot examples for the LLM
-    └── sample-output.md
 ```
-
 **Progressive Disclosure**: Only skill metadata is loaded into context initially; full skill content is loaded only when invoked.
 
 ### 4. Three-Tier Skills Taxonomy
@@ -131,11 +127,6 @@ This separation enables:
 
 ---
 
-## Rationale
-
-### Why Skills-First for Federal Context
-
-| Factor | Traditional Agent | Skills-First Agent |
 |--------|-------------------|-------------------|
 | **Auditability** | Prompts in code, hard to trace | Skills versioned in Git, full lineage |
 | **Governance** | Ad-hoc prompt engineering | Explicit decision logic in skill.md |
@@ -201,16 +192,9 @@ ranger/
 ├── mcp/                           # MCP Server Implementations
 │   ├── nifc/
 │   ├── weather/
-│   └── gis/
-│
-├── packages/                      # Shared Libraries
 │   ├── skill-runtime/             # Skill loading/execution
 │   └── types/
-│
-└── infrastructure/
-    └── terraform/
 ```
-
 ### Feature Branch Strategy
 
 Each agent + its skills developed in isolation:
@@ -241,7 +225,6 @@ This enables:
 ---
 
 ## Consequences
-
 ### Positive
 
 1. **USDA Strategy Alignment** — Architecture maps directly to GenAI roadmap objectives
@@ -293,7 +276,6 @@ This enables:
 |--------|------------|
 | Simplicity | Medium |
 | Flexibility | High |
-| Control | Low — no central coordination |
 | Federal fit | Poor — hard to audit decision flow |
 | **Verdict** | **Rejected** — insufficient governance |
 
@@ -313,7 +295,6 @@ This enables:
 
 **Description**: Pure retrieval-augmented generation over documents.
 
-| Factor | Assessment |
 |--------|------------|
 | Simplicity | High |
 | Reasoning | Low — limited to retrieval |
@@ -335,18 +316,10 @@ To align communications with USDA leadership, use this terminology mapping:
 | Agent + Skills Testing | GenAI Evaluation Lab |
 | skill.md Governance | Explainability and Transparency Controls |
 | RANGER | Innovation Incubator Proof-of-Concept |
-| MCP Connectivity | Data-Driven Decision Support Infrastructure |
 
 **Recommended framing for stakeholders**:
 
-> "RANGER implements USDA's GenAI strategic vision through a Skills-First architecture that delivers the 'enterprise skills and capabilities' and 'GenAI operations factory' called for in the department's roadmap. Each skill is a testable, auditable unit of domain expertise that can be composed, versioned, and potentially shared across mission areas."
-
----
-
-## Success Metrics
-
 ### Technical Metrics
-
 | Metric | Target | Measurement |
 |--------|--------|-------------|
 | Skill invocation accuracy | >95% | Coordinator routes to correct skill |
@@ -358,7 +331,6 @@ To align communications with USDA leadership, use this terminology mapping:
 
 | Metric | Target | Timeline |
 |--------|--------|----------|
-| RANGER pilot adoption | >50% of pilot regions | 12 months |
 | BAER assessment time reduction | 20% | 12 months |
 | Second vertical (NRCS or FS expansion) | Initiated | 18 months |
 | FedRAMP ATO | Obtained | 18 months |
@@ -372,9 +344,6 @@ To align communications with USDA leadership, use this terminology mapping:
 - [Claude Agents and Skills Transcripts](../research/_!_Claude%20Agents%20and%20Skills.md) — Anthropic's skills paradigm
 - [Google ADK Documentation](https://google.github.io/adk-docs/) — Agent Development Kit
 - [ADR-004: Site Analysis & OpenRouter](./ADR-004-site-analysis-openrouter.md) — Prior LLM integration decision
-- [USDA Data Strategy 2024-2026](https://www.usda.gov/sites/default/files/documents/fy-2024-2026-usda-data-strategy.pdf)
-
----
 
 ## Decision Log
 
@@ -397,15 +366,10 @@ To align communications with USDA leadership, use this terminology mapping:
 
 ## Description
 Brief description of what this skill does.
-
-## Triggers
 When should the agent invoke this skill?
 - User asks about X
-- Task involves Y
 - Data contains Z
 
-## Instructions
-Step-by-step instructions for the agent when executing this skill.
 
 1. First, do X
 2. Then, evaluate Y

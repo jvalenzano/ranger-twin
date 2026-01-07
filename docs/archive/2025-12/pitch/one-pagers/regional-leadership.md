@@ -69,7 +69,7 @@ Pilot program participation in Q1 2026. We need:
 - 30 minutes for demonstration
 - Feedback on operational fit
 
-**Contact:** TechTrend Federal — Digital Twin Initiative
+**Contact:** jvalenzano — Digital Twin Initiative
 
 ---
 

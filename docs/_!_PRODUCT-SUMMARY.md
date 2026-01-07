@@ -476,7 +476,7 @@ If users don't trust the basic data display (filtered counts, visual consistency
 
 ## The Team & Timeline
 
-**Team:** TechTrend Federal - Digital Twin Initiative  
+**Team:** jvalenzano - Digital Twin Initiative  
 **Size:** 3 developers  
 **Timeline:** January 6 - February 14, 2026 (6 weeks)  
 **Target:** USFS regional office demonstration

@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2025-12-26
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** API Infrastructure & Simplification
 **Supersedes:** ADR-004 (OpenRouter integration only; Site Analysis feature remains valid)
 

@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2024-12-31  
-**Decision Makers:** TechTrend Federal - Digital Twin Team  
+**Decision Makers:** jvalenzano - Digital Twin Team  
 **Category:** Architecture | Infrastructure  
 **Depends On:** ADR-012 (Mission Control UI)
 

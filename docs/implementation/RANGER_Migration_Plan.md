@@ -65,7 +65,7 @@ for a federal AI system (RANGER) in support of U.S. Forest Service post-fire rec
 
 PROJECT DETAILS:
 - Project ID: ranger-twin-dev
-- Organization: TechTrend, Inc. (Google Cloud Partner)
+- Organization: jvalenzano, Inc. (Google Cloud Partner)
 - Customer Agency: U.S. Department of Agriculture, Forest Service
 - Use Case: Retrieval-augmented generation over federal regulatory documents (NEPA, BAER, timber cruising)
 - Expected Scale: ~20 source documents, ~500k-1M tokens indexed, <100 queries/day in demo, scaling to 1000+ in production
@@ -925,5 +925,5 @@ A: For production (post-ATO), consider replicating RAG corpora to a secondary US
 ---
 
 **Document prepared for:** RANGER federal AI system (USDA Forest Service)  
-**Infrastructure lead:** TechTrend, Inc.  
+**Infrastructure lead:** jvalenzano, Inc.  
 **Date prepared:** December 28, 2025

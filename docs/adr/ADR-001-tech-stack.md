@@ -2,7 +2,7 @@
 
 **Status:** Amended (Superseded in part by [ADR-005](./ADR-005-skills-first-architecture.md))
 **Date:** 2025-12-19
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 
 > [!IMPORTANT]
 > This ADR has been amended. While the base technology choices (React, PostgreSQL) remain valid, the primary orchestration layer has shifted from a FastAPI-led microservice approach to a **Skills-First architecture** using the **Google ADK** and **MCP**. See [ADR-005](./ADR-005-skills-first-architecture.md) for the definitive orchestration standard.

@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2025-12-27  
-**Decision Makers:** TechTrend Federal - Digital Twin Team  
+**Decision Makers:** jvalenzano - Digital Twin Team  
 **Category:** Data Architecture & Demo Strategy  
 **Related:** ADR-005 (Skills-First Architecture), ADR-006 (Google-Only LLM)
 

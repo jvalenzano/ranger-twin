@@ -100,5 +100,5 @@ Key acronyms used in this document:
 
 ## Contact
 
-TechTrend Federal - Digital Twin Initiative  
+jvalenzano - Digital Twin Initiative  
 [Your Contact Info]

@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-01-02
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** Process
 **Supersedes:** None
 
@@ -34,7 +34,7 @@ We adopt a **four-phase deployment model** with explicit trust gates between eac
 **Objective:** Prove multi-agent coordination, Proof Layer transparency, and cross-domain synthesis work with simulated data.
 
 **Audience:**
-- TechTrend Federal internal team
+- jvalenzano internal team
 - Google Cloud partner stakeholders (showcase)
 - Selected USFS technical contacts (preview)
 

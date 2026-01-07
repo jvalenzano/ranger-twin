@@ -427,7 +427,7 @@ FOOTER
 
 Left: "RANGER • Agentic OS for Forest Recovery"
 Center: "16 Documents • 4 Domains • 1 Source of Truth"
-Right: "TechTrend Federal"
+Right: "jvalenzano"
 
 ═══════════════════════════════════════════════════════════════════════════════
 KEY MESSAGE CALLOUT (bottom center, above footer)

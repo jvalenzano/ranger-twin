@@ -230,7 +230,7 @@ For FedRAMP-compliant deployments:
 
 ## License
 
-Proprietary - TechTrend Federal
+Proprietary - jvalenzano
 
 ## References
 

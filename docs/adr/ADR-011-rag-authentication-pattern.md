@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2025-12-28
-**Decision Makers:** TechTrend Federal - Digital Twin Team
+**Decision Makers:** jvalenzano - Digital Twin Team
 **Category:** AI/ML
 **Supersedes:** None
 

@@ -163,7 +163,7 @@ Next audit recommended after Phase 4 deployment completion.
 
 ---
 
-*Maintained by TechTrend Federal — Digital Twin Initiative*
+*Maintained by jvalenzano — Digital Twin Initiative*
 
 ---
 

@@ -326,7 +326,7 @@ User Query: "Give me a recovery briefing for Cedar Creek"
 - **Investment:** Zero licensing fees (open source)
 - **Requirement:** One fire recovery incident as test case
 
-**Call to Action:** *"Contact TechTrend Federal to schedule a demonstration with your incident data."*
+**Call to Action:** *"Contact jvalenzano to schedule a demonstration with your incident data."*
 
 **Footer:** *"Built for the Forest Service. By people who understand the mission."*
 
