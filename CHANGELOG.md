@@ -34,4 +34,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **100% Validation Pass Rate**: All 600+ agent and skill tests passing on GCP `ranger-twin-dev` environment.
 - **SSE Streaming**: Verified real-time event streaming from Cloud Run to the Command Console.
 
-[0.1.0]: https://github.com/TechTrend/ranger-twin/releases/tag/v0.1.0
+[0.1.0]: https://github.com/jvalenzano/ranger-twin/releases/tag/v0.1.0

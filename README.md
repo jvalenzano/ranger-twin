@@ -41,7 +41,7 @@ RANGER is an **Agentic Operating System** for post-fire forest recovery that coo
 
 ```bash
 # Clone repository
-git clone https://github.com/TechTrend-Federal/ranger-twin.git
+git clone https://github.com/jvalenzano/ranger-twin.git
 cd ranger-twin
 
 # Development setup
