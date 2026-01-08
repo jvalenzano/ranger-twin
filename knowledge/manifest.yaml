@@ -24,8 +24,8 @@ gcs_bucket: "ranger-knowledge-base-usw1"  # Target bucket for Phase 2
 status: "offline"  # Phase 1 demo - no active corpora
 notes: |
   RAG corpora decommissioned 2026-01-02 to eliminate Spanner costs.
-  Phase 1 uses embedded fixtures via graceful fallback pattern.
-  Re-enable with: python scripts/enable_rag.py
+  Phase 1 uses enriched embedded templates via graceful fallback pattern.
+  Re-enable Phase 2 with: python scripts/enable_rag.py --demo-mode
 embedding_model: "text-embedding-005"
 last_updated: "2025-12-28"
 

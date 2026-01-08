@@ -5,9 +5,9 @@ Provides RAG capabilities for timber cruising methodology, salvage assessment,
 volume estimation, deterioration rates, and appraisal standards.
 
 Usage:
-    from rag_query import query_timber_salvage_knowledge
+    from rag_query import query_timber_infrastructure_knowledge
 
-    result = query_timber_salvage_knowledge(
+    result = query_timber_infrastructure_knowledge(
         query="What is the standard cruise methodology for post-fire salvage?",
         top_k=5
     )
@@ -103,7 +103,7 @@ def _get_corpus_resource_id() -> str:
     return _corpus_resource_id
 
 
-def query_timber_salvage_knowledge(
+def query_timber_infrastructure_knowledge(
     query: str,
     top_k: int = 5,
     include_answer: bool = True
@@ -131,7 +131,7 @@ def query_timber_salvage_knowledge(
             - status (str): "success" or "error"
 
     Example:
-        >>> result = query_timber_salvage_knowledge(
+        >>> result = query_timber_infrastructure_knowledge(
         ...     "How do you calculate timber volume deterioration rates?"
         ... )
         >>> print(result["answer"])

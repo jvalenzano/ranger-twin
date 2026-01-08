@@ -28,9 +28,16 @@ export const AnalysisHistoryPanel: React.FC<AnalysisHistoryPanelProps> = ({ isOp
     const clearHistory = useAnalysisHistoryStore((state) => state.clearHistory);
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [showClearConfirm, setShowClearConfirm] = useState(false);
     const selectedAnalysis = analyses.find(a => a.id === selectedId);
 
     if (!isOpen) return null;
+
+    const handleClearAll = () => {
+        clearHistory();
+        setSelectedId(null);
+        setShowClearConfirm(false);
+    };
 
     const formatDate = (timestamp: string) => {
         const date = new Date(timestamp);
@@ -58,12 +65,7 @@ export const AnalysisHistoryPanel: React.FC<AnalysisHistoryPanelProps> = ({ isOp
                     <div className="flex items-center gap-2">
                         {analyses.length > 0 && (
                             <button
-                                onClick={() => {
-                                    if (confirm('Clear all saved analyses? This cannot be undone.')) {
-                                        clearHistory();
-                                        setSelectedId(null);
-                                    }
-                                }}
+                                onClick={() => setShowClearConfirm(true)}
                                 className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all"
                             >
                                 Clear All
@@ -173,6 +175,43 @@ export const AnalysisHistoryPanel: React.FC<AnalysisHistoryPanelProps> = ({ isOp
                     </div>
                 </div>
             </div>
+
+            {/* Clear All Confirmation Modal */}
+            {showClearConfirm && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[#0f111a] w-full max-w-md rounded-2xl border border-red-500/30 shadow-2xl overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/20">
+                            <h3 className="text-sm font-black uppercase tracking-widest text-red-400">
+                                Confirm Clear All
+                            </h3>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6">
+                            <p className="text-sm text-text-secondary">
+                                Clear all saved analyses? This action cannot be undone.
+                            </p>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="px-6 py-4 bg-white/[0.02] border-t border-white/10 flex items-center justify-end gap-3">
+                            <button
+                                onClick={() => setShowClearConfirm(false)}
+                                className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleClearAll}
+                                className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white bg-red-500 hover:bg-red-600 rounded-lg transition-all"
+                            >
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

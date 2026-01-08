@@ -29,20 +29,27 @@ logger = logging.getLogger("ranger.trail_assessor")
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
-# Damage Classification skill
-DAMAGE_PATH = SKILLS_DIR / "damage-classification" / "scripts"
-if DAMAGE_PATH.exists():
-    sys.path.insert(0, str(DAMAGE_PATH))
+# Add agent directory to path for local imports (rag_query)
+if str(Path(__file__).parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).parent))
 
-# Closure Decision skill
-CLOSURE_PATH = SKILLS_DIR / "closure-decision" / "scripts"
+# Trail Classification skill
+CLASSIFICATION_PATH = SKILLS_DIR / "trail-classification" / "scripts"
+if CLASSIFICATION_PATH.exists():
+    sys.path.insert(0, str(CLASSIFICATION_PATH))
+
+# Closure Evaluation skill
+CLOSURE_PATH = SKILLS_DIR / "closure-evaluation" / "scripts"
 if CLOSURE_PATH.exists():
     sys.path.insert(0, str(CLOSURE_PATH))
 
-# Recreation Priority skill
-PRIORITY_PATH = SKILLS_DIR / "recreation-priority" / "scripts"
+# Priority Assessment skill
+PRIORITY_PATH = SKILLS_DIR / "trail-priority" / "scripts"
 if PRIORITY_PATH.exists():
     sys.path.insert(0, str(PRIORITY_PATH))
+
+# Import RAG/File Search tool
+from trail_rag_query import query_trail_infrastructure_knowledge
 
 
 def classify_damage(fire_id: str, trail_id: str = "", damage_points_json: str = "[]") -> dict:
@@ -197,6 +204,9 @@ actual assessment data.
 
 **Question about trail damage, severity, classification, or repair costs?**
 → CALL `classify_damage(fire_id="cedar-creek-2022")` FIRST
+
+**Question about FSTAG standards, TRACS codes, or recreation policy?**
+→ CALL `query_trail_infrastructure_knowledge(query="...")` FIRST
 
 **Question about closures, safety, reopening, or public access?**
 → CALL `evaluate_closure(fire_id="cedar-creek-2022")` FIRST
@@ -360,6 +370,7 @@ root_agent = Agent(
         classify_damage,
         evaluate_closure,
         prioritize_trails,
+        query_trail_infrastructure_knowledge,
     ],
 
     # TIER 1: API-level tool enforcement

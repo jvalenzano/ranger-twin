@@ -116,6 +116,9 @@ cd agents && adk web --port 8000
 # Tests
 pytest agents/ -v              # 606 agent tests
 pytest tests/integration/ -v   # RAG integration tests
+
+# Workflows
+/browser-automation             # Autonomous browser interactions (scrolling, etc.)
 ```
 
 ## Where To Find Things
@@ -132,12 +135,12 @@ pytest tests/integration/ -v   # RAG integration tests
 | Frontend stores | `apps/command-console/src/stores/` |
 | Terraform | `infrastructure/terraform/` |
 
-## Don't Touch Without Reading
-
-1. **`docs/adr/ADR-005-skills-first-architecture.md`** — Core paradigm
-2. **`docs/adr/ADR-007.1-tool-invocation-strategy.md`** — Prevents infinite loops
-3. **`docs/adr/ADR-011-rag-authentication-pattern.md`** — RAG auth pattern
-4. **`docs/runbooks/ADK-OPERATIONS-RUNBOOK.md`** — Common pitfalls
+### RAG Fallback & Resilience (Phase 1)
+- **Pattern**: "Graceful RAG Fallback" ensures agents work without Vertex RAG.
+- **Client**: `agents/_shared/rag_client.py` performs startup health check.
+- **Fallback**: Specialists use `template_lookup.py` skills for technical standards when RAG is offline.
+- **Citations**: Citations must be preserved in fallback mode using `retrieval_method: "embedded_template"`.
+- **Config**: `.vertex_rag_config.json` controls RAG status. Set `"enabled": false` for demo mode.
 
 ## GCP Environment
 

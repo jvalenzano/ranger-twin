@@ -23,6 +23,10 @@ if str(PROJECT_ROOT) not in sys.path:
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
+# Add agent directory to path for local imports (rag_query)
+if str(Path(__file__).parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).parent))
+
 # Soil Burn Severity skill
 SEVERITY_PATH = SKILLS_DIR / "soil-burn-severity" / "scripts"
 if SEVERITY_PATH.exists():
@@ -33,10 +37,13 @@ MTBS_PATH = SKILLS_DIR / "mtbs-classification" / "scripts"
 if MTBS_PATH.exists():
     sys.path.insert(0, str(MTBS_PATH))
 
-# Boundary Mapping skill
-BOUNDARY_PATH = SKILLS_DIR / "boundary-mapping" / "scripts"
+# Boundary Validation skill
+BOUNDARY_PATH = SKILLS_DIR / "boundary-validation" / "scripts"
 if BOUNDARY_PATH.exists():
     sys.path.insert(0, str(BOUNDARY_PATH))
+
+# Import RAG/File Search tool
+from burn_rag_query import query_burn_severity_knowledge
 
 
 def assess_severity(fire_id: str, sectors_json: str = "[]", include_geometry: bool = False) -> dict:
@@ -196,6 +203,9 @@ data-driven insights.
 **Question about burn severity, dNBR, soil impacts, or BAER assessment?**
 → CALL `assess_severity(fire_id="cedar-creek-2022")` FIRST
 
+**Question about BAER records, historical analysis, or general severity standards?**
+→ CALL `query_burn_severity_knowledge(query="...")` FIRST
+
 **Question about MTBS classification, severity classes (1-4), or mapping standards?**
 → CALL `classify_mtbs(fire_id="cedar-creek-2022")` FIRST
 
@@ -349,6 +359,7 @@ root_agent = Agent(
         assess_severity,
         classify_mtbs,
         validate_boundary,
+        query_burn_severity_knowledge,
     ],
 
     # TIER 1: API-level tool enforcement (mode="AUTO" eliminates infinite loop)

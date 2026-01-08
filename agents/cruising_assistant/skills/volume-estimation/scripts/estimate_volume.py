@@ -551,8 +551,8 @@ def execute(inputs: dict) -> dict:
 
     logger.info(f"Volume estimation invoked: fire_id={fire_id}, plot_id={plot_id}, custom_trees={bool(custom_trees)}")
 
-    # Mode 1: Custom Trees (only if trees are actually provided)
-    if custom_trees:
+    # Mode 1: Custom Trees (only if trees are actually provided, including empty list)
+    if custom_trees is not None:
         analyzed_trees = []
         total_net_bf = 0.0
         reasoning_chain = [f"Analyzing {len(custom_trees)} custom trees"]

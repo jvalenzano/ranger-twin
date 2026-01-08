@@ -22,11 +22,29 @@ def _check_corpus_health() -> bool:
     Check if RAG corpus is available and healthy.
     Called once at startup, result is cached.
     """
-    # Look for config in agents root
-    config_path = Path(__file__).parent.parent / ".vertex_rag_config.json"
+    # 1. Check for manual override via environment variable
+    config_env = os.environ.get("VERTEX_RAG_CONFIG_PATH")
+    if config_env:
+        config_path = Path(config_env)
+    else:
+        # 2. Look in conventional locations
+        # - Current working directory
+        # - Agent root (parent of this file's parent)
+        # - Project root (from AGENTS_DIR or similar)
+        search_paths = [
+            Path.cwd() / ".vertex_rag_config.json",
+            Path(__file__).parent.parent / ".vertex_rag_config.json",
+            Path(__file__).parent.parent.parent / ".vertex_rag_config.json"
+        ]
+        
+        config_path = None
+        for p in search_paths:
+            if p.exists():
+                config_path = p
+                break
     
-    if not config_path.exists():
-        logger.warning("[RAG-OFFLINE] No .vertex_rag_config.json found at %s", config_path)
+    if not config_path or not config_path.exists():
+        logger.info("[RAG-DEMO-MODE] No .vertex_rag_config.json found. System will use embedded knowledge (fixtured/templates).")
         return False
     
     try:
@@ -35,22 +53,22 @@ def _check_corpus_health() -> bool:
         
         # Check if explicitly disabled
         if not config.get("enabled", True):
-            logger.info("[RAG-OFFLINE] RAG explicitly disabled in config")
+            logger.info("[RAG-DEMO-MODE] RAG explicitly disabled in config. Using embedded knowledge.")
             return False
             
         global _RAG_CONFIG
         _RAG_CONFIG = config
         
-        # In demo phase, we often have enabled=false but healthy=false set manually.
-        # We also check for actual corpus IDs if enabled.
+        # In demo phase, we often have healthy=false set manually.
         if config.get("healthy", False):
+            logger.info("[RAG-ONLINE] Vertex AI RAG corpus is healthy and available.")
             return True
         else:
-            logger.info("[RAG-OFFLINE] RAG config found but status is unhealthy/disabled")
+            logger.info("[RAG-DEMO-MODE] RAG config found but status is unhealthy/disabled. Using embedded knowledge.")
             return False
         
     except Exception as e:
-        logger.warning("[RAG-OFFLINE] Failed to load RAG config: %s", e)
+        logger.warning("[RAG-ERROR] Failed to load RAG config: %s", e)
         return False
 
 
@@ -59,8 +77,6 @@ def is_rag_available() -> bool:
     global _RAG_AVAILABLE
     if _RAG_AVAILABLE is None:
         _RAG_AVAILABLE = _check_corpus_health()
-        if not _RAG_AVAILABLE:
-            logger.info("[RAG-OFFLINE] Using embedded knowledge (fixtured/templates) for demo phase")
     return _RAG_AVAILABLE
 
 

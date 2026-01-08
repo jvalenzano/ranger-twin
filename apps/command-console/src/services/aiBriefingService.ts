@@ -432,21 +432,31 @@ class AIBriefingService {
 
   /**
    * Detect which specialist agent should handle the query
+   * Priority: Trail/Timber/NEPA keywords higher than generic 'fire/burn'
    */
   private detectAgentRole(query: string): AgentRole {
     const lowerQuery = query.toLowerCase();
 
-    if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
-      return 'burn-analyst';
-    }
-    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('damage') || lowerQuery.includes('path')) {
+    // Specific infrastructure keywords first
+    if (lowerQuery.includes('trail') || lowerQuery.includes('bridge') || lowerQuery.includes('path')) {
       return 'trail-assessor';
     }
-    if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('plot') || lowerQuery.includes('mbf')) {
+    if (lowerQuery.includes('timber') || lowerQuery.includes('salvage') || lowerQuery.includes('mbf')) {
       return 'cruising-assistant';
     }
     if (lowerQuery.includes('nepa') || lowerQuery.includes('compliance') || lowerQuery.includes('environmental') || lowerQuery.includes('regulation')) {
       return 'nepa-advisor';
+    }
+
+    // Generic damage keywords
+    if (lowerQuery.includes('damage')) {
+      // If damage and not specifically trail/timber, guess trail assessor as it covers most infrastructure
+      return 'trail-assessor';
+    }
+
+    // Burn/Fire keywords last (generic context)
+    if (lowerQuery.includes('burn') || lowerQuery.includes('severity') || lowerQuery.includes('fire')) {
+      return 'burn-analyst';
     }
 
     return 'recovery-coordinator';

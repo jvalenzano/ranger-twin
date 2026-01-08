@@ -23,6 +23,10 @@ if str(PROJECT_ROOT) not in sys.path:
 # Add skill scripts to path for dynamic loading
 SKILLS_DIR = Path(__file__).parent / "skills"
 
+# Add agent directory to path for local imports (timber_rag_query)
+if str(Path(__file__).parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).parent))
+
 # Cruise Methodology skill
 METHODOLOGY_PATH = SKILLS_DIR / "cruise-methodology" / "scripts"
 if METHODOLOGY_PATH.exists():
@@ -38,10 +42,8 @@ SALVAGE_PATH = SKILLS_DIR / "salvage-assessment" / "scripts"
 if SALVAGE_PATH.exists():
     sys.path.insert(0, str(SALVAGE_PATH))
 
-# CSV Insight skill
-CSV_INSIGHT_PATH = SKILLS_DIR / "csv-insight" / "scripts"
-if CSV_INSIGHT_PATH.exists():
-    sys.path.insert(0, str(CSV_INSIGHT_PATH))
+# Import RAG/File Search tool
+from timber_rag_query import query_timber_infrastructure_knowledge
 
 
 def recommend_methodology(
@@ -299,6 +301,9 @@ analyze it using your tools and return data-driven insights.
 **Question about salvage viability, deterioration, blue stain, or harvest timing?**
 → CALL `assess_salvage(fire_id="cedar-creek-2022")` FIRST
 
+**Question about FSH 2409.12 standards, cruise design, or volume protocols?**
+→ CALL `query_timber_infrastructure_knowledge(query="...")` FIRST
+
 **Question about timber volume, board feet, MBF, or per-acre estimates?**
 → CALL `estimate_volume(fire_id="cedar-creek-2022")` FIRST
 
@@ -491,6 +496,7 @@ root_agent = Agent(
         estimate_volume,
         assess_salvage,
         analyze_csv_data,
+        query_timber_infrastructure_knowledge,
     ],
 
     # TIER 1: API-level tool enforcement (mode="AUTO" eliminates infinite loop)

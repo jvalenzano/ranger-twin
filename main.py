@@ -28,8 +28,24 @@ Environment variables:
 import os
 import logging
 from pathlib import Path
+from typing import Optional, List, Any
 
+from pydantic import BaseModel, Field
 from google.adk.cli.fast_api import get_fast_api_app
+
+# Import legacy CoordinatorService for /api/v1/chat compatibility
+# We add agents/ to path so imports within implementation.py work
+import sys
+AGENTS_DIR_FOR_PATH = str(Path(__file__).parent / "agents")
+if AGENTS_DIR_FOR_PATH not in sys.path:
+    sys.path.insert(0, AGENTS_DIR_FOR_PATH)
+from coordinator.implementation import CoordinatorService
+
+class ChatRequest(BaseModel):
+    """Legacy chat request model for frontend compatibility."""
+    session_id: str
+    query: str
+    fire_context: Optional[dict[str, Any]] = None
 
 # Configure logging
 logging.basicConfig(
@@ -99,6 +115,36 @@ def create_app():
                     "cruising_assistant",
                     "nepa_advisor"
                 ]
+            }
+
+        # Legacy /api/v1/chat endpoint for Phase 1 frontend compatibility
+        coordinator_service = CoordinatorService()
+
+        @app.post("/api/v1/chat")
+        async def legacy_chat(request: ChatRequest):
+            """Legacy chat endpoint that routes to CoordinatorService."""
+            logger.info(f"Legacy chat request: {request.query[:100]}...")
+            
+            result = await coordinator_service.handle_message(
+                query=request.query,
+                context={
+                    "session_id": request.session_id,
+                    "fire_context": request.fire_context
+                }
+            )
+            
+            # Map CoordinatorService response to frontend expected format
+            return {
+                "success": True,
+                "response": {
+                    "agentRole": result.get("agent_role", "recovery-coordinator"),
+                    "summary": result.get("summary", ""),
+                    "reasoning": result.get("reasoning", []),
+                    "confidence": result.get("confidence", 0),
+                    "citations": result.get("citations", []),
+                    "recommendations": result.get("recommendations", [])
+                },
+                "processingTimeMs": result.get("processing_time_ms", 0)
             }
 
         logger.info("FastAPI app created successfully")
